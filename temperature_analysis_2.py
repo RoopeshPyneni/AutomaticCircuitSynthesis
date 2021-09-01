@@ -448,8 +448,135 @@ def plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,
 # Plotting results ( Parameters vs Temperature at different current )
 def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_array,file_sub_directory,output_conditions,colour_dict,spec_current):
 	
-	temp=0
-	print(temp)
+	# Finding the length of each array
+	n_temp=len(temp_array)
+	n_current=len(current_array)
+	n_param=len(param_array)
+
+	# First, we will plot Parameters vs Temperature and each plot will contain a single current
+	for j in range(n_current):
+		
+		# Creating the directory
+		pathname=file_sub_directory+str(current_array[j])+'/'
+		if not os.path.exists(pathname):
+			os.makedirs(pathname)
+
+		for k in range(n_param):
+			
+			# Plot for single parameter
+			figure()
+			
+			# Plotting the main parameter
+			plot(temp_array,extracted_matrix[:,j,k],color='g',label=param_array[k])
+			
+			# Calculating the maximum and minimum value of the output
+			max_val=np.max(extracted_matrix[:,j,k])
+			min_val=np.min(extracted_matrix[:,j,k])
+			if param_array[k] in output_conditions:
+				arrY=output_conditions[param_array[k]]*np.ones(n_temp,dtype=float)
+				plot(temp_array,arrY,color='r',label='Output Spec')
+				if output_conditions[param_array[k]]>max_val:
+					max_val=output_conditions[param_array[k]]
+				if output_conditions[param_array[k]]<min_val:
+					min_val=output_conditions[param_array[k]]
+
+			# Plotting a vertical line at spec_current
+			arrX=27*np.ones(100,dtype=float)
+			arrY=np.linspace(min_val,max_val,100)
+			plot(arrX,arrY,color='black',linestyle='--')
+
+			# Other Plotting Parameters
+			xlabel('Io')
+			ylabel(param_array[k])
+			legend()
+			grid(b=True,which='major',color='#666666')
+			grid(b=True,which='minor',color='#999999')
+			savefig(pathname+str(param_array[k])+'.pdf')
+			close()
+
+		
+		# Plot for all output parameters
+		figure()
+		flag=0
+		for k in range(n_param):
+			if param_array[k] not in output_conditions:
+				continue
+			plot(temp_array,extracted_matrix[:,j,k],color=colour_dict[param_array[k]],label=param_array[k])
+			arrY=output_conditions[param_array[k]]*np.ones(n_current,dtype=float)
+			plot(temp_array,arrY,color=colour_dict[param_array[k]],linestyle='--',label='Output Spec')
+
+			if flag==0:
+				max_val=np.max(extracted_matrix[:,j,k])
+				min_val=np.min(extracted_matrix[:,j,k])
+			else:
+				cur_max=np.max(extracted_matrix[:,j,k])
+				cur_min=np.min(extracted_matrix[:,j,k])
+				if max_val<cur_max:
+					max_val=cur_max
+				if min_val>cur_min:
+					min_val=cur_min
+
+			if output_conditions[param_array[k]]>max_val:
+				max_val=output_conditions[param_array[k]]
+			if output_conditions[param_array[k]]<min_val:
+				min_val=output_conditions[param_array[k]]
+
+		arrX=27*np.ones(100,dtype=float)
+		arrY=np.linspace(min_val,max_val,100)
+		plot(arrX,arrY,color='black',linestyle='--')
+		xlabel('Io')
+		ylabel(param_array[k])
+		legend()
+		grid(b=True,which='major',color='#666666')
+		grid(b=True,which='minor',color='#999999')
+		savefig(pathname+'all.pdf')
+		close()
+
+
+
+	# Second, we will plot Parameters vs Current for all temperatures in the same plot
+	multi_colour=['green','blue','yellow','cyan','darkviolet','orange','peru']
+	multi_linestyle=['-','--','-.',':']
+	
+	# Creating the directory
+	pathname=file_sub_directory+'all_current/'
+	if not os.path.exists(pathname):
+		os.makedirs(pathname)
+
+	for k in range(n_param):
+			
+		figure()
+
+		for j in range(n_current):
+			
+			# Plotting the main parameter
+			plot(temp_array,extracted_matrix[:,j,k],color=multi_colour[j%7],linestyle=multi_linestyle[int(j/7)],label=current_array[j])
+			
+			# Calculating the maximum and minimum value of the output
+			max_val=np.max(extracted_matrix[:,j,k])
+			min_val=np.min(extracted_matrix[:,j,k])
+			
+		if param_array[k] in output_conditions:
+			arrY=output_conditions[param_array[k]]*np.ones(n_temp,dtype=float)
+			plot(temp_array,arrY,color='red',label='Output Spec')
+			if output_conditions[param_array[k]]>max_val:
+				max_val=output_conditions[param_array[k]]
+			if output_conditions[param_array[k]]<min_val:
+				min_val=output_conditions[param_array[k]]
+
+		# Plotting a vertical line at spec_current
+		arrX=27*np.ones(100,dtype=float)
+		arrY=np.linspace(min_val,max_val,100)
+		plot(arrX,arrY,color='black',linestyle='--')
+
+		# Other Plotting Parameters
+		xlabel('Io')
+		ylabel(param_array[k])
+		legend()
+		grid(b=True,which='major',color='#666666')
+		grid(b=True,which='minor',color='#999999')
+		savefig(pathname+str(param_array[k])+'.pdf')
+		close()
 
 #===========================================================================================================================
 
