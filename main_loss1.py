@@ -275,11 +275,11 @@ optimization_input_parameters['temperature_analysis_2']['run']='YES'
 
 optimization_input_parameters['temperature_analysis_2']['start_temp']=-40
 optimization_input_parameters['temperature_analysis_2']['stop_temp']=120
-optimization_input_parameters['temperature_analysis_2']['n_temp']=5
+optimization_input_parameters['temperature_analysis_2']['n_temp']=9
 
 optimization_input_parameters['temperature_analysis_2']['start_current']=0.1
 optimization_input_parameters['temperature_analysis_2']['stop_current']=10
-optimization_input_parameters['temperature_analysis_2']['n_current']=5
+optimization_input_parameters['temperature_analysis_2']['n_current']=21
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -318,7 +318,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'temp2_plot_test_2'						# SET THE FILENAME HERE
+	filename=f_directory+'temp2_plot_opt_point'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=300	
 	# ------- Set Any Additional Parameters Here --------
 	

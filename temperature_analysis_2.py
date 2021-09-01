@@ -373,6 +373,7 @@ def plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,
 			if flag==0:
 				max_val=np.max(extracted_matrix[i,:,k])
 				min_val=np.min(extracted_matrix[i,:,k])
+				flag=1
 			else:
 				cur_max=np.max(extracted_matrix[i,:,k])
 				cur_min=np.min(extracted_matrix[i,:,k])
@@ -418,8 +419,16 @@ def plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,
 			semilogx(current_array,extracted_matrix[i,:,k],color=multi_colour[i%7],linestyle=multi_linestyle[int(i/7)],label=temp_array[i])
 			
 			# Calculating the maximum and minimum value of the output
-			max_val=np.max(extracted_matrix[i,:,k])
-			min_val=np.min(extracted_matrix[i,:,k])
+			if i==0:
+				max_val=np.max(extracted_matrix[i,:,k])
+				min_val=np.min(extracted_matrix[i,:,k])
+			else:
+				cur_max=np.max(extracted_matrix[i,:,k])
+				cur_min=np.min(extracted_matrix[i,:,k])
+				if max_val<cur_max:
+					max_val=cur_max
+				if min_val>cur_min:
+					min_val=cur_min
 			
 		if param_array[k] in output_conditions:
 			arrY=output_conditions[param_array[k]]*np.ones(n_current,dtype=float)
@@ -457,7 +466,7 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 	for j in range(n_current):
 		
 		# Creating the directory
-		pathname=file_sub_directory+str(current_array[j])+'/'
+		pathname=file_sub_directory+cf.num_trunc(current_array[j],3)+'/'
 		if not os.path.exists(pathname):
 			os.makedirs(pathname)
 
@@ -486,7 +495,7 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 			plot(arrX,arrY,color='black',linestyle='--')
 
 			# Other Plotting Parameters
-			xlabel('Io')
+			xlabel('Temperature')
 			ylabel(param_array[k])
 			legend()
 			grid(b=True,which='major',color='#666666')
@@ -502,12 +511,13 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 			if param_array[k] not in output_conditions:
 				continue
 			plot(temp_array,extracted_matrix[:,j,k],color=colour_dict[param_array[k]],label=param_array[k])
-			arrY=output_conditions[param_array[k]]*np.ones(n_current,dtype=float)
+			arrY=output_conditions[param_array[k]]*np.ones(n_temp,dtype=float)
 			plot(temp_array,arrY,color=colour_dict[param_array[k]],linestyle='--',label='Output Spec')
 
 			if flag==0:
 				max_val=np.max(extracted_matrix[:,j,k])
 				min_val=np.min(extracted_matrix[:,j,k])
+				flag=1
 			else:
 				cur_max=np.max(extracted_matrix[:,j,k])
 				cur_min=np.min(extracted_matrix[:,j,k])
@@ -524,7 +534,7 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 		arrX=27*np.ones(100,dtype=float)
 		arrY=np.linspace(min_val,max_val,100)
 		plot(arrX,arrY,color='black',linestyle='--')
-		xlabel('Io')
+		xlabel('Temperature')
 		ylabel(param_array[k])
 		legend()
 		grid(b=True,which='major',color='#666666')
@@ -546,15 +556,23 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 	for k in range(n_param):
 			
 		figure()
-
+		
 		for j in range(n_current):
 			
 			# Plotting the main parameter
-			plot(temp_array,extracted_matrix[:,j,k],color=multi_colour[j%7],linestyle=multi_linestyle[int(j/7)],label=current_array[j])
+			plot(temp_array,extracted_matrix[:,j,k],color=multi_colour[j%7],linestyle=multi_linestyle[int(j/7)],label=cf.num_trunc(current_array[j],3))
 			
 			# Calculating the maximum and minimum value of the output
-			max_val=np.max(extracted_matrix[:,j,k])
-			min_val=np.min(extracted_matrix[:,j,k])
+			if j==0:
+				max_val=np.max(extracted_matrix[:,j,k])
+				min_val=np.min(extracted_matrix[:,j,k])
+			else:
+				cur_max=np.max(extracted_matrix[:,j,k])
+				cur_min=np.min(extracted_matrix[:,j,k])
+				if max_val<cur_max:
+					max_val=cur_max
+				if min_val>cur_min:
+					min_val=cur_min
 			
 		if param_array[k] in output_conditions:
 			arrY=output_conditions[param_array[k]]*np.ones(n_temp,dtype=float)
@@ -570,7 +588,7 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 		plot(arrX,arrY,color='black',linestyle='--')
 
 		# Other Plotting Parameters
-		xlabel('Io')
+		xlabel('Temperature')
 		ylabel(param_array[k])
 		legend()
 		grid(b=True,which='major',color='#666666')
