@@ -1,0 +1,68 @@
+************************** Meaning of Different Dictionaries ***********************************
+
+
+output_conditions
+--> This stores the desired output conditions such as iip3, s11, etc. It also has the value of Rs
+--> This dictionary is mentioned in main
+--> The dictionary elements are:
+    --> 's11_db'
+    --> 'iip3_dbm'
+    --> 'gain_db'
+    --> 'nf_db'
+    --> 'wo'
+    --> 'delta_v'
+    --> 'Rs'
+
+mos_parameters
+--> This stores the MOSFET parameters such as un, cox, vt, Lmin and vdd
+--> This dictionary is mentioned in complete_optimization 
+--> The dictionary elements are:
+    --> 'un'
+    --> 'cox'
+    --> 'vt'
+    --> 'Lmin'
+    --> 'vdd'
+
+circuit_parameters
+--> This stores the values of different elements on the circuit such as Resistances, Capacitances, etc
+--> This dictionary is mentioned in main
+--> The dictionary elements are:
+    --> 's11_db'
+    --> 'iip3_dbm'
+    --> 'gain_db'
+    --> 'nf_db'
+    --> 'wo'
+    --> 'delta_v'
+    --> 'Rs'
+
+dc_initial_outputs
+--> This stores the values of the output ports such as Vg, Vd and Vs as we calculate them from the hand calculations
+--> This dictionary is mentioned in hand_calculations
+--> The dictionary elements are:
+    --> 'vg'
+    --> 'vd'
+    --> 'vs'
+
+extracted_parameters
+--> This stores the values extracted from the output file of the Eldo simulation
+--> This dictionary is mentioned in file_extract
+--> The dictionary elements are:
+    --> 'vd'
+    --> 'vg'
+    --> 'vs'
+    --> 'i_source'
+    --> 'v_source'
+    --> 'p_source'
+    --> 'Io'
+    --> 'gm1'
+    --> 'gds1'
+    --> 'vt'
+    --> 'vdsat'
+    --> 'cgs1'
+    --> 'cgd1'
+    --> 'freq'
+    --> 'gain_db'
+    --> 's11_db'
+    --> 'nf_db'
+    --> 'iip3_dbm'
+    
