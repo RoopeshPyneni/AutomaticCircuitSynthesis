@@ -90,6 +90,9 @@ def temperature_analysis(circuit_parameters,extracted_parameters,optimization_in
 	timing_results['temperature_analysis']={}
 	timing_results['temperature_analysis']['start']=datetime.datetime.now()
 
+	print('************************************************************************************************************')
+	print('*********************************** Temperature Analysis ***************************************************')
+
 	initial_extracted_parameters=extracted_parameters.copy()
 
 	# Creating Dictionaries to Store Values

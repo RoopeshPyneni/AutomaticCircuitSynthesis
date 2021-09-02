@@ -1,10 +1,18 @@
 #===========================================================================================================================
 """
-Name: Pyneni Roopesh
-Roll Number: EE18B028
+Name				: Pyneni Roopesh
+Roll Number			: EE18B028
+File Name			: pre_optimization.py
+File Description 	: This file will perform pre optimization and calculate an initial point to be used 
+					  at the start of the gradient descent algorithm
 
-Pre Optimization File:
+Functions structure in this file:
+	--> pre_optimization
+		--> manual_circuit_parameters
+
+COMPLETE
 """
+
 #===========================================================================================================================
 import datetime
 import common_functions as cf
@@ -14,10 +22,12 @@ import hand_calculation_2 as hc2
 import file_write as fw
 
 #===========================================================================================================================
-#------------------------------------Defining the functions for simple calculations-----------------------------------------
+#----------------------------------- Defining the functions for simple calculations ----------------------------------------
 
 #---------------------------------------------------------------------------------------------------------------------------
-# Function to manually choose the Initial Circuit Parameters	
+# Function to manually choose the Initial Circuit Parameters
+# Inputs  : optimization_input_parameters
+# Outputs :	circuit_parameters, extracted_parameters
 def manual_initial_parameters(optimization_input_parameters):
 
 	# Getting Circuit Parameters
@@ -31,6 +41,11 @@ def manual_initial_parameters(optimization_input_parameters):
 
 #===========================================================================================================================
 #------------------------------------------- Output Functions --------------------------------------------------------------
+
+#---------------------------------------------------------------------------------------------------------------------------
+# Function to perform pre-optimization
+# Inputs  : mos_parameters, optimization_input_parameters, timing_results
+# Outputs :	circuit_parameters, extracted_parameters
 def pre_optimization(mos_parameters,optimization_input_parameters,timing_results):
 
 	# Opening the Run_Status File
@@ -41,6 +56,9 @@ def pre_optimization(mos_parameters,optimization_input_parameters,timing_results
 	# Storing the starting time
 	timing_results['pre_optimization']={}
 	timing_results['pre_optimization']['start']=datetime.datetime.now()
+
+	print('************************************************************************************************************')
+	print('*********************************** Pre Optimization *******************************************************')
 
 	cf.write_simulation_parameters(optimization_input_parameters,'pre_optimization',0)
 

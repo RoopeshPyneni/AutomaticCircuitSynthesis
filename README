@@ -1,38 +1,40 @@
 Files in this folder:
 
----> main.py
-This file contains the program that will call the main optimization function
-You can very different parameters in this program that are input to the optimization function
+---> main_loss1.py
+This file contains the program that will call the complete optimization function
+You can specify very different parameters in this program that are input to the optimization function
+This is used for loss optimization
+
+---> main_fom1.py
+This file contains the program that will call the complete optimization function
+You can specify very different parameters in this program that are input to the optimization function
+This is used for FOM optimization
+
+---> main_single_point.py
+This file is used to extract the outputs for a single input point
+This will call the functions in spectre and run the calculation
 
 ---> complete_optimization.py
 This file is used to run the complete otpimization
 It will perform optimization in the following steps:
-	1. Operating Point Calculations
-		1a. Operating Points are calculated based on the MOSFET Characteristics and Required Output Conditions
-		1b. Operating Points values are checked with the simulation; Values such as Vt may vary due to channel length variation. These values are now updated and the function is run again
-	2. gm Updation
-		This step will ensure that the value of gm and vdsat are close to the desired values. 
-		We do operating point calculation assuming a square law device. However, this is not 100% accurate. 
-		This function will iterative try to get gm and vdsat closer to the desired values
-	3. Optimization Function
-		This function will try to do the optimization for current
-		It will ensure that the values of s11, gain, iip3 and noise are within the limits
-		It will use gradient descent to optimize the values
-
+	1. Pre Optimization
+	2. Optimization Function
+	3. Temperature Analysis
+		
 ---> pre_optimization.py
 This file will run the pre optimization steps ( hand calculations and some parameter corrections )
 It will store the results after each step in this process
 	
 	---> hand_calculation_1.py
-	This file will do hand calculations with Method 1 ( Calculations based on output conditions )
+	This file will do hand calculations with Method 1 ( Normal Operating Point with gm=20mS and high Rb )
 
-	---> hand_calculation_1.py
+	---> hand_calculation_2.py
 	This file will do hand calculations with Method 2 ( To get high IIP3 and Low Power by choosing Rb=50 )
-
 
 ---> optimization.py
 This file will run the optimization
 It will store the results of each optimization step
+This file will also plot thr results
 	
 	---> optimization_functions_loss.py
 	This file contains functions related to loss
@@ -40,18 +42,20 @@ It will store the results of each optimization step
 	---> optimization_functions_fom.py
 	This file contains functions related to FOM	
 
-
----> hand_calculation.py
-This file is used to do the initial point calculations
-
----> file_extract.py
+---> spectre.py
 This file will extract different parameters from .chi files. It is used to extract the circuit parameters
 
+---> spectre_run.tcsh
+This file is the list of shell commands to run the spectre file
+
 ---> file_write.py
-This file will write information to different files. 
-i) It changes the circuit parameters in .cir files
-ii) It writes the result of optimization to .csv and .txt files
+This file will write information of the optimization input parameters
+It will also store the results of pre_optimization, optimization, and temperature_analysis
+
+---> common_functions.py
+This file contains many functions that are used commonly
+
+---> temperature_analysis.py
+This file is used to perform the temperature analysis to the final optimized point
 
 
----> data_plot.py
-This file will plot the data present in the .csv files

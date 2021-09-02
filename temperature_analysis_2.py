@@ -1,10 +1,23 @@
 #===========================================================================================================================
 """
-Name: Pyneni Roopesh
-Roll Number: EE18B028
+Name				: Pyneni Roopesh
+Roll Number			: EE18B028
+File Name			: temperature_analysis_2.py
+File Description 	: This file will perform the temperature analysis by sweeping Temperature and Io
 
-Temperature Analysis:
+Functions structure in this file:
+	--> temperature analysis
+		--> write_circuit_parameters
+		--> write_extracted_parameters_initial
+		--> update_extracted_parameters
+		--> plot_temp_analysis_2
+			--> extract_temp_analysis_2
+			--> plot_param_vs_current
+			--> plot_param_vs_temperature
+
+COMPLETE
 """
+
 #===========================================================================================================================
 import numpy as np
 import spectre as sp
@@ -90,6 +103,9 @@ def temperature_analysis(circuit_parameters,extracted_parameters,optimization_in
 	timing_results['temperature_analysis_2']={}
 	timing_results['temperature_analysis_2']['start']=datetime.datetime.now()
 
+	print('************************************************************************************************************')
+	print('*********************************** Temperature Analysis ***************************************************')
+
 	initial_extracted_parameters=extracted_parameters.copy()
 	initial_circuit_parameters=circuit_parameters.copy()
 
@@ -148,110 +164,31 @@ def temperature_analysis(circuit_parameters,extracted_parameters,optimization_in
 	
 #===========================================================================================================================
 
-"""
-================================================================================================================================================================================================================
-"""
-
-
-#-----------------------------------------------------------------------------------------------
-# Function to extract the data from temperature analysis csv file
-def extract_temp_analysis(extracted_parameters_iter):
-	
-	# Assigning the array to store the loss variables
-	param_name_list=[]
-	
-	# Creating variables for the counting no of lines and variables
-	n_iter=0
-	flag=0
-	for current in extracted_parameters_iter:
-		n_iter+=1
-		if flag==0:
-			current_initial=current
-			flag=1
-	
-	n_param=1
-	param_name_list.append('Io')
-	for param_name in extracted_parameters_iter[current_initial]:
-		n_param+=1
-		param_name_list.append(param_name)
-	
-	# Creating array to store the values 
-	extracted_array=np.zeros((n_iter,n_param),dtype=float)
-	
-	# Extracting the values of the variables
-	i=0
-	for current in extracted_parameters_iter:
-		j=1
-		# Storing the variables
-		extracted_array[i,0]=current
-		for param_name in extracted_parameters_iter[current]:
-			extracted_array[i,j]=extracted_parameters_iter[current][param_name]
-			j+=1
-		i+=1
-		
-	return extracted_array,param_name_list
-
-#-----------------------------------------------------------------------------------------------
-# Plotting results from temperature analysis
-def plot_single_temp(extracted_parameters_iter,file_directory):
-	
-	extracted_array,param_name=extract_temp_analysis(extracted_parameters_iter)
-	
-	if not os.path.exists(file_directory):
-		os.makedirs(file_directory)
-    		
-	n_param=len(param_name)
-
-	arrX=extracted_array[:,0]
-
-	output_conditions_dict={'gain_db':10.0,'s11_db':-15.0,'nf_db':4.0,'iip3_dbm':-5.0}
-
-	# Figure 1
-	for i in range(n_param-1):
-		figure()
-		semilogx(arrX,extracted_array[:,i+1],'g',label=param_name[i+1])
-		if param_name[i+1] in output_conditions_dict:
-			arrY=np.ones(len(arrX),dtype=float)
-			arrY=arrY*output_conditions_dict[param_name[i+1]]
-			semilogx(arrX,arrY,'r',label='Output Condition')
-		xlabel('Io')
-		ylabel(param_name[i+1])
-		legend()
-		grid(b=True,which='major',color='#666666')
-		grid(b=True,which='minor',color='#999999')
-		savefig(file_directory+param_name[i+1]+'.pdf')
-		close()
-	
-	# Figure 2
-	colour_dict={'iip3_dbm':'r','nf_db':'g','s11_db':'b','gain_db':'m'}
-	figure()
-	for i in range(n_param-1):
-		if param_name[i+1] in output_conditions_dict:
-			semilogx(arrX,extracted_array[:,i+1],colour_dict[param_name[i+1]],linestyle='-',label=param_name[i+1])
-			arrY=np.ones(len(arrX),dtype=float)
-			arrY=arrY*output_conditions_dict[param_name[i+1]]
-			semilogx(arrX,arrY,colour_dict[param_name[i+1]],linestyle='--',label=param_name[i+1]+' Output Condition')
-	xlabel('Io')
-	ylabel('Output Parameters')
-	legend()
-	grid(b=True,which='major',color='#666666')
-	grid(b=True,which='minor',color='#999999')
-	savefig(file_directory+'all.pdf')
-	close()
-
-#-----------------------------------------------------------------------------------------------
-# Plotting results from temperature analysis
-def plot_temp_analysis(extracted_parameters_iter,file_directory):
-	for temp in extracted_parameters_iter:
-		file_sub_directory=file_directory+'/Temperature_Analysis_2/Plots/'+str(temp)+'/'
-		plot_single_temp(extracted_parameters_iter[temp],file_sub_directory)
 
 """
 ====================================================================================================================================================================
 """
 
 #-----------------------------------------------------------------------------------------------
+# Plotting results ( Parameters vs Io at different temperatures )
+# Inputs  : extracted_parameters_iter
+# Outputs : extracted_matrix, temp_array, current_array, param_array
+def plot_temp_analysis_2(extracted_parameters_iter,file_directory,spec_current):
+	
+	file_sub_directory=file_directory+'/Temperature_Analysis_2/Plots/'
+	extracted_matrix,temp_array,current_array,param_array=extract_temp_analysis_2(extracted_parameters_iter)
+
+	output_conditions={'gain_db':10.0,'s11_db':-15.0,'nf_db':4.0,'iip3_dbm':-5.0}
+	colour_dict={'iip3_dbm':'r','nf_db':'g','s11_db':'b','gain_db':'m'}
+
+
+	plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,file_sub_directory+'X_current/',output_conditions,colour_dict,spec_current)
+	plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_array,file_sub_directory+'X_temperature/',output_conditions,colour_dict,spec_current)
+
+#-----------------------------------------------------------------------------------------------
 # Function to extract the data from extracted_parameters_iter dictionary and store it in the form of a matrix
+# Inputs  : extracted_parameters_iter
+# Outputs : extracted_matrix, temp_array, current_array, param_array
 def extract_temp_analysis_2(extracted_parameters_iter):
 	
 	# Assigning the array to store the loss variables
@@ -296,22 +233,11 @@ def extract_temp_analysis_2(extracted_parameters_iter):
 	
 	return extracted_matrix,temp_array,current_array,param_array
 
-#-----------------------------------------------------------------------------------------------
-# Plotting results ( Parameters vs Io at different temperatures )
-def plot_temp_analysis_2(extracted_parameters_iter,file_directory,spec_current):
-	
-	file_sub_directory=file_directory+'/Temperature_Analysis_2/Plots/'
-	extracted_matrix,temp_array,current_array,param_array=extract_temp_analysis_2(extracted_parameters_iter)
-
-	output_conditions={'gain_db':10.0,'s11_db':-15.0,'nf_db':4.0,'iip3_dbm':-5.0}
-	colour_dict={'iip3_dbm':'r','nf_db':'g','s11_db':'b','gain_db':'m'}
-
-
-	plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,file_sub_directory+'X_current/',output_conditions,colour_dict,spec_current)
-	plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_array,file_sub_directory+'X_temperature/',output_conditions,colour_dict,spec_current)
 
 #-----------------------------------------------------------------------------------------------
 # Plotting results ( Parameters vs current at different temperatures )
+# Inputs  : extracted_matrix, temp_array, current_array, param_array, file_sub_directory, output_conditions, colour_dict, spec_current
+# Outputs : NONE
 def plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,file_sub_directory,output_conditions,colour_dict,spec_current):
 	
 	# Finding the length of each array
@@ -455,6 +381,8 @@ def plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,
 	
 #-----------------------------------------------------------------------------------------------
 # Plotting results ( Parameters vs Temperature at different current )
+# Inputs  : extracted_matrix, temp_array, current_array, param_array, file_sub_directory, output_conditions, colour_dict, spec_current
+# Outputs : NONE
 def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_array,file_sub_directory,output_conditions,colour_dict,spec_current):
 	
 	# Finding the length of each array
@@ -597,11 +525,3 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 		close()
 
 #===========================================================================================================================
-
-
-
-
-		
-	
-
-

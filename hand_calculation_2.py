@@ -1,10 +1,27 @@
 #===========================================================================================================================
 """
-Name: Pyneni Roopesh
-Roll Number: EE18B028
+Name				: Pyneni Roopesh
+Roll Number			: EE18B028
+File Name			: hand_calculations_2.py
+File Description 	: This file will perform hand calculations using method 2
+					  This method involves choosing the points such that gm is low and Rb is 50
 
-Hand Calculations 2 File:
+Functions structure in this file:
+	--> automatic_initial_parameters
+		--> calculate_initial_parameters
+			--> calc_C1
+			--> calc_W
+			--> calc_Rd
+			--> calc_C2
+			--> calc_dc_opt
+
+		--> update_initial_parameters
+			--> calc_C2_updated
+			--> calc_dc_opt
+
+COMPLETE
 """
+
 #===========================================================================================================================
 import numpy as np
 import common_functions as cf
@@ -15,6 +32,8 @@ import spectre as sp
 
 #-----------------------------------------------------------------------------------------------
 # Calculating C1
+# Inputs  : output_conditions, optimization_input_parameters
+# Outputs : C1
 def calc_C1(opt_conditions,optimization_input_parameters):
 	
 	threshold1=optimization_input_parameters['pre_optimization']['C1_threshold']
@@ -30,6 +49,8 @@ def calc_C1(opt_conditions,optimization_input_parameters):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating W
+# Inputs  : circuit_parameters, mos_parameters
+# Outputs : W
 def calc_W(circuit_parameters,mos_parameters):
 
 	# Assigning the values
@@ -46,6 +67,8 @@ def calc_W(circuit_parameters,mos_parameters):
 
 #-----------------------------------------------------------------------------------------------	
 # Calculating Rd by assuming gain=Rd/2*Rs
+# Inputs  : output_conditions
+# Outputs : Rd
 def calc_Rd(opt_conditions):
 
 	# Calculating the required gain
@@ -59,6 +82,8 @@ def calc_Rd(opt_conditions):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating C2 from W and Rbias 
+# Inputs  : mos_parameters, output_conditions, circuit_parameters, optimization_input_parameters
+# Outputs : C2, Rbias
 def calc_C2(mos_parameters,opt_conditions,circuit_parameters,optimization_input_parameters):
 	
 	threshold2=optimization_input_parameters['pre_optimization']['C2_threshold']
@@ -80,6 +105,8 @@ def calc_C2(mos_parameters,opt_conditions,circuit_parameters,optimization_input_
 
 #-----------------------------------------------------------------------------------------------
 # Calculating DC Output Values from Initial Circuit Parameters
+# Inputs  : circuit_parameters,mos_parameters,output_conditions
+# Outputs : dc_outputs
 def calc_dc_opt(circuit_parameters,mos_parameters,opt_conditions):
 	vs=circuit_parameters['Io']*circuit_parameters['Rb']
 	vgs=mos_parameters['vt']+ 2*opt_conditions['Rs']*circuit_parameters['Io']
@@ -92,6 +119,8 @@ def calc_dc_opt(circuit_parameters,mos_parameters,opt_conditions):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating C2 from Cgs & Cgd and Rbias
+# Inputs  : extracted_parameters, output_conditions, circuit_parameters, optimization_input_parameters
+# Outputs : C2, Rbias
 def calc_C2_updated(extracted_parameters,opt_conditions,circuit_parameters,optimization_input_parameters):
 	
 	threshold2=optimization_input_parameters['pre_optimization']['C2_threshold']
@@ -119,7 +148,9 @@ def calc_C2_updated(extracted_parameters,opt_conditions,circuit_parameters,optim
 #-------------------------------------------- Main Functions ---------------------------------------------------------------
 	
 #---------------------------------------------------------------------------------------------------------------------------
-# Function to calculate the Initial Circuit Parameters	
+# Function to calculate the Initial Circuit Parameters
+# Inputs  : mos_parameters, optimization_input_parameters
+# Outputs : circuit_parameters, dc_outputs, extracted_parameters
 def calculate_initial_parameters(mos_parameters,optimization_input_parameters):
 
 	opt_conditions=optimization_input_parameters['output_conditions']
@@ -159,6 +190,8 @@ def calculate_initial_parameters(mos_parameters,optimization_input_parameters):
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to update the Initial Circuit Parameters	
+# Inputs  : circuit_parameters, mos_parameters, extracted_parameters, optimization_input_parameters
+# Outputs : circuit_parameters, dc_outputs, mos_parameters, extracted_parameters
 def update_initial_parameters(circuit_parameters,mos_parameters,extracted_parameters,optimization_input_parameters):
 
 	opt_conditions=optimization_input_parameters['output_conditions']
@@ -183,16 +216,17 @@ def update_initial_parameters(circuit_parameters,mos_parameters,extracted_parame
 #===========================================================================================================================
 #-------------------------------------------- Output Functions -------------------------------------------------------------
 
+#---------------------------------------------------------------------------------------------------------------------------
+# Function to calculate the initial parameters by completing all the sub steps of pre optimization
+# Inputs  : mos_parameters, optimization_input_parameters, optimization_results
+# Outputs : circuit_parameters, extracted_parameters
 def automatic_initial_parameters(mos_parameters,optimization_input_parameters,optimization_results):
 	
-	#======================================================== Step 1 =============================================================================================================
-
 	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
-	print('\n\n--------------------------------- Operating Point Calculations ------------------------------------')
 
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#--------------------Initial Point Calculations-------------------------
+	#======================================================== Step 1 =============================================================================================================
+	print('\n\n--------------------------------- Operating Point Calculations ------------------------------------')
 
 	# Calculating the Values of Circuit Parameters
 	circuit_parameters,dc_initial_outputs,extracted_parameters=calculate_initial_parameters(mos_parameters,optimization_input_parameters)
@@ -207,15 +241,10 @@ def automatic_initial_parameters(mos_parameters,optimization_input_parameters,op
 	cf.print_DC_outputs(dc_initial_outputs,mos_parameters)
 	cf.print_extracted_outputs(extracted_parameters)
 
-	#cf.wait_key()
+
 
 	#======================================================== Step 1 b ============================================================================================================
-	
 	print('\n\n--------------------------------- Operating Point Updations ------------------------------------')
-
-
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#--------------------Initial Point Updating-----------------------------
 
 	# Calculating the Values of Circuit Parameters
 	circuit_parameters,dc_initial_outputs,mos_parameters,extracted_parameters=update_initial_parameters(circuit_parameters,
@@ -231,17 +260,7 @@ def automatic_initial_parameters(mos_parameters,optimization_input_parameters,op
 	cf.print_DC_outputs(dc_initial_outputs,mos_parameters)
 	cf.print_extracted_outputs(extracted_parameters)
 
-	#cf.wait_key()
 
 	return circuit_parameters,extracted_parameters
-
-
 	
-
 #===========================================================================================================================
-
-
-		
-	
-
-

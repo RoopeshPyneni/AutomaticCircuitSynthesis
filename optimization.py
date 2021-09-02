@@ -6,7 +6,6 @@ Roll Number: EE18B028
 Optimization Algorithm:
 """
 #===========================================================================================================================
-from typing import Optional
 import numpy as np
 import common_functions as cf
 import spectre as sp
@@ -483,6 +482,9 @@ def main_opt(circuit_parameters,extracted_parameters,optimization_input_paramete
 	timing_results['optimization']={}
 	timing_results['optimization']['overall']={}
 	timing_results['optimization']['overall']['start']=datetime.datetime.now()
+
+	print('************************************************************************************************************')
+	print('*********************************** Main Optimization ******************************************************')
 
 	for i in range(1,1+n_runs):
 		

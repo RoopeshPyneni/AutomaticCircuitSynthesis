@@ -1,10 +1,17 @@
 #===========================================================================================================================
 """
-Name: Pyneni Roopesh
-Roll Number: EE18B028
+Name				: Pyneni Roopesh
+Roll Number			: EE18B028
+File Name			: complete_optimization.py
+File Description 	: This file will perform all the optimization steps by calling functions in different files
 
-Full Optimization Code:
+Functions structure in this file:
+	--> complete_optimization
+		--> calculate_mos_parameters
+
+COMPLETE
 """
+
 #===========================================================================================================================
 import datetime
 import file_write as fw
@@ -14,11 +21,14 @@ import pre_optimization as pr
 import temperature_analysis as ta
 import temperature_analysis_2 as ta2
 import spectre as sp
+
 #===========================================================================================================================
 #------------------------------------ MOSFET EXTRACTION --------------------------------------------------------------------
 
 #-----------------------------------------------------------------
 # Function that extracts the MOSFET File Parameeters
+# Inputs  : Optimization Input Parameters
+# Outputs : MOS_Parameters
 def calculate_mos_parameters(optimization_input_parameters):
 	
 	# Setting Lmin and Vdd
@@ -39,11 +49,13 @@ def calculate_mos_parameters(optimization_input_parameters):
 	return mos_parameters
 
 
-
-
 #===========================================================================================================================
 #------------------------------------Main Program Code----------------------------------------------------------------------
 
+#-----------------------------------------------------------------
+# Function that performs the complete optimization process
+# Inputs  : Optimization Input Parameters
+# Outputs : NONE
 def complete_optimization(optimization_input_parameters):
 
 	# Calculating Starting Time
@@ -72,34 +84,18 @@ def complete_optimization(optimization_input_parameters):
 
 	#======================================================== PRE OPTIMIZATION ===================================================================================================
 
-	print('************************************************************************************************************')
-	print('*********************************** Pre Optimization *******************************************************')
-	
-	# Running pre optimization
 	circuit_parameters,extracted_parameters=pr.pre_optimization(mos_parameters,optimization_input_parameters,timing_results)
 
 	#======================================================== OPTIMIZATION =======================================================================================================
 
-	print('************************************************************************************************************')
-	print('*********************************** Main Optimization ******************************************************')
-
-	# Running the main optimization
 	circuit_parameters,extracted_parameters=op.main_opt(circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results)
 
 	#======================================================== TEMPERATURE ANALYSIS ===============================================================================================
 
-	print('************************************************************************************************************')
-	print('*********************************** Temperature Analysis ***************************************************')
-
-	# Running the temperature analysis
 	circuit_parameters,extracted_parameters=ta.temperature_analysis(circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results)
 
 	#======================================================== TEMPERATURE ANALYSIS 2 ==============================================================================================
 
-	print('************************************************************************************************************')
-	print('*********************************** Temperature Analysis ***************************************************')
-
-	# Running the temperature analysis
 	circuit_parameters,extracted_parameters=ta2.temperature_analysis(circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results)
 	
 	#======================================================== AFTER OPTIMIZATION =================================================================================================

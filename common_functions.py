@@ -1,10 +1,28 @@
 #===========================================================================================================================
 """
-Name: Pyneni Roopesh
-Roll Number: EE18B028
+Name				: Pyneni Roopesh
+Roll Number			: EE18B028
+File Name			: common_functions.py
+File Description 	: This file contains many commonly used functions
 
-Common Functions File:
+Functions structure in this file:
+	--> db_to_normal
+	--> dbm_to_normal
+	--> normal_to_db
+	--> normal_to_dbm
+	--> num_trunc
+	--> write_simulation_parameters
+	--> wait_key
+	--> update_MOS_parameters
+	--> print_MOS_parameters
+	--> print_circuit_parameters
+	--> print_DC_outputs
+	--> print_extracted_outputs
+	--> print_extracted_outputs_optimization
+
+COMPLETE
 """
+
 #===========================================================================================================================
 import numpy as np
 import os
@@ -16,7 +34,7 @@ import os
 #---------------------------------------- Calculation Functions ------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------
-#These functions change the parameters from normal scale to dB and dBm scale and vice versa
+# These functions change the parameters from normal scale to dB and dBm scale and vice versa
 def db_to_normal(x_db):
 	exp_x=x_db/10.0
 	x_normal=10.0**exp_x
@@ -37,15 +55,22 @@ def normal_to_dbm(x_normal):
 	x_dbm=x_db+30.0
 	return x_dbm
 	
+#===========================================================================================================================
+#---------------------------------------- Number Conversion Functions ------------------------------------------------------
+
 #-----------------------------------------------------------------------------------------------
-# This function returns the truncated number as a string
+# This function truncates a number to a few significant numbers and returns a string
+# Inputs  : Number, Number of Significant Values
+# Outputs : Output Character
 def num_trunc(num,pts):
 	
-	num_len=-1 #
+	# Initializing Length of number
+	num_len=-1 
 	
 	# Checking for zero
 	if num==0:
 		return '0'
+
 	# Converting to a positive number
 	flag=1
 	if num<0:
@@ -115,6 +140,10 @@ def num_trunc(num,pts):
 #===========================================================================================================================
 #------------------------------------ Dictionary Modification Functions ----------------------------------------------------
 
+#-----------------------------------------------------------------------------------------------
+# This function that is used to modify the simulation parameters
+# Inputs  : optimization_input_parameters, optimization_name, iteration_number
+# Outputs : NONE
 def write_simulation_parameters(optimization_input_parameters,optimization_name,iteration_number):
 	if iteration_number==0:
 		if 'parameters_list' in optimization_input_parameters[optimization_name]['simulation']:
@@ -134,20 +163,10 @@ def write_simulation_parameters(optimization_input_parameters,optimization_name,
 			if param_name != 'parameters_list':
 				optimization_input_parameters['simulation'][param_name]=optimization_input_parameters[optimization_name]['simulation'][iteration_number][param_name]
 
-	
-#===========================================================================================================================
-#--------------------------------------- Output Printing Functions ---------------------------------------------------------
-
-trunc_val=3
-
 #-----------------------------------------------------------------------------------------------
-def wait_key():
-	input('\n\nPress Enter to continue')
-	os.system("clear")
-
-
-#-----------------------------------------------------------------------------------------------
-#Assigning MOSFET Parameters
+# This function is used to update the MOS Parameters
+# Inputs  : mos_parameters, un, cox, vt, Lmin, Vdd
+# Outputs : mos_parameters
 def update_MOS_parameters(mos,un,cox,vt,Lmin,vdd):
 	mos['un']=un
 	mos['cox']=cox
@@ -155,26 +174,25 @@ def update_MOS_parameters(mos,un,cox,vt,Lmin,vdd):
 	mos['un']=Lmin
 	mos['un']=vdd
 	return mos
+
 	
-"""
-#-----------------------------------------------------------------------------------------------
-# Printing the MOSFET Parameters
-def print_change_opt_gm(W1,Io1,Rb1,W2,Io2,Rb2):
-	print ('\n____________________________________________________________________')
-	print('------------------------Changes in parameters------------------------\n')
-	print('Previous Values:')
-	print('W   = ',num_trunc(W1 ,3))
-	print('Io  = ',num_trunc(Io1,3))
-	print('Rb  = ',num_trunc(Rb1,3))
-	print('\nUpdated Values:')
-	print('W   = ',num_trunc(W2 ,3))
-	print('Io  = ',num_trunc(Io2,3))
-	print('Rb  = ',num_trunc(Rb2,3))
-"""
+#===========================================================================================================================
+#--------------------------------------- Output Printing Functions ---------------------------------------------------------
 
+trunc_val=3
 
 #-----------------------------------------------------------------------------------------------
+# This function is used to wait for key press
+# Inputs  : NONE
+# Outputs : NONE
+def wait_key():
+	input('\n\nPress Enter to continue')
+	os.system("clear")
+	
+#-----------------------------------------------------------------------------------------------
 # Printing the MOSFET Parameters
+# Inputs  : mos_parameters
+# Outputs : NONE
 def print_MOS_parameters(mos_parameters):
 	print ('\n____________________________________________________________________')
 	print ('-------------------------MOSFET Parameters--------------------------\n')
@@ -187,6 +205,8 @@ def print_MOS_parameters(mos_parameters):
 	
 #-----------------------------------------------------------------------------------------------
 # Printing the circuit parameters
+# Inputs  : circuit_parameters
+# Outputs : NONE
 def print_circuit_parameters(circuit_parameters):
 	print ('\n____________________________________________________________________')
 	print ('-------------------------Circuit Parameters-------------------------\n')
@@ -200,6 +220,8 @@ def print_circuit_parameters(circuit_parameters):
 	
 #-----------------------------------------------------------------------------------------------
 # Printing the DC outputs
+# Inputs  : dc_outputs, mos_parameters
+# Outputs : NONE
 def print_DC_outputs(dc_outputs,mos_parameters):
 	print ('\n____________________________________________________________________')
 	print ('-------------------Hand Calculation DC Outputs----------------------\n')
@@ -210,6 +232,8 @@ def print_DC_outputs(dc_outputs,mos_parameters):
 		
 #-----------------------------------------------------------------------------------------------
 # Printing the extracted parameters
+# Inputs  : extracted_parameters
+# Outputs : NONE
 def print_extracted_outputs(extracted_parameters):
 	print ('\n____________________________________________________________________')
 	print ('-------------------------Extracted Outputs--------------------------\n')
@@ -237,6 +261,8 @@ def print_extracted_outputs(extracted_parameters):
 	
 #-----------------------------------------------------------------------------------------------
 # Printing the extracted parameters for main optimization
+# Inputs  : extracted_parameters
+# Outputs : NONE
 def print_extracted_outputs_optimization(extracted_parameters):
 	print ('\n____________________________________________________________________')
 	print ('-------------------------Extracted Outputs--------------------------\n')
@@ -249,17 +275,4 @@ def print_extracted_outputs_optimization(extracted_parameters):
 	print ('vgs-vt   = ',num_trunc(extracted_parameters['vg']-extracted_parameters['vs']-extracted_parameters['vt'],trunc_val))
 	print ('vdsat    = ',num_trunc(extracted_parameters['vdsat'],trunc_val))
 	
-"""
-#-----------------------------------------------------------------------------------------------
-# Printing the sensitivity of the parameters
-def print_sensitivity(circuit_parameters_sensitivity):
-	print ('\n____________________________________________________________________')
-	print ('-------------------------Sensitivity --------------------------\n')
-	for param_name in circuit_parameters_sensitivity:
-		print('\n----------- ',param_name,' -----------\n')
-		for categ in circuit_parameters_sensitivity[param_name]:
-			print(categ,'\t: ',num_trunc(circuit_parameters_sensitivity[param_name][categ],trunc_val))
-"""
-
-
 #===========================================================================================================================
