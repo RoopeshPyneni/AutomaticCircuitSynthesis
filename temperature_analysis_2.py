@@ -147,8 +147,6 @@ def temperature_analysis(circuit_parameters,extracted_parameters,optimization_in
 
 	# Plotting the graphs
 	file_directory=optimization_input_parameters['filename']['output']
-	#plot_temp_analysis(extracted_parameters_iter,file_directory)
-	
 	spec_current=circuit_parameters['Io']
 	plot_temp_analysis_2(extracted_parameters_iter,file_directory,spec_current)
 
@@ -180,7 +178,6 @@ def plot_temp_analysis_2(extracted_parameters_iter,file_directory,spec_current):
 
 	output_conditions={'gain_db':10.0,'s11_db':-15.0,'nf_db':4.0,'iip3_dbm':-5.0}
 	colour_dict={'iip3_dbm':'r','nf_db':'g','s11_db':'b','gain_db':'m'}
-
 
 	plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,file_sub_directory+'X_current/',output_conditions,colour_dict,spec_current)
 	plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_array,file_sub_directory+'X_temperature/',output_conditions,colour_dict,spec_current)
@@ -245,6 +242,15 @@ def plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,
 	n_current=len(current_array)
 	n_param=len(param_array)
 
+	# Finding the limits of X-axis
+	percent_cover=0.8
+	extra_addition=1.1
+	X_arr_start=current_array[0]
+	X_arr_stop=current_array[n_current-1]
+	X_start=X_arr_start/extra_addition
+	log_diff=np.log10(X_arr_stop)-np.log10(X_arr_start)
+	X_stop=extra_addition*(10**(np.log10(X_arr_start)+(log_diff/percent_cover)))
+
 	# First, we will plot Parameters vs Current and each plot will contain a single temperature
 	for i in range(n_temp):
 		# Creating the directory
@@ -279,6 +285,7 @@ def plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,
 			# Other Plotting Parameters
 			xlabel('Io')
 			ylabel(param_array[k])
+			xlim([X_start,X_stop])
 			legend()
 			grid(b=True,which='major',color='#666666')
 			grid(b=True,which='minor',color='#999999')
@@ -318,6 +325,7 @@ def plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,
 		semilogx(arrX,arrY,color='black',linestyle='--')
 		xlabel('Io')
 		ylabel(param_array[k])
+		xlim([X_start,X_stop])
 		legend()
 		grid(b=True,which='major',color='#666666')
 		grid(b=True,which='minor',color='#999999')
@@ -327,7 +335,7 @@ def plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,
 
 
 	# Second, we will plot Parameters vs Current for all temperatures in the same plot
-	multi_colour=['green','blue','yellow','cyan','darkviolet','orange','peru']
+	multi_colour=['green','blue','lime','cyan','darkviolet','orange','peru']
 	multi_linestyle=['-','--','-.',':']
 	
 	# Creating the directory
@@ -372,6 +380,7 @@ def plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,
 		# Other Plotting Parameters
 		xlabel('Io')
 		ylabel(param_array[k])
+		xlim([X_start,X_stop])
 		legend()
 		grid(b=True,which='major',color='#666666')
 		grid(b=True,which='minor',color='#999999')
@@ -389,6 +398,14 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 	n_temp=len(temp_array)
 	n_current=len(current_array)
 	n_param=len(param_array)
+
+	# Finding the limits of X-axis
+	percent_cover=0.8
+	extra_addition=10
+	X_arr_start=temp_array[0]
+	X_arr_stop=temp_array[n_current-1]
+	X_start=X_arr_start-extra_addition
+	X_stop=extra_addition+X_arr_start+((X_arr_stop-X_arr_start)/percent_cover)
 
 	# First, we will plot Parameters vs Temperature and each plot will contain a single current
 	for j in range(n_current):
@@ -425,6 +442,7 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 			# Other Plotting Parameters
 			xlabel('Temperature')
 			ylabel(param_array[k])
+			xlim([X_start,X_stop])
 			legend()
 			grid(b=True,which='major',color='#666666')
 			grid(b=True,which='minor',color='#999999')
@@ -464,6 +482,7 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 		plot(arrX,arrY,color='black',linestyle='--')
 		xlabel('Temperature')
 		ylabel(param_array[k])
+		xlim([X_start,X_stop])
 		legend()
 		grid(b=True,which='major',color='#666666')
 		grid(b=True,which='minor',color='#999999')
@@ -473,7 +492,7 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 
 
 	# Second, we will plot Parameters vs Current for all temperatures in the same plot
-	multi_colour=['green','blue','yellow','cyan','darkviolet','orange','peru']
+	multi_colour=['green','blue','lime','cyan','darkviolet','orange','peru']
 	multi_linestyle=['-','--','-.',':']
 	
 	# Creating the directory
@@ -518,6 +537,7 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 		# Other Plotting Parameters
 		xlabel('Temperature')
 		ylabel(param_array[k])
+		xlim([X_start,X_stop])
 		legend()
 		grid(b=True,which='major',color='#666666')
 		grid(b=True,which='minor',color='#999999')
