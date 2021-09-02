@@ -105,6 +105,8 @@ def temperature_analysis(circuit_parameters,extracted_parameters,optimization_in
 
 	print('************************************************************************************************************')
 	print('*********************************** Temperature Analysis ***************************************************')
+	
+	cf.write_simulation_parameters(optimization_input_parameters,'temperature_analysis_2',0)
 
 	initial_extracted_parameters=extracted_parameters.copy()
 	initial_circuit_parameters=circuit_parameters.copy()
@@ -243,7 +245,7 @@ def plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,
 	n_param=len(param_array)
 
 	# Finding the limits of X-axis
-	percent_cover=0.8
+	percent_cover=0.7
 	extra_addition=1.1
 	X_arr_start=current_array[0]
 	X_arr_stop=current_array[n_current-1]
@@ -286,7 +288,7 @@ def plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,
 			xlabel('Io')
 			ylabel(param_array[k])
 			xlim([X_start,X_stop])
-			legend()
+			legend(loc='upper right', bbox_to_anchor=(1,1.1))
 			grid(b=True,which='major',color='#666666')
 			grid(b=True,which='minor',color='#999999')
 			savefig(pathname+str(param_array[k])+'.pdf')
@@ -326,7 +328,7 @@ def plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,
 		xlabel('Io')
 		ylabel(param_array[k])
 		xlim([X_start,X_stop])
-		legend()
+		legend(loc='upper right', bbox_to_anchor=(1,1.1))
 		grid(b=True,which='major',color='#666666')
 		grid(b=True,which='minor',color='#999999')
 		savefig(pathname+'all.pdf')
@@ -380,8 +382,8 @@ def plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,
 		# Other Plotting Parameters
 		xlabel('Io')
 		ylabel(param_array[k])
-		xlim([X_start,X_stop])
-		legend()
+		#xlim([X_start,X_stop])
+		legend(loc='upper right', bbox_to_anchor=(1,1.1))
 		grid(b=True,which='major',color='#666666')
 		grid(b=True,which='minor',color='#999999')
 		savefig(pathname+str(param_array[k])+'.pdf')
@@ -400,10 +402,10 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 	n_param=len(param_array)
 
 	# Finding the limits of X-axis
-	percent_cover=0.8
+	percent_cover=0.7
 	extra_addition=10
 	X_arr_start=temp_array[0]
-	X_arr_stop=temp_array[n_current-1]
+	X_arr_stop=temp_array[n_temp-1]
 	X_start=X_arr_start-extra_addition
 	X_stop=extra_addition+X_arr_start+((X_arr_stop-X_arr_start)/percent_cover)
 
@@ -442,8 +444,8 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 			# Other Plotting Parameters
 			xlabel('Temperature')
 			ylabel(param_array[k])
-			xlim([X_start,X_stop])
-			legend()
+			#xlim([X_start,X_stop])
+			legend(loc='upper right', bbox_to_anchor=(1,1.1))
 			grid(b=True,which='major',color='#666666')
 			grid(b=True,which='minor',color='#999999')
 			savefig(pathname+str(param_array[k])+'.pdf')
@@ -483,7 +485,7 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 		xlabel('Temperature')
 		ylabel(param_array[k])
 		xlim([X_start,X_stop])
-		legend()
+		legend(loc='upper right', bbox_to_anchor=(1,1.1))
 		grid(b=True,which='major',color='#666666')
 		grid(b=True,which='minor',color='#999999')
 		savefig(pathname+'all.pdf')
@@ -538,7 +540,7 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 		xlabel('Temperature')
 		ylabel(param_array[k])
 		xlim([X_start,X_stop])
-		legend()
+		legend(loc='upper right', bbox_to_anchor=(1,1.1))
 		grid(b=True,which='major',color='#666666')
 		grid(b=True,which='minor',color='#999999')
 		savefig(pathname+str(param_array[k])+'.pdf')
