@@ -12,7 +12,6 @@ Functions structure in this file:
 
 #===========================================================================================================================
 import datetime
-import file_write as fw
 import optimization as op
 import common_functions as cf
 import pre_optimization as pr

@@ -11,7 +11,6 @@ import common_functions as cf
 import spectre as sp
 import optimization_functions_loss as ofl
 import optimization_functions_fom as off
-import file_write as fw
 import os
 from matplotlib import pylab
 from pylab import *

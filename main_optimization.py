@@ -8,8 +8,6 @@ Main Code:
 #===========================================================================================================================
 import numpy as np
 import complete_optimization as co
-import data_plot as dp
-
 
 #===========================================================================================================================
 #------------------------------------ Other Functions ----------------------------------------------------------------------
@@ -320,7 +318,7 @@ def get_temperature_analysis_2_parameters(optimization_input_parameters,fo):
 
 # Creating a dictionary with the optimization parameters
 optimization_input_parameters={}
-optimization_name='FOM'
+optimization_name='LOSS'
 
 # ---------- MOSFET Parameters ----------
 get_mos_parameters(optimization_input_parameters,'TSMC018')
@@ -361,7 +359,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'test_file_input_change_1'						# SET THE FILENAME HERE
+	filename=f_directory+'test_file_output_change_1'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=300	
 	# ------- Set Any Additional Parameters Here --------
 	
@@ -369,7 +367,6 @@ if file_choose=='S':
 	# ------- DON'T CHANGE THESE LINES -------------
 	optimization_input_parameters['filename']['output']=filename
 	co.complete_optimization(optimization_input_parameters)			
-	#dp.plot_complete(optimization_input_parameters)			
 	# ------- DON'T CHANGE THESE LINES -------------		
 
 
@@ -390,7 +387,6 @@ if file_choose=='M':
 		# ------- DON'T CHANGE THESE LINES -------------
 		optimization_input_parameters['filename']['output']=filename
 		co.complete_optimization(optimization_input_parameters)
-		dp.plot_complete(optimization_input_parameters)
 		# ------- DON'T CHANGE THESE LINES -------------
 
 #===========================================================================================================================

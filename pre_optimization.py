@@ -20,7 +20,6 @@ import common_functions as cf
 import spectre as sp
 import hand_calculation_1 as hc1
 import hand_calculation_2 as hc2
-import file_write as fw
 import os
 
 
