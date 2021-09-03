@@ -12,7 +12,6 @@ Functions structure in this file:
 	--> get_pre_optimization_parameters
 	--> get_optimization_parameters
 	--> get_temperature_analysis_parameters
-	--> get_temperature_analysis_2_parameters
 
 """
 
@@ -264,13 +263,18 @@ def get_temperature_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['temperature_analysis']['start_temp']=-40
 	optimization_input_parameters['temperature_analysis']['stop_temp']=120
-	optimization_input_parameters['temperature_analysis']['n_temp']=17
+	optimization_input_parameters['temperature_analysis']['n_temp']=3
+
+	optimization_input_parameters['temperature_analysis']['start_current']=0.1
+	optimization_input_parameters['temperature_analysis']['stop_current']=10
+	optimization_input_parameters['temperature_analysis']['n_current']=1
+
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Temperature Analysis Simulation Parameters
 	optimization_input_parameters['temperature_analysis']['simulation']={}
 
-	optimization_input_parameters['temperature_analysis']['simulation']['iip3_type']='advanced'
+	optimization_input_parameters['temperature_analysis']['simulation']['iip3_type']='basic'
 	optimization_input_parameters['temperature_analysis']['simulation']['std_temp']=27
 	optimization_input_parameters['temperature_analysis']['simulation']['pin_fixed']=-65
 	optimization_input_parameters['temperature_analysis']['simulation']['pin_start']=-70
@@ -279,43 +283,6 @@ def get_temperature_analysis_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['temperature_analysis']['simulation']['iip3_calc_points']=5
 
 	optimization_input_parameters['temperature_analysis']['simulation']['parameters_list']={
-		'pin':-65,
-		'fund_2':fo+1e6,
-		'fund_1':fo,
-		'cir_temp':27,
-		'n_harm':15
-	}
-
-#---------------------------------------------------------------------------------------------------------------------------
-# Function that sets the temperature analysis parameters to the optimization_input_parameters dictionary
-def get_temperature_analysis_2_parameters(optimization_input_parameters,fo):
-
-	optimization_input_parameters['temperature_analysis_2']={}
-
-	optimization_input_parameters['temperature_analysis_2']['run']='NO'
-
-	optimization_input_parameters['temperature_analysis_2']['start_temp']=-40
-	optimization_input_parameters['temperature_analysis_2']['stop_temp']=120
-	optimization_input_parameters['temperature_analysis_2']['n_temp']=3
-
-	optimization_input_parameters['temperature_analysis_2']['start_current']=0.1
-	optimization_input_parameters['temperature_analysis_2']['stop_current']=10
-	optimization_input_parameters['temperature_analysis_2']['n_current']=1
-
-
-	#~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Temperature Analysis Simulation Parameters
-	optimization_input_parameters['temperature_analysis_2']['simulation']={}
-
-	optimization_input_parameters['temperature_analysis_2']['simulation']['iip3_type']='basic'
-	optimization_input_parameters['temperature_analysis_2']['simulation']['std_temp']=27
-	optimization_input_parameters['temperature_analysis_2']['simulation']['pin_fixed']=-65
-	optimization_input_parameters['temperature_analysis_2']['simulation']['pin_start']=-70
-	optimization_input_parameters['temperature_analysis_2']['simulation']['pin_stop']=-40
-	optimization_input_parameters['temperature_analysis_2']['simulation']['pin_points']=16
-	optimization_input_parameters['temperature_analysis_2']['simulation']['iip3_calc_points']=5
-
-	optimization_input_parameters['temperature_analysis_2']['simulation']['parameters_list']={
 		'pin':-65,
 		'fund_2':fo+1e6,
 		'fund_1':fo,
@@ -350,9 +317,6 @@ get_optimization_parameters(optimization_input_parameters,fo,optimization_name)
 
 # ---------- Temperature Analysis Parameters ----------
 get_temperature_analysis_parameters(optimization_input_parameters,fo)
-
-# ---------- Temperature Analysis 2 Parameters ----------
-get_temperature_analysis_2_parameters(optimization_input_parameters,fo)
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
