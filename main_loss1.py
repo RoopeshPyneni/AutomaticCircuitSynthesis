@@ -134,7 +134,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the optimization parameters to the optimization_input_parameters dictionary
-def get_optimization_parameters(optimization_input_parameters,fo,optimization_type):
+def get_optimization_parameters(optimization_input_parameters,fo,optimization_name):
 
 	optimization_input_parameters['optimization']={}
 
@@ -155,7 +155,11 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_ty
 	optimization_input_parameters['optimization']['optimizing_parameters']=['Rb','Rd','Io','W']
 	optimization_input_parameters['optimization']['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','nf_db','p_source','gm1','vdsat','vg','vd','vs']
 
-	optimization_input_parameters['optimization']['optimization_name']='loss1'
+	if optimization_name=='LOSS':
+		optimization_input_parameters['optimization']['optimization_name']='loss1'
+	else:
+		optimization_input_parameters['optimization']['optimization_name']='fom1'
+		
 	optimization_input_parameters['optimization']['optimization_type']=0
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -233,7 +237,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_ty
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Conditions for acceptable solution
-	if optimization_type=='FOM':
+	if optimization_name=='FOM':
 		optimization_input_parameters['acceptable_solution']={}
 		optimization_input_parameters['acceptable_solution']['s11_db']=-15
 		optimization_input_parameters['acceptable_solution']['gain_db']=6
@@ -316,7 +320,7 @@ def get_temperature_analysis_2_parameters(optimization_input_parameters,fo):
 
 # Creating a dictionary with the optimization parameters
 optimization_input_parameters={}
-optimization_type='LOSS'
+optimization_name='FOM'
 
 # ---------- MOSFET Parameters ----------
 get_mos_parameters(optimization_input_parameters,'TSMC018')
@@ -330,10 +334,10 @@ get_output_conditions(optimization_input_parameters,fo)
 get_simulation_conditions(optimization_input_parameters,fo)
 
 # ---------- Pre Optimization Parameters ----------
-get_pre_optimization_parameters(optimization_input_parameters,fo,optimization_type)
+get_pre_optimization_parameters(optimization_input_parameters,fo)
 
 # ---------- Optimization Parameters ----------
-get_optimization_parameters(optimization_input_parameters,fo)
+get_optimization_parameters(optimization_input_parameters,fo,optimization_name)
 
 # ---------- Temperature Analysis Parameters ----------
 get_temperature_analysis_parameters(optimization_input_parameters,fo)
@@ -348,7 +352,7 @@ get_temperature_analysis_2_parameters(optimization_input_parameters,fo)
 optimization_input_parameters['filename']={}
 optimization_input_parameters['filename']['run_status']='/home/ee18b028/Optimization/Simulation_Results/run_status.txt'
 
-f_directory='/home/ee18b028/Optimization/Simulation_Results/'+str(optimization_type)+'/'
+f_directory='/home/ee18b028/Optimization/Simulation_Results/'+str(optimization_name)+'/'
 
 
 file_choose='S' # 'S' to run a single time; 'M' to run multiple times
@@ -357,7 +361,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'test_mos_change_1'						# SET THE FILENAME HERE
+	filename=f_directory+'test_main_change_2'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=300	
 	# ------- Set Any Additional Parameters Here --------
 	
