@@ -8,10 +8,12 @@ File Description 	: This file will perform pre optimization and calculate an ini
 
 Functions structure in this file:
 	--> pre_optimization
+		--> save_input_results_pre_optimization
+		--> save_mos_results
 		--> manual_circuit_parameters
 		--> calculate_mos_parameters
+		--> save_output_results_pre_optimization
 
-COMPLETE
 """
 
 #===========================================================================================================================
@@ -20,21 +22,24 @@ import common_functions as cf
 import spectre as sp
 import hand_calculation_1 as hc1
 import hand_calculation_2 as hc2
-import os
 
+
+#===========================================================================================================================
+#----------------------------------- File Writing Functions ----------------------------------------------------------------
 
 #-----------------------------------------------------------------
 # Function that stores input data of the simulation
+# Inputs  : optimization_input_parameters
+# Outputs : NONE
 def save_input_results_pre_optimization(optimization_input_parameters):
-	filename=optimization_input_parameters['filename']['output']
-	newpath =filename+'/'
-	if not os.path.exists(newpath):
-		os.makedirs(newpath)
-		
-	filename=filename+str('/input_data.txt')
+
+	# Opening the file
+	filename=optimization_input_parameters['filename']['output']+str('/input_data.txt')
 	f=open(filename,'a')
 
-	f.write('\n\n---------------------- Pre Optimization -----------------------')
+	# Storing the results
+	f.write('\n\n********************************************************************************\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Pre Optimization ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 	
 	f.write('\nStep1b_Limit :'+str(optimization_input_parameters['pre_optimization']['Step1b_Limit']))
 	f.write('\nStep2_Limit  :'+str(optimization_input_parameters['pre_optimization']['Step2_Limit']))
@@ -48,19 +53,19 @@ def save_input_results_pre_optimization(optimization_input_parameters):
 	f.write('\nC1_threshold    :'+str(optimization_input_parameters['pre_optimization']['C2_threshold']))
 	f.write('\nRbias_threshold :'+str(optimization_input_parameters['pre_optimization']['Rbias_threshold']))
 
-	f.write('\nManual Circuit Parameters')
-	for name in optimization_input_parameters['pre_optimization']['manual_circuit_parameters']:
-		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['pre_optimization']['manual_circuit_parameters'][name],3))
-
 	f.close()
 
 #-----------------------------------------------------------------
 # Function that stores output data of the pre optimization
+# Inputs  : optimization_results, optimization_input_parameters
+# Outputs : NONE
 def save_output_results_pre_optimization(optimization_results,optimization_input_parameters):
-	filename=optimization_input_parameters['filename']['output']
-	filename=filename+str('/output_data.txt')
+	
+	# Opening the file
+	filename=optimization_input_parameters['filename']['output']+str('/output_data.txt')
 	f=open(filename,'a')
 
+	# Storing the results
 	f.write('\n\n********************************************************************************\n')
 	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Pre Optimization ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 	
@@ -103,15 +108,15 @@ def save_output_results_pre_optimization(optimization_results,optimization_input
 
 #-----------------------------------------------------------------
 # Function that stores output data of the MOS File Calculations
+# Inputs  : mos_parameters, optimization_input_parameters
+# Outputs : NONE
 def save_mos_results(mos_parameters,optimization_input_parameters):
-	filename=optimization_input_parameters['filename']['output']
-	newpath =filename+'/'
-	if not os.path.exists(newpath):
-		os.makedirs(newpath)
-		
-	filename=filename+str('/output_data.txt')
-	f=open(filename,'w')
+	
+	# Opening the file
+	filename=optimization_input_parameters['filename']['output']+str('/output_data.txt')
+	f=open(filename,'a')
 
+	# Storing the results
 	f.write('\n\n********************************************************************************\n')
 	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ MOS Parameters ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 

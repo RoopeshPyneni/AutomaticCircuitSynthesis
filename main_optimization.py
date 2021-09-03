@@ -1,10 +1,21 @@
 #===========================================================================================================================
 """
-Name: Pyneni Roopesh
-Roll Number: EE18B028
+Name				: Pyneni Roopesh
+Roll Number			: EE18B028
+File Name			: main_optimization.py
+File Description 	: This file will initialize the optimization_input_parameters and run the complete_optimization file
 
-Main Code:
+Functions structure in this file:
+	--> get_mos_parameters
+	--> get_output_conditions
+	--> get_simulation_conditions
+	--> get_pre_optimization_parameters
+	--> get_optimization_parameters
+	--> get_temperature_analysis_parameters
+	--> get_temperature_analysis_2_parameters
+
 """
+
 #===========================================================================================================================
 import numpy as np
 import complete_optimization as co

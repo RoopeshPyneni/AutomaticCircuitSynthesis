@@ -21,23 +21,28 @@ import spectre as sp
 import os
 
 #===========================================================================================================================
-#------------------------------------ File Storage Code --------------------------------------------------------------------
+#------------------------------------ File Writing Functions ---------------------------------------------------------------
 
 #-----------------------------------------------------------------
-# Function that stores input data of the simulation
+# Function that stores input data of the simulation ( output conditions, MOS Parameters, Filenames, Simulation Conditions )
+# Inputs  : optimization_input_parameters
+# Outputs : NONE
 def save_input_results_initial(optimization_input_parameters):
+	
+	# Creating the folder path
 	filename=optimization_input_parameters['filename']['output']
 	newpath =filename+'/'
 	if not os.path.exists(newpath):
 		os.makedirs(newpath)
 		
+	# Opening the filename
 	filename=filename+str('/input_data.txt')
 	f=open(filename,'w')
 
-	# Saving Output Conditions
-	f.write('\n\n---------------------- Output Conditions -----------------------')
-	for name in optimization_input_parameters['output_conditions']:
-		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['output_conditions'][name],3))
+	# Saving Filenames
+	f.write('\n\n---------------------- Filenames -----------------------')
+	f.write('\nOutput     : '+str(optimization_input_parameters['filename']['output']))
+	f.write('\nRun Status : '+str(optimization_input_parameters['filename']['run_status']))
 
 	# Saving MOS Parameters
 	f.write('\n\n---------------------- MOS Parameters -----------------------')
@@ -46,10 +51,10 @@ def save_input_results_initial(optimization_input_parameters):
 	f.write('\nVdd      	:'+str(optimization_input_parameters['MOS']['Vdd']))
 	f.write('\nLmin     	:'+str(optimization_input_parameters['MOS']['Lmin']))
 
-	# Saving Filenames
-	f.write('\n\n---------------------- Filenames -----------------------')
-	f.write('\nRun Status : '+str(optimization_input_parameters['filename']['run_status']))
-	f.write('\nOutput     : '+str(optimization_input_parameters['filename']['output']))
+	# Saving Output Conditions
+	f.write('\n\n---------------------- Output Conditions -----------------------')
+	for name in optimization_input_parameters['output_conditions']:
+		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['output_conditions'][name],3))
 
 	# Saving Simulation Results
 	f.write('\n\n---------------------- Simulation Conditions -----------------------')
@@ -64,36 +69,44 @@ def save_input_results_initial(optimization_input_parameters):
 	f.write('\nPin Points     :'+str(optimization_input_parameters['simulation']['pin_points']))
 	f.write('\nIIP3 Calculation Points :'+str(optimization_input_parameters['simulation']['iip3_calc_points']))
 	
+	# Parameter List for simulation
 	for name in optimization_input_parameters['simulation']['parameters_list']:
 		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['simulation']['parameters_list'][name],3))
 	
+	# Circuit Writing List for simulation
 	for name in optimization_input_parameters['simulation']['cir_writing_dict']:
 		f.write('\n'+str(name)+': '+str(optimization_input_parameters['simulation']['cir_writing_dict'][name]))
 
 	f.close()
 
 #-----------------------------------------------------------------
-# Function that stores output data of the simulation
+# Function that creates a file that stores output data of the simulation
+# Inputs  : optimization_input_parameters
+# Outputs : NONE
 def save_output_results_initial(optimization_input_parameters):
 	
+	# Creating the folder path
 	filename=optimization_input_parameters['filename']['output']
 	newpath =filename+'/'
 	if not os.path.exists(newpath):
 		os.makedirs(newpath)
 		
+	# Opening the filename
 	filename=filename+str('/output_data.txt')
 	f=open(filename,'w')
 
-	# Saving Filenames
+	# Storing the Filenames
 	f.write('\n\n---------------------- Filenames -----------------------')
-	f.write('\nRun Status : '+str(optimization_input_parameters['filename']['run_status']))
 	f.write('\nOutput     : '+str(optimization_input_parameters['filename']['output']))
+	f.write('\nRun Status : '+str(optimization_input_parameters['filename']['run_status']))
 	f.write('\n\n\n')
 
 	f.close()
 
 #-----------------------------------------------------------------
-# Function that stores output data of the simulation
+# Function that stores the time results
+# Inputs  : timing_results, optimization_input_parameters
+# Outputs : NONE
 def save_time_results(timing_results,optimization_input_parameters):
 	
 	filename=optimization_input_parameters['filename']['output']	
@@ -160,7 +173,7 @@ def complete_optimization(optimization_input_parameters):
 
 	circuit_parameters,extracted_parameters=ta.temperature_analysis(circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results)
 
-	#======================================================== TEMPERATURE ANALYSIS 2 ==============================================================================================
+	#======================================================== TEMPERATURE ANALYSIS 2 =============================================================================================
 
 	circuit_parameters,extracted_parameters=ta2.temperature_analysis(circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results)
 	
@@ -172,5 +185,4 @@ def complete_optimization(optimization_input_parameters):
 	# Saving the timing results
 	save_time_results(timing_results,optimization_input_parameters)
 	
-	#=============================================================================================================================================================================
-
+#=================================================================================================================================================================================

@@ -118,14 +118,20 @@ def temperature_analysis(circuit_parameters,extracted_parameters,optimization_in
 	start_temp=optimization_input_parameters['temperature_analysis_2']['start_temp']
 	stop_temp=optimization_input_parameters['temperature_analysis_2']['stop_temp']
 	n_temp=optimization_input_parameters['temperature_analysis_2']['n_temp']
-	temp_array=np.linspace(start_temp,stop_temp,n_temp)
+	if n_temp==1:
+		temp_array=np.array(['27'])
+	else:
+		temp_array=np.linspace(start_temp,stop_temp,n_temp)
 	
 	# Creating an array for Io sweep
 	room_temp_current_log=np.log10(circuit_parameters['Io'])
 	start_current=np.log10(optimization_input_parameters['temperature_analysis_2']['start_current'])
 	stop_current=np.log10(optimization_input_parameters['temperature_analysis_2']['stop_current'])
 	n_current=optimization_input_parameters['temperature_analysis_2']['n_current']
-	current_array=np.logspace(room_temp_current_log+start_current,room_temp_current_log+stop_current,n_current)
+	if n_current==1:
+		current_array=np.array([circuit_parameters['Io']])
+	else:
+		current_array=np.logspace(room_temp_current_log+start_current,room_temp_current_log+stop_current,n_current)
 	
 	# Writing the values to output files
 	write_circuit_parameters(circuit_parameters,optimization_input_parameters)

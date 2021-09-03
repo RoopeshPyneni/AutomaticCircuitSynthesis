@@ -18,15 +18,15 @@ from pylab import *
 
 #-----------------------------------------------------------------
 # Function that stores input data of the simulation
+# Inputs  : optimization_input_parameters
+# Outputs : NONE
 def save_input_results_optimization(optimization_input_parameters):
-	filename=optimization_input_parameters['filename']['output']
-	newpath =filename+'/'
-	if not os.path.exists(newpath):
-		os.makedirs(newpath)
-		
-	filename=filename+str('/input_data.txt')
+
+	# Opening the file
+	filename=optimization_input_parameters['filename']['output']+str('/input_data.txt')
 	f=open(filename,'a')
 
+	# Storing the results
 	f.write('\n\n---------------------- Optimization Parameters -----------------------')
 	
 	f.write('\nMax Iterations :'+str(optimization_input_parameters['optimization']['max_iteration']))
@@ -66,9 +66,12 @@ def save_input_results_optimization(optimization_input_parameters):
 
 #-----------------------------------------------------------------
 # Function that stores output data of the optimization
+# Inputs  : optimization_results, optimization_input_parameters
+# Outputs : NONE
 def save_output_results_optimization(optimization_results,optimization_input_parameters):
-	filename=optimization_input_parameters['filename']['output']
-	filename=filename+str('/output_data.txt')
+	
+	# Opening the file
+	filename=optimization_input_parameters['filename']['output']+str('/output_data.txt')
 	f=open(filename,'a')
 
 	print_dict=optimization_results['optimized_results']
@@ -76,6 +79,7 @@ def save_output_results_optimization(optimization_results,optimization_input_par
 
 	run_number=optimization_results['run_number']
 
+	# Storing the results
 	f.write('\n\n********************************************************************************\n')
 	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Optimization '+str(run_number)+'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 	
@@ -111,6 +115,7 @@ def save_output_results_optimization(optimization_results,optimization_input_par
 			f.write(str(i)+' ; ')
 	
 	f.close()
+
 
 #===========================================================================================================================
 #-------------------------------------------- Storing Iteration Results ----------------------------------------------------
@@ -188,6 +193,177 @@ def save_info(optimization_input_parameters,optimization_results):
 	save_info_single_array_iter(newpath,'output_parameters.csv',output_parameters_iter,niter)
 	save_info_single_array_iter(newpath,'circuit_parameters.csv',circuit_parameters_iter,niter)
 	save_info_single_array_iter(newpath,'average_parameters.csv',average_parameters_iter,niter)
+
+#===========================================================================================================================
+#-------------------------------------------- Plotting the Results ---------------------------------------------------------
+	
+#-----------------------------------------------------------------------------------------------
+# Function to extract the data from a 2D dictionary file
+def extract_double_array(optimization_results,list_name):
+	
+	# Assigning the array to store the loss variables
+	param_name_list=[]
+	variable_name_list=[]
+
+	# Creating variables for the counting no of lines and variables
+	n_iter=optimization_results['n_iter']
+	
+	flag=0
+	n_param=0
+	for param_name in optimization_results[list_name][1]:
+		n_param+=1
+		param_name_list.append(param_name)
+		if flag==0:
+			param_name1=param_name
+			flag=1
+	
+	n_variable=0
+	for variable_name in optimization_results[list_name][1][param_name1]:
+		n_variable+=1
+		variable_name_list.append(variable_name)
+	
+	
+	# Creating array to store the values 
+	parameter_matrix=np.zeros((n_iter,n_param,n_variable),dtype=float)
+	
+	# Extracting the values of the variables
+	for i in range(n_iter):
+	
+		# Storing the variables
+		j=0
+		for param_name in optimization_results[list_name][i]:
+			k=0
+			for variable_name in optimization_results[list_name][i][param_name]:
+				parameter_matrix[i,j,k]=optimization_results[list_name][i][param_name][variable_name]
+		
+	return parameter_matrix,param_name_list,variable_name_list
+
+	
+#-----------------------------------------------------------------------------------------------
+# Plotting 2D array dictionary vs iterations
+def plot_double_array(optimization_results,list_name,file_directory):
+	
+	loss_array,param_name,variable_name=extract_double_array(optimization_results,list_name)
+	
+	n_iter=loss_array.shape[0]
+	n_param=loss_array.shape[1]
+	n_variable=loss_array.shape[2]
+	
+	filename=file_directory+'/plots/'+list_name+'/'
+	if not os.path.exists(filename):
+		os.makedirs(filename)
+	
+	# Creating the new arrays
+	arrX=np.zeros((n_iter,1),dtype=float)
+	
+	# Calculating values of new array
+	i=0	
+	while i<n_iter:
+		arrX[i,0]=i+1	
+		i+=1
+		
+	print('Starting Plots '+list_name)
+	
+	color_dict={0:'r',1:'g',2:'b',3:'c',4:'m',5:'k',6:'y'}
+	n_colour=7
+	
+	for i in range(n_param):
+		figure()
+		for j in range(n_variable):
+			plot(arrX,loss_array[:,i,j],color_dict[int(j%n_colour)],label=variable_name[j])
+		xlabel('Iterations')
+		ylabel(param_name[i])
+		legend()
+		grid()
+		savefig(filename+param_name[i]+'.pdf')
+		close()
+	
+	print('Plotting Over '+list_name)
+
+	
+#-----------------------------------------------------------------------------------------------
+# Function to extract the data from 1D dictionary
+def extract_single_array(optimization_results,list_name):
+	
+	# Assigning the array to store the loss variables
+	param_name_list=[]
+	
+	# Creating variables for the counting no of lines and variables
+	n_iter=optimization_results['n_iter']
+	
+	n_param=0
+	for param_name in optimization_results[list_name][1]:
+		param_name_list.append(param_name)
+		n_param+=1
+	
+	# Creating array to store the values 
+	parameter_matrix=np.zeros((n_iter,n_param),dtype=float)
+	
+	# Extracting the values of the variables
+	for i in range(n_iter):
+		
+		# Storing the variables
+		j=0
+		for param_name in optimization_results[list_name][i]:
+			parameter_matrix[i,j]=optimization_results[list_name][i][param_name]
+			j+=1
+		
+	return parameter_matrix,param_name_list
+	
+	
+#-----------------------------------------------------------------------------------------------
+# Plotting parameters vs iterations
+def plot_single_array(optimization_results,list_name,file_directory):
+	
+	loss_array,param_name=extract_single_array(optimization_results,list_name)
+	
+	n_iter=loss_array.shape[0]
+	n_param=loss_array.shape[1]
+	
+	filename=file_directory+'/plots/'+list_name+'/'
+	if not os.path.exists(filename):
+    		os.makedirs(filename)
+	
+	# Creating the new arrays
+	arrX=np.zeros((n_iter,1),dtype=float)
+	
+	# Calculating values of new array
+	i=0	
+	while i<n_iter:
+		arrX[i,0]=i+1	
+		i+=1
+		
+	print('Starting Plots '+list_name)
+	
+	color_dict={0:'r',1:'g',2:'b',3:'c',4:'m',5:'k',6:'y'}
+	n_colour=7
+	
+	# Figure 1
+	figure()
+	for i in range(n_param):
+		plot(arrX,loss_array[:,i],color_dict[int(i%n_colour)],label=param_name[i])
+		annotate(cf.num_trunc(loss_array[n_iter-1,i],3),(arrX[n_iter-1,0],loss_array[n_iter-1,i]))
+	xlabel('Iterations')
+	ylabel('Parameter')
+	legend()
+	grid()
+	savefig(filename+'all.pdf')
+	close()
+	
+	
+	# Figure 2	
+	for i in range(n_param):
+		figure()
+		plot(arrX,loss_array[:,i],'g',label=param_name[i])
+		annotate(cf.num_trunc(loss_array[n_iter-1,i],3),(arrX[n_iter-1,0],loss_array[n_iter-1,i]))
+		xlabel('Iterations')
+		ylabel(param_name[i])
+		legend()
+		grid()
+		savefig(filename+param_name[i]+'.pdf')
+		close()
+	
+	print('Plotting Over '+list_name)
 
 #===========================================================================================================================
 #------------------------------------Defining the functions -----------------------------------------
@@ -371,7 +547,7 @@ def moving_avg(loss_iter,circuit_parameters_iter,average_parameters,i,n_points):
 
 		
 #===========================================================================================================================
-#--------------------------------------------Output Functions---------------------------------------------------------------
+#------------------------------------------- Output Functions --------------------------------------------------------------
 	
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to do main optimization
@@ -609,188 +785,5 @@ def main_opt(circuit_parameters,extracted_parameters,optimization_input_paramete
 	timing_results['optimization']['overall']['stop']=datetime.datetime.now()
 
 	return circuit_parameters,extracted_parameters
-#===========================================================================================================================
-
-
-
-"""
-===============================================================================================================================================================================================
----------------------------------------------------------------- PLOTTING FUNCTIONS -----------------------------------------------------------------------------------------------------------
-"""	
-
-#===========================================================================================================================
-#----------------------------------- Extracting and Plotting Double Array --------------------------------------------------
-	
-#-----------------------------------------------------------------------------------------------
-# Function to extract the loss data from csv file
-def extract_double_array(optimization_results,list_name):
-	
-	# Assigning the array to store the loss variables
-	param_name_list=[]
-	variable_name_list=[]
-
-	# Creating variables for the counting no of lines and variables
-	n_iter=optimization_results['n_iter']
-	
-	flag=0
-	n_param=0
-	for param_name in optimization_results[list_name][1]:
-		n_param+=1
-		param_name_list.append(param_name)
-		if flag==0:
-			param_name1=param_name
-			flag=1
-	
-	n_variable=0
-	for variable_name in optimization_results[list_name][1][param_name1]:
-		n_variable+=1
-		variable_name_list.append(variable_name)
-	
-	
-	# Creating array to store the values 
-	parameter_matrix=np.zeros((n_iter,n_param,n_variable),dtype=float)
-	
-	# Extracting the values of the variables
-	for i in range(n_iter):
-	
-		# Storing the variables
-		j=0
-		for param_name in optimization_results[list_name][i]:
-			k=0
-			for variable_name in optimization_results[list_name][i][param_name]:
-				parameter_matrix[i,j,k]=optimization_results[list_name][i][param_name][variable_name]
-		
-	return parameter_matrix,param_name_list,variable_name_list
-
-	
-#-----------------------------------------------------------------------------------------------
-# Plotting loss slope vs iterations
-def plot_double_array(optimization_results,list_name,file_directory):
-	
-	loss_array,param_name,variable_name=extract_double_array(optimization_results,list_name)
-	
-	n_iter=loss_array.shape[0]
-	n_param=loss_array.shape[1]
-	n_variable=loss_array.shape[2]
-	
-	filename=file_directory+'/plots/'+list_name+'/'
-	if not os.path.exists(filename):
-		os.makedirs(filename)
-	
-	# Creating the new arrays
-	arrX=np.zeros((n_iter,1),dtype=float)
-	
-	# Calculating values of new array
-	i=0	
-	while i<n_iter:
-		arrX[i,0]=i+1	
-		i+=1
-		
-	print('Starting Plots '+list_name)
-	
-	color_dict={0:'r',1:'g',2:'b',3:'c',4:'m',5:'k',6:'y'}
-	n_colour=7
-	
-	for i in range(n_param):
-		figure()
-		for j in range(n_variable):
-			plot(arrX,loss_array[:,i,j],color_dict[int(j%n_colour)],label=variable_name[j])
-		xlabel('Iterations')
-		ylabel(param_name[i])
-		legend()
-		grid()
-		savefig(filename+param_name[i]+'.pdf')
-		close()
-	
-	print('Plotting Over '+list_name)
-
-	
-
-#===========================================================================================================================
-#------------------------------------Extracting and Plotting Single Array --------------------------------------------------
-
-#-----------------------------------------------------------------------------------------------
-# Function to extract the data from csv file
-def extract_single_array(optimization_results,list_name):
-	
-	# Assigning the array to store the loss variables
-	param_name_list=[]
-	
-	# Creating variables for the counting no of lines and variables
-	n_iter=optimization_results['n_iter']
-	
-	n_param=0
-	for param_name in optimization_results[list_name][1]:
-		param_name_list.append(param_name)
-		n_param+=1
-	
-	# Creating array to store the values 
-	parameter_matrix=np.zeros((n_iter,n_param),dtype=float)
-	
-	# Extracting the values of the variables
-	for i in range(n_iter):
-		
-		# Storing the variables
-		j=0
-		for param_name in optimization_results[list_name][i]:
-			parameter_matrix[i,j]=optimization_results[list_name][i][param_name]
-			j+=1
-		
-	return parameter_matrix,param_name_list
-	
-	
-#-----------------------------------------------------------------------------------------------
-# Plotting average parameters vs iterations
-def plot_single_array(optimization_results,list_name,file_directory):
-	
-	loss_array,param_name=extract_single_array(optimization_results,list_name)
-	
-	n_iter=loss_array.shape[0]
-	n_param=loss_array.shape[1]
-	
-	filename=file_directory+'/plots/'+list_name+'/'
-	if not os.path.exists(filename):
-    		os.makedirs(filename)
-	
-	# Creating the new arrays
-	arrX=np.zeros((n_iter,1),dtype=float)
-	
-	# Calculating values of new array
-	i=0	
-	while i<n_iter:
-		arrX[i,0]=i+1	
-		i+=1
-		
-	print('Starting Plots '+list_name)
-	
-	color_dict={0:'r',1:'g',2:'b',3:'c',4:'m',5:'k',6:'y'}
-	n_colour=7
-	
-	# Figure 1
-	figure()
-	for i in range(n_param):
-		plot(arrX,loss_array[:,i],color_dict[int(i%n_colour)],label=param_name[i])
-		annotate(cf.num_trunc(loss_array[n_iter-1,i],3),(arrX[n_iter-1,0],loss_array[n_iter-1,i]))
-	xlabel('Iterations')
-	ylabel('Parameter')
-	legend()
-	grid()
-	savefig(filename+'all.pdf')
-	close()
-	
-	
-	# Figure 2	
-	for i in range(n_param):
-		figure()
-		plot(arrX,loss_array[:,i],'g',label=param_name[i])
-		annotate(cf.num_trunc(loss_array[n_iter-1,i],3),(arrX[n_iter-1,0],loss_array[n_iter-1,i]))
-		xlabel('Iterations')
-		ylabel(param_name[i])
-		legend()
-		grid()
-		savefig(filename+param_name[i]+'.pdf')
-		close()
-	
-	print('Plotting Over '+list_name)
 
 #===========================================================================================================================
