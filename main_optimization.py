@@ -292,7 +292,7 @@ def get_temperature_analysis_2_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['temperature_analysis_2']={}
 
-	optimization_input_parameters['temperature_analysis_2']['run']='YES'
+	optimization_input_parameters['temperature_analysis_2']['run']='NO'
 
 	optimization_input_parameters['temperature_analysis_2']['start_temp']=-40
 	optimization_input_parameters['temperature_analysis_2']['stop_temp']=120
@@ -300,7 +300,7 @@ def get_temperature_analysis_2_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['temperature_analysis_2']['start_current']=0.1
 	optimization_input_parameters['temperature_analysis_2']['stop_current']=10
-	optimization_input_parameters['temperature_analysis_2']['n_current']=3
+	optimization_input_parameters['temperature_analysis_2']['n_current']=1
 
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -370,7 +370,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'test_file_output_change_1'						# SET THE FILENAME HERE
+	filename=f_directory+'test_temp_analysis_2'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=300	
 	# ------- Set Any Additional Parameters Here --------
 	
