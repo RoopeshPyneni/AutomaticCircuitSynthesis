@@ -64,6 +64,55 @@ def save_input_results_optimization(optimization_input_parameters):
 	
 	f.close()
 
+
+#-----------------------------------------------------------------
+# Function that stores output data of the optimization
+def save_output_results_optimization(optimization_results,optimization_input_parameters):
+	filename=optimization_input_parameters['filename']['output']
+	filename=filename+str('/output_data.txt')
+	f=open(filename,'a')
+
+	print_dict=optimization_results['optimized_results']
+	iter_number=print_dict['iter_number']-1
+
+	run_number=optimization_results['run_number']
+
+	f.write('\n\n********************************************************************************\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Optimization '+str(run_number)+'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+	
+	
+	if 'optimization_start' in optimization_results:
+		f.write('\n\n--------------------- Optimization Start ---------------------------------')
+		f.write('\n\n---------------- Circuit Parameters ------------------------')
+		cf.print_output_parameters(f,optimization_results['optimization_start']['circuit_parameters'])
+		f.write('\n\n---------------- Extracted Parameters ------------------------')
+		cf.print_output_parameters(f,optimization_results['optimization_start']['extracted_parameters'])
+	
+
+	f.write('\n-------------------------------------------------------------------')
+	if optimization_input_parameters['optimization']['optimization_name']=='loss1':
+		f.write('\nMaximum Loss of gain+Io+s11+iip3='+cf.num_trunc(print_dict['loss_max'],3))
+		f.write('\nOptimized Point occured at iteration='+str(print_dict['iter_number']))
+		f.write('\nOptimized Io Loss='+cf.num_trunc(print_dict['Io_loss'],3))
+	
+	elif optimization_input_parameters['optimization']['optimization_name']=='fom1':
+		f.write('\nMaximum Loss of s11='+cf.num_trunc(print_dict['loss_max'],3))
+		f.write('\nOptimized Point occured at iteration='+str(print_dict['iter_number']))
+		f.write('\nOptimized FOM in dB='+cf.num_trunc(print_dict['FOM'],3))
+	
+	f.write('\n\n------------------------- Circuit Parameter Values ----------------------------------------')
+	cf.print_output_parameters(f,optimization_results['circuit_parameters_iter'][iter_number])
+	
+	f.write('\n\n------------------------- Output Parameter Values ----------------------------------------')
+	cf.print_output_parameters(f,optimization_results['output_parameters_iter'][iter_number])
+
+	if 'acceptable_solution' in optimization_results:
+		f.write('Acceptable Solutions:\n')
+		for i in optimization_results['acceptable_solution']:
+			f.write(str(i)+' ; ')
+	
+	f.close()
+
 #===========================================================================================================================
 #-------------------------------------------- Storing Iteration Results ----------------------------------------------------
 
@@ -496,7 +545,7 @@ def opt_single_run(circuit_parameters,extracted_parameters,optimization_input_pa
 	cf.print_extracted_outputs(extracted_parameters)
 
 	# Storing the results of Optimization
-	fw.save_opt_results(optimization_results,optimization_input_parameters)
+	save_output_results_optimization(optimization_results,optimization_input_parameters)
 	
 	# Saving Results of Each Iteration
 	save_info(optimization_input_parameters,optimization_results)

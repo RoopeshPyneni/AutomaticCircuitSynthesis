@@ -52,6 +52,73 @@ def save_input_results_initial(optimization_input_parameters):
 	f.write('\nRun Status : '+str(optimization_input_parameters['filename']['run_status']))
 	f.write('\nOutput     : '+str(optimization_input_parameters['filename']['output']))
 
+	# Saving Simulation Results
+	f.write('\n\n---------------------- Simulation Conditions -----------------------')
+	f.write('\nDirectory      :'+str(optimization_input_parameters['simulation']['directory']))
+	f.write('\nBasic Filename :'+str(optimization_input_parameters['simulation']['basic_circuit']))
+	f.write('\nIIP3 Filename  :'+str(optimization_input_parameters['simulation']['iip3_circuit']))
+	f.write('\nTCSH Filename  :'+str(optimization_input_parameters['simulation']['tcsh']))
+	f.write('\nStandard Temp  :'+str(optimization_input_parameters['simulation']['std_temp']))
+	f.write('\nPin Fixed      :'+str(optimization_input_parameters['simulation']['pin_fixed']))
+	f.write('\nPin Start      :'+str(optimization_input_parameters['simulation']['pin_start']))
+	f.write('\nPin Stop       :'+str(optimization_input_parameters['simulation']['pin_stop']))
+	f.write('\nPin Points     :'+str(optimization_input_parameters['simulation']['pin_points']))
+	f.write('\nIIP3 Calculation Points :'+str(optimization_input_parameters['simulation']['iip3_calc_points']))
+	
+	for name in optimization_input_parameters['simulation']['parameters_list']:
+		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['simulation']['parameters_list'][name],3))
+	
+	for name in optimization_input_parameters['simulation']['cir_writing_dict']:
+		f.write('\n'+str(name)+': '+str(optimization_input_parameters['simulation']['cir_writing_dict'][name]))
+
+	f.close()
+
+#-----------------------------------------------------------------
+# Function that stores output data of the simulation
+def save_output_results_initial(optimization_input_parameters):
+	
+	filename=optimization_input_parameters['filename']['output']
+	newpath =filename+'/'
+	if not os.path.exists(newpath):
+		os.makedirs(newpath)
+		
+	filename=filename+str('/output_data.txt')
+	f=open(filename,'w')
+
+	# Saving Filenames
+	f.write('\n\n---------------------- Filenames -----------------------')
+	f.write('\nRun Status : '+str(optimization_input_parameters['filename']['run_status']))
+	f.write('\nOutput     : '+str(optimization_input_parameters['filename']['output']))
+	f.write('\n\n\n')
+
+	f.close()
+
+#-----------------------------------------------------------------
+# Function that stores output data of the simulation
+def save_time_results(timing_results,optimization_input_parameters):
+	
+	filename=optimization_input_parameters['filename']['output']	
+	filename=filename+str('/output_data.txt')
+	f=open(filename,'a')
+
+	f.write('\n\n********************************************************************************\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Timing Results ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+	
+	for optimization_name in timing_results:
+		f.write('\n\n---------- '+str(optimization_name)+' ----------')
+		
+		if 'start' in timing_results[optimization_name]:
+			f.write('\nStart    : '+str(timing_results[optimization_name]['start']))
+			f.write('\nEnd      : '+str(timing_results[optimization_name]['stop']))
+			f.write('\nDuration : '+str(timing_results[optimization_name]['stop']-timing_results[optimization_name]['start']))
+		
+		else:
+			for run_number in timing_results[optimization_name]:
+				f.write('\n\nRun Number : '+str(run_number))
+				f.write('\nStart    : '+str(timing_results[optimization_name][run_number]['start']))
+				f.write('\nEnd      : '+str(timing_results[optimization_name][run_number]['stop']))
+				f.write('\nDuration : '+str(timing_results[optimization_name][run_number]['stop']-timing_results[optimization_name][run_number]['start']))
+	
 	f.close()
 
 #===========================================================================================================================
@@ -68,8 +135,9 @@ def complete_optimization(optimization_input_parameters):
 	timing_results['complete_analysis']={}
 	timing_results['complete_analysis']['start']=datetime.datetime.now()
 
-	# Saving the optimization input results
+	# Saving the optimization input and output results initially
 	save_input_results_initial(optimization_input_parameters)
+	save_output_results_initial(optimization_input_parameters)
 
 	# Opening the Run_Status File
 	f=open(optimization_input_parameters['filename']['run_status'],'w')
@@ -102,7 +170,8 @@ def complete_optimization(optimization_input_parameters):
 	# Calculating Ending Time
 	timing_results['complete_analysis']['stop']=datetime.datetime.now()
 	
-	fw.save_time_results(timing_results,optimization_input_parameters)
+	# Saving the timing results
+	save_time_results(timing_results,optimization_input_parameters)
 	
 	#=============================================================================================================================================================================
 

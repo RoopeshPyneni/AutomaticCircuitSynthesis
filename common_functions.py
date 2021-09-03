@@ -181,6 +181,12 @@ def update_MOS_parameters(mos,un,cox,vt,Lmin,vdd):
 
 trunc_val=3
 
+#-----------------------------------------------------------------
+# Function that prints parameters
+def print_output_parameters(f,parameters):
+	for param_name in parameters:
+		f.write('\n'+str(param_name)+': '+num_trunc(parameters[param_name],3))
+
 #-----------------------------------------------------------------------------------------------
 # This function is used to wait for key press
 # Inputs  : NONE

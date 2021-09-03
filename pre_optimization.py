@@ -55,6 +55,73 @@ def save_input_results_pre_optimization(optimization_input_parameters):
 
 	f.close()
 
+#-----------------------------------------------------------------
+# Function that stores output data of the pre optimization
+def save_output_results_pre_optimization(optimization_results,optimization_input_parameters):
+	filename=optimization_input_parameters['filename']['output']
+	filename=filename+str('/output_data.txt')
+	f=open(filename,'a')
+
+	f.write('\n\n********************************************************************************\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Pre Optimization ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+	
+	if 'manual_hc' in optimization_results:
+		f.write('\n\n--------------------- Manual Hand Calculations ---------------------------------')
+		f.write('\n\n---------------- Circuit Parameters ------------------------')
+		cf.print_output_parameters(f,optimization_results['manual_hc']['circuit_parameters'])
+		f.write('\n\n---------------- Extracted Parameters ------------------------')
+		cf.print_output_parameters(f,optimization_results['manual_hc']['extracted_parameters'])
+
+	if 'auto_hc' in optimization_results:
+		f.write('\n\n--------------------- Automatic Hand Calculations ---------------------------------')
+		f.write('\n\n---------------- Circuit Parameters ------------------------')
+		cf.print_output_parameters(f,optimization_results['auto_hc']['circuit_parameters'])
+		f.write('\n\n---------------- Extracted Parameters ------------------------')
+		cf.print_output_parameters(f,optimization_results['auto_hc']['extracted_parameters'])
+
+	if 'hc_update' in optimization_results:
+		f.write('\n\n--------------------- Hand Calculations Update ---------------------------------')
+		f.write('\n\n---------------- Circuit Parameters ------------------------')
+		cf.print_output_parameters(f,optimization_results['hc_update']['circuit_parameters'])
+		f.write('\n\n---------------- Extracted Parameters ------------------------')
+		cf.print_output_parameters(f,optimization_results['hc_update']['extracted_parameters'])
+
+	if 'gm_update' in optimization_results:
+		f.write('\n\n--------------------- gm Update ---------------------------------')
+		f.write('\n\n---------------- Circuit Parameters ------------------------')
+		cf.print_output_parameters(f,optimization_results['gm_update']['circuit_parameters'])
+		f.write('\n\n---------------- Extracted Parameters ------------------------')
+		cf.print_output_parameters(f,optimization_results['gm_update']['extracted_parameters'])
+
+	if 'gmvd_update' in optimization_results:
+		f.write('\n\n--------------------- gmvd Update ---------------------------------')
+		f.write('\n\n---------------- Circuit Parameters ------------------------')
+		cf.print_output_parameters(f,optimization_results['gmvd_update']['circuit_parameters'])
+		f.write('\n\n---------------- Extracted Parameters ------------------------')
+		cf.print_output_parameters(f,optimization_results['gmvd_update']['extracted_parameters'])
+	
+	f.close()
+
+#-----------------------------------------------------------------
+# Function that stores output data of the MOS File Calculations
+def save_mos_results(mos_parameters,optimization_input_parameters):
+	filename=optimization_input_parameters['filename']['output']
+	newpath =filename+'/'
+	if not os.path.exists(newpath):
+		os.makedirs(newpath)
+		
+	filename=filename+str('/output_data.txt')
+	f=open(filename,'w')
+
+	f.write('\n\n********************************************************************************\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ MOS Parameters ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+
+	for param_name in mos_parameters:
+		f.write('\n'+str(param_name)+': '+cf.num_trunc(mos_parameters[param_name],3))
+	
+	f.close()
+
+
 #===========================================================================================================================
 #----------------------------------- Defining the functions for simple calculations ----------------------------------------
 
@@ -95,7 +162,7 @@ def calculate_mos_parameters(optimization_input_parameters):
 	cf.print_MOS_parameters(mos_parameters)
 
 	# Storing the results
-	fw.save_mos_results(mos_parameters,optimization_input_parameters)
+	save_mos_results(mos_parameters,optimization_input_parameters)
 
 	return mos_parameters
 
@@ -178,7 +245,7 @@ def pre_optimization(optimization_input_parameters,timing_results):
 	cf.print_extracted_outputs(extracted_parameters)
 
 	# Storing the results
-	fw.save_pre_opt_results(optimization_results,optimization_input_parameters)
+	save_output_results_pre_optimization(optimization_results,optimization_input_parameters)
 
 	# Storing the finishing time
 	timing_results['pre_optimization']['stop']=datetime.datetime.now()
