@@ -6,8 +6,7 @@ File Name			: complete_optimization.py
 File Description 	: This file will perform all the optimization steps by calling functions in different files
 
 Functions structure in this file:
-	--> complete_optimization
-		--> calculate_mos_parameters
+	--> complete_optimizations
 
 COMPLETE
 """
@@ -21,32 +20,6 @@ import pre_optimization as pr
 import temperature_analysis as ta
 import temperature_analysis_2 as ta2
 import spectre as sp
-
-#===========================================================================================================================
-#------------------------------------ MOSFET EXTRACTION --------------------------------------------------------------------
-
-#-----------------------------------------------------------------
-# Function that extracts the MOSFET File Parameeters
-# Inputs  : Optimization Input Parameters
-# Outputs : MOS_Parameters
-def calculate_mos_parameters(optimization_input_parameters):
-	
-	# Setting Lmin and Vdd
-	Lmin=optimization_input_parameters['MOS']['Lmin']
-	vdd=optimization_input_parameters['MOS']['Vdd']
-
-	# Extracting From File
-	mos_file_parameters = {'un':0,'cox':0,'vt':0,'Lmin':Lmin,'vdd':vdd}
-	mos_file_parameters=sp.extract_mosfet_param(optimization_input_parameters,mos_file_parameters)
-	mos_parameters=mos_file_parameters.copy()
-
-	# Printing the MOSFET Parameters
-	cf.print_MOS_parameters(mos_parameters)
-
-	# Storing the results
-	fw.save_mos_results(mos_parameters,optimization_input_parameters)
-
-	return mos_parameters
 
 
 #===========================================================================================================================
@@ -72,19 +45,13 @@ def complete_optimization(optimization_input_parameters):
 	f.close()
 
 	#======================================================== MOSFET PARAMETERS ==================================================================================================
-	
-	print('************************************************************************************************************')
-	print('*********************************** MOSFET Parameters ******************************************************')
-
-	# Extracting the MOSFET Parameters from the MOS file
-	mos_parameters=calculate_mos_parameters(optimization_input_parameters)
 
 	# Writing the MOSFET File Location to .scs file
 	sp.write_MOS_parameters(optimization_input_parameters)
 
 	#======================================================== PRE OPTIMIZATION ===================================================================================================
 
-	circuit_parameters,extracted_parameters=pr.pre_optimization(mos_parameters,optimization_input_parameters,timing_results)
+	circuit_parameters,extracted_parameters=pr.pre_optimization(optimization_input_parameters,timing_results)
 
 	#======================================================== OPTIMIZATION =======================================================================================================
 

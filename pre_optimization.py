@@ -9,6 +9,7 @@ File Description 	: This file will perform pre optimization and calculate an ini
 Functions structure in this file:
 	--> pre_optimization
 		--> manual_circuit_parameters
+		--> calculate_mos_parameters
 
 COMPLETE
 """
@@ -40,13 +41,40 @@ def manual_initial_parameters(optimization_input_parameters):
 
 
 #===========================================================================================================================
+#------------------------------------ MOSFET EXTRACTION --------------------------------------------------------------------
+
+#-----------------------------------------------------------------
+# Function that extracts the MOSFET File Parameeters
+# Inputs  : Optimization Input Parameters
+# Outputs : MOS_Parameters
+def calculate_mos_parameters(optimization_input_parameters):
+	
+	# Setting Lmin and Vdd
+	Lmin=optimization_input_parameters['MOS']['Lmin']
+	vdd=optimization_input_parameters['MOS']['Vdd']
+
+	# Extracting From File
+	mos_file_parameters = {'un':0,'cox':0,'vt':0,'Lmin':Lmin,'vdd':vdd}
+	mos_file_parameters=sp.extract_mosfet_param(optimization_input_parameters,mos_file_parameters)
+	mos_parameters=mos_file_parameters.copy()
+
+	# Printing the MOSFET Parameters
+	cf.print_MOS_parameters(mos_parameters)
+
+	# Storing the results
+	fw.save_mos_results(mos_parameters,optimization_input_parameters)
+
+	return mos_parameters
+
+
+#===========================================================================================================================
 #------------------------------------------- Output Functions --------------------------------------------------------------
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to perform pre-optimization
 # Inputs  : mos_parameters, optimization_input_parameters, timing_results
 # Outputs :	circuit_parameters, extracted_parameters
-def pre_optimization(mos_parameters,optimization_input_parameters,timing_results):
+def pre_optimization(optimization_input_parameters,timing_results):
 
 	# Opening the Run_Status File
 	f=open(optimization_input_parameters['filename']['run_status'],'a')
@@ -91,9 +119,23 @@ def pre_optimization(mos_parameters,optimization_input_parameters,timing_results
 	#======================================================== Automatic Initial Points =============================================================================================================
 
 	if optimization_input_parameters['pre_optimization']['type']==1:
+		
+		print('************************************************************************************************************')
+		print('*********************************** MOSFET Parameters ******************************************************')
+
+		# Extracting the MOSFET Parameters from the MOS file
+		mos_parameters=calculate_mos_parameters(optimization_input_parameters)
+		
 		circuit_parameters,extracted_parameters=hc1.automatic_initial_parameters(mos_parameters,optimization_input_parameters,optimization_results)
 
 	if optimization_input_parameters['pre_optimization']['type']==2:
+
+		print('************************************************************************************************************')
+		print('*********************************** MOSFET Parameters ******************************************************')
+
+		# Extracting the MOSFET Parameters from the MOS file
+		mos_parameters=calculate_mos_parameters(optimization_input_parameters)
+
 		circuit_parameters,extracted_parameters=hc2.automatic_initial_parameters(mos_parameters,optimization_input_parameters,optimization_results)
 
 	# Printing the values
