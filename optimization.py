@@ -17,6 +17,53 @@ from matplotlib import pylab
 from pylab import *
 #===========================================================================================================================
 
+#-----------------------------------------------------------------
+# Function that stores input data of the simulation
+def save_input_results_optimization(optimization_input_parameters):
+	filename=optimization_input_parameters['filename']['output']
+	newpath =filename+'/'
+	if not os.path.exists(newpath):
+		os.makedirs(newpath)
+		
+	filename=filename+str('/input_data.txt')
+	f=open(filename,'a')
+
+	f.write('\n\n---------------------- Optimization Parameters -----------------------')
+	
+	f.write('\nMax Iterations :'+str(optimization_input_parameters['optimization']['max_iteration']))
+	f.write('\nAlpha Min      :'+str(optimization_input_parameters['optimization']['alpha_min']))
+	f.write('\nConsec Iter    :'+str(optimization_input_parameters['optimization']['consec_iter']))
+	
+	f.write('\nAlpha Mult      :'+str(optimization_input_parameters['optimization']['alpha_mult']))
+	f.write('\nDelta Threshold :'+str(optimization_input_parameters['optimization']['delta_threshold']))
+	f.write('\nLoss Type       :'+str(optimization_input_parameters['optimization']['loss_type']))
+	f.write('\nUpdate Check    :'+str(optimization_input_parameters['optimization']['update_check']))
+
+	f.write('\nOptimization Name :'+str(optimization_input_parameters['optimization']['optimization_name']))
+	f.write('\nOptimization Type :'+str(optimization_input_parameters['optimization']['optimization_type']))
+
+	f.write('\nOptimization Parameters : ')
+	for name in optimization_input_parameters['optimization']['optimizing_parameters']:
+		f.write(str(name)+' ,')
+
+	f.write('\n\n---------------------- Loss Weights -----------------------')
+	for name in optimization_input_parameters['optimization']['loss_weights']:
+		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['optimization']['loss_weights'][name],3))
+
+	f.write('\n\n---------------------- Alpha Parameters -----------------------')
+	for name in optimization_input_parameters['optimization']['alpha']['values']:
+		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['optimization']['alpha']['values'][name],3))
+	f.write('\nAlpha Type  :'+str(optimization_input_parameters['optimization']['alpha']['type']))
+	f.write('\nAlpha Start :'+str(optimization_input_parameters['optimization']['alpha']['start']))
+	f.write('\nAlpha End   :'+str(optimization_input_parameters['optimization']['alpha']['end']))
+
+	if 'acceptable_solution' in optimization_input_parameters:
+		f.write('\n\n---------------------- Acceptable Solution Parameters -----------------------')
+		for name in optimization_input_parameters['acceptable_solution']:
+			f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['acceptable_solution'][name],3))
+	
+	f.close()
+
 #===========================================================================================================================
 #-------------------------------------------- Storing Iteration Results ----------------------------------------------------
 
@@ -485,6 +532,8 @@ def main_opt(circuit_parameters,extracted_parameters,optimization_input_paramete
 
 	print('************************************************************************************************************')
 	print('*********************************** Main Optimization ******************************************************')
+
+	save_input_results_optimization(optimization_input_parameters)
 
 	for i in range(1,1+n_runs):
 		

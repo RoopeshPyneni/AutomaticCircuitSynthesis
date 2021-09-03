@@ -159,12 +159,12 @@ def save_input_results(optimization_input_parameters):
 	filename=filename+str('/input_data.txt')
 	f=open(filename,'w')
 
-	print_input_results_mos_parameters(f,optimization_input_parameters)
-	print_input_results_output_conditions(f,optimization_input_parameters)
+	#print_input_results_mos_parameters(f,optimization_input_parameters)
+	#print_input_results_output_conditions(f,optimization_input_parameters)
 	print_input_results_simulation_conditions(f,optimization_input_parameters)
-	print_input_results_pre_optimization(f,optimization_input_parameters)
-	print_input_results_optimization(f,optimization_input_parameters)
-	print_input_acceptable_solution(f,optimization_input_parameters)
+	#print_input_results_pre_optimization(f,optimization_input_parameters)
+	#print_input_results_optimization(f,optimization_input_parameters)
+	#print_input_acceptable_solution(f,optimization_input_parameters)
 	print_input_results_filenames(f,optimization_input_parameters)
 	print_input_extra_notes(f)
 	

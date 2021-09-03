@@ -21,6 +21,39 @@ import spectre as sp
 import hand_calculation_1 as hc1
 import hand_calculation_2 as hc2
 import file_write as fw
+import os
+
+
+#-----------------------------------------------------------------
+# Function that stores input data of the simulation
+def save_input_results_pre_optimization(optimization_input_parameters):
+	filename=optimization_input_parameters['filename']['output']
+	newpath =filename+'/'
+	if not os.path.exists(newpath):
+		os.makedirs(newpath)
+		
+	filename=filename+str('/input_data.txt')
+	f=open(filename,'a')
+
+	f.write('\n\n---------------------- Pre Optimization -----------------------')
+	
+	f.write('\nStep1b_Limit :'+str(optimization_input_parameters['pre_optimization']['Step1b_Limit']))
+	f.write('\nStep2_Limit  :'+str(optimization_input_parameters['pre_optimization']['Step2_Limit']))
+	f.write('\nvdsat_reqd      :'+str(optimization_input_parameters['pre_optimization']['vdsat_reqd']))
+
+	f.write('\nPre_Opt_Type	   :'+str(optimization_input_parameters['pre_optimization']['type']))
+	f.write('\ngmrs_threshold  :'+str(optimization_input_parameters['pre_optimization']['gmrs_threshold']))
+	f.write('\nvdsat_threshold :'+str(optimization_input_parameters['pre_optimization']['vdsat_threshold']))
+	
+	f.write('\nC1_threshold    :'+str(optimization_input_parameters['pre_optimization']['C1_threshold']))
+	f.write('\nC1_threshold    :'+str(optimization_input_parameters['pre_optimization']['C2_threshold']))
+	f.write('\nRbias_threshold :'+str(optimization_input_parameters['pre_optimization']['Rbias_threshold']))
+
+	f.write('\nManual Circuit Parameters')
+	for name in optimization_input_parameters['pre_optimization']['manual_circuit_parameters']:
+		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['pre_optimization']['manual_circuit_parameters'][name],3))
+
+	f.close()
 
 #===========================================================================================================================
 #----------------------------------- Defining the functions for simple calculations ----------------------------------------
@@ -87,6 +120,8 @@ def pre_optimization(optimization_input_parameters,timing_results):
 
 	print('************************************************************************************************************')
 	print('*********************************** Pre Optimization *******************************************************')
+
+	save_input_results_pre_optimization(optimization_input_parameters)
 
 	cf.write_simulation_parameters(optimization_input_parameters,'pre_optimization',0)
 
