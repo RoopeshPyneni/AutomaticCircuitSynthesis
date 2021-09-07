@@ -49,8 +49,8 @@ def get_simulation_conditions(optimization_input_parameters,fo):
 	optimization_input_parameters['simulation']['pin_fixed']=-65
 	optimization_input_parameters['simulation']['pin_start']=-70
 	optimization_input_parameters['simulation']['pin_stop']=-40
-	optimization_input_parameters['simulation']['pin_points']=6
-	optimization_input_parameters['simulation']['iip3_calc_points']=3
+	optimization_input_parameters['simulation']['pin_points']=16
+	optimization_input_parameters['simulation']['iip3_calc_points']=5
 
 	optimization_input_parameters['simulation']['parameters_list']={
 		'pin':-65,
@@ -86,13 +86,13 @@ get_simulation_conditions(optimization_input_parameters,fo)
 
 
 circuit_parameters={
-	'Rb':262,
-	'Rd':1310,
+	'Rb':267,
+	'Rd':1170,
 	'Io':437e-6,
 	'C1':159e-12,
-	'C2':1960e-12,
-	'W':184e-6,
-	'Rbias':8.1
+	'C2':1780e-12,
+	'W':185e-6,
+	'Rbias':8.87
 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
