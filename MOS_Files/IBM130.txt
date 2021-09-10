@@ -16,3 +16,9 @@ vth0
 tt_file
 include "/home/ee18b028/cadence_project/ibm013.scs"
 
+ff_file
+include "/home/ee18b028/cadence_project/ibm013.scs"
+
+ss_file
+include "/home/ee18b028/cadence_project/ibm013.scs"
+

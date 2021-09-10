@@ -29,6 +29,7 @@ def get_mos_parameters(optimization_input_parameters,process_name):
 	
 	optimization_input_parameters['MOS']={}
 	optimization_input_parameters['MOS']['Process']=process_name
+	optimization_input_parameters['MOS']['filename']={}
 	
 	f=open('/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/MOS_Files/'+process_name+'.txt')
 	lines=f.readlines()
@@ -48,29 +49,28 @@ def get_mos_parameters(optimization_input_parameters,process_name):
 		elif line=='vth0':
 			optimization_input_parameters['MOS']['vt']=float(lines[i+1][:-1])
 		elif line=='tt_file':
-			optimization_input_parameters['MOS']['filename']=''
+			optimization_input_parameters['MOS']['filename']['tt']=''
 			j=i+1
 			while lines[j][:-1]!='':
-				optimization_input_parameters['MOS']['filename']+=lines[j]
+				optimization_input_parameters['MOS']['filename']['tt']+=lines[j]
+				j+=1
+		elif line=='ff_file':
+			optimization_input_parameters['MOS']['filename']['ff']=''
+			j=i+1
+			while lines[j][:-1]!='':
+				optimization_input_parameters['MOS']['filename']['ff']+=lines[j]
+				j+=1
+		elif line=='ss_file':
+			optimization_input_parameters['MOS']['filename']['ss']=''
+			j=i+1
+			while lines[j][:-1]!='':
+				optimization_input_parameters['MOS']['filename']['ss']+=lines[j]
 				j+=1
                 
 	# Calculating Cox
 	eo=8.85*1e-12
 	er=3.9
 	optimization_input_parameters['MOS']['cox']=eo*er/optimization_input_parameters['MOS']['tox']
-
-	"""
-	if process_name=='TSMC018':
-		optimization_input_parameters['MOS']['filename']='/home/ee18b028/cadence_project/tsmc018.scs'
-		optimization_input_parameters['MOS']['Type']='NMOS'
-		optimization_input_parameters['MOS']['Lmin']=0.18*1e-6
-		optimization_input_parameters['MOS']['Vdd']=1.8
-	else:
-		optimization_input_parameters['MOS']['filename']='/home/ee18b028/cadence_project/ibm013.scs'
-		optimization_input_parameters['MOS']['Type']='NMOS'
-		optimization_input_parameters['MOS']['Lmin']=0.13*1e-6
-		optimization_input_parameters['MOS']['Vdd']=1.3
-	"""
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the output conditions to the optimization_input_parameters dictionary
@@ -103,6 +103,7 @@ def get_simulation_conditions(optimization_input_parameters,fo):
 	optimization_input_parameters['simulation']['pin_stop']=-40
 	optimization_input_parameters['simulation']['pin_points']=6
 	optimization_input_parameters['simulation']['iip3_calc_points']=3
+	optimization_input_parameters['simulation']['process_corner']='tt'
 
 	optimization_input_parameters['simulation']['parameters_list']={
 		'pin':-65,
@@ -163,6 +164,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['pre_optimization']['simulation']['pin_stop']=-40
 	optimization_input_parameters['pre_optimization']['simulation']['pin_points']=6
 	optimization_input_parameters['pre_optimization']['simulation']['iip3_calc_points']=3
+	optimization_input_parameters['pre_optimization']['simulation']['process_corner']='tt'
 
 	optimization_input_parameters['pre_optimization']['simulation']['parameters_list']={
 		'pin':-65,
@@ -248,6 +250,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization']['simulation'][1]['pin_stop']=-40
 	optimization_input_parameters['optimization']['simulation'][1]['pin_points']=6
 	optimization_input_parameters['optimization']['simulation'][1]['iip3_calc_points']=3
+	optimization_input_parameters['optimization']['simulation']['process_corner']='tt'
 
 	optimization_input_parameters['optimization']['simulation'][1]['parameters_list']={
 		'pin':-65,
@@ -266,6 +269,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization']['simulation'][2]['pin_stop']=-40
 	optimization_input_parameters['optimization']['simulation'][2]['pin_points']=16
 	optimization_input_parameters['optimization']['simulation'][2]['iip3_calc_points']=5
+	optimization_input_parameters['optimization']['simulation']['process_corner']='tt'
 
 	optimization_input_parameters['optimization']['simulation'][2]['parameters_list']={
 		'pin':-65,
@@ -313,8 +317,37 @@ def get_temperature_analysis_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['temperature_analysis']['simulation']['pin_stop']=-40
 	optimization_input_parameters['temperature_analysis']['simulation']['pin_points']=16
 	optimization_input_parameters['temperature_analysis']['simulation']['iip3_calc_points']=5
+	optimization_input_parameters['temperature_analysis']['simulation']['process_corner']='tt'
 
 	optimization_input_parameters['temperature_analysis']['simulation']['parameters_list']={
+		'pin':-65,
+		'fund_2':fo+1e6,
+		'fund_1':fo,
+		'cir_temp':27,
+		'n_harm':15
+	}
+
+#---------------------------------------------------------------------------------------------------------------------------
+# Function that sets the process analysis parameters to the optimization_input_parameters dictionary
+def get_process_analysis_parameters(optimization_input_parameters,fo):
+
+	optimization_input_parameters['process_analysis']={}
+	optimization_input_parameters['process_analysis']['run']='NO'
+
+	#~~~~~~~~~~~~~~~~~~~~~~~~~
+	# Temperature Analysis Simulation Parameters
+	optimization_input_parameters['process_analysis']['simulation']={}
+
+	optimization_input_parameters['process_analysis']['simulation']['iip3_type']='basic'
+	optimization_input_parameters['process_analysis']['simulation']['std_temp']=27
+	optimization_input_parameters['process_analysis']['simulation']['pin_fixed']=-65
+	optimization_input_parameters['process_analysis']['simulation']['pin_start']=-70
+	optimization_input_parameters['process_analysis']['simulation']['pin_stop']=-40
+	optimization_input_parameters['process_analysis']['simulation']['pin_points']=16
+	optimization_input_parameters['process_analysis']['simulation']['iip3_calc_points']=5
+	optimization_input_parameters['process_analysis']['simulation']['process_corner']='tt'
+
+	optimization_input_parameters['process_analysis']['simulation']['parameters_list']={
 		'pin':-65,
 		'fund_2':fo+1e6,
 		'fund_1':fo,
@@ -350,6 +383,9 @@ get_optimization_parameters(optimization_input_parameters,fo,optimization_name)
 
 # ---------- Temperature Analysis Parameters ----------
 get_temperature_analysis_parameters(optimization_input_parameters,fo)
+
+# ---------- Temperature Analysis Parameters ----------
+get_process_analysis_parameters(optimization_input_parameters,fo)
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

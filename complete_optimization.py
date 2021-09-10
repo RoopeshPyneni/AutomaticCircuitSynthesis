@@ -16,6 +16,7 @@ import optimization as op
 import common_functions as cf
 import pre_optimization as pr
 import temperature_analysis as ta
+import process_analysis as pa
 import spectre as sp
 import os
 
@@ -174,6 +175,10 @@ def complete_optimization(optimization_input_parameters):
 	#======================================================== TEMPERATURE ANALYSIS ===============================================================================================
 
 	circuit_parameters,extracted_parameters=ta.temperature_analysis(circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results)
+
+	#========================================================== PROCESS ANALYSIS =================================================================================================
+
+	circuit_parameters,extracted_parameters=pa.process_analysis(circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results)
 	
 	#======================================================== AFTER OPTIMIZATION =================================================================================================
 	
