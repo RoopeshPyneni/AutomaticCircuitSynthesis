@@ -115,6 +115,7 @@ def process_analysis(circuit_parameters,extracted_parameters,optimization_input_
 	
 	# Writing the values to output files
 	write_circuit_parameters(circuit_parameters,optimization_input_parameters)
+	write_extracted_parameters_initial(extracted_parameters,optimization_input_parameters)
 
 	# Creating the list of process corners
 	process_corner_list=['tt','ff','ss']
@@ -124,7 +125,6 @@ def process_analysis(circuit_parameters,extracted_parameters,optimization_input_
 		extracted_parameters_iter[process_corner]={}
 		optimization_input_parameters['simulation']['process_corner']=process_corner
 		sp.write_simulation_parameters(optimization_input_parameters)
-		write_extracted_parameters_initial(extracted_parameters,optimization_input_parameters,27)
 		extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)				# Extracting the parameters
 		update_extracted_parameters(extracted_parameters,optimization_input_parameters,process_corner)		# Writing the values to the output file
 		
