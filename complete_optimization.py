@@ -27,7 +27,7 @@ import os
 # Inputs  : optimization_input_parameters
 # Outputs : NONE
 def save_input_results_initial(optimization_input_parameters):
-	
+
 	# Creating the folder path
 	filename=optimization_input_parameters['filename']['output']
 	newpath =filename+'/'
@@ -45,10 +45,13 @@ def save_input_results_initial(optimization_input_parameters):
 
 	# Saving MOS Parameters
 	f.write('\n\n---------------------- MOS Parameters -----------------------')
-	f.write('\nMOSFET File	:'+str(optimization_input_parameters['MOS']['filename']))
-	f.write('\nMOS Type 	:'+str(optimization_input_parameters['MOS']['Type']))
+	f.write('\nProcess Name	:'+str(optimization_input_parameters['MOS']['Process']))
 	f.write('\nVdd      	:'+str(optimization_input_parameters['MOS']['Vdd']))
 	f.write('\nLmin     	:'+str(optimization_input_parameters['MOS']['Lmin']))
+	f.write('\nun	    	:'+str(optimization_input_parameters['MOS']['un']))
+	f.write('\ntox  	   	:'+str(optimization_input_parameters['MOS']['tox']))
+	f.write('\ncox	     	:'+str(optimization_input_parameters['MOS']['cox']))
+	f.write('\nvth0	     	:'+str(optimization_input_parameters['MOS']['vt']))
 
 	# Saving Output Conditions
 	f.write('\n\n---------------------- Output Conditions -----------------------')

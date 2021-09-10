@@ -156,12 +156,13 @@ def calculate_mos_parameters(optimization_input_parameters):
 	# Setting Lmin and Vdd
 	Lmin=optimization_input_parameters['MOS']['Lmin']
 	vdd=optimization_input_parameters['MOS']['Vdd']
+	cox=optimization_input_parameters['MOS']['cox']
+	un=optimization_input_parameters['MOS']['un']
+	vt=optimization_input_parameters['MOS']['vt']
 
 	# Extracting From File
-	mos_file_parameters = {'un':0,'cox':0,'vt':0,'Lmin':Lmin,'vdd':vdd}
-	mos_file_parameters=sp.extract_mosfet_param(optimization_input_parameters,mos_file_parameters)
-	mos_parameters=mos_file_parameters.copy()
-
+	mos_parameters = {'un':un,'cox':cox,'vt':vt,'Lmin':Lmin,'vdd':vdd}
+	
 	# Printing the MOSFET Parameters
 	cf.print_MOS_parameters(mos_parameters)
 

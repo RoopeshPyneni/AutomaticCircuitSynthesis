@@ -99,6 +99,7 @@ def extract_file(file_name):
 	f.close()
 	return lines
 
+"""
 #---------------------------------------------------------------------------------------------------------------------------
 # Extracting the parameters from the lib file
 # Inputs: 
@@ -180,6 +181,7 @@ def extract_mosfet_param(optimization_input_parameters,mos_dict):
 	mos_dict['cox']=cox
 	
 	return mos_dict
+"""
 
 
 #===========================================================================================================================================================
@@ -348,16 +350,9 @@ def calculate_iip3_multiple_points(optimization_input_parameters,vout_fund_mag,v
 	vout_fund_log=20*np.log10(vout_fund_mag)
 	vout_im3_log=20*np.log10(vout_im3_mag)
 
-
 	n_pin=optimization_input_parameters['simulation']['pin_points']
 	n_points=optimization_input_parameters['simulation']['iip3_calc_points']
 	
-	"""
-	print('\n\nFund:',vout_fund_log)
-	print('\n\nIM3:',vout_im3_log)
-	print('\n\nPin:',pin)
-	"""
-
 	# Creating arrays for slopes and y-intercepts of fundamental and im3 components
 	fund_slope=np.zeros(n_pin+1-n_points,dtype=float)
 	fund_intercept=np.zeros(n_pin+1-n_points,dtype=float)
@@ -369,24 +364,8 @@ def calculate_iip3_multiple_points(optimization_input_parameters,vout_fund_mag,v
 		fund_slope[i],fund_intercept[i]=calculate_slope(pin[i:i+n_points-1],vout_fund_log[i:i+n_points-1])
 		im3_slope[i],im3_intercept[i]=calculate_slope(pin[i:i+n_points-1],vout_im3_log[i:i+n_points-1])
 	
-	"""
-	print('\n\n Fund Slope:',fund_slope)
-	print('\n\n IM3  Slope:',im3_slope)
-	print('\n\n Fund Intercept:',fund_intercept)
-	print('\n\n IM3  Intercept:',im3_intercept)
-	"""
-	
 	# Finding the best points for iip3 calculation
 	best_point=calculate_best_iip3_point(fund_slope,im3_slope)
-	
-	"""
-	print('\n\n Best Point:',best_point)
-	
-	print('\n\n Fund Intercept:',fund_intercept[best_point])
-	print(' IM3  Intercept:',im3_intercept[best_point])
-	print(' Fund Slope:',fund_slope[best_point])
-	print(' IM3  Slope:',im3_slope[best_point])
-	"""
 	
 	# Calculating the iip3 given the slope and y-intercept of fundamental and im3
 	iip3=(im3_intercept[best_point]-fund_intercept[best_point])/(fund_slope[best_point]-im3_slope[best_point])
@@ -603,17 +582,25 @@ def write_MOS_parameters(optimization_input_parameters):
 	# Writing the MOS Parameters to Basic File
 	f=open(filename1,'r+')
 	s=''
+	write_check=1
+	include_check=0
 
 	# Replacing the lines of .scs file
 	for line in fileinput.input(filename1):
 		if "include " in line:	# This line is used to include the MOS file in the .scs file
-			newline='include \"'+optimization_input_parameters['MOS']['filename']+'\"\n'
-			line=line.replace(line,newline)
+			include_check=1
+			write_check=0
+
+		elif "include" not in line and include_check==1:
+			s=s+optimization_input_parameters['MOS']['filename']
+			write_check=1
 		
 		for param_name in write_dict:	# This line is used to replace the MOS parameters and simulation_parameters
 			if "parameters "+param_name+'=' in line:
 				line=line.replace(line,print_param(param_name,write_dict[param_name]))
-		s=s+line
+
+		if write_check==1:
+			s=s+line
 
 	f.truncate(0)
 	f.write(s)
@@ -623,6 +610,7 @@ def write_MOS_parameters(optimization_input_parameters):
 	f=open(filename2,'r+')
 	s=''
 
+	"""
 	# Replacing the lines of .scs file
 	for line in fileinput.input(filename2):
 		if "include " in line:	# This line is used to include the MOS file in the .scs file
@@ -633,6 +621,28 @@ def write_MOS_parameters(optimization_input_parameters):
 			if "parameters "+param_name+'=' in line:
 				line=line.replace(line,print_param(param_name,write_dict[param_name]))
 		s=s+line
+	"""
+
+	write_check=1
+	include_check=0
+
+	# Replacing the lines of .scs file
+	for line in fileinput.input(filename1):
+		if "include " in line:	# This line is used to include the MOS file in the .scs file
+			include_check=1
+			write_check=0
+
+		elif "include" not in line and include_check==1:
+			s=s+optimization_input_parameters['MOS']['filename']
+			write_check=1
+		
+		for param_name in write_dict:	# This line is used to replace the MOS parameters and simulation_parameters
+			if "parameters "+param_name+'=' in line:
+				line=line.replace(line,print_param(param_name,write_dict[param_name]))
+
+		if write_check==1:
+			s=s+line
+	
 
 	f.truncate(0)
 	f.write(s)

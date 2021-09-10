@@ -28,7 +28,43 @@ import complete_optimization as co
 def get_mos_parameters(optimization_input_parameters,process_name):
 	
 	optimization_input_parameters['MOS']={}
+	optimization_input_parameters['MOS']['Process']=process_name
 	
+	f=open('/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/MOS_Files/'+process_name+'.txt')
+	lines=f.readlines()
+	f.close()
+
+	# Extracting values from the MOS File
+	for i in range(len(lines)):
+		line=lines[i][:-1]
+        if line=='Vdd':
+            optimization_input_parameters['MOS']['Vdd']=float(lines[i+1][:-1])
+        
+        elif line=='Lmin':
+            optimization_input_parameters['MOS']['Lmin']=float(lines[i+1][:-1])
+        
+        elif line=='u0':
+	        optimization_input_parameters['MOS']['un']=float(lines[i+1][:-1])
+
+        elif line=='tox':
+	        optimization_input_parameters['MOS']['tox']=float(lines[i+1][:-1])
+
+        elif line=='vth0':
+	        optimization_input_parameters['MOS']['vt']=float(lines[i+1][:-1])
+
+        elif line=='tt_file':
+            optimization_input_parameters['MOS']['filename']=''
+            j=i+1
+            while lines[j][:-1]!='':
+                optimization_input_parameters['MOS']['filename']+=lines[j]
+                j+=1
+                
+	# Calculating Cox
+	eo=8.85*1e-12
+	er=3.9
+	optimization_input_parameters['MOS']['cox']=eo*er/optimization_input_parameters['MOS']['tox']
+
+	"""
 	if process_name=='TSMC018':
 		optimization_input_parameters['MOS']['filename']='/home/ee18b028/cadence_project/tsmc018.scs'
 		optimization_input_parameters['MOS']['Type']='NMOS'
@@ -39,6 +75,7 @@ def get_mos_parameters(optimization_input_parameters,process_name):
 		optimization_input_parameters['MOS']['Type']='NMOS'
 		optimization_input_parameters['MOS']['Lmin']=0.13*1e-6
 		optimization_input_parameters['MOS']['Vdd']=1.3
+	"""
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the output conditions to the optimization_input_parameters dictionary

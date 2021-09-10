@@ -1,0 +1,18 @@
+Vdd
+1.8
+
+Lmin
+180e-9
+
+u0
+273.8094484
+
+tox
+4.1e-9
+
+vth0
+0.3662473
+
+tt_file
+include '/home/ee18b028/cadence_project/tsmc018.scs'
+
