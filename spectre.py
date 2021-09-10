@@ -593,6 +593,7 @@ def write_MOS_parameters(optimization_input_parameters):
 
 		elif "include" not in line and include_check==1:
 			s=s+optimization_input_parameters['MOS']['filename']
+			include_check=0
 			write_check=1
 		
 		for param_name in write_dict:	# This line is used to replace the MOS parameters and simulation_parameters
@@ -609,31 +610,18 @@ def write_MOS_parameters(optimization_input_parameters):
 	# Writing the MOS Parameters to IIP3 File
 	f=open(filename2,'r+')
 	s=''
-
-	"""
-	# Replacing the lines of .scs file
-	for line in fileinput.input(filename2):
-		if "include " in line:	# This line is used to include the MOS file in the .scs file
-			newline='include \"'+optimization_input_parameters['MOS']['filename']+'\"\n'
-			line=line.replace(line,newline)
-		
-		for param_name in write_dict:	# This line is used to replace the MOS parameters and simulation_parameters
-			if "parameters "+param_name+'=' in line:
-				line=line.replace(line,print_param(param_name,write_dict[param_name]))
-		s=s+line
-	"""
-
 	write_check=1
 	include_check=0
 
 	# Replacing the lines of .scs file
-	for line in fileinput.input(filename1):
+	for line in fileinput.input(filename2):
 		if "include " in line:	# This line is used to include the MOS file in the .scs file
 			include_check=1
 			write_check=0
 
 		elif "include" not in line and include_check==1:
 			s=s+optimization_input_parameters['MOS']['filename']
+			include_check=0
 			write_check=1
 		
 		for param_name in write_dict:	# This line is used to replace the MOS parameters and simulation_parameters
@@ -668,9 +656,11 @@ def write_simulation_parameters(optimization_input_parameters):
 	s=''
 	# Replacing the lines of .scs file
 	for line in fileinput.input(filename1):
+		"""
 		if "include " in line:	# This line is used to include the MOS file in the .scs file
 			newline='include \"'+optimization_input_parameters['MOS']['filename']+'\"\n'
 			line=line.replace(line,newline)
+		"""
 		
 		for param_name in write_dict:	# This line is used to replace the MOS parameters and simulation_parameters
 			if "parameters "+param_name+'=' in line:
@@ -686,9 +676,11 @@ def write_simulation_parameters(optimization_input_parameters):
 	s=''
 	# Replacing the lines of .scs file
 	for line in fileinput.input(filename2):
+		"""
 		if "include " in line:	# This line is used to include the MOS file in the .scs file
 			newline='include \"'+optimization_input_parameters['MOS']['filename']+'\"\n'
 			line=line.replace(line,newline)
+		"""
 		
 		for param_name in write_dict:	# This line is used to replace the MOS parameters and simulation_parameters
 			if "parameters "+param_name+'=' in line:
@@ -847,3 +839,15 @@ def write_extract(circuit_parameters,optimization_input_parameters):
 	return extracted_parameters
 
 #===========================================================================================================================
+"""
+	# Replacing the lines of .scs file
+	for line in fileinput.input(filename2):
+		if "include " in line:	# This line is used to include the MOS file in the .scs file
+			newline='include \"'+optimization_input_parameters['MOS']['filename']+'\"\n'
+			line=line.replace(line,newline)
+		
+		for param_name in write_dict:	# This line is used to replace the MOS parameters and simulation_parameters
+			if "parameters "+param_name+'=' in line:
+				line=line.replace(line,print_param(param_name,write_dict[param_name]))
+		s=s+line
+	"""

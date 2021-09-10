@@ -14,5 +14,5 @@ vth0
 0.0568751
 
 tt_file
-include '/home/ee18b028/cadence_project/ibm013.scs'
+include "/home/ee18b028/cadence_project/ibm013.scs"
 

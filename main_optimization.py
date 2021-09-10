@@ -37,27 +37,22 @@ def get_mos_parameters(optimization_input_parameters,process_name):
 	# Extracting values from the MOS File
 	for i in range(len(lines)):
 		line=lines[i][:-1]
-        if line=='Vdd':
-            optimization_input_parameters['MOS']['Vdd']=float(lines[i+1][:-1])
-        
-        elif line=='Lmin':
-            optimization_input_parameters['MOS']['Lmin']=float(lines[i+1][:-1])
-        
-        elif line=='u0':
-	        optimization_input_parameters['MOS']['un']=float(lines[i+1][:-1])
-
-        elif line=='tox':
-	        optimization_input_parameters['MOS']['tox']=float(lines[i+1][:-1])
-
-        elif line=='vth0':
-	        optimization_input_parameters['MOS']['vt']=float(lines[i+1][:-1])
-
-        elif line=='tt_file':
-            optimization_input_parameters['MOS']['filename']=''
-            j=i+1
-            while lines[j][:-1]!='':
-                optimization_input_parameters['MOS']['filename']+=lines[j]
-                j+=1
+		if line=='Vdd':
+			optimization_input_parameters['MOS']['Vdd']=float(lines[i+1][:-1])
+		elif line=='Lmin':
+			optimization_input_parameters['MOS']['Lmin']=float(lines[i+1][:-1])
+		elif line=='u0':
+			optimization_input_parameters['MOS']['un']=float(lines[i+1][:-1])*1e-4
+		elif line=='tox':
+			optimization_input_parameters['MOS']['tox']=float(lines[i+1][:-1])
+		elif line=='vth0':
+			optimization_input_parameters['MOS']['vt']=float(lines[i+1][:-1])
+		elif line=='tt_file':
+			optimization_input_parameters['MOS']['filename']=''
+			j=i+1
+			while lines[j][:-1]!='':
+				optimization_input_parameters['MOS']['filename']+=lines[j]
+				j+=1
                 
 	# Calculating Cox
 	eo=8.85*1e-12
@@ -236,9 +231,9 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Iterations
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=5
+	optimization_input_parameters['optimization'][1]['max_iteration']=100
 	optimization_input_parameters['optimization'][2]={}
-	optimization_input_parameters['optimization'][2]['max_iteration']=5
+	optimization_input_parameters['optimization'][2]['max_iteration']=100
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Simulation Parameters
@@ -296,7 +291,7 @@ def get_temperature_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['temperature_analysis']={}
 
-	optimization_input_parameters['temperature_analysis']['run']='YES'
+	optimization_input_parameters['temperature_analysis']['run']='NO'
 
 	optimization_input_parameters['temperature_analysis']['start_temp']=-40
 	optimization_input_parameters['temperature_analysis']['stop_temp']=120
@@ -336,8 +331,9 @@ optimization_input_parameters={}
 optimization_name='LOSS'
 
 # ---------- MOSFET Parameters ----------
-get_mos_parameters(optimization_input_parameters,'TSMC018')
-#get_mos_parameters(optimization_input_parameters,'IBM013')
+#get_mos_parameters(optimization_input_parameters,'TSMC180')
+get_mos_parameters(optimization_input_parameters,'TSMC65')
+#get_mos_parameters(optimization_input_parameters,'IBM130')
 
 # ---------- Output Conditions ----------
 fo=1e9
@@ -371,7 +367,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'test_temp_plot_change_1'						# SET THE FILENAME HERE
+	filename=f_directory+'test_tsmc_65_change_TSMC65_3'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=300	
 	# ------- Set Any Additional Parameters Here --------
 	
