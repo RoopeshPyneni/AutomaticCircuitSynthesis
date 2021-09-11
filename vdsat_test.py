@@ -163,24 +163,95 @@ def write_extract(filename_w,v_g,filename_e):
 
 """
 ====================================================================================================================================================================================
+------------------------------------------------------------ DIFFERENTIATION -------------------------------------------------------------------------------------------------------
+"""
+
+#-----------------------------------------------------------------------------------------------
+# 
+# Inputs  : 
+# Outputs : 
+
+def differentiation_array(arr_x,arr_y):
+	
+	arr_y1=np.zeros(len(arr_y)-1,dtype=float)
+	arr_y2=np.zeros(len(arr_y)-2,dtype=float)
+	arr_y3=np.zeros(len(arr_y)-3,dtype=float)
+
+	for i in len(arr_y1):
+		arr_y1[i]=(arr_y[i+1]-arr_y[i])/(arr_x[i+1]-arr_x[i])
+	
+	for i in len(arr_y2):
+		arr_y2[i]=(arr_y1[i+1]-arr_y1[i])/(arr_x[i+1]-arr_x[i])
+	
+	for i in len(arr_y3):
+		arr_y3[i]=(arr_y2[i+1]-arr_y2[i])/(arr_x[i+1]-arr_x[i])
+
+	return arr_x[:-3],arr_y[:-3],arr_y1[:-2],arr_y2[:-1],arr_y3
+
+"""
+====================================================================================================================================================================================
 ------------------------------------------------------------ PLOT FUNCTIONS --------------------------------------------------------------------------------------------------------
 """
 
 #-----------------------------------------------------------------------------------------------
-# This function will write the circuit parameters, run Eldo and extract the output parameters
-# Inputs  : Circuit_Parameters, Optimization_Input_Parameters
-# Outputs : Extracted_Parameters
+# 
+# Inputs  : 
+# Outputs : 
 
-def plot_id_vg(file_directory_plot,i_d,vg):
+def plot_curves(file_directory_plot,vg,i_d,gm1,gm2,gm3):
 	
+	# ID vs VG
 	figure()
-	plot(vg,i_d,label='id')
+	plot(vg,i_d)
 	ylabel('id')
 	xlabel('vg')
 	title('id vs vg')
 	grid()
-	legend()
 	savefig(file_directory_plot+'/id_vs_vg.pdf')
+	close()
+
+	# GM1 vs VG
+	figure()
+	plot(vg,gm1)
+	ylabel('gm1')
+	xlabel('vg')
+	title('gm1 vs vg')
+	grid()
+	savefig(file_directory_plot+'/gm1_vs_vg.pdf')
+	close()
+
+	# GM2 vs VG
+	figure()
+	plot(vg,gm2)
+	ylabel('gm2')
+	xlabel('vg')
+	title('gm2 vs vg')
+	grid()
+	savefig(file_directory_plot+'/gm2_vs_vg.pdf')
+	close()
+
+	# GM3 vs VG
+	figure()
+	plot(vg,gm3)
+	ylabel('gm3')
+	xlabel('vg')
+	title('gm3 vs vg')
+	grid()
+	savefig(file_directory_plot+'/gm3_vs_vg.pdf')
+	close()
+
+	# All vs VG
+	figure()
+	plot(vg,i_d,label='id')
+	plot(vg,gm1,label='gm1')
+	plot(vg,gm2,label='gm2')
+	plot(vg,gm3,label='gm3')
+	ylabel('All Parameters')
+	xlabel('vg')
+	title('All Parameters vs vg')
+	grid()
+	legend()
+	savefig(file_directory_plot+'/all_vs_vg.pdf')
 	close()
 
 
@@ -212,4 +283,24 @@ file_directory_plot='/home/ee18b028/Optimization/Simulation_Results/Vdsat'
 if not os.path.exists(file_directory_plot):
 	os.makedirs(file_directory_plot)
 
-plot_id_vg(file_directory_plot,id_array,vg_array)
+vg_array,id_array,gm1_array,gm2_array,gm3_array=differentiation_array(vg_array,id_array)
+vdsat_array=vdsat_array[:-3]
+
+plot_curves(file_directory_plot,vg_array,id_array,gm1_array,gm2_array,gm3_array)
+
+vdsat_best=0
+i_best=0
+vg_best=0
+id_best=9
+for i in range(len(vg_array)-1):
+	if gm3_array[i]>0 and gm3_array[i+1]<=0:
+		vdsat_best=vdsat_array[i]
+		i_best=i
+		vg_best=vg_array[i]
+		id_best=id_array[i]
+		break
+
+print('Vdsat Best : ',vdsat_best)
+print('i     Best : ',i_best)
+print('Vg    Best : ',vg_best)
+print('Id    Best : ',id_best)
