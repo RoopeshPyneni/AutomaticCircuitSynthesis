@@ -22,17 +22,49 @@ import spectre as sp
 def get_mos_parameters(optimization_input_parameters,process_name):
 	
 	optimization_input_parameters['MOS']={}
+	optimization_input_parameters['MOS']['Process']=process_name
+	optimization_input_parameters['MOS']['filename']={}
 	
-	if process_name=='TSMC018':
-		optimization_input_parameters['MOS']['filename']='/home/ee18b028/cadence_project/tsmc018.scs'
-		optimization_input_parameters['MOS']['Type']='NMOS'
-		optimization_input_parameters['MOS']['Lmin']=0.18*1e-6
-		optimization_input_parameters['MOS']['Vdd']=1.8
-	else:
-		optimization_input_parameters['MOS']['filename']='/home/ee18b028/cadence_project/ibm013.scs'
-		optimization_input_parameters['MOS']['Type']='NMOS'
-		optimization_input_parameters['MOS']['Lmin']=0.13*1e-6
-		optimization_input_parameters['MOS']['Vdd']=1.3
+	f=open('/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/MOS_Files/'+process_name+'.txt')
+	lines=f.readlines()
+	f.close()
+
+	# Extracting values from the MOS File
+	for i in range(len(lines)):
+		line=lines[i][:-1]
+		if line=='Vdd':
+			optimization_input_parameters['MOS']['Vdd']=float(lines[i+1][:-1])
+		elif line=='Lmin':
+			optimization_input_parameters['MOS']['Lmin']=float(lines[i+1][:-1])
+		elif line=='u0':
+			optimization_input_parameters['MOS']['un']=float(lines[i+1][:-1])*1e-4
+		elif line=='tox':
+			optimization_input_parameters['MOS']['tox']=float(lines[i+1][:-1])
+		elif line=='vth0':
+			optimization_input_parameters['MOS']['vt']=float(lines[i+1][:-1])
+		elif line=='tt_file':
+			optimization_input_parameters['MOS']['filename']['tt']=''
+			j=i+1
+			while lines[j][:-1]!='':
+				optimization_input_parameters['MOS']['filename']['tt']+=lines[j]
+				j+=1
+		elif line=='ff_file':
+			optimization_input_parameters['MOS']['filename']['ff']=''
+			j=i+1
+			while lines[j][:-1]!='':
+				optimization_input_parameters['MOS']['filename']['ff']+=lines[j]
+				j+=1
+		elif line=='ss_file':
+			optimization_input_parameters['MOS']['filename']['ss']=''
+			j=i+1
+			while lines[j][:-1]!='':
+				optimization_input_parameters['MOS']['filename']['ss']+=lines[j]
+				j+=1
+                
+	# Calculating Cox
+	eo=8.85*1e-12
+	er=3.9
+	optimization_input_parameters['MOS']['cox']=eo*er/optimization_input_parameters['MOS']['tox']
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the simulation conditions to the optimization_input_parameters dictionary
@@ -51,6 +83,7 @@ def get_simulation_conditions(optimization_input_parameters,fo):
 	optimization_input_parameters['simulation']['pin_stop']=-40
 	optimization_input_parameters['simulation']['pin_points']=16
 	optimization_input_parameters['simulation']['iip3_calc_points']=5
+	optimization_input_parameters['simulation']['process_corner']='tt'
 
 	optimization_input_parameters['simulation']['parameters_list']={
 		'pin':-65,
@@ -77,8 +110,9 @@ def get_simulation_conditions(optimization_input_parameters,fo):
 optimization_input_parameters={}
 
 # ---------- MOSFET Parameters ----------
-get_mos_parameters(optimization_input_parameters,'TSMC018')
-#get_mos_parameters(optimization_input_parameters,'IBM013')
+#get_mos_parameters(optimization_input_parameters,'TSMC180')
+get_mos_parameters(optimization_input_parameters,'TSMC65')
+#get_mos_parameters(optimization_input_parameters,'IBM130')
 
 # ---------- Simulation Conditions ----------
 fo=1e9
