@@ -3,7 +3,7 @@
 Name				: Pyneni Roopesh
 Roll Number			: EE18B028
 File Name			: main_optimization.py
-File Description 	: This file will initialize the optimization_input_parameters and run the complete_optimization file
+File Description 		: This file will initialize the optimization_input_parameters and run the complete_optimization file
 
 Functions structure in this file:
 	--> get_mos_parameters
@@ -131,9 +131,9 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']['Step1b_Limit']=5
 	optimization_input_parameters['pre_optimization']['Step2_Limit']=5
-	optimization_input_parameters['pre_optimization']['vdsat_reqd']=0.09
+	optimization_input_parameters['pre_optimization']['vdsat_reqd']=0.07
 
-	optimization_input_parameters['pre_optimization']['type']='manual'
+	optimization_input_parameters['pre_optimization']['type']=1
 	optimization_input_parameters['pre_optimization']['gmrs_threshold']=0.2
 	optimization_input_parameters['pre_optimization']['vdsat_threshold']=0.02
 
@@ -233,9 +233,9 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Iterations
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=100
+	optimization_input_parameters['optimization'][1]['max_iteration']=200
 	optimization_input_parameters['optimization'][2]={}
-	optimization_input_parameters['optimization'][2]['max_iteration']=100
+	optimization_input_parameters['optimization'][2]['max_iteration']=2
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Simulation Parameters
@@ -403,7 +403,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'TSMC65_Opt_and_Process_Analysis'						# SET THE FILENAME HERE
+	filename=f_directory+'TSMC65_Opt_and_Process_Analysis_with_vdsat'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=300	
 	# ------- Set Any Additional Parameters Here --------
 	

@@ -177,13 +177,13 @@ def differentiation_array(arr_x,arr_y):
 	arr_y2=np.zeros(len(arr_y)-2,dtype=float)
 	arr_y3=np.zeros(len(arr_y)-3,dtype=float)
 
-	for i in len(arr_y1):
+	for i in range(len(arr_y1)):
 		arr_y1[i]=(arr_y[i+1]-arr_y[i])/(arr_x[i+1]-arr_x[i])
 	
-	for i in len(arr_y2):
+	for i in range(len(arr_y2)):
 		arr_y2[i]=(arr_y1[i+1]-arr_y1[i])/(arr_x[i+1]-arr_x[i])
 	
-	for i in len(arr_y3):
+	for i in range(len(arr_y3)):
 		arr_y3[i]=(arr_y2[i+1]-arr_y2[i])/(arr_x[i+1]-arr_x[i])
 
 	return arr_x[:-3],arr_y[:-3],arr_y1[:-2],arr_y2[:-1],arr_y3
