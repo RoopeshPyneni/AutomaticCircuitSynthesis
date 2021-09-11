@@ -71,10 +71,10 @@ def extract_dc_param(filename):
 	lines=lines[0].split()
 
 	# Extracting the values
-	id=valueE_to_value(lines[4])
+	i_d=valueE_to_value(lines[4])
 	vdsat=valueE_to_value(lines[6])
 
-	return id,vdsat
+	return i_d,vdsat
 
 #===========================================================================================================================
 
@@ -95,7 +95,7 @@ def write_circuit_parameters(filename,v_g):
 	s=''
 	for line in fileinput.input(filename):
 		if "parameters v_g=" in line:	# Checking for a particular parameter in the .scs file
-			line='parameters v_g='+str(v_g)	# Replacing the parameter in the .scs file
+			line='parameters v_g='+str(v_g)+'\n'	# Replacing the parameter in the .scs file
 		s=s+line
 	f.truncate(0)
 	f.write(s)
@@ -113,7 +113,7 @@ def write_tcsh_file():
 	
 	s='#tcsh\n'
 	s=s+'source ~/.cshrc\n'
-	s=s+'cd /home/ee18b028/cadence_project/lna1/vdsat_test'
+	s=s+'cd /home/ee18b028/cadence_project/lna1/vdsat_test\n'
 	s=s+'spectre circ.scs \n'
 	s=s+'exit'
 	
@@ -135,10 +135,9 @@ def write_tcsh_file():
 # Outputs : NONE
 
 def run_file():
-	os.system('cd /home/ee18b028/cadence_project')
+	#os.system('cd /home/ee18b028/cadence_project')
 	os.system('tcsh /home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh')	# This is the command to run the spectre file
-
-
+	
 #-----------------------------------------------------------------------------------------------
 # This function will write the circuit parameters, run Eldo and extract the output parameters
 # Inputs  : Circuit_Parameters, Optimization_Input_Parameters
@@ -156,9 +155,9 @@ def write_extract(filename_w,v_g,filename_e):
 	run_file()
 
 	# Extracting the Basic Parameters
-	id,vdsat=extract_dc_param(filename_e)
+	i_d,vdsat=extract_dc_param(filename_e)
 	
-	return id,vdsat
+	return i_d,vdsat
 
 #===========================================================================================================================
 
@@ -172,16 +171,16 @@ def write_extract(filename_w,v_g,filename_e):
 # Inputs  : Circuit_Parameters, Optimization_Input_Parameters
 # Outputs : Extracted_Parameters
 
-def plot_id_vg(file_directory_plot,id,vg):
+def plot_id_vg(file_directory_plot,i_d,vg):
 	
 	figure()
-	plot(vg,id,label='id')
+	plot(vg,i_d,label='id')
 	ylabel('id')
 	xlabel('vg')
 	title('id vs vg')
 	grid()
 	legend()
-	savefig(file_directory_plot+'id_vs_vg.pdf')
+	savefig(file_directory_plot+'/id_vs_vg.pdf')
 	close()
 
 
@@ -200,8 +199,8 @@ filename_w=file_directory+'/circ.scs'
 filename_e=file_directory+'/dc.out'
 
 for vg in np.linspace(0,1,101):
-	id,vdsat=write_extract(filename_w,vg,filename_e)
-	id_array.append(id)
+	i_d,vdsat=write_extract(filename_w,vg,filename_e)
+	id_array.append(i_d)
 	vdsat_array.append(vdsat)
 	vg_array.append(vg)
 
@@ -209,5 +208,8 @@ id_array=np.array(id_array)
 vdsat_array=np.array(vdsat_array)
 vg_array=np.array(vg_array)
 
-file_directory_plot='/home/ee18b028/Optimization/Simulation_Results/Vdsat/'
-plot_id_vg(file_directory_plot,id,vg)
+file_directory_plot='/home/ee18b028/Optimization/Simulation_Results/Vdsat'
+if not os.path.exists(file_directory_plot):
+	os.makedirs(file_directory_plot)
+
+plot_id_vg(file_directory_plot,id_array,vg_array)
