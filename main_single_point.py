@@ -90,7 +90,7 @@ def get_simulation_conditions(optimization_input_parameters,fo):
 		'fund_2':fo+1e6,
 		'fund_1':fo,
 		'cir_temp':27,
-		'n_harm':5
+		'n_harm':10
 	}
 
 	optimization_input_parameters['simulation']['cir_writing_dict']={
@@ -119,14 +119,26 @@ fo=1e9
 get_simulation_conditions(optimization_input_parameters,fo)
 
 
+"""
 circuit_parameters={
-	'Rb':267,
-	'Rd':1170,
-	'Io':437e-6,
+	'Rb':300,
+	'Rd':350,
+	'Io':750e-6,
 	'C1':159e-12,
 	'C2':1780e-12,
-	'W':185e-6,
+	'W':300e-6,
 	'Rbias':8.87
+}
+"""
+
+circuit_parameters={
+	'Rb':242,
+	'Rd':1080,
+	'Io':478e-6,
+	'C1':159e-12,
+	'C2':1760e-12,
+	'W':177e-6,
+	'Rbias':9.0
 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

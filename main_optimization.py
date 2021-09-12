@@ -133,7 +133,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['pre_optimization']['Step2_Limit']=5
 	optimization_input_parameters['pre_optimization']['vdsat_reqd']=0.07
 
-	optimization_input_parameters['pre_optimization']['type']=1
+	optimization_input_parameters['pre_optimization']['type']='manual'
 	optimization_input_parameters['pre_optimization']['gmrs_threshold']=0.2
 	optimization_input_parameters['pre_optimization']['vdsat_threshold']=0.02
 
@@ -144,13 +144,13 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Manual Hand Calculations
 	optimization_input_parameters['pre_optimization']['manual_circuit_parameters']={
-		'Rb':281,
-		'Rd':316,
-		'Io':900e-6,
-		'C1':318e-12,
-		'C2':2.51e-12,
-		'W':36.3e-6,
-		'Rbias':6320
+		'Rb':300,
+		'Rd':350,
+		'Io':750e-6,
+		'C1':159e-12,
+		'C2':1780e-12,
+		'W':300e-6,
+		'Rbias':8.87
 	}
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -403,7 +403,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'TSMC65_Opt_and_Process_Analysis_with_vdsat'						# SET THE FILENAME HERE
+	filename=f_directory+'TSMC65_Opt_and_Process_Analysis_manual_checked'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=300	
 	# ------- Set Any Additional Parameters Here --------
 	
