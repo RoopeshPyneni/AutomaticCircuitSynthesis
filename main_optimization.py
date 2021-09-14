@@ -184,7 +184,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Parameters for Optimization
-	optimization_input_parameters['optimization']['n_runs']=2
+	optimization_input_parameters['optimization']['n_runs']=1
 	optimization_input_parameters['optimization']['max_iteration']=300
 	optimization_input_parameters['optimization']['alpha_min']=-1
 	optimization_input_parameters['optimization']['consec_iter']=-1
@@ -233,9 +233,9 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Iterations
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=200
-	optimization_input_parameters['optimization'][2]={}
-	optimization_input_parameters['optimization'][2]['max_iteration']=2
+	optimization_input_parameters['optimization'][1]['max_iteration']=100
+	#optimization_input_parameters['optimization'][2]={}
+	#optimization_input_parameters['optimization'][2]['max_iteration']=2
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Simulation Parameters
@@ -260,6 +260,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 		'n_harm':5
 	}
 
+	"""
 	optimization_input_parameters['optimization']['simulation'][2]={}
 
 	optimization_input_parameters['optimization']['simulation'][2]['iip3_type']='advanced'
@@ -278,6 +279,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 		'cir_temp':27,
 		'n_harm':15
 	}
+	"""
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Conditions for acceptable solution
@@ -403,7 +405,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'TSMC65_Opt_and_Process_Analysis_manual_checked'						# SET THE FILENAME HERE
+	filename=f_directory+'TSMC65_Opt_and_Process_Analysis_manual_checked_2'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=300	
 	# ------- Set Any Additional Parameters Here --------
 	
