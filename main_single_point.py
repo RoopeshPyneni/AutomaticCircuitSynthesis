@@ -84,6 +84,7 @@ def get_simulation_conditions(optimization_input_parameters,fo):
 	optimization_input_parameters['simulation']['pin_points']=16
 	optimization_input_parameters['simulation']['iip3_calc_points']=5
 	optimization_input_parameters['simulation']['process_corner']='tt'
+	optimization_input_parameters['simulation']['conservative']='NO'
 
 	optimization_input_parameters['simulation']['parameters_list']={
 		'pin':-65,
@@ -111,7 +112,8 @@ optimization_input_parameters={}
 
 # ---------- MOSFET Parameters ----------
 #get_mos_parameters(optimization_input_parameters,'TSMC180')
-get_mos_parameters(optimization_input_parameters,'TSMC65')
+#get_mos_parameters(optimization_input_parameters,'TSMC65')
+get_mos_parameters(optimization_input_parameters,'TSMC65_2')
 #get_mos_parameters(optimization_input_parameters,'IBM130')
 
 # ---------- Simulation Conditions ----------

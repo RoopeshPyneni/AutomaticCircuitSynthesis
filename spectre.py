@@ -99,90 +99,6 @@ def extract_file(file_name):
 	f.close()
 	return lines
 
-"""
-#---------------------------------------------------------------------------------------------------------------------------
-# Extracting the parameters from the lib file
-# Inputs: 
-# 1) lines of the lib file
-# 2) Parameter Name: un, vt, etc
-# 3) MOSFET Type: NMOS or PMOS
-# Output: The value of the extracted parameter
-def extract_lib_param(lines,param_name,mos_type):
-
-	# Getting the MOS Type
-	if mos_type=='NMOS':
-		m_type='type=n'
-	else:
-		m_type='type=p'
-
-	# Finding the required MOS Type in the MOSFET Process File
-	while 1:
-		if len(lines[0].split())<3:
-			lines=lines[1:]
-		elif 'model' in lines[0].split() and lines[0].split()[3] == m_type:
-			break
-		else:
-			lines=lines[1:]
-			
-	# Searching for the required parameter
-	while 1:
-		f=0
-		for word in lines[0].split():
-			if word==param_name:
-				f=1
-				break
-		if f==1:
-			line=lines[0].split()
-			i=0
-			while 1:
-				if line[i]==param_name:
-					value=float(line[i+2])
-					break
-				i+=1
-			break
-		else:
-			lines=lines[1:]
-	return value
-
-#---------------------------------------------------------------------------------------------------------------------------
-# Extracting Vth, un and cox from lib file
-# Inputs:
-# 1) lines of the lib file
-# 2) MOSFET Dictionary File
-# Outputs: mosfet dictionary containing mosfet parameters
-
-def extract_mosfet_param(optimization_input_parameters,mos_dict):
-	
-	# Getting the filename and the MOSFET Type
-	file_name=optimization_input_parameters['MOS']['filename']
-	mos_type=optimization_input_parameters['MOS']['Type']
-	
-	# Values that need to be extracted from the file
-	param_name_vt='vth0'
-	param_name_un='+u0'
-	param_name_tox='tox'
-
-	# Extracting the lines of the MOS File
-	lines=extract_file(file_name)
-
-	# Extracting the values
-	vt=extract_lib_param(lines,param_name_vt,mos_type)
-	un=1e-4*extract_lib_param(lines,param_name_un,mos_type)
-	tox=extract_lib_param(lines,param_name_tox,mos_type)
-
-	# Calculating other values
-	eo=8.85*1e-12
-	er=3.9
-	cox=eo*er/tox
-	
-	# Storing the values in a dictionary
-	mos_dict['un']=un
-	mos_dict['vt']=vt
-	mos_dict['cox']=cox
-	
-	return mos_dict
-"""
-
 
 #===========================================================================================================================================================
 #------------------------------------------------------ Basic File Extraction Functions --------------------------------------------------------------------
@@ -628,6 +544,17 @@ def write_MOS_parameters(optimization_input_parameters):
 		for param_name in write_dict:	# This line is used to replace the MOS parameters and simulation_parameters
 			if "parameters "+param_name+'=' in line:
 				line=line.replace(line,print_param(param_name,write_dict[param_name]))
+		
+		if 'hb_test' in line and 'errpreset=conservative' in line and optimization_input_parameters['simulation']['conservative']=='NO':
+			line_split=line.split()
+			line=''
+			for word in line_split:
+				if 'errpreset=conservative' not in word:
+					line=line+word+' '
+			line=line+'\n'
+		
+		elif 'hb_test' in line and 'errpreset=conservative' not in line and optimization_input_parameters['simulation']['conservative']=='YES':
+			line=line[:-1]+' errpreset=conservative \n'
 
 		if write_check==1:
 			s=s+line
@@ -701,6 +628,18 @@ def write_simulation_parameters(optimization_input_parameters):
 		for param_name in write_dict:	# This line is used to replace the MOS parameters and simulation_parameters
 			if "parameters "+param_name+'=' in line:
 				line=line.replace(line,print_param(param_name,write_dict[param_name]))
+				
+		if 'hb_test' in line and 'errpreset=conservative' in line and optimization_input_parameters['simulation']['conservative']=='NO':
+			line_split=line.split()
+			line=''
+			for word in line_split:
+				if 'errpreset=conservative' not in word:
+					line=line+word+' '
+			line=line+'\n'
+		
+		elif 'hb_test' in line and 'errpreset=conservative' not in line and optimization_input_parameters['simulation']['conservative']=='YES':
+			line=line[:-1]+' errpreset=conservative \n'
+			
 		
 		if write_check==1:
 			s=s+line

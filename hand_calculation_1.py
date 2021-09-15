@@ -233,6 +233,7 @@ def calc_C2(mos_parameters,opt_conditions,circuit_parameters,optimization_input_
 	
 	threshold2=optimization_input_parameters['pre_optimization']['C2_threshold']
 	threshold3=optimization_input_parameters['pre_optimization']['Rbias_threshold']
+	Rbias_min=optimization_input_parameters['pre_optimization']['Rbias_minimum']
 
 	# Assigning the values
 	L=mos_parameters['Lmin']
@@ -245,6 +246,7 @@ def calc_C2(mos_parameters,opt_conditions,circuit_parameters,optimization_input_
 	
 	# Calculating Rbias
 	Rbias=threshold3/(wo*C2)
+	Rbias=max(Rbias,Rbias_min)
 	
 	return C2,Rbias
 	
@@ -256,6 +258,7 @@ def calc_C2_updated(extracted_parameters,opt_conditions,circuit_parameters,optim
 	
 	threshold2=optimization_input_parameters['pre_optimization']['C2_threshold']
 	threshold3=optimization_input_parameters['pre_optimization']['Rbias_threshold']
+	Rbias_min=optimization_input_parameters['pre_optimization']['Rbias_minimum']
 
 	# Assigning the values
 	cgs=extracted_parameters['cgs1']
@@ -270,6 +273,7 @@ def calc_C2_updated(extracted_parameters,opt_conditions,circuit_parameters,optim
 	
 	# Calculating Rbias
 	Rbias=threshold3/(wo*C2)
+	Rbias=max(Rbias,Rbias_min)
 	
 	return C2,Rbias
 	
