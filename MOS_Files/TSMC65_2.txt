@@ -1,0 +1,25 @@
+Vdd
+1.0
+
+Lmin
+60e-9
+
+u0
+212.0608
+
+tox
+2e-9
+
+vth0
+0.31703
+
+tt_file
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d1_usage.scs" section=tt_lib
+
+ff_file
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d1_usage.scs" section=ff_lib
+
+ss_file
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d1_usage.scs" section=ss_lib
+
+
