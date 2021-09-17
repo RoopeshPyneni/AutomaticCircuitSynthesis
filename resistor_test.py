@@ -71,10 +71,9 @@ def extract_dc_param(filename):
 	lines=lines[0].split()
 
 	# Extracting the values
-	i_d=valueE_to_value(lines[4])
-	vdsat=valueE_to_value(lines[6])
+	resistance=valueE_to_value(lines[2])
 
-	return i_d,vdsat
+	return resistance
 
 #===========================================================================================================================
 
@@ -83,19 +82,46 @@ def extract_dc_param(filename):
 ====================================================================================================================================================================================
 ------------------------------------------------------------ FILE WRITE FUNCTIONS --------------------------------------------------------------------------------------------------
 """
-      
+
 #-----------------------------------------------------------------
 # Function that modifies the .scs file
 # Inputs  : circuit_parameters, optimization input parameters
 # Outputs : NONE
-def write_circuit_parameters(filename,v_g):
+def write_resistor_name(filename,resistor_name):
 	
 	# We will write the new values to the Basic Circuit
 	f=open(filename,'r+')
 	s=''
 	for line in fileinput.input(filename):
-		if "parameters v_g=" in line:	# Checking for a particular parameter in the .scs file
-			line='parameters v_g='+str(v_g)+'\n'	# Replacing the parameter in the .scs file
+		if "R1" in line:	# Checking for a particular parameter in the .scs file
+			line=line.split()
+			if line[0]=='R1':
+				line[3]=resistor_name
+			newline=''
+			for word in line:
+				newline=newline+word+' '
+			line=newline+'\n'
+		s=s+line
+	f.truncate(0)
+	f.write(s)
+	f.close()
+
+#-----------------------------------------------------------------
+# Function that modifies the .scs file
+# Inputs  : circuit_parameters, optimization input parameters
+# Outputs : NONE
+def write_circuit_parameters(filename,len,wid,temp):
+	
+	# Creating a dictionary of the parameters
+	write_dict={'len':len,'wid':wid,'cir_temp':temp}
+
+	# We will write the new values to the netlist file
+	f=open(filename,'r+')
+	s=''
+	for line in fileinput.input(filename):
+		for param in write_dict:
+			if 'parameters '+str(param) in line:								# Checking for a particular parameter in the .scs file
+				line='parameters '+str(param)+'='+str(write_dict(param))+'\n'	# Replacing the parameter in the .scs file
 		s=s+line
 	f.truncate(0)
 	f.write(s)
@@ -113,7 +139,7 @@ def write_tcsh_file():
 	
 	s='#tcsh\n'
 	s=s+'source ~/.cshrc\n'
-	s=s+'cd /home/ee18b028/cadence_project/lna1/vdsat_test\n'
+	s=s+'cd /home/ee18b028/cadence_project/test/resistor_test\n'
 	s=s+'spectre circ.scs \n'
 	s=s+'exit'
 	
@@ -135,7 +161,6 @@ def write_tcsh_file():
 # Outputs : NONE
 
 def run_file():
-	#os.system('cd /home/ee18b028/cadence_project')
 	os.system('tcsh /home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh')	# This is the command to run the spectre file
 	
 #-----------------------------------------------------------------------------------------------
@@ -143,117 +168,23 @@ def run_file():
 # Inputs  : Circuit_Parameters, Optimization_Input_Parameters
 # Outputs : Extracted_Parameters
 
-def write_extract(filename_w,v_g,filename_e):
+def write_extract(filename_w,filename_e,len,wid,temp):
 	
 	# Writing the tcsh file for Basic Analysis
 	write_tcsh_file()
 
 	# Writing to netlist file
-	write_circuit_parameters(filename_w,v_g)
+	write_circuit_parameters(filename_w,len,wid,temp)
 
 	# Running netlist file
 	run_file()
 
 	# Extracting the Basic Parameters
-	i_d,vdsat=extract_dc_param(filename_e)
+	resistance=extract_dc_param(filename_e)
 	
-	return i_d,vdsat
+	return resistance
 
 #===========================================================================================================================
-
-"""
-====================================================================================================================================================================================
------------------------------------------------------------- DIFFERENTIATION -------------------------------------------------------------------------------------------------------
-"""
-
-#-----------------------------------------------------------------------------------------------
-# 
-# Inputs  : 
-# Outputs : 
-
-def differentiation_array(arr_x,arr_y):
-	
-	arr_y1=np.zeros(len(arr_y)-1,dtype=float)
-	arr_y2=np.zeros(len(arr_y)-2,dtype=float)
-	arr_y3=np.zeros(len(arr_y)-3,dtype=float)
-
-	for i in range(len(arr_y1)):
-		arr_y1[i]=(arr_y[i+1]-arr_y[i])/(arr_x[i+1]-arr_x[i])
-	
-	for i in range(len(arr_y2)):
-		arr_y2[i]=(arr_y1[i+1]-arr_y1[i])/(arr_x[i+1]-arr_x[i])
-	
-	for i in range(len(arr_y3)):
-		arr_y3[i]=(arr_y2[i+1]-arr_y2[i])/(arr_x[i+1]-arr_x[i])
-
-	return arr_x[:-3],arr_y[:-3],arr_y1[:-2],arr_y2[:-1],arr_y3
-
-"""
-====================================================================================================================================================================================
------------------------------------------------------------- PLOT FUNCTIONS --------------------------------------------------------------------------------------------------------
-"""
-
-#-----------------------------------------------------------------------------------------------
-# 
-# Inputs  : 
-# Outputs : 
-
-def plot_curves(file_directory_plot,vg,i_d,gm1,gm2,gm3):
-	
-	# ID vs VG
-	figure()
-	plot(vg,i_d)
-	ylabel('id')
-	xlabel('vg')
-	title('id vs vg')
-	grid()
-	savefig(file_directory_plot+'/id_vs_vg.pdf')
-	close()
-
-	# GM1 vs VG
-	figure()
-	plot(vg,gm1)
-	ylabel('gm1')
-	xlabel('vg')
-	title('gm1 vs vg')
-	grid()
-	savefig(file_directory_plot+'/gm1_vs_vg.pdf')
-	close()
-
-	# GM2 vs VG
-	figure()
-	plot(vg,gm2)
-	ylabel('gm2')
-	xlabel('vg')
-	title('gm2 vs vg')
-	grid()
-	savefig(file_directory_plot+'/gm2_vs_vg.pdf')
-	close()
-
-	# GM3 vs VG
-	figure()
-	plot(vg,gm3)
-	ylabel('gm3')
-	xlabel('vg')
-	title('gm3 vs vg')
-	grid()
-	savefig(file_directory_plot+'/gm3_vs_vg.pdf')
-	close()
-
-	# All vs VG
-	figure()
-	plot(vg,i_d,label='id')
-	plot(vg,gm1,label='gm1')
-	plot(vg,gm2,label='gm2')
-	plot(vg,gm3,label='gm3')
-	ylabel('All Parameters')
-	xlabel('vg')
-	title('All Parameters vs vg')
-	grid()
-	legend()
-	savefig(file_directory_plot+'/all_vs_vg.pdf')
-	close()
-
 
 
 """
@@ -261,46 +192,20 @@ def plot_curves(file_directory_plot,vg,i_d,gm1,gm2,gm3):
 ------------------------------------------------------------ MAIN PROGRAM ----------------------------------------------------------------------------------------------------------
 """
 
-id_array=[]
-vdsat_array=[]
-vg_array=[]
-
-file_directory='/home/ee18b028/cadence_project/lna1/vdsat_test'
+file_directory='/home/ee18b028/cadence_project/test/resistor_test'
 filename_w=file_directory+'/circ.scs'
 filename_e=file_directory+'/dc.out'
 
-for vg in np.linspace(0,1,101):
-	i_d,vdsat=write_extract(filename_w,vg,filename_e)
-	id_array.append(i_d)
-	vdsat_array.append(vdsat)
-	vg_array.append(vg)
+write_resistor_name(filename_w,'rnpolyl')
 
-id_array=np.array(id_array)
-vdsat_array=np.array(vdsat_array)
-vg_array=np.array(vg_array)
+len=60e-9
+wid=600e-9
+temp=27
+resistance=write_extract(filename_w,filename_e,len,wid,temp)
 
-file_directory_plot='/home/ee18b028/Optimization/Simulation_Results/Vdsat'
+print('Resistance is:',resistance)
+
+file_directory_plot='/home/ee18b028/Optimization/Simulation_Results/Resistance'
 if not os.path.exists(file_directory_plot):
 	os.makedirs(file_directory_plot)
 
-vg_array,id_array,gm1_array,gm2_array,gm3_array=differentiation_array(vg_array,id_array)
-vdsat_array=vdsat_array[:-3]
-
-plot_curves(file_directory_plot,vg_array,id_array,gm1_array,gm2_array,gm3_array)
-
-vdsat_best=0
-i_best=0
-vg_best=0
-id_best=9
-for i in range(len(vg_array)-1):
-	if gm3_array[i]>0 and gm3_array[i+1]<=0:
-		vdsat_best=vdsat_array[i]
-		i_best=i
-		vg_best=vg_array[i]
-		id_best=id_array[i]
-		break
-
-print('Vdsat Best : ',vdsat_best)
-print('i     Best : ',i_best)
-print('Vg    Best : ',vg_best)
-print('Id    Best : ',id_best)
