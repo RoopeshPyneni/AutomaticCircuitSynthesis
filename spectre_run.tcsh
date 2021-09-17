@@ -1,5 +1,5 @@
 #tcsh
 source ~/.cshrc
-cd /home/ee18b028/cadence_project/test/vdsat_test
+cd /home/ee18b028/cadence_project/test/resistor_test
 spectre circ.scs 
 exit

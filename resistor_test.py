@@ -121,7 +121,7 @@ def write_circuit_parameters(filename,len,wid,temp):
 	for line in fileinput.input(filename):
 		for param in write_dict:
 			if 'parameters '+str(param) in line:								# Checking for a particular parameter in the .scs file
-				line='parameters '+str(param)+'='+str(write_dict(param))+'\n'	# Replacing the parameter in the .scs file
+				line='parameters '+str(param)+'='+str(write_dict[param])+'\n'	# Replacing the parameter in the .scs file
 		s=s+line
 	f.truncate(0)
 	f.write(s)
@@ -198,8 +198,8 @@ filename_e=file_directory+'/dc.out'
 
 write_resistor_name(filename_w,'rnpolyl')
 
-len=60e-9
-wid=600e-9
+len=1200e-9
+wid=6000e-9
 temp=27
 resistance=write_extract(filename_w,filename_e,len,wid,temp)
 
