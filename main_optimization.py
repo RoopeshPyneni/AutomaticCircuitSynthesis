@@ -183,7 +183,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 
 	optimization_input_parameters['optimization']={}
 
-	optimization_input_parameters['optimization']['run']='YES'
+	optimization_input_parameters['optimization']['run']='NO'
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Parameters for Optimization

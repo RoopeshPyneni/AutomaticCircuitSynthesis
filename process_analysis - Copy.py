@@ -14,6 +14,7 @@ Functions structure in this file:
 		--> plot_process_analysis
 			--> extract_process_analysis
 
+COMPLETE
 """
 
 #===========================================================================================================================
@@ -52,12 +53,12 @@ def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 # Writing the header row for extracted parameters to a csv file
 # Input: extracted_parameters, optimization_input_parameters
 # Output: NONE
-def write_extracted_parameters_initial(extracted_parameters,optimization_input_parameters,process_corner):
+def write_extracted_parameters_initial(extracted_parameters,optimization_input_parameters):
 	
-	filename=optimization_input_parameters['filename']['output']+'/Process_Analysis/Results/'+str(process_corner)+'/extracted_parameters.csv'	# Getting the filename
+	filename=optimization_input_parameters['filename']['output']+'/Process_Analysis/Results/extracted_parameters.csv'	# Getting the filename
 
 	f=open(filename,'w')
-	f.write('Temperature,')
+	f.write('Process,')
 	for param_name in extracted_parameters:
 		f.write(param_name+',')	# Writing the names in the file
 	f.write('\n')
@@ -67,11 +68,11 @@ def write_extracted_parameters_initial(extracted_parameters,optimization_input_p
 # Writing the values of extracted_parameters from each process iteration to a csv file
 # Input: circuit_parameters, optimization_input_parameters
 # Output: NONE
-def update_extracted_parameters(extracted_parameters,optimization_input_parameters,process_corner,temp):
-	filename=optimization_input_parameters['filename']['output']+'/Process_Analysis/Results/'+str(process_corner)+'/extracted_parameters.csv'	# Getting the filename
+def update_extracted_parameters(extracted_parameters,optimization_input_parameters,process_corner):
+	filename=optimization_input_parameters['filename']['output']+'/Process_Analysis/Results/extracted_parameters.csv'	# Getting the filename
 	
 	f=open(filename,'a')
-	f.write(str(temp)+',')
+	f.write(str(process_corner)+',')
 	for param_name in extracted_parameters:
 		f.write(str(extracted_parameters[param_name])+',')	# Writing the values to the file
 	f.write('\n')
@@ -114,42 +115,28 @@ def process_analysis(circuit_parameters,extracted_parameters,optimization_input_
 	
 	# Writing the values to output files
 	write_circuit_parameters(circuit_parameters,optimization_input_parameters)
-	
+	write_extracted_parameters_initial(extracted_parameters,optimization_input_parameters)
+
 	# Creating the list of process corners
 	process_corner_list=['tt','ff','ss']
-
-	# Creating an array for temperature analysis
-	start_temp=optimization_input_parameters['temperature_analysis']['start_temp']
-	stop_temp=optimization_input_parameters['temperature_analysis']['stop_temp']
-	n_temp=optimization_input_parameters['temperature_analysis']['n_temp']
-	if n_temp==1:
-		temp_array=np.array(['27'])
-	else:
-		temp_array=np.linspace(start_temp,stop_temp,n_temp)
-
+	
 	# Performing the analysis
 	for process_corner in process_corner_list:
 		extracted_parameters_iter[process_corner]={}
 		optimization_input_parameters['simulation']['process_corner']=process_corner
-		write_extracted_parameters_initial(extracted_parameters,optimization_input_parameters,process_corner)
 		sp.write_simulation_parameters(optimization_input_parameters)
-		for temp in temp_array:
-			optimization_input_parameters['simulation']['parameters_list']['cir_temp']=temp				# Writing the temperature value to the netlist file
-			extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)	# Extracting the parameters
-			update_extracted_parameters(extracted_parameters,optimization_input_parameters,process_corner,temp)		# Writing the values to the output file
-			extracted_parameters_iter[process_corner][temp]=extracted_parameters.copy()
+		extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)				# Extracting the parameters
+		update_extracted_parameters(extracted_parameters,optimization_input_parameters,process_corner)		# Writing the values to the output file
 		
 	# Restoring the value of initial extracted and circuit parameters
 	extracted_parameters=initial_extracted_parameters.copy()
 	circuit_parameters=initial_circuit_parameters.copy()
 
-	optimization_input_parameters['simulation']['parameters_list']['cir_temp']=optimization_input_parameters['simulation']['std_temp']	# Writing the temperature value to the netlist file
-
 	# Plotting the graphs
-	file_directory=optimization_input_parameters['filename']['output']
-	plot_process_analysis(extracted_parameters_iter,file_directory)
+	#file_directory=optimization_input_parameters['filename']['output']
+	#plot_process_analysis(extracted_parameters_iter,file_directory)
 
-	# Storing the stopping time
+	# Storing the stoppingg time
 	timing_results['process_analysis']['stop']=datetime.datetime.now()
 
 	# Opening the Run_Status File
@@ -166,6 +153,8 @@ def process_analysis(circuit_parameters,extracted_parameters,optimization_input_
 ====================================================================================================================================================================
 """
 
+"""
+
 #-----------------------------------------------------------------------------------------------
 # Plotting results ( Parameters vs Io at different temperatures )
 # Inputs  : extracted_parameters_iter
@@ -178,26 +167,15 @@ def plot_process_analysis(extracted_parameters_iter,file_directory,spec_current)
 		os.makedirs(pathname)
 	
 	# Creating output conditions dictionary
-	colour_dict_process={1:'red',2:'green',3:'blue',4:'cyan',5:'lime'}
-	
-	# Extracting the values
-	extracted_matrix,process_array,temp_array,param_array=extract_process_analysis(extracted_parameters_iter)
+	output_conditions={'gain_db':10.0,'s11_db':-15.0,'nf_db':4.0,'iip3_dbm':-5.0}
+	#colour_dict={'iip3_dbm':'r','nf_db':'g','s11_db':'b','gain_db':'m'}
+	colour_dict={0:'green',1:'blue',2:'red',3:'cyan',4:'lime',5:'violet'}
+
+	extracted_matrix,process_array,param_array=extract_process_analysis(extracted_parameters_iter)
 
 	# Getting the lengths of the arrays
 	n_process=len(process_array)
-	n_temp=len(temp_array)
 	n_param=len(param_array)
-
-	# Plotting parameters vs temp for different process corners
-	for k in range(n_param):
-		figure()
-		for i in len(n_process):
-			plot(temp_array,extracted_matrix[i,:,k],color=colour_dict_process[i],label='Process : '+str(process_array[i]))
-		xlabel('Temperature')
-		ylabel(param_array[k])
-		legend()
-		grid()
-		savefig(pathname+str(param_array[k])+'.pdf')	
 
 #-----------------------------------------------------------------------------------------------
 # Function to extract the data from extracted_parameters_iter dictionary and store it in the form of a matrix
@@ -207,12 +185,10 @@ def extract_process_analysis(extracted_parameters_iter):
 	
 	# Assigning the array to store the loss variables
 	process_array=[]
-	temp_array=[]
 	param_array=[]
 	
 	# Creating variables for the counting no of lines and variables
 	n_process=0
-	n_temp=0
 	n_param=0
 	
 	# Storing the value of temp, current, and param arrays
@@ -221,30 +197,24 @@ def extract_process_analysis(extracted_parameters_iter):
 		n_process+=1
 		final_process=process
 
-	for temp in extracted_parameters_iter[final_process]:
-		temp_array.append(temp)
-		n_temp+=1
-		final_temp=temp
-
-	for param in extracted_parameters_iter[final_process][final_temp]:
+	for param in extracted_parameters_iter[final_process]:
 		param_array.append(param)
 		n_param+=1
 		
 	# Creating array to store the values 
-	extracted_matrix=np.zeros((n_process,n_temp,n_param),dtype=float)
+	extracted_matrix=np.zeros((n_process,n_param),dtype=float)
 	
 	# Extracting the values of the variables
 	i=0
 	for process in extracted_parameters_iter:
 		j=0
-		for temp in extracted_parameters_iter[process]:
-			k=0
-			for param in extracted_parameters_iter[process][temp]:
-				extracted_matrix[i,j,k]=extracted_parameters_iter[process][temp][param]
-				k+=1
+		for param in extracted_parameters_iter[process]:
+			extracted_matrix[i,j]=extracted_parameters_iter[process][param]
 			j+=1
 		i+=1
 	
-	return extracted_matrix,process_array,temp_array,param_array
+	return extracted_matrix,process_array,param_array
+
+"""
 
 #===========================================================================================================================
