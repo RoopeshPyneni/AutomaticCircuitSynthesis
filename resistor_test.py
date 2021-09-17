@@ -140,7 +140,7 @@ def write_tcsh_file():
 	s='#tcsh\n'
 	s=s+'source ~/.cshrc\n'
 	s=s+'cd /home/ee18b028/cadence_project/test/resistor_test\n'
-	s=s+'spectre circ.scs \n'
+	s=s+'spectre circ.scs =log circ_log.txt\n'
 	s=s+'exit'
 	
 	f.truncate(0)
@@ -224,7 +224,7 @@ def plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wi
 	for i in range(len(temp_array)):
 		figure()
 		for k in range(len(wid_array)):
-			semilogx(len_array,resistance_array[i,:,k],label='Width = '+str(wid_array[k]))
+			loglog(len_array,resistance_array[i,:,k],label='Width = '+str(wid_array[k]))
 		xlabel('Length')
 		ylabel('Resistance')
 		grid()
@@ -241,7 +241,7 @@ def plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wi
 	for i in range(len(temp_array)):
 		figure()
 		for j in range(len(len_array)):
-			semilogx(wid_array,resistance_array[i,j,:],label='Length = '+str(len_array[j]))
+			loglog(wid_array,resistance_array[i,j,:],label='Length = '+str(len_array[j]))
 		xlabel('Width')
 		ylabel('Resistance')
 		grid()
@@ -258,7 +258,7 @@ def plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wi
 	for i in range(len(temp_array)):
 		figure()
 		for k in range(len(wid_array)):
-			semilogx(len_array/wid_array[k],resistance_array[i,:,k],label='Width = '+str(wid_array[k]))
+			loglog(len_array/wid_array[k],resistance_array[i,:,k],label='Width = '+str(wid_array[k]))
 		xlabel('Length/Width')
 		ylabel('Resistance')
 		grid()
@@ -280,10 +280,10 @@ filename_e=file_directory+'/dc.out'
 
 # Creating the temperature, length, and width arrays
 resistor_list=['rppolywo','rppolyl','rpodwo','rpodl','rnwsti','rnwod','rnpolywo','rnpolyl','rnodwo','rnodl']
-temp_array=np.linspace(-40,120,17)
+temp_array=np.linspace(-40,120,5)
 lw_start=60e-9
-lw_end=60e-6
-len_array=lw_start*np.logspace(0,np.log10(lw_end/lw_start),10)
+lw_end=60e-7
+len_array=lw_start*np.logspace(0,np.log10(lw_end/lw_start),7)
 wid_array=len_array
 
 # Running the code 
@@ -304,6 +304,7 @@ for resistor in resistor_list:
 	for i in range(l_temp):
 		for j in range(l_len):
 			for k in range(l_wid):
+				print('\n\ni=',i,'j=',j,'k=',k)
 				resistance_array[i,j,k]=write_extract(filename_w,filename_e,len_array[j],wid_array[k],temp_array[i])
 
 	plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wid_array)
