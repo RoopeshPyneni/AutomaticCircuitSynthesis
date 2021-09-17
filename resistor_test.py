@@ -113,7 +113,7 @@ def write_tcsh_file():
 	
 	s='#tcsh\n'
 	s=s+'source ~/.cshrc\n'
-	s=s+'cd /home/ee18b028/cadence_project/test/vdsat_test\n'
+	s=s+'cd /home/ee18b028/cadence_project/lna1/vdsat_test\n'
 	s=s+'spectre circ.scs \n'
 	s=s+'exit'
 	
@@ -265,7 +265,7 @@ id_array=[]
 vdsat_array=[]
 vg_array=[]
 
-file_directory='/home/ee18b028/cadence_project/test/vdsat_test'
+file_directory='/home/ee18b028/cadence_project/lna1/vdsat_test'
 filename_w=file_directory+'/circ.scs'
 filename_e=file_directory+'/dc.out'
 
