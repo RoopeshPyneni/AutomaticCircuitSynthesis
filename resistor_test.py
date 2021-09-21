@@ -75,6 +75,68 @@ def extract_dc_param(filename):
 
 	return resistance
 
+#---------------------------------------------------------------------------------------------------------------------------	
+# Checks if the frequency is within range ( within (target-error,target+error) )
+# Inputs: Test Frequency, Target Frequency, Error
+# Output: 1 if Yes and 0 if No
+
+def check_freq(f_test,f_target,f_error):
+	if f_test<f_target+f_error and f_test>f_target-f_error:
+		return 1
+	else:
+		return 0
+
+#---------------------------------------------------------------------------------------------------------------------------	
+# Extracting the DC from the file
+# Inputs: Optimization_input_parameters
+# Output: Dictionary with all the parameters
+
+def extract_hb_param(filename):
+
+	lines=extract_file(filename)
+	
+	frequency_array=[]
+	vout_real_array=[]
+	vout_img_array=[]
+	flag=0
+
+	for line in lines:
+		if flag==1:
+			char_real=(line.split()[1])[1:]
+			char_img=(line.split()[1])[:-1]
+			vout_real_array.append(float(char_real))
+			vout_img_array.append(float(char_img))
+			flag=0
+		if 'freq' not in line:
+			continue
+		if 'sweep' in line.split()[1]:
+			continue
+		frequency_array.append(float(line.split()[1]))
+		flag=1
+
+	# Converting to numpy arrays
+	frequency_array=np.array(frequency_array)
+	vout_real_array=np.array(vout_real_array)
+	vout_img_array=np.array(vout_img_array)
+
+	vout_square_extra=0
+	for i in range(len(frequency_array)):
+		print('\n\n')
+		print('i:',i)
+		print('Frequency:',frequency_array[i])
+		print('Vout Rea:',vout_real_array[i])
+		print('Vout Img:',vout_img_array[i])
+		if check_freq(frequency_array[i],0,1e6)==1:
+			continue
+		if check_freq(frequency_array[i],1e9,1e6)==1:
+			resistance=1e3*np.sqrt(vout_real_array[i]**2+vout_img_array[i]**2)
+			vout_square_normal=vout_real_array[i]**2+vout_img_array[i]**2
+		else:
+			vout_square_extra+=(vout_real_array[i]**2+vout_img_array[i]**2)
+	distortion=vout_square_extra/(vout_square_extra+vout_square_normal)
+
+	return resistance,distortion
+
 #===========================================================================================================================
 
 
@@ -168,7 +230,7 @@ def run_file():
 # Inputs  : Circuit_Parameters, Optimization_Input_Parameters
 # Outputs : Extracted_Parameters
 
-def write_extract(filename_w,filename_e,len,wid,temp):
+def write_extract(filename_w,filename_e,filename_h,len,wid,temp):
 	
 	# Writing the tcsh file for Basic Analysis
 	write_tcsh_file()
@@ -180,9 +242,12 @@ def write_extract(filename_w,filename_e,len,wid,temp):
 	run_file()
 
 	# Extracting the Basic Parameters
-	resistance=extract_dc_param(filename_e)
+	resistance_dc=extract_dc_param(filename_e)
+
+	# Extracting the HB Parameters
+	resistance_ac,distortion=extract_hb_param(filename_h)
 	
-	return resistance
+	return resistance_dc,resistance_ac,distortion
 
 #===========================================================================================================================
 
@@ -196,7 +261,7 @@ def write_extract(filename_w,filename_e,len,wid,temp):
 # Inputs  : Circuit_Parameters, Optimization_Input_Parameters
 # Outputs : Extracted_Parameters
 
-def plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wid_array):
+def plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wid_array,y_label):
 	
 	# First, we will plot R vs T for different l 
 	print('Start Plot vs Temperature')
@@ -209,7 +274,7 @@ def plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wi
 		for j in range(len(len_array)):
 			plot(temp_array,resistance_array[:,j,k],label='Length = '+str(len_array[j]))
 		xlabel('Temperature')
-		ylabel('Resistance')
+		ylabel(y_label)
 		grid()
 		legend()
 		savefig(file_directory+'/wid_'+str(wid_array[k])+'.pdf')
@@ -226,7 +291,7 @@ def plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wi
 		for k in range(len(wid_array)):
 			loglog(len_array,resistance_array[i,:,k],label='Width = '+str(wid_array[k]))
 		xlabel('Length')
-		ylabel('Resistance')
+		ylabel(y_label)
 		grid()
 		legend()
 		savefig(file_directory+'/temp_'+str(temp_array[i])+'.pdf')
@@ -243,7 +308,7 @@ def plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wi
 		for j in range(len(len_array)):
 			loglog(wid_array,resistance_array[i,j,:],label='Length = '+str(len_array[j]))
 		xlabel('Width')
-		ylabel('Resistance')
+		ylabel(y_label)
 		grid()
 		legend()
 		savefig(file_directory+'/temp_'+str(temp_array[i])+'.pdf')
@@ -260,7 +325,7 @@ def plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wi
 		for k in range(len(wid_array)):
 			loglog(len_array/wid_array[k],resistance_array[i,:,k],label='Width = '+str(wid_array[k]))
 		xlabel('Length/Width')
-		ylabel('Resistance')
+		ylabel(y_label)
 		grid()
 		legend()
 		savefig(file_directory+'/temp_'+str(temp_array[i])+'.pdf')
@@ -277,15 +342,28 @@ def plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wi
 file_directory='/home/ee18b028/cadence_project/test/resistor_test'
 filename_w=file_directory+'/circ.scs'
 filename_e=file_directory+'/dc.out'
+filename_h=file_directory+'/circ.raw/hb_test.fd.pss_hb'
 
 # Creating the temperature, length, and width arrays
-resistor_list=['rppolywo','rppolyl','rpodwo','rpodl','rnwsti','rnwod','rnpolywo','rnpolyl','rnodwo','rnodl']
+#resistor_list=['rppolywo','rppolyl','rpodwo','rpodl','rnwsti','rnwod','rnpolywo','rnpolyl','rnodwo','rnodl']
+resistor_list=['rnpolyl']
 temp_array=np.linspace(-40,120,5)
 lw_start=60e-9
 lw_end=60e-7
 len_array=lw_start*np.logspace(0,np.log10(lw_end/lw_start),7)
 wid_array=len_array
 
+#
+resistor='rpodwo'
+write_resistor_name(filename_w,resistor)
+resistance_dc,resistance_ac,distortion=write_extract(filename_w,filename_e,filename_h,1e-7,1e-7,27)
+
+print('Resistance DC:',resistance_dc)
+print('Resistance AC:',resistance_ac)
+print('Distortion   :',distortion)
+#
+
+"""
 # Running the code 
 for resistor in resistor_list:
 	print('Resistor name is : ',resistor)
@@ -299,39 +377,17 @@ for resistor in resistor_list:
 	l_len=len(len_array)
 	l_wid=len(wid_array)
 
-	resistance_array=np.zeros((l_temp,l_len,l_wid),dtype=float)
+	resistance_dc_array=np.zeros((l_temp,l_len,l_wid),dtype=float)
+	resistance_ac_array=np.zeros((l_temp,l_len,l_wid),dtype=float)
+	distortion_array=np.zeros((l_temp,l_len,l_wid),dtype=float)
 
 	for i in range(l_temp):
 		for j in range(l_len):
 			for k in range(l_wid):
 				print('\n\ni=',i,'j=',j,'k=',k)
-				resistance_array[i,j,k]=write_extract(filename_w,filename_e,len_array[j],wid_array[k],temp_array[i])
+				resistance_dc_array[i,j,k],resistance_ac_array[i,j,k],distortion_array[i,j,k]=write_extract(filename_w,filename_e,filename_h,len_array[j],wid_array[k],temp_array[i])
 
-	plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wid_array)
-
-
-"""
-write_resistor_name(filename_w,'rnpolyl')
-
-len=1200e-9
-wid=6000e-9
-temp=27
-resistance=write_extract(filename_w,filename_e,len,wid,temp)
-
-print('Resistance is:',resistance)
-"""
-
-
-"""
-List of Resistor Commands in the netlist file
-R0 (net017 net016 ) rppolywo l=10u w=2u m=1 mf=(1) mismatchflag=0
-R1 (net017 net016 ) rppolyl l=10u w=2u m=1 mf=(1) mismatchflag=0
-R2 (net017 net016 ) rpodwo l=10u w=2u m=1 mf=(1) mismatchflag=0
-R3 (net016 net028 ) rpodl l=10u w=2u m=1 mf=(1) mismatchflag=0
-R4 (net016 net028 ) rnwsti l=10u w=2u mf=(1)
-R5 (net016 net028 ) rnwod l=10u w=2u mf=(1)
-R6 (net016 net028 ) rnpolywo l=10u w=2u m=1 mf=(1) mismatchflag=0
-R7 (net016 net028 ) rnpolyl l=10u w=2u m=1 mf=(1) mismatchflag=0
-R8 (net016 net028 ) rnodwo l=10u w=2u m=1 mf=(1) mismatchflag=0
-R9 (net033 net028 ) rnodl l=10u w=2u m=1 mf=(1) mismatchflag=0
+	plot_resistance(file_directory_plot+'/DC_Resistance',resistance_dc_array,temp_array,len_array,wid_array,'DC Resistance')
+	plot_resistance(file_directory_plot+'/AC_Resistance',resistance_ac_array,temp_array,len_array,wid_array,'AC Resistance')
+	plot_resistance(file_directory_plot+'/Distortion',distortion_array,temp_array,len_array,wid_array,'Distortion')
 """
