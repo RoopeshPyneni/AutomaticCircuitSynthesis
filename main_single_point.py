@@ -166,6 +166,24 @@ extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_para
 print('Extracted_Parameters\n')
 for param_name in extracted_parameters:
 	print(param_name,' : ',extracted_parameters[param_name])
+	
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#------------------------------- CHANGING TO NEW SCHEMATIC -------------------------------------
+	
+optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65'
+optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65'
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#----------------------------------------- FILE RUN --------------------------------------------
+
+sp.write_MOS_parameters(optimization_input_parameters)
+extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#------------------------------------- OUTPUT PRINT --------------------------------------------
+print('Extracted_Parameters\n')
+for param_name in extracted_parameters:
+	print(param_name,' : ',extracted_parameters[param_name])
 
 
 
