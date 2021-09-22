@@ -168,10 +168,10 @@ def write_resistor_name(file_directory,resistor_name):
 # Function that modifies the .scs file
 # Inputs  : circuit_parameters, optimization input parameters
 # Outputs : NONE
-def write_circuit_parameters(filename,len,wid,temp):
+def write_circuit_parameters(filename,len,wid,temp,freq):
 	
 	# Creating a dictionary of the parameters
-	write_dict={'len':len,'wid':wid,'cir_temp':temp}
+	write_dict={'len':len,'wid':wid,'cir_temp':temp,'fund_1':freq}
 
 	# We will write the new values to the netlist file
 	f=open(filename,'r+')
@@ -225,7 +225,7 @@ def run_file():
 # Inputs  : Circuit_Parameters, Optimization_Input_Parameters
 # Outputs : Extracted_Parameters
 
-def write_extract(file_directory,length,wid,temp):
+def write_extract(file_directory,length,wid,temp,freq):
 
 	# Getting the filenames
 	filename_w=file_directory+'/circ.scs'
@@ -236,7 +236,7 @@ def write_extract(file_directory,length,wid,temp):
 	write_tcsh_file(file_directory)
 
 	# Writing to netlist file
-	write_circuit_parameters(filename_w,length,wid,temp)
+	write_circuit_parameters(filename_w,length,wid,temp,freq)
 
 	# Running netlist file
 	run_file()
@@ -271,7 +271,7 @@ def calculate_slope(x,y):
 # Calculating the temperature coefficient
 # Inputs: filenames for netlist files, resistor list, output storing file directory
 # Output: NONE
-def temp_co_analysis(file_directory_netlist,file_directory):
+def temp_co_analysis(file_directory_netlist,resistor_list,file_directory):
 	
 	# Creating the folder to store the outputs
 	if not os.path.exists(file_directory):
@@ -300,6 +300,7 @@ def temp_co_analysis(file_directory_netlist,file_directory):
 		f.write(resistor+',')
 		
 		# Choosing the width and length of the MOS Resistor
+		freq=1e9
 		if resistor=='rnwsti' or resistor=='rnwod':
 			wid=5e-6
 			length=10e-6
@@ -311,14 +312,83 @@ def temp_co_analysis(file_directory_netlist,file_directory):
 		i=0
 		for temp in temp_array:
 			print('Temperature : ',temp)
-			resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,temp)	# Extracting the values
+			resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,temp,freq)	# Extracting the values
 			resistance_array[i]=resistance_dc	
 			i+=1
 			f.write(str(resistance_dc)+',') # Writing to csv file
 		temp_co,c=calculate_slope(temp_array,resistance_array)	# Calculating the slope of resistance vs temperature
-		resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,27)	# Finding resistance at 27o C
+		resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,27,freq)	# Finding resistance at 27o C
 		temp_co/=resistance_dc	# Dividing the slope by resistance at 27o C
 		f.write(str(temp_co)+'\n')
+
+	f.close()
+
+"""
+====================================================================================================================================================================================
+------------------------------------------------------------ FREQUENCY SWEEP ANALYSIS ----------------------------------------------------------------------------------------------
+"""
+
+#---------------------------------------------------------------------------------------------------------------------------	
+# Calculating AC Resistance as a function of frequency
+# Inputs: filenames for netlist files, resistor list, output storing file directory
+# Output: NONE
+def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_list,file_directory):
+
+	# Creating the folder to store the outputs
+	if not os.path.exists(file_directory):
+		os.makedirs(file_directory)
+	
+	# Opening the file
+	filename_csv=file_directory+'/frequency_sweep.csv'
+	f=open(filename_csv,'w')
+
+	# Getting the frequency array
+	freq_array=np.logspace(8,10,11)
+
+	# Arrays to store values
+	resistance_ac_array=np.zeros(len(freq_array),dtype=float)
+
+	# Writing the first line in the csv file
+	f.write('Resistor Name,')
+	for freq in freq_array:
+		f.write(str(freq)+',')
+	f.write('DC Resistance\n')
+	
+	# Performing the analysis
+	for resistor in resistor_list:
+		
+		# Writing the resistor name in the file
+		print('\n\n Resistor : ', resistor)
+		write_resistor_name(file_directory_netlist,resistor)
+		f.write(resistor+',')
+		
+		# Choosing the width and length of the MOS Resistor
+		if resistor=='rnwsti' or resistor=='rnwod':
+			wid=5e-6
+			length=10e-6
+		else:
+			wid=1e-6
+			length=1e-6
+		
+		i=0
+		for freq in freq_array:
+			resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,27,freq)	# Finding resistance at 27o C
+			resistance_ac_array[i]=resistance_ac
+			i+=1
+			f.write(str(resistance_ac)+',')
+		f.write(str(resistance_dc)+'\n')
+
+		resistance_dc_array=resistance_dc*np.ones(len(resistance_ac_array),dtype=float)
+		figure()
+		semilogx(freq_array,resistance_ac_array,color='green',label='AC Resistance')
+		semilogx(freq_array,resistance_dc_array,color='red',label='DC Resistance')
+		grid()
+		xlabel('Frequency')
+		ylabel('Resistance')
+		grid()
+		legend()
+		savefig(file_directory+'/FrequencyPlot_'+resistor+'.jpg')
+		close()
 
 	f.close()
 
@@ -354,6 +424,7 @@ def MOS_Resistor_Distortion(file_directory_netlist,resistor_list,file_directory)
 		f.write(resistor+',')
 		
 		# Choosing the width and length of the MOS Resistor
+		freq=1e9
 		if resistor=='rnwsti' or resistor=='rnwod':
 			wid=5e-6
 			length=10e-6
@@ -361,7 +432,7 @@ def MOS_Resistor_Distortion(file_directory_netlist,resistor_list,file_directory)
 			wid=1e-6
 			length=1e-6
 		
-		resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,27)	# Finding resistance at 27o C
+		resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,27,freq)	# Finding resistance at 27o C
 		print('Resistance DC:',resistance_dc)
 		print('Resistance AC:',resistance_ac)
 		print('Distortion   :',distortion)
@@ -455,6 +526,7 @@ def plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wi
 def sweep_MOS_R(file_directory_netlist,resistor_list,file_directory):
 	
 	# Running the code 
+	freq=1e9
 	temp_array=np.linspace(-40,120,17)
 	lw_start=60e-9
 	lw_end=60e-7
@@ -481,7 +553,7 @@ def sweep_MOS_R(file_directory_netlist,resistor_list,file_directory):
 				for k in range(l_wid):
 					print('\n\ni=',i,'j=',j,'k=',k)
 					resistance_dc_array[i,j,k],resistance_ac_array[i,j,k],distortion_array[i,j,k]=write_extract(file_directory_netlist,
-					len_array[j],wid_array[k],temp_array[i])
+					len_array[j],wid_array[k],temp_array[i],freq)
 
 		plot_resistance(file_directory_plot+'/DC_Resistance',resistance_dc_array,temp_array,len_array,wid_array,'DC Resistance')
 		plot_resistance(file_directory_plot+'/AC_Resistance',resistance_ac_array,temp_array,len_array,wid_array,'AC Resistance')
@@ -511,6 +583,12 @@ write_directory_temp='/home/ee18b028/Optimization/Simulation_Results/Resistance/
 temp_co_analysis(file_directory,resistor_list1,write_directory)
 """
 
-# Code to distortion analysis
+"""
+# Code to do distortion analysis
 write_directory_distortion='/home/ee18b028/Optimization/Simulation_Results/Resistance/Distortion'
 MOS_Resistor_Distortion(file_directory,resistor_list2,write_directory_distortion)
+"""
+
+# Code to distortion analysis
+write_directory_fsweep='/home/ee18b028/Optimization/Simulation_Results/Resistance/FrequencySweep'
+MOS_Resistor_Frequency_Sweep(file_directory,resistor_list2,write_directory_fsweep)
