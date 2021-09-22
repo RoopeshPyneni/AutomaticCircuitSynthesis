@@ -246,87 +246,6 @@ def write_extract(filename_w,filename_e,filename_h,length,wid,temp):
 
 #===========================================================================================================================
 
-"""
-====================================================================================================================================================================================
------------------------------------------------------------- PLOTS -----------------------------------------------------------------------------------------------------------------
-"""
-
-#-----------------------------------------------------------------------------------------------
-# This function will plot all the graphs
-# Inputs  : Circuit_Parameters, Optimization_Input_Parameters
-# Outputs : Extracted_Parameters
-
-def plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wid_array,y_label):
-	
-	# First, we will plot R vs T for different l 
-	print('Start Plot vs Temperature')
-	file_directory=file_directory_plot+'/Temperature'
-	if not os.path.exists(file_directory):
-		os.makedirs(file_directory)
-
-	for k in range(len(wid_array)):
-		figure()
-		for j in range(len(len_array)):
-			plot(temp_array,resistance_array[:,j,k],label='Length = '+str(len_array[j]))
-		xlabel('Temperature')
-		ylabel(y_label)
-		grid()
-		legend()
-		savefig(file_directory+'/wid_'+str(wid_array[k])+'.pdf')
-		close()
-
-	# Second, we will plot R vs l for different w
-	print('Start Plot vs Length')
-	file_directory=file_directory_plot+'/Length'
-	if not os.path.exists(file_directory):
-		os.makedirs(file_directory)
-
-	for i in range(len(temp_array)):
-		figure()
-		for k in range(len(wid_array)):
-			loglog(len_array,resistance_array[i,:,k],label='Width = '+str(wid_array[k]))
-		xlabel('Length')
-		ylabel(y_label)
-		grid()
-		legend()
-		savefig(file_directory+'/temp_'+str(temp_array[i])+'.pdf')
-		close()
-
-	# Third, we will plot R vs w for different l
-	print('Start Plot vs Width')
-	file_directory=file_directory_plot+'/Width'
-	if not os.path.exists(file_directory):
-		os.makedirs(file_directory)
-
-	for i in range(len(temp_array)):
-		figure()
-		for j in range(len(len_array)):
-			loglog(wid_array,resistance_array[i,j,:],label='Length = '+str(len_array[j]))
-		xlabel('Width')
-		ylabel(y_label)
-		grid()
-		legend()
-		savefig(file_directory+'/temp_'+str(temp_array[i])+'.pdf')
-		close()
-
-	# Finally, we will plot R vs l/w for different w
-	print('Start Plot vs L by W')
-	file_directory=file_directory_plot+'/L_by_W'
-	if not os.path.exists(file_directory):
-		os.makedirs(file_directory)
-
-	for i in range(len(temp_array)):
-		figure()
-		for k in range(len(wid_array)):
-			loglog(len_array/wid_array[k],resistance_array[i,:,k],label='Width = '+str(wid_array[k]))
-		xlabel('Length/Width')
-		ylabel(y_label)
-		grid()
-		legend()
-		savefig(file_directory+'/temp_'+str(temp_array[i])+'.pdf')
-		close()
-
-
 
 """
 ====================================================================================================================================================================================
@@ -403,21 +322,133 @@ def temp_co_analysis(filename_write,filename_dc,filename_hb,resistor_list,file_d
 ------------------------------------------------------------ CODE TO FIND THE DISTORTION -------------------------------------------------------------------------------------------
 """
 
-def MOS_Resistor_Distortion():
-	resistor='rpodwo'
-	write_resistor_name(filename_w,resistor)
-	resistance_dc,resistance_ac,distortion=write_extract(filename_w,filename_e,filename_h,1e-7,1e-7,27)
+#---------------------------------------------------------------------------------------------------------------------------	
+# Calculating the distortion
+# Inputs: filenames for netlist files, resistor list, output storing file directory
+# Output: NONE
+def MOS_Resistor_Distortion(filename_write,filename_dc,filename_hb,resistor_list,file_directory):
 
-	print('Resistance DC:',resistance_dc)
-	print('Resistance AC:',resistance_ac)
-	print('Distortion   :',distortion)
+	# Creating the folder to store the outputs
+	if not os.path.exists(file_directory):
+		os.makedirs(file_directory)
+	
+	# Opening the file
+	filename_csv=file_directory+'/distortion.csv'
+	f=open(filename_csv,'w')
+
+	# Writing the first line in the csv file
+	f.write('Resistor Name,')
+	f.write('Distortion\n')
+	
+	# Performing the analysis
+	for resistor in resistor_list:
+		
+		# Writing the resistor name in the file
+		print('\n\n Resistor : ', resistor)
+		write_resistor_name(filename_write,resistor)
+		f.write(resistor+',')
+		
+		# Choosing the width and length of the MOS Resistor
+		if resistor=='rnwsti' or resistor=='rnwod':
+			wid=5e-6
+			length=10e-6
+		else:
+			wid=1e-6
+			length=1e-6
+		
+		resistance_dc,resistance_ac,distortion=write_extract(filename_write,filename_dc,filename_hb,length,wid,27)	# Finding resistance at 27o C
+		print('Resistance DC:',resistance_dc)
+		print('Resistance AC:',resistance_ac)
+		print('Distortion   :',distortion)
+		f.write(str(distortion)+'\n')
+
+	f.close()
 
 """
 ====================================================================================================================================================================================
 ------------------------------------------------------------ CODE TO SWEEP R vs W,L,T ----------------------------------------------------------------------------------------------
 """
 
-def sweep_MOS_R():
+#-----------------------------------------------------------------------------------------------
+# This function will plot all the graphs
+# Inputs  : Circuit_Parameters, Optimization_Input_Parameters
+# Outputs : Extracted_Parameters
+def plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wid_array,y_label):
+	
+	# First, we will plot R vs T for different l 
+	print('Start Plot vs Temperature')
+	file_directory=file_directory_plot+'/Temperature'
+	if not os.path.exists(file_directory):
+		os.makedirs(file_directory)
+
+	for k in range(len(wid_array)):
+		figure()
+		for j in range(len(len_array)):
+			plot(temp_array,resistance_array[:,j,k],label='Length = '+str(len_array[j]))
+		xlabel('Temperature')
+		ylabel(y_label)
+		grid()
+		legend()
+		savefig(file_directory+'/wid_'+str(wid_array[k])+'.pdf')
+		close()
+
+	# Second, we will plot R vs l for different w
+	print('Start Plot vs Length')
+	file_directory=file_directory_plot+'/Length'
+	if not os.path.exists(file_directory):
+		os.makedirs(file_directory)
+
+	for i in range(len(temp_array)):
+		figure()
+		for k in range(len(wid_array)):
+			loglog(len_array,resistance_array[i,:,k],label='Width = '+str(wid_array[k]))
+		xlabel('Length')
+		ylabel(y_label)
+		grid()
+		legend()
+		savefig(file_directory+'/temp_'+str(temp_array[i])+'.pdf')
+		close()
+
+	# Third, we will plot R vs w for different l
+	print('Start Plot vs Width')
+	file_directory=file_directory_plot+'/Width'
+	if not os.path.exists(file_directory):
+		os.makedirs(file_directory)
+
+	for i in range(len(temp_array)):
+		figure()
+		for j in range(len(len_array)):
+			loglog(wid_array,resistance_array[i,j,:],label='Length = '+str(len_array[j]))
+		xlabel('Width')
+		ylabel(y_label)
+		grid()
+		legend()
+		savefig(file_directory+'/temp_'+str(temp_array[i])+'.pdf')
+		close()
+
+	# Finally, we will plot R vs l/w for different w
+	print('Start Plot vs L by W')
+	file_directory=file_directory_plot+'/L_by_W'
+	if not os.path.exists(file_directory):
+		os.makedirs(file_directory)
+
+	for i in range(len(temp_array)):
+		figure()
+		for k in range(len(wid_array)):
+			loglog(len_array/wid_array[k],resistance_array[i,:,k],label='Width = '+str(wid_array[k]))
+		xlabel('Length/Width')
+		ylabel(y_label)
+		grid()
+		legend()
+		savefig(file_directory+'/temp_'+str(temp_array[i])+'.pdf')
+		close()
+
+#---------------------------------------------------------------------------------------------------------------------------	
+# Sweeping W,L,T and plotting the Resistance Values
+# Inputs: filenames for netlist files, resistor list, output storing file directory
+# Output: NONE
+def sweep_MOS_R(filename_write,filename_dc,filename_hb,resistor_list,file_directory):
+	
 	# Running the code 
 	temp_array=np.linspace(-40,120,17)
 	lw_start=60e-9
@@ -426,7 +457,7 @@ def sweep_MOS_R():
 	wid_array=len_array
 	for resistor in resistor_list:
 		print('Resistor name is : ',resistor)
-		write_resistor_name(filename_w,resistor)
+		write_resistor_name(filename_write,resistor)
 
 		file_directory_plot='/home/ee18b028/Optimization/Simulation_Results/Resistance/'+resistor
 		if not os.path.exists(file_directory_plot):
@@ -444,8 +475,8 @@ def sweep_MOS_R():
 			for j in range(l_len):
 				for k in range(l_wid):
 					print('\n\ni=',i,'j=',j,'k=',k)
-					resistance_dc_array[i,j,k],resistance_ac_array[i,j,k],distortion_array[i,j,k]=write_extract(filename_w,
-					filename_e,filename_h,len_array[j],wid_array[k],temp_array[i])
+					resistance_dc_array[i,j,k],resistance_ac_array[i,j,k],distortion_array[i,j,k]=write_extract(filename_write,
+					filename_dc,filename_hb,len_array[j],wid_array[k],temp_array[i])
 
 		plot_resistance(file_directory_plot+'/DC_Resistance',resistance_dc_array,temp_array,len_array,wid_array,'DC Resistance')
 		plot_resistance(file_directory_plot+'/AC_Resistance',resistance_ac_array,temp_array,len_array,wid_array,'AC Resistance')
@@ -472,6 +503,12 @@ resistor_list2=['rppolywo_m','rppolyl_m','rpodwo_m','rpodl_m','rnwsti_m','rnwod_
 resistor_list3=['rnpolywo','rnodl','rnwsti']
 resistor_list4=['rnpolywo_m','rnodl_m','rnwsti_m']
 
+"""
 # Code to run temp co analysis
-write_directory='/home/ee18b028/Optimization/Simulation_Results/Resistance/Temp Coefficient'
+write_directory_temp='/home/ee18b028/Optimization/Simulation_Results/Resistance/Temp Coefficient'
 temp_co_analysis(filename_write,filename_dc,filename_hb,resistor_list1,write_directory)
+"""
+
+# Code to distortion analysis
+write_directory_distortion='/home/ee18b028/Optimization/Simulation_Results/Resistance/Distortion'
+MOS_Resistor_Distortion(filename_write,filename_dc,filename_hb,resistor_list1,write_directory_distortion)
