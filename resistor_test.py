@@ -103,7 +103,7 @@ def extract_hb_param(filename):
 	for line in lines:
 		if flag==1:
 			char_real=(line.split()[1])[1:]
-			char_img=(line.split()[1])[:-1]
+			char_img=(line.split()[2])[:-1]
 			vout_real_array.append(float(char_real))
 			vout_img_array.append(float(char_img))
 			flag=0
@@ -129,7 +129,7 @@ def extract_hb_param(filename):
 		if check_freq(frequency_array[i],0,1e6)==1:
 			continue
 		if check_freq(frequency_array[i],1e9,1e6)==1:
-			resistance=1e3*np.sqrt(vout_real_array[i]**2+vout_img_array[i]**2)
+			resistance=1e6*np.sqrt(vout_real_array[i]**2+vout_img_array[i]**2)
 			vout_square_normal=vout_real_array[i]**2+vout_img_array[i]**2
 		else:
 			vout_square_extra+=(vout_real_array[i]**2+vout_img_array[i]**2)
@@ -339,7 +339,7 @@ def plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wi
 """
 
 # Filenames for the netlist file
-file_directory='/home/ee18b028/cadence_project/test/resistor_test'
+file_directory='/home/ee18b028/cadence_project/test/resistor_test_2'
 filename_w=file_directory+'/circ.scs'
 filename_e=file_directory+'/dc.out'
 filename_h=file_directory+'/circ.raw/hb_test.fd.pss_hb'
