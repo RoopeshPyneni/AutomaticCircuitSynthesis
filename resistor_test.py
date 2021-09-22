@@ -335,8 +335,115 @@ def plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wi
 
 """
 ====================================================================================================================================================================================
+------------------------------------------------------------ TEMP CO FUNCTIONS -----------------------------------------------------------------------------------------------------
+"""
+
+#---------------------------------------------------------------------------------------------------------------------------	
+# Calculating the slope and y-intercept
+# Inputs: x and y coordinates of the points
+# Output: slope, y-intercept
+
+def calculate_slope(x,y):
+	A = np.vstack([x, np.ones(len(x))]).T
+	m, c = np.linalg.lstsq(A, y, rcond=None)[0]
+	return m,c
+
+#---------------------------------------------------------------------------------------------------------------------------	
+# Calculating the temperature coefficient
+# Inputs: filenames for netlist files, resistor list, output storing file directory
+# Output: NONE
+def temp_co_analysis(filename_w,filename_e,filename_h,resistor_list,file_directory):
+	
+	# Analysis performed to find the temperature coefficient
+	temp_array=np.linspace(-40,120,17)
+	resistance_array=np.zeros(17,dtype=float)
+	filename_csv=file_directory+'/temp_coeff.csv'
+	f=open(filename_csv,'w')
+
+	# Writing the first line in the csv file
+	f.write('Resistor Name,')
+	for temp in temp_array:
+		f.write(str(temp)+',')
+	f.write('Temperature Coefficient\n')
+	for resistor in resistor_list:
+		f.write(resistor+',')
+		if resistor=='rnwsti' or resistor=='rnwod':
+			wid=5e-6
+			len=10e-6
+		else:
+			wid=1e-6
+			len=1e-6
+		i=0
+		for temp in temp_array:
+			resistance_dc,resistance_ac,distortion=write_extract(filename_w,filename_e,filename_h,len,wid,temp)
+			resistance_array[i]=resistance_dc
+			i+=1
+			f.write(str(resistance_dc)+',')
+		temp_co,c=calculate_slope(temp_array,resistance_array)
+		f.write(str(temp_co)+'\n')
+
+	f.close()
+
+"""
+====================================================================================================================================================================================
+------------------------------------------------------------ CODE TO FIND THE DISTORTION -------------------------------------------------------------------------------------------
+"""
+
+def MOS_Resistor_Distortion():
+	resistor='rpodwo'
+	write_resistor_name(filename_w,resistor)
+	resistance_dc,resistance_ac,distortion=write_extract(filename_w,filename_e,filename_h,1e-7,1e-7,27)
+
+	print('Resistance DC:',resistance_dc)
+	print('Resistance AC:',resistance_ac)
+	print('Distortion   :',distortion)
+
+"""
+====================================================================================================================================================================================
+------------------------------------------------------------ CODE TO SWEEP R vs W,L,T ----------------------------------------------------------------------------------------------
+"""
+
+def sweep_MOS_R():
+	# Running the code 
+	temp_array=np.linspace(-40,120,17)
+	lw_start=60e-9
+	lw_end=60e-7
+	len_array=lw_start*np.logspace(0,np.log10(lw_end/lw_start),7)
+	wid_array=len_array
+	for resistor in resistor_list:
+		print('Resistor name is : ',resistor)
+		write_resistor_name(filename_w,resistor)
+
+		file_directory_plot='/home/ee18b028/Optimization/Simulation_Results/Resistance/'+resistor
+		if not os.path.exists(file_directory_plot):
+			os.makedirs(file_directory_plot)
+
+		l_temp=len(temp_array)
+		l_len=len(len_array)
+		l_wid=len(wid_array)
+
+		resistance_dc_array=np.zeros((l_temp,l_len,l_wid),dtype=float)
+		resistance_ac_array=np.zeros((l_temp,l_len,l_wid),dtype=float)
+		distortion_array=np.zeros((l_temp,l_len,l_wid),dtype=float)
+
+		for i in range(l_temp):
+			for j in range(l_len):
+				for k in range(l_wid):
+					print('\n\ni=',i,'j=',j,'k=',k)
+					resistance_dc_array[i,j,k],resistance_ac_array[i,j,k],distortion_array[i,j,k]=write_extract(filename_w,filename_e,filename_h,len_array[j],wid_array[k],temp_array[i])
+
+		plot_resistance(file_directory_plot+'/DC_Resistance',resistance_dc_array,temp_array,len_array,wid_array,'DC Resistance')
+		plot_resistance(file_directory_plot+'/AC_Resistance',resistance_ac_array,temp_array,len_array,wid_array,'AC Resistance')
+		plot_resistance(file_directory_plot+'/Distortion',distortion_array,temp_array,len_array,wid_array,'Distortion')
+
+
+
+
+"""
+====================================================================================================================================================================================
 ------------------------------------------------------------ MAIN PROGRAM ----------------------------------------------------------------------------------------------------------
 """
+
 
 # Filenames for the netlist file
 file_directory='/home/ee18b028/cadence_project/test/resistor_test_2'
@@ -345,49 +452,8 @@ filename_e=file_directory+'/dc.out'
 filename_h=file_directory+'/circ.raw/hb_test.fd.pss_hb'
 
 # Creating the temperature, length, and width arrays
-#resistor_list=['rppolywo','rppolyl','rpodwo','rpodl','rnwsti','rnwod','rnpolywo','rnpolyl','rnodwo','rnodl']
-resistor_list=['rnpolyl']
-temp_array=np.linspace(-40,120,5)
-lw_start=60e-9
-lw_end=60e-7
-len_array=lw_start*np.logspace(0,np.log10(lw_end/lw_start),7)
-wid_array=len_array
+resistor_list=['rppolywo','rppolyl','rpodwo','rpodl','rnwsti','rnwod','rnpolywo','rnpolyl','rnodwo','rnodl']
+#resistor_list=['rppolywo_m','rppolyl_m','rpodwo_m','rpodl_m','rnwsti_m','rnwod_m','rnpolywo_m','rnpolyl_m','rnodwo_m','rnodl_m']
 
-#
-resistor='rpodwo'
-write_resistor_name(filename_w,resistor)
-resistance_dc,resistance_ac,distortion=write_extract(filename_w,filename_e,filename_h,1e-7,1e-7,27)
-
-print('Resistance DC:',resistance_dc)
-print('Resistance AC:',resistance_ac)
-print('Distortion   :',distortion)
-#
-
-"""
-# Running the code 
-for resistor in resistor_list:
-	print('Resistor name is : ',resistor)
-	write_resistor_name(filename_w,resistor)
-
-	file_directory_plot='/home/ee18b028/Optimization/Simulation_Results/Resistance/'+resistor
-	if not os.path.exists(file_directory_plot):
-		os.makedirs(file_directory_plot)
-
-	l_temp=len(temp_array)
-	l_len=len(len_array)
-	l_wid=len(wid_array)
-
-	resistance_dc_array=np.zeros((l_temp,l_len,l_wid),dtype=float)
-	resistance_ac_array=np.zeros((l_temp,l_len,l_wid),dtype=float)
-	distortion_array=np.zeros((l_temp,l_len,l_wid),dtype=float)
-
-	for i in range(l_temp):
-		for j in range(l_len):
-			for k in range(l_wid):
-				print('\n\ni=',i,'j=',j,'k=',k)
-				resistance_dc_array[i,j,k],resistance_ac_array[i,j,k],distortion_array[i,j,k]=write_extract(filename_w,filename_e,filename_h,len_array[j],wid_array[k],temp_array[i])
-
-	plot_resistance(file_directory_plot+'/DC_Resistance',resistance_dc_array,temp_array,len_array,wid_array,'DC Resistance')
-	plot_resistance(file_directory_plot+'/AC_Resistance',resistance_ac_array,temp_array,len_array,wid_array,'AC Resistance')
-	plot_resistance(file_directory_plot+'/Distortion',distortion_array,temp_array,len_array,wid_array,'Distortion')
-"""
+write_directory='/home/ee18b028/Optimization/Simulation_Results/Resistance/Temp Coefficient'
+temp_co_analysis(filename_w,filename_e,filename_h,resistor_list,write_directory)
