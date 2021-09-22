@@ -121,11 +121,6 @@ def extract_hb_param(filename):
 
 	vout_square_extra=0
 	for i in range(len(frequency_array)):
-		print('\n\n')
-		print('i:',i)
-		print('Frequency:',frequency_array[i])
-		print('Vout Rea:',vout_real_array[i])
-		print('Vout Img:',vout_img_array[i])
 		if check_freq(frequency_array[i],0,1e6)==1:
 			continue
 		if check_freq(frequency_array[i],1e9,1e6)==1:
@@ -201,7 +196,7 @@ def write_tcsh_file():
 	
 	s='#tcsh\n'
 	s=s+'source ~/.cshrc\n'
-	s=s+'cd /home/ee18b028/cadence_project/test/resistor_test\n'
+	s=s+'cd /home/ee18b028/cadence_project/test/resistor_test_2\n'
 	s=s+'spectre circ.scs =log circ_log.txt\n'
 	s=s+'exit'
 	
@@ -230,13 +225,13 @@ def run_file():
 # Inputs  : Circuit_Parameters, Optimization_Input_Parameters
 # Outputs : Extracted_Parameters
 
-def write_extract(filename_w,filename_e,filename_h,len,wid,temp):
+def write_extract(filename_w,filename_e,filename_h,length,wid,temp):
 	
 	# Writing the tcsh file for Basic Analysis
 	write_tcsh_file()
 
 	# Writing to netlist file
-	write_circuit_parameters(filename_w,len,wid,temp)
+	write_circuit_parameters(filename_w,length,wid,temp)
 
 	# Running netlist file
 	run_file()
@@ -352,11 +347,17 @@ def calculate_slope(x,y):
 # Calculating the temperature coefficient
 # Inputs: filenames for netlist files, resistor list, output storing file directory
 # Output: NONE
-def temp_co_analysis(filename_w,filename_e,filename_h,resistor_list,file_directory):
+def temp_co_analysis(filename_write,filename_dc,filename_hb,resistor_list,file_directory):
 	
-	# Analysis performed to find the temperature coefficient
+	# Creating the folder to store the outputs
+	if not os.path.exists(file_directory):
+		os.makedirs(file_directory)
+			
+	# Creating the arrays to store the results
 	temp_array=np.linspace(-40,120,17)
 	resistance_array=np.zeros(17,dtype=float)
+	
+	# Opening the file
 	filename_csv=file_directory+'/temp_coeff.csv'
 	f=open(filename_csv,'w')
 
@@ -365,21 +366,34 @@ def temp_co_analysis(filename_w,filename_e,filename_h,resistor_list,file_directo
 	for temp in temp_array:
 		f.write(str(temp)+',')
 	f.write('Temperature Coefficient\n')
+	
+	# Performing the analysis
 	for resistor in resistor_list:
+		
+		# Writing the resistor name in the file
+		print('\n\n Resistor : ', resistor)
+		write_resistor_name(filename_write,resistor)
 		f.write(resistor+',')
+		
+		# Choosing the width and length of the MOS Resistor
 		if resistor=='rnwsti' or resistor=='rnwod':
 			wid=5e-6
-			len=10e-6
+			length=10e-6
 		else:
 			wid=1e-6
-			len=1e-6
+			length=1e-6
+		
+		# Starting the sweep for temperature
 		i=0
 		for temp in temp_array:
-			resistance_dc,resistance_ac,distortion=write_extract(filename_w,filename_e,filename_h,len,wid,temp)
-			resistance_array[i]=resistance_dc
+			print('Temperature : ',temp)
+			resistance_dc,resistance_ac,distortion=write_extract(filename_write,filename_dc,filename_hb,length,wid,temp)	# Extracting the values
+			resistance_array[i]=resistance_dc	
 			i+=1
-			f.write(str(resistance_dc)+',')
-		temp_co,c=calculate_slope(temp_array,resistance_array)
+			f.write(str(resistance_dc)+',') # Writing to csv file
+		temp_co,c=calculate_slope(temp_array,resistance_array)	# Calculating the slope of resistance vs temperature
+		resistance_dc,resistance_ac,distortion=write_extract(filename_write,filename_dc,filename_hb,length,wid,27)	# Finding resistance at 27o C
+		temp_co/=resistance_dc	# Dividing the slope by resistance at 27o C
 		f.write(str(temp_co)+'\n')
 
 	f.close()
@@ -430,7 +444,8 @@ def sweep_MOS_R():
 			for j in range(l_len):
 				for k in range(l_wid):
 					print('\n\ni=',i,'j=',j,'k=',k)
-					resistance_dc_array[i,j,k],resistance_ac_array[i,j,k],distortion_array[i,j,k]=write_extract(filename_w,filename_e,filename_h,len_array[j],wid_array[k],temp_array[i])
+					resistance_dc_array[i,j,k],resistance_ac_array[i,j,k],distortion_array[i,j,k]=write_extract(filename_w,
+					filename_e,filename_h,len_array[j],wid_array[k],temp_array[i])
 
 		plot_resistance(file_directory_plot+'/DC_Resistance',resistance_dc_array,temp_array,len_array,wid_array,'DC Resistance')
 		plot_resistance(file_directory_plot+'/AC_Resistance',resistance_ac_array,temp_array,len_array,wid_array,'AC Resistance')
@@ -447,13 +462,16 @@ def sweep_MOS_R():
 
 # Filenames for the netlist file
 file_directory='/home/ee18b028/cadence_project/test/resistor_test_2'
-filename_w=file_directory+'/circ.scs'
-filename_e=file_directory+'/dc.out'
-filename_h=file_directory+'/circ.raw/hb_test.fd.pss_hb'
+filename_write=file_directory+'/circ.scs'
+filename_dc=file_directory+'/dc.out'
+filename_hb=file_directory+'/circ.raw/hb_test.fd.pss_hb'
 
 # Creating the temperature, length, and width arrays
-resistor_list=['rppolywo','rppolyl','rpodwo','rpodl','rnwsti','rnwod','rnpolywo','rnpolyl','rnodwo','rnodl']
-#resistor_list=['rppolywo_m','rppolyl_m','rpodwo_m','rpodl_m','rnwsti_m','rnwod_m','rnpolywo_m','rnpolyl_m','rnodwo_m','rnodl_m']
+resistor_list1=['rppolywo','rppolyl','rpodwo','rpodl','rnwsti','rnwod','rnpolywo','rnpolyl','rnodwo','rnodl']
+resistor_list2=['rppolywo_m','rppolyl_m','rpodwo_m','rpodl_m','rnwsti_m','rnwod_m','rnpolywo_m','rnpolyl_m','rnodwo_m','rnodl_m']
+resistor_list3=['rnpolywo','rnodl','rnwsti']
+resistor_list4=['rnpolywo_m','rnodl_m','rnwsti_m']
 
+# Code to run temp co analysis
 write_directory='/home/ee18b028/Optimization/Simulation_Results/Resistance/Temp Coefficient'
-temp_co_analysis(filename_w,filename_e,filename_h,resistor_list,write_directory)
+temp_co_analysis(filename_write,filename_dc,filename_hb,resistor_list1,write_directory)
