@@ -91,7 +91,7 @@ def check_freq(f_test,f_target,f_error):
 # Inputs: Optimization_input_parameters
 # Output: Dictionary with all the parameters
 
-def extract_hb_param(filename):
+def extract_hb_param(filename,freq):
 
 	lines=extract_file(filename)
 	
@@ -123,7 +123,7 @@ def extract_hb_param(filename):
 	for i in range(len(frequency_array)):
 		if check_freq(frequency_array[i],0,1e6)==1:
 			continue
-		if check_freq(frequency_array[i],1e9,1e6)==1:
+		if check_freq(frequency_array[i],freq,1e6)==1:
 			resistance=1e6*np.sqrt(vout_real_array[i]**2+vout_img_array[i]**2)
 			vout_square_normal=vout_real_array[i]**2+vout_img_array[i]**2
 		else:
@@ -245,7 +245,7 @@ def write_extract(file_directory,length,wid,temp,freq):
 	resistance_dc=extract_dc_param(filename_e)
 
 	# Extracting the HB Parameters
-	resistance_ac,distortion=extract_hb_param(filename_h)
+	resistance_ac,distortion=extract_hb_param(filename_h,freq)
 	
 	return resistance_dc,resistance_ac,distortion
 
@@ -387,7 +387,7 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_list,file_direc
 		ylabel('Resistance')
 		grid()
 		legend()
-		savefig(file_directory+'/FrequencyPlot_'+resistor+'.jpg')
+		savefig(file_directory+'/FrequencyPlot_'+resistor+'.pdf')
 		close()
 
 	f.close()
