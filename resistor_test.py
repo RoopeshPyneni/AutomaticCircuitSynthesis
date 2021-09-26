@@ -3,10 +3,9 @@
 Name: Pyneni Roopesh
 Roll Number: EE18B028
 
-Vdsat File:
+Resistor Test:
 """
 #===========================================================================================================================
-from typing import no_type_check
 import numpy as np
 import fileinput
 import os
@@ -363,7 +362,7 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_list,file_direc
 		f.write(resistor+',')
 		
 		# Choosing the width and length of the MOS Resistor
-		if resistor=='rnwsti' or resistor=='rnwod':
+		if resistor=='rnwsti' or resistor=='rnwod' or resistor=='rnwsti_m' or resistor=='rnwod_m':
 			wid=5e-6
 			length=10e-6
 		else:
@@ -577,18 +576,21 @@ resistor_list2=['rppolywo_m','rppolyl_m','rpodwo_m','rpodl_m','rnwsti_m','rnwod_
 resistor_list3=['rnpolywo','rnodl','rnwsti']
 resistor_list4=['rnpolywo_m','rnodl_m','rnwsti_m']
 
+
 """
 # Code to run temp co analysis
 write_directory_temp='/home/ee18b028/Optimization/Simulation_Results/Resistance/Temp Coefficient'
 temp_co_analysis(file_directory,resistor_list1,write_directory)
 """
 
-"""
+#"""
 # Code to do distortion analysis
 write_directory_distortion='/home/ee18b028/Optimization/Simulation_Results/Resistance/Distortion'
 MOS_Resistor_Distortion(file_directory,resistor_list2,write_directory_distortion)
-"""
+#"""
 
-# Code to distortion analysis
+"""
+# Code to frequency analysis
 write_directory_fsweep='/home/ee18b028/Optimization/Simulation_Results/Resistance/FrequencySweep'
 MOS_Resistor_Frequency_Sweep(file_directory,resistor_list2,write_directory_fsweep)
+"""
