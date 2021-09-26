@@ -366,8 +366,8 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_list,file_direc
 			wid=5e-6
 			length=10e-6
 		else:
-			wid=1e-6
-			length=1e-6
+			wid=3e-6
+			length=3e-6
 		
 		i=0
 		for freq in freq_array:
