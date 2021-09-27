@@ -331,7 +331,7 @@ def temp_co_analysis(file_directory_netlist,resistor_list,file_directory):
 # Calculating AC Resistance as a function of frequency
 # Inputs: filenames for netlist files, resistor list, output storing file directory
 # Output: NONE
-def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_list,file_directory):
+def MOS_Resistor_Frequency_Sweep1(file_directory_netlist,resistor_list,file_directory):
 
 	# Creating the folder to store the outputs
 	if not os.path.exists(file_directory):
@@ -390,6 +390,159 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_list,file_direc
 		close()
 
 	f.close()
+
+#---------------------------------------------------------------------------------------------------------------------------	
+# Calculating AC Resistance as a function of frequency
+# Inputs: filenames for netlist files, resistor list, output storing file directory
+# Output: NONE
+def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_directory):
+
+	# Creating the folder to store the outputs
+	if not os.path.exists(file_directory):
+		os.makedirs(file_directory)
+	
+	# Opening the file
+	filename_csv1=file_directory+'/frequency_sweep_ss.csv'
+	filename_csv2=file_directory+'/frequency_sweep_sl.csv'
+	filename_csv3=file_directory+'/frequency_sweep_ls.csv'
+	filename_csv4=file_directory+'/frequency_sweep_ll.csv'
+	f1=open(filename_csv1,'w')
+	f2=open(filename_csv2,'w')
+	f3=open(filename_csv3,'w')
+	f4=open(filename_csv4,'w')
+
+	# Getting the frequency array
+	freq_array=np.logspace(8,10,11)
+
+	# Arrays to store values
+	resistance_ac_array=np.zeros(len(freq_array),dtype=float)
+
+	# Writing the first line in the csv file
+	f1.write('Resistor Name,')
+	f2.write('Resistor Name,')
+	f3.write('Resistor Name,')
+	f4.write('Resistor Name,')
+	for freq in freq_array:
+		f1.write(str(freq)+',')
+		f2.write(str(freq)+',')
+		f3.write(str(freq)+',')
+		f4.write(str(freq)+',')
+	f1.write('DC Resistance\n')
+	f2.write('DC Resistance\n')
+	f3.write('DC Resistance\n')
+	f4.write('DC Resistance\n')
+	
+	# Performing the analysis
+	for resistor in resistor_dict:
+		
+		# Writing the resistor name in the file
+		print('\n\n Resistor : ', resistor)
+		write_resistor_name(file_directory_netlist,resistor)
+		f1.write(resistor+',')
+		f2.write(resistor+',')
+		f3.write(resistor+',')
+		f4.write(resistor+',')
+		
+		# ---------------------------- Case 1 --------------------------------
+		# Choosing the minimum width and minimum length 
+		wid=resistor_dict[resistor]['w_min']
+		length=resistor_dict[resistor]['l_min']
+		i=0
+		for freq in freq_array:
+			resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,27,freq)	# Finding resistance at 27o C
+			resistance_ac_array[i]=resistance_ac
+			i+=1
+			f1.write(str(resistance_ac)+',')
+		f1.write(str(resistance_dc)+'\n')
+
+		resistance_dc_array=resistance_dc*np.ones(len(resistance_ac_array),dtype=float)
+		figure()
+		semilogx(freq_array,resistance_ac_array,color='green',label='AC Resistance')
+		semilogx(freq_array,resistance_dc_array,color='red',label='DC Resistance')
+		grid()
+		xlabel('Frequency')
+		ylabel('Resistance')
+		grid()
+		legend()
+		savefig(file_directory+'/FrequencyPlot_ss_'+resistor+'.pdf')
+		close()
+
+		# ---------------------------- Case 2 --------------------------------
+		# Choosing the minimum width and maximum length 
+		wid=resistor_dict[resistor]['w_min']
+		length=resistor_dict[resistor]['l_max']
+		i=0
+		for freq in freq_array:
+			resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,27,freq)	# Finding resistance at 27o C
+			resistance_ac_array[i]=resistance_ac
+			i+=1
+			f2.write(str(resistance_ac)+',')
+		f2.write(str(resistance_dc)+'\n')
+
+		resistance_dc_array=resistance_dc*np.ones(len(resistance_ac_array),dtype=float)
+		figure()
+		semilogx(freq_array,resistance_ac_array,color='green',label='AC Resistance')
+		semilogx(freq_array,resistance_dc_array,color='red',label='DC Resistance')
+		grid()
+		xlabel('Frequency')
+		ylabel('Resistance')
+		grid()
+		legend()
+		savefig(file_directory+'/FrequencyPlot_sl_'+resistor+'.pdf')
+		close()
+
+		# ---------------------------- Case 1 --------------------------------
+		# Choosing the maximum width and minimum length 
+		wid=resistor_dict[resistor]['w_max']
+		length=resistor_dict[resistor]['l_min']
+		i=0
+		for freq in freq_array:
+			resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,27,freq)	# Finding resistance at 27o C
+			resistance_ac_array[i]=resistance_ac
+			i+=1
+			f3.write(str(resistance_ac)+',')
+		f3.write(str(resistance_dc)+'\n')
+
+		resistance_dc_array=resistance_dc*np.ones(len(resistance_ac_array),dtype=float)
+		figure()
+		semilogx(freq_array,resistance_ac_array,color='green',label='AC Resistance')
+		semilogx(freq_array,resistance_dc_array,color='red',label='DC Resistance')
+		grid()
+		xlabel('Frequency')
+		ylabel('Resistance')
+		grid()
+		legend()
+		savefig(file_directory+'/FrequencyPlot_ls_'+resistor+'.pdf')
+		close()
+
+		# ---------------------------- Case 1 --------------------------------
+		# Choosing the minimum width and minimum length 
+		wid=resistor_dict[resistor]['w_max']
+		length=resistor_dict[resistor]['l_max']
+		i=0
+		for freq in freq_array:
+			resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,27,freq)	# Finding resistance at 27o C
+			resistance_ac_array[i]=resistance_ac
+			i+=1
+			f4.write(str(resistance_ac)+',')
+		f4.write(str(resistance_dc)+'\n')
+
+		resistance_dc_array=resistance_dc*np.ones(len(resistance_ac_array),dtype=float)
+		figure()
+		semilogx(freq_array,resistance_ac_array,color='green',label='AC Resistance')
+		semilogx(freq_array,resistance_dc_array,color='red',label='DC Resistance')
+		grid()
+		xlabel('Frequency')
+		ylabel('Resistance')
+		grid()
+		legend()
+		savefig(file_directory+'/FrequencyPlot_ll_'+resistor+'.pdf')
+		close()
+
+	f1.close()
+	f2.close()
+	f3.close()
+	f4.close()
 
 """
 ====================================================================================================================================================================================
@@ -576,6 +729,23 @@ resistor_list2=['rppolywo_m','rppolyl_m','rpodwo_m','rpodl_m','rnwsti_m','rnwod_
 resistor_list3=['rnpolywo','rnodl','rnwsti']
 resistor_list4=['rnpolywo_m','rnodl_m','rnwsti_m']
 
+resistor_dict_2={
+	'rnodl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6},
+	'rnods_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':2e-6},
+	'rnodwo_m':{'l_min':0.8e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':10e-6},
+	'rnpolyl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6},
+	'rnpolys_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':1e-6,'w_max':2e-6},
+	'rnpolywo_m':{'l_min':0.8e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':10e-6},
+	'rnwod_m':{'l_min':9e-6,'l_max':100e-6,'w_min':1.8e-6,'w_max':10e-6},
+	'rnwsti_m':{'l_min':9e-6,'l_max':100e-6,'w_min':1.8e-6,'w_max':10e-6},
+	'rpodl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6},
+	'rpods_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':1e-6,'w_max':2e-6},
+	'rpodwo_m':{'l_min':0.8e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':10e-6},
+	'rppolyl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6},
+	'rppolys_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':1e-6,'w_max':2e-6},
+	'rppolywo_m':{'l_min':0.8e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':10e-6}
+}
+
 
 """
 # Code to run temp co analysis
@@ -583,14 +753,14 @@ write_directory_temp='/home/ee18b028/Optimization/Simulation_Results/Resistance/
 temp_co_analysis(file_directory,resistor_list1,write_directory)
 """
 
-#"""
+"""
 # Code to do distortion analysis
 write_directory_distortion='/home/ee18b028/Optimization/Simulation_Results/Resistance/Distortion'
 MOS_Resistor_Distortion(file_directory,resistor_list2,write_directory_distortion)
-#"""
-
 """
+
+#"""
 # Code to frequency analysis
 write_directory_fsweep='/home/ee18b028/Optimization/Simulation_Results/Resistance/FrequencySweep'
 MOS_Resistor_Frequency_Sweep(file_directory,resistor_list2,write_directory_fsweep)
-"""
+#"""
