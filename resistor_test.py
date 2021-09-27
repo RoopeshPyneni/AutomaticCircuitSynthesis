@@ -459,7 +459,6 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 		figure()
 		semilogx(freq_array,resistance_ac_array,color='green',label='AC Resistance')
 		semilogx(freq_array,resistance_dc_array,color='red',label='DC Resistance')
-		grid()
 		xlabel('Frequency')
 		ylabel('Resistance')
 		grid()
@@ -483,7 +482,6 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 		figure()
 		semilogx(freq_array,resistance_ac_array,color='green',label='AC Resistance')
 		semilogx(freq_array,resistance_dc_array,color='red',label='DC Resistance')
-		grid()
 		xlabel('Frequency')
 		ylabel('Resistance')
 		grid()
@@ -507,7 +505,6 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 		figure()
 		semilogx(freq_array,resistance_ac_array,color='green',label='AC Resistance')
 		semilogx(freq_array,resistance_dc_array,color='red',label='DC Resistance')
-		grid()
 		xlabel('Frequency')
 		ylabel('Resistance')
 		grid()
@@ -531,7 +528,6 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 		figure()
 		semilogx(freq_array,resistance_ac_array,color='green',label='AC Resistance')
 		semilogx(freq_array,resistance_dc_array,color='red',label='DC Resistance')
-		grid()
 		xlabel('Frequency')
 		ylabel('Resistance')
 		grid()
@@ -762,5 +758,5 @@ MOS_Resistor_Distortion(file_directory,resistor_list2,write_directory_distortion
 #"""
 # Code to frequency analysis
 write_directory_fsweep='/home/ee18b028/Optimization/Simulation_Results/Resistance/FrequencySweep'
-MOS_Resistor_Frequency_Sweep(file_directory,resistor_list2,write_directory_fsweep)
+MOS_Resistor_Frequency_Sweep(file_directory,resistor_dict_2,write_directory_fsweep)
 #"""
