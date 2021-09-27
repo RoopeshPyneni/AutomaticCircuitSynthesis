@@ -397,9 +397,30 @@ def MOS_Resistor_Frequency_Sweep1(file_directory_netlist,resistor_list,file_dire
 # Output: NONE
 def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_directory):
 
+	file_directory_ss=file_directory+'/ss'
+	file_directory_sl=file_directory+'/sl'
+	file_directory_ls=file_directory+'/ls'
+	file_directory_ll=file_directory+'/ll'
+
 	# Creating the folder to store the outputs
 	if not os.path.exists(file_directory):
 		os.makedirs(file_directory)
+
+	# Creating the folder to store the outputs
+	if not os.path.exists(file_directory_ss):
+		os.makedirs(file_directory_ss)
+
+	# Creating the folder to store the outputs
+	if not os.path.exists(file_directory_sl):
+		os.makedirs(file_directory_sl)
+
+	# Creating the folder to store the outputs
+	if not os.path.exists(file_directory_ls):
+		os.makedirs(file_directory_ls)
+
+	# Creating the folder to store the outputs
+	if not os.path.exists(file_directory_ll):
+		os.makedirs(file_directory_ll)
 	
 	# Opening the file
 	filename_csv1=file_directory+'/frequency_sweep_ss.csv'
@@ -463,7 +484,7 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 		ylabel('Resistance')
 		grid()
 		legend()
-		savefig(file_directory+'/FrequencyPlot_ss_'+resistor+'.pdf')
+		savefig(file_directory_ss+'/FrequencyPlot_'+resistor+'.pdf')
 		close()
 
 		# ---------------------------- Case 2 --------------------------------
@@ -486,10 +507,10 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 		ylabel('Resistance')
 		grid()
 		legend()
-		savefig(file_directory+'/FrequencyPlot_sl_'+resistor+'.pdf')
+		savefig(file_directory_sl+'/FrequencyPlot_'+resistor+'.pdf')
 		close()
 
-		# ---------------------------- Case 1 --------------------------------
+		# ---------------------------- Case 3 --------------------------------
 		# Choosing the maximum width and minimum length 
 		wid=resistor_dict[resistor]['w_max']
 		length=resistor_dict[resistor]['l_min']
@@ -509,10 +530,10 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 		ylabel('Resistance')
 		grid()
 		legend()
-		savefig(file_directory+'/FrequencyPlot_ls_'+resistor+'.pdf')
+		savefig(file_directory_ls+'/FrequencyPlot_'+resistor+'.pdf')
 		close()
 
-		# ---------------------------- Case 1 --------------------------------
+		# ---------------------------- Case 4 --------------------------------
 		# Choosing the minimum width and minimum length 
 		wid=resistor_dict[resistor]['w_max']
 		length=resistor_dict[resistor]['l_max']
@@ -532,7 +553,7 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 		ylabel('Resistance')
 		grid()
 		legend()
-		savefig(file_directory+'/FrequencyPlot_ll_'+resistor+'.pdf')
+		savefig(file_directory_ll+'/FrequencyPlot_'+resistor+'.pdf')
 		close()
 
 	f1.close()
@@ -757,6 +778,6 @@ MOS_Resistor_Distortion(file_directory,resistor_list2,write_directory_distortion
 
 #"""
 # Code to frequency analysis
-write_directory_fsweep='/home/ee18b028/Optimization/Simulation_Results/Resistance/FrequencySweep'
+write_directory_fsweep='/home/ee18b028/Optimization/Simulation_Results/Resistance/FrequencySweep_2'
 MOS_Resistor_Frequency_Sweep(file_directory,resistor_dict_2,write_directory_fsweep)
 #"""
