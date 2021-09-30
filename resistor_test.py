@@ -54,7 +54,7 @@ def extract_file(file_name):
 	return lines
 
 #===========================================================================================================================================================
-#------------------------------------------------------ Basic File Extraction Functions --------------------------------------------------------------------
+#--------------------------------------------------------- DC File Extraction Functions --------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------------------------------------------------	
 # Extracting the DC from the file
@@ -74,6 +74,9 @@ def extract_dc_param(filename):
 
 	return resistance
 
+#===========================================================================================================================================================
+#--------------------------------------------------------- HB File Extraction Functions --------------------------------------------------------------------
+
 #---------------------------------------------------------------------------------------------------------------------------	
 # Checks if the frequency is within range ( within (target-error,target+error) )
 # Inputs: Test Frequency, Target Frequency, Error
@@ -92,20 +95,38 @@ def check_freq(f_test,f_target,f_error):
 
 def extract_hb_param(filename,freq):
 
+	# Getting the lines in the filename
 	lines=extract_file(filename)
 	
+	# Creating arrays to store the values
 	frequency_array=[]
-	vout_real_array=[]
-	vout_img_array=[]
+	vout_a_real_array=[]
+	vout_a_img_array=[]
+	vout_b_real_array=[]
+	vout_b_img_array=[]
+	
+	# Extracting the data from the HB Raw File
 	flag=0
-
 	for line in lines:
+		# If flag=1, it means that the "freq" line is already over and we need to extract the vout values.
 		if flag==1:
-			char_real=(line.split()[1])[1:]
-			char_img=(line.split()[2])[:-1]
-			vout_real_array.append(float(char_real))
-			vout_img_array.append(float(char_img))
-			flag=0
+			
+			# Extracting R1a node values
+			if 'R1a' in line:
+				char_real=(line.split()[1])[1:]
+				char_img=(line.split()[2])[:-1]
+				vout_a_real_array.append(-1*float(char_img))
+				vout_a_img_array.append(float(char_real))
+			
+			# Extracting R1b node values
+			elif 'R1b' in line:
+				char_real=(line.split()[1])[1:]
+				char_img=(line.split()[2])[:-1]
+				vout_b_real_array.append(-1*float(char_img))
+				vout_b_img_array.append(float(char_real))
+				flag=0
+			else:
+				continue
 		if 'freq' not in line:
 			continue
 		if 'sweep' in line.split()[1]:
@@ -115,21 +136,32 @@ def extract_hb_param(filename,freq):
 
 	# Converting to numpy arrays
 	frequency_array=np.array(frequency_array)
-	vout_real_array=np.array(vout_real_array)
-	vout_img_array=np.array(vout_img_array)
+	vout_a_real_array=np.array(vout_a_real_array)
+	vout_a_img_array=np.array(vout_a_img_array)
+	vout_b_real_array=np.array(vout_b_real_array)
+	vout_b_img_array=np.array(vout_b_img_array)
 
+	# Calculating distortion
 	vout_square_extra=0
 	for i in range(len(frequency_array)):
-		if check_freq(frequency_array[i],0,1e6)==1:
+		if check_freq(frequency_array[i],0,freq/1000)==1:
 			continue
-		if check_freq(frequency_array[i],freq,1e6)==1:
-			resistance=1e6*np.sqrt(vout_real_array[i]**2+vout_img_array[i]**2)
-			vout_square_normal=vout_real_array[i]**2+vout_img_array[i]**2
+		if check_freq(frequency_array[i],freq,freq/1000)==1:
+			resistance=1e6*np.sqrt(vout_a_real_array[i]**2+vout_a_img_array[i]**2)
+			vout_square_normal=vout_a_real_array[i]**2+vout_a_img_array[i]**2
 		else:
-			vout_square_extra+=(vout_real_array[i]**2+vout_img_array[i]**2)
-	distortion=vout_square_extra/(vout_square_extra+vout_square_normal)
+			vout_square_extra+=(vout_a_real_array[i]**2+vout_a_img_array[i]**2)
+	distortion=vout_square_extra/vout_square_normal
 
-	return resistance,distortion
+	# Calculating symmetry
+	symmetry=0
+	for i in range(len(frequency_array)):
+		if check_freq(frequency_array[i],freq,freq/1000)==1:
+			if vout_a_real_array[i]==-1*vout_b_real_array[i] and vout_a_img_array[i]==-1*vout_b_img_array[i]:
+				symmetry=1
+			break
+
+	return resistance,distortion,symmetry
 
 #===========================================================================================================================
 
@@ -244,152 +276,17 @@ def write_extract(file_directory,length,wid,temp,freq):
 	resistance_dc=extract_dc_param(filename_e)
 
 	# Extracting the HB Parameters
-	resistance_ac,distortion=extract_hb_param(filename_h,freq)
+	resistance_ac,distortion,symmetry=extract_hb_param(filename_h,freq)
 	
-	return resistance_dc,resistance_ac,distortion
+	return resistance_dc,resistance_ac,distortion,symmetry
 
 #===========================================================================================================================
 
 
 """
 ====================================================================================================================================================================================
------------------------------------------------------------- TEMP CO FUNCTIONS -----------------------------------------------------------------------------------------------------
-"""
-
-#---------------------------------------------------------------------------------------------------------------------------	
-# Calculating the slope and y-intercept
-# Inputs: x and y coordinates of the points
-# Output: slope, y-intercept
-
-def calculate_slope(x,y):
-	A = np.vstack([x, np.ones(len(x))]).T
-	m, c = np.linalg.lstsq(A, y, rcond=None)[0]
-	return m,c
-
-#---------------------------------------------------------------------------------------------------------------------------	
-# Calculating the temperature coefficient
-# Inputs: filenames for netlist files, resistor list, output storing file directory
-# Output: NONE
-def temp_co_analysis(file_directory_netlist,resistor_list,file_directory):
-	
-	# Creating the folder to store the outputs
-	if not os.path.exists(file_directory):
-		os.makedirs(file_directory)
-			
-	# Creating the arrays to store the results
-	temp_array=np.linspace(-40,120,17)
-	resistance_array=np.zeros(17,dtype=float)
-	
-	# Opening the file
-	filename_csv=file_directory+'/temp_coeff.csv'
-	f=open(filename_csv,'w')
-
-	# Writing the first line in the csv file
-	f.write('Resistor Name,')
-	for temp in temp_array:
-		f.write(str(temp)+',')
-	f.write('Temperature Coefficient\n')
-	
-	# Performing the analysis
-	for resistor in resistor_list:
-		
-		# Writing the resistor name in the file
-		print('\n\n Resistor : ', resistor)
-		write_resistor_name(file_directory_netlist,resistor)
-		f.write(resistor+',')
-		
-		# Choosing the width and length of the MOS Resistor
-		freq=1e9
-		if resistor=='rnwsti' or resistor=='rnwod':
-			wid=5e-6
-			length=10e-6
-		else:
-			wid=1e-6
-			length=1e-6
-		
-		# Starting the sweep for temperature
-		i=0
-		for temp in temp_array:
-			print('Temperature : ',temp)
-			resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,temp,freq)	# Extracting the values
-			resistance_array[i]=resistance_dc	
-			i+=1
-			f.write(str(resistance_dc)+',') # Writing to csv file
-		temp_co,c=calculate_slope(temp_array,resistance_array)	# Calculating the slope of resistance vs temperature
-		resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,27,freq)	# Finding resistance at 27o C
-		temp_co/=resistance_dc	# Dividing the slope by resistance at 27o C
-		f.write(str(temp_co)+'\n')
-
-	f.close()
-
-"""
-====================================================================================================================================================================================
 ------------------------------------------------------------ FREQUENCY SWEEP ANALYSIS ----------------------------------------------------------------------------------------------
 """
-
-#---------------------------------------------------------------------------------------------------------------------------	
-# Calculating AC Resistance as a function of frequency
-# Inputs: filenames for netlist files, resistor list, output storing file directory
-# Output: NONE
-def MOS_Resistor_Frequency_Sweep1(file_directory_netlist,resistor_list,file_directory):
-
-	# Creating the folder to store the outputs
-	if not os.path.exists(file_directory):
-		os.makedirs(file_directory)
-	
-	# Opening the file
-	filename_csv=file_directory+'/frequency_sweep.csv'
-	f=open(filename_csv,'w')
-
-	# Getting the frequency array
-	freq_array=np.logspace(8,10,11)
-
-	# Arrays to store values
-	resistance_ac_array=np.zeros(len(freq_array),dtype=float)
-
-	# Writing the first line in the csv file
-	f.write('Resistor Name,')
-	for freq in freq_array:
-		f.write(str(freq)+',')
-	f.write('DC Resistance\n')
-	
-	# Performing the analysis
-	for resistor in resistor_list:
-		
-		# Writing the resistor name in the file
-		print('\n\n Resistor : ', resistor)
-		write_resistor_name(file_directory_netlist,resistor)
-		f.write(resistor+',')
-		
-		# Choosing the width and length of the MOS Resistor
-		if resistor=='rnwsti' or resistor=='rnwod' or resistor=='rnwsti_m' or resistor=='rnwod_m':
-			wid=5e-6
-			length=10e-6
-		else:
-			wid=3e-6
-			length=3e-6
-		
-		i=0
-		for freq in freq_array:
-			resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,27,freq)	# Finding resistance at 27o C
-			resistance_ac_array[i]=resistance_ac
-			i+=1
-			f.write(str(resistance_ac)+',')
-		f.write(str(resistance_dc)+'\n')
-
-		resistance_dc_array=resistance_dc*np.ones(len(resistance_ac_array),dtype=float)
-		figure()
-		semilogx(freq_array,resistance_ac_array,color='green',label='AC Resistance')
-		semilogx(freq_array,resistance_dc_array,color='red',label='DC Resistance')
-		grid()
-		xlabel('Frequency')
-		ylabel('Resistance')
-		grid()
-		legend()
-		savefig(file_directory+'/FrequencyPlot_'+resistor+'.pdf')
-		close()
-
-	f.close()
 
 #---------------------------------------------------------------------------------------------------------------------------	
 # Calculating AC Resistance as a function of frequency
@@ -611,6 +508,42 @@ def MOS_Resistor_Distortion(file_directory_netlist,resistor_list,file_directory)
 
 """
 ====================================================================================================================================================================================
+------------------------------------------------------------ CODE TO FIND THE SYMMETRY ---------------------------------------------------------------------------------------------
+"""
+
+#---------------------------------------------------------------------------------------------------------------------------	
+# Checking the symmetry
+# Inputs: filenames for netlist files, resistor list, output storing file directory
+# Output: NONE
+def MOS_Resistor_Symmetry(file_directory_netlist,resistor_dict):
+
+	# Storing the variables
+	resistor_name=[]
+	resistor_symmetry=[]
+	
+	# Performing the analysis
+	for resistor in resistor_dict:
+		
+		# Writing the resistor name in the file
+		print('\n\n Resistor : ', resistor)
+		write_resistor_name(file_directory_netlist,resistor)
+		
+		# Choosing the width and length of the MOS Resistor
+		wid=resistor_dict[resistor]['w_min']
+		length=resistor_dict[resistor]['l_min']
+		
+		resistance_dc,resistance_ac,distortion,symmetry=write_extract(file_directory_netlist,length,wid,27,1e9)	# Finding resistance at 27o C
+		resistor_name.append(resistor)
+		resistor_symmetry.append(symmetry)
+	
+	print('\n\n\n\n\n Symmetry Analysis \n\n')
+	for i in range(len(resistor_name)):
+		print('\nResistor : ',resistor_name[i])
+		print('Symmetry : ',resistor_symmetry[i])
+		
+	
+"""
+====================================================================================================================================================================================
 ------------------------------------------------------------ CODE TO SWEEP R vs W,L,T ----------------------------------------------------------------------------------------------
 """
 
@@ -776,8 +709,84 @@ write_directory_distortion='/home/ee18b028/Optimization/Simulation_Results/Resis
 MOS_Resistor_Distortion(file_directory,resistor_list2,write_directory_distortion)
 """
 
-#"""
+"""
 # Code to frequency analysis
 write_directory_fsweep='/home/ee18b028/Optimization/Simulation_Results/Resistance/FrequencySweep_2'
 MOS_Resistor_Frequency_Sweep(file_directory,resistor_dict_2,write_directory_fsweep)
-#"""
+"""
+
+# Code to do symmetry analysis
+MOS_Resistor_Symmetry(file_directory,resistor_dict_2)
+
+
+"""
+====================================================================================================================================================================================
+------------------------------------------------------------ TEMP CO FUNCTIONS -----------------------------------------------------------------------------------------------------
+
+#---------------------------------------------------------------------------------------------------------------------------	
+# Calculating the slope and y-intercept
+# Inputs: x and y coordinates of the points
+# Output: slope, y-intercept
+
+def calculate_slope(x,y):
+	A = np.vstack([x, np.ones(len(x))]).T
+	m, c = np.linalg.lstsq(A, y, rcond=None)[0]
+	return m,c
+
+#---------------------------------------------------------------------------------------------------------------------------	
+# Calculating the temperature coefficient
+# Inputs: filenames for netlist files, resistor list, output storing file directory
+# Output: NONE
+def temp_co_analysis(file_directory_netlist,resistor_list,file_directory):
+	
+	# Creating the folder to store the outputs
+	if not os.path.exists(file_directory):
+		os.makedirs(file_directory)
+			
+	# Creating the arrays to store the results
+	temp_array=np.linspace(-40,120,17)
+	resistance_array=np.zeros(17,dtype=float)
+	
+	# Opening the file
+	filename_csv=file_directory+'/temp_coeff.csv'
+	f=open(filename_csv,'w')
+
+	# Writing the first line in the csv file
+	f.write('Resistor Name,')
+	for temp in temp_array:
+		f.write(str(temp)+',')
+	f.write('Temperature Coefficient\n')
+	
+	# Performing the analysis
+	for resistor in resistor_list:
+		
+		# Writing the resistor name in the file
+		print('\n\n Resistor : ', resistor)
+		write_resistor_name(file_directory_netlist,resistor)
+		f.write(resistor+',')
+		
+		# Choosing the width and length of the MOS Resistor
+		freq=1e9
+		if resistor=='rnwsti' or resistor=='rnwod':
+			wid=5e-6
+			length=10e-6
+		else:
+			wid=1e-6
+			length=1e-6
+		
+		# Starting the sweep for temperature
+		i=0
+		for temp in temp_array:
+			print('Temperature : ',temp)
+			resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,temp,freq)	# Extracting the values
+			resistance_array[i]=resistance_dc	
+			i+=1
+			f.write(str(resistance_dc)+',') # Writing to csv file
+		temp_co,c=calculate_slope(temp_array,resistance_array)	# Calculating the slope of resistance vs temperature
+		resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,27,freq)	# Finding resistance at 27o C
+		temp_co/=resistance_dc	# Dividing the slope by resistance at 27o C
+		f.write(str(temp_co)+'\n')
+
+	f.close()
+
+"""
