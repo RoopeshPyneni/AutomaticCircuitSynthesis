@@ -176,14 +176,14 @@ def calculate_impedance(cur,a_real,a_img,b_real,b_img):
 	Z_real=(a_real-b_real)/cur
 	Z_img=(a_img-b_img)/cur
 	Z_mag=np.sqrt(Z_real**2+Z_img**2)
-	Z_ph=np.arctan(Z_img/Z_real)
+	Z_ph=np.arctan(Z_img/Z_real)*57.29577
 
 	# Calculating the AC Resistance
-	Ca_Cb=-1*b_real/b_img
+	Ca_Cb=-1*b_real/a_real
 	a=a_real/cur
 	b=a_img/cur
 	c=a/(a**2+b**2)
-	Resistance=c*(1+Ca_Cb)
+	Resistance=(1+Ca_Cb)/c
 
 	return Resistance,Z_mag,Z_ph,Z_real,Z_img
 
@@ -535,7 +535,7 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 			i=0
 			for freq in freq_array:
 				# Running spectre
-				resistance_dc,resistance_dict,distortion,symmetry=write_extract(file_directory_netlist,length,wid,27,freq)	# Finding resistance at 27o C
+				resistance_dc,resistance_dict,distortion,symmetry=write_extract(file_directory_netlist,length,wid,27,freq,1e-6)	# Finding resistance at 27o C
 
 				# Storing the values in arrays
 				resistance_dc_array[i]=resistance_dc
@@ -546,6 +546,7 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 				impedance_i_array[i]=resistance_dict['Imaginary']
 
 				# Writing the values
+				f.write(str(freq)+',')
 				f.write(str(resistance_dict['AC_Resistance'])+',')
 				f.write(str(resistance_dict['Magnitude'])+',')
 				f.write(str(resistance_dict['Phase'])+',')
@@ -574,9 +575,13 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 			subplot(2,1,1)
 			semilogx(freq_array,impedance_m_array,color='green',label='Impedance Magnitude')
 			semilogx(freq_array,resistance_dc_array,color='red',label='DC Resistance')
+			legend()
+			grid()
+			ylabel('Impedance Magnitude')
 			subplot(2,1,2)
 			semilogx(freq_array,impedance_p_array,color='green',label='Impedance Phase')
 			xlabel('Frequency')
+			ylabel('Impedance Phase')
 			grid()
 			legend()
 			savefig(file_directory_current+'/Impedance_M_P.pdf')
@@ -586,9 +591,13 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 			figure()
 			subplot(2,1,1)
 			semilogx(freq_array,impedance_r_array,color='green',label='Impedance Real')
-			subplot(2,1,1)
+			ylabel('Impedance Real')
+			grid()
+			legend()
+			subplot(2,1,2)
 			semilogx(freq_array,impedance_i_array,color='red',label='Impedance Imaginary')
 			xlabel('Frequency')
+			ylabel('Impedance Imaginary')
 			grid()
 			legend()
 			savefig(file_directory_current+'/Impedance_R_I.pdf')
@@ -808,7 +817,7 @@ def sweep_MOS_R(file_directory_netlist,resistor_list,file_directory):
 
 
 # Filenames for the netlist file
-file_directory='/home/ee18b028/cadence_project/test/resistor_test_3'
+file_directory='/home/ee18b028/cadence_project/test/resistor_test_4'
 
 # Creating the temperature, length, and width arrays
 resistor_list1=['rppolywo','rppolyl','rpodwo','rpodl','rnwsti','rnwod','rnpolywo','rnpolyl','rnodwo','rnodl']
@@ -831,6 +840,11 @@ resistor_dict_2={
 	'rppolyl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6},
 	'rppolys_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':1e-6,'w_max':2e-6},
 	'rppolywo_m':{'l_min':0.8e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':10e-6}
+}
+
+resistor_dict_3={
+	'rnodl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6},
+	'rnods_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':2e-6}
 }
 
 
