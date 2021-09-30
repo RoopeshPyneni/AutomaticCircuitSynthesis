@@ -17,14 +17,10 @@ from pylab import *
 ------------------------------------------------------------ EXTRACTION FUNCTION ---------------------------------------------------------------------------------------------------
 """
 
-#===========================================================================================================================================================
-#------------------------------------------------------ Character to Real Number Functions -----------------------------------------------------------------
-
 #---------------------------------------------------------------------------------------------------------------------------
 # Changing the values extracted as 10e1, 1.5e-2 to a floating point value 
 # Input: Value of the number in string format 	
 # Output: Value of the number in float
-
 def valueE_to_value(value_name):
     
     # Extracting the number before and after e
@@ -40,9 +36,6 @@ def valueE_to_value(value_name):
     
     return num
 
-#===========================================================================================================================================================
-#--------------------------------------------------------- Other File Extraction Functions -----------------------------------------------------------------
-
 #---------------------------------------------------------------------------------------------------------------------------
 # Extracting the files as an array of lines
 # Inputs: file name
@@ -53,14 +46,10 @@ def extract_file(file_name):
 	f.close()
 	return lines
 
-#===========================================================================================================================================================
-#--------------------------------------------------------- DC File Extraction Functions --------------------------------------------------------------------
-
 #---------------------------------------------------------------------------------------------------------------------------	
 # Extracting the DC from the file
 # Inputs: Optimization_input_parameters
 # Output: Dictionary with all the parameters
-
 def extract_dc_param(filename):
 
 	lines=extract_file(filename)
@@ -74,14 +63,10 @@ def extract_dc_param(filename):
 
 	return resistance
 
-#===========================================================================================================================================================
-#--------------------------------------------------------- HB File Extraction Functions --------------------------------------------------------------------
-
 #---------------------------------------------------------------------------------------------------------------------------	
 # Checks if the frequency is within range ( within (target-error,target+error) )
 # Inputs: Test Frequency, Target Frequency, Error
 # Output: 1 if Yes and 0 if No
-
 def check_freq(f_test,f_target,f_error):
 	if f_test<f_target+f_error and f_test>f_target-f_error:
 		return 1
@@ -89,11 +74,10 @@ def check_freq(f_test,f_target,f_error):
 		return 0
 
 #---------------------------------------------------------------------------------------------------------------------------	
-# Extracting the DC from the file
+# Extracting the HB from the file
 # Inputs: Optimization_input_parameters
-# Output: Dictionary with all the parameters
-
-def extract_hb_param(filename,freq):
+# Output: resistance_dict,distortion,symmetry
+def extract_hb_param(filename,freq,i_cur):
 
 	# Getting the lines in the filename
 	lines=extract_file(filename)
@@ -160,10 +144,49 @@ def extract_hb_param(filename,freq):
 			if vout_a_real_array[i]==-1*vout_b_real_array[i] and vout_a_img_array[i]==-1*vout_b_img_array[i]:
 				symmetry=1
 			break
+	
+	# Calculating AC Resistance and Impedance
+	ac_resistance=0
+	m_impedance=0
+	p_impedance=0
+	r_impedance=0
+	i_impedance=0
+	for i in range(len(frequency_array)):
+		if check_freq(frequency_array[i],freq,freq/1000)==1:
+			ac_resistance,m_impedance,p_impedance,r_impedance,i_impedance=calculate_impedance(i_cur,vout_a_real_array[i],vout_a_img_array[i],vout_b_real_array[i],vout_b_img_array[i])
+			break
+	
+	resistance_dict={
+		'AC_Resistance':ac_resistance,
+		'Magnitude':m_impedance,
+		'Phase':p_impedance,
+		'Real':r_impedance,
+		'Imaginary':i_impedance
+	}
 
-	return resistance,distortion,symmetry
+	return resistance_dict,distortion,symmetry
 
-#===========================================================================================================================
+#---------------------------------------------------------------------------------------------------------------------------	
+# Extracting the Impedances from the voltages of node R1a and R1b
+# Inputs: current, a_real, a_img, b_real, b_img 
+# Output: resistance, (magintude, phase, real, and imaginary ) part of the impedance
+def calculate_impedance(cur,a_real,a_img,b_real,b_img):
+	
+	# Calculating the Impedance
+	Z_real=(a_real-b_real)/cur
+	Z_img=(a_img-b_img)/cur
+	Z_mag=np.sqrt(Z_real**2+Z_img**2)
+	Z_ph=np.arctan(Z_img/Z_real)
+
+	# Calculating the AC Resistance
+	Ca_Cb=-1*b_real/b_img
+	a=a_real/cur
+	b=a_img/cur
+	c=a/(a**2+b**2)
+	Resistance=c*(1+Ca_Cb)
+
+	return Resistance,Z_mag,Z_ph,Z_real,Z_img
+
 
 
 """
@@ -199,10 +222,10 @@ def write_resistor_name(file_directory,resistor_name):
 # Function that modifies the .scs file
 # Inputs  : circuit_parameters, optimization input parameters
 # Outputs : NONE
-def write_circuit_parameters(filename,len,wid,temp,freq):
+def write_circuit_parameters(filename,len,wid,temp,freq,i_cur):
 	
 	# Creating a dictionary of the parameters
-	write_dict={'len':len,'wid':wid,'cir_temp':temp,'fund_1':freq}
+	write_dict={'len':len,'wid':wid,'cir_temp':temp,'fund_1':freq,'i_sin':i_cur}
 
 	# We will write the new values to the netlist file
 	f=open(filename,'r+')
@@ -235,8 +258,6 @@ def write_tcsh_file(file_directory):
 	f.write(s)
 	f.close()
 
-#===========================================================================================================================
-
 
 """
 ====================================================================================================================================================================================
@@ -247,7 +268,6 @@ def write_tcsh_file(file_directory):
 # This function will run the shell commands to run Spectre
 # Inputs  : Optimization Input Parameters
 # Outputs : NONE
-
 def run_file():
 	os.system('tcsh /home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh')	# This is the command to run the spectre file
 	
@@ -255,8 +275,7 @@ def run_file():
 # This function will write the circuit parameters, run Eldo and extract the output parameters
 # Inputs  : Circuit_Parameters, Optimization_Input_Parameters
 # Outputs : Extracted_Parameters
-
-def write_extract(file_directory,length,wid,temp,freq):
+def write_extract(file_directory,length,wid,temp,freq,i_cur):
 
 	# Getting the filenames
 	filename_w=file_directory+'/circ.scs'
@@ -267,7 +286,7 @@ def write_extract(file_directory,length,wid,temp,freq):
 	write_tcsh_file(file_directory)
 
 	# Writing to netlist file
-	write_circuit_parameters(filename_w,length,wid,temp,freq)
+	write_circuit_parameters(filename_w,length,wid,temp,freq,i_cur)
 
 	# Running netlist file
 	run_file()
@@ -276,9 +295,9 @@ def write_extract(file_directory,length,wid,temp,freq):
 	resistance_dc=extract_dc_param(filename_e)
 
 	# Extracting the HB Parameters
-	resistance_ac,distortion,symmetry=extract_hb_param(filename_h,freq)
+	resistance_dict,distortion,symmetry=extract_hb_param(filename_h,freq,i_cur)
 	
-	return resistance_dc,resistance_ac,distortion,symmetry
+	return resistance_dc,resistance_dict,distortion,symmetry
 
 #===========================================================================================================================
 
@@ -292,7 +311,7 @@ def write_extract(file_directory,length,wid,temp,freq):
 # Calculating AC Resistance as a function of frequency
 # Inputs: filenames for netlist files, resistor list, output storing file directory
 # Output: NONE
-def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_directory):
+def MOS_Resistor_Frequency_Sweep1(file_directory_netlist,resistor_dict,file_directory):
 
 	file_directory_ss=file_directory+'/ss'
 	file_directory_sl=file_directory+'/sl'
@@ -457,6 +476,126 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 	f2.close()
 	f3.close()
 	f4.close()
+
+#---------------------------------------------------------------------------------------------------------------------------	
+# Calculating AC Resistance as a function of frequency
+# Inputs: filenames for netlist files, resistor list, output storing file directory
+# Output: NONE
+def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_directory):
+
+	size_types=['ss','sl','ls','ll']
+	for size in size_types:
+			
+		# Getting the frequency array
+		freq_array=np.logspace(8,10,11)
+
+		# Arrays to store values
+		resistance_ac_array=np.zeros(len(freq_array),dtype=float)
+		impedance_m_array=np.zeros(len(freq_array),dtype=float)
+		impedance_p_array=np.zeros(len(freq_array),dtype=float)
+		impedance_r_array=np.zeros(len(freq_array),dtype=float)
+		impedance_i_array=np.zeros(len(freq_array),dtype=float)
+		resistance_dc_array=np.ones(len(freq_array),dtype=float)
+
+		
+		# Performing the analysis
+		for resistor in resistor_dict:
+			
+			file_directory_current=file_directory+'/'+size+'/'+resistor
+
+			# Creating the folder to store the outputs
+			if not os.path.exists(file_directory_current):
+				os.makedirs(file_directory_current)
+
+			# Opening the file
+			filename_csv=file_directory_current+'/frequency_sweep.csv'
+			f=open(filename_csv,'w')
+
+			# Writing the first line in the csv file
+			f.write('Frequency,AC_Resistance,Impedance_Mag,Impedance_Phase,Impedance_Real,Impedance_Img,DC_Resistance\n')
+			
+			# Writing the resistor name in the file
+			print('\n\n Resistor : ', resistor)
+			write_resistor_name(file_directory_netlist,resistor)
+		
+			# Choosing the width and length
+			if size=='ss':
+				wid=resistor_dict[resistor]['w_min']
+				length=resistor_dict[resistor]['l_min']
+			elif size=='ls':
+				wid=resistor_dict[resistor]['w_max']
+				length=resistor_dict[resistor]['l_min']
+			elif size=='sl':
+				wid=resistor_dict[resistor]['w_min']
+				length=resistor_dict[resistor]['l_max']
+			else:
+				wid=resistor_dict[resistor]['w_max']
+				length=resistor_dict[resistor]['l_max']
+			
+			i=0
+			for freq in freq_array:
+				# Running spectre
+				resistance_dc,resistance_dict,distortion,symmetry=write_extract(file_directory_netlist,length,wid,27,freq)	# Finding resistance at 27o C
+
+				# Storing the values in arrays
+				resistance_dc_array[i]=resistance_dc
+				resistance_ac_array[i]=resistance_dict['AC_Resistance']
+				impedance_m_array[i]=resistance_dict['Magnitude']
+				impedance_p_array[i]=resistance_dict['Phase']
+				impedance_r_array[i]=resistance_dict['Real']
+				impedance_i_array[i]=resistance_dict['Imaginary']
+
+				# Writing the values
+				f.write(str(resistance_dict['AC_Resistance'])+',')
+				f.write(str(resistance_dict['Magnitude'])+',')
+				f.write(str(resistance_dict['Phase'])+',')
+				f.write(str(resistance_dict['Real'])+',')
+				f.write(str(resistance_dict['Imaginary'])+',')
+				f.write(str(resistance_dc)+'\n')
+				i+=1
+			
+			f.close()
+
+			# ---------- Plots ----------
+
+			# Plot 1 : AC Resistance
+			figure()
+			semilogx(freq_array,resistance_ac_array,color='green',label='AC Resistance')
+			semilogx(freq_array,resistance_dc_array,color='red',label='DC Resistance')
+			xlabel('Frequency')
+			ylabel('Resistance')
+			grid()
+			legend()
+			savefig(file_directory_current+'/AC_Resistance.pdf')
+			close()
+
+			# Plot 2 : Impedance ( Mag and Phase )
+			figure()
+			subplot(2,1,1)
+			semilogx(freq_array,impedance_m_array,color='green',label='Impedance Magnitude')
+			semilogx(freq_array,resistance_dc_array,color='red',label='DC Resistance')
+			subplot(2,1,2)
+			semilogx(freq_array,impedance_p_array,color='green',label='Impedance Phase')
+			xlabel('Frequency')
+			grid()
+			legend()
+			savefig(file_directory_current+'/Impedance_M_P.pdf')
+			close()
+
+			# Plot 3 : Impedance ( Real and Imaginary )
+			figure()
+			subplot(2,1,1)
+			semilogx(freq_array,impedance_r_array,color='green',label='Impedance Real')
+			subplot(2,1,1)
+			semilogx(freq_array,impedance_i_array,color='red',label='Impedance Imaginary')
+			xlabel('Frequency')
+			grid()
+			legend()
+			savefig(file_directory_current+'/Impedance_R_I.pdf')
+			close()
+
+		
+	
 
 """
 ====================================================================================================================================================================================
@@ -662,8 +801,6 @@ def sweep_MOS_R(file_directory_netlist,resistor_list,file_directory):
 		plot_resistance(file_directory_plot+'/Distortion',distortion_array,temp_array,len_array,wid_array,'Distortion')
 
 
-
-
 """
 ====================================================================================================================================================================================
 ------------------------------------------------------------ MAIN PROGRAM ----------------------------------------------------------------------------------------------------------
@@ -709,15 +846,16 @@ write_directory_distortion='/home/ee18b028/Optimization/Simulation_Results/Resis
 MOS_Resistor_Distortion(file_directory,resistor_list2,write_directory_distortion)
 """
 
-"""
+#""
 # Code to frequency analysis
-write_directory_fsweep='/home/ee18b028/Optimization/Simulation_Results/Resistance/FrequencySweep_2'
+write_directory_fsweep='/home/ee18b028/Optimization/Simulation_Results/Resistance/FrequencySweep_30_9'
 MOS_Resistor_Frequency_Sweep(file_directory,resistor_dict_2,write_directory_fsweep)
-"""
+#"""
 
+"""
 # Code to do symmetry analysis
 MOS_Resistor_Symmetry(file_directory,resistor_dict_2)
-
+"""
 
 """
 ====================================================================================================================================================================================
