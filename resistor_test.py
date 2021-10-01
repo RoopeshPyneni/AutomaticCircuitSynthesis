@@ -96,14 +96,14 @@ def extract_hb_param(filename,freq,i_cur):
 		if flag==1:
 			
 			# Extracting R1a node values
-			if 'R1a' in line:
+			if 'Rn1' in line:
 				char_real=(line.split()[1])[1:]
 				char_img=(line.split()[2])[:-1]
 				vout_a_real_array.append(-1*float(char_img))
 				vout_a_img_array.append(float(char_real))
 			
 			# Extracting R1b node values
-			elif 'R1b' in line:
+			elif 'Rn2' in line:
 				char_real=(line.split()[1])[1:]
 				char_img=(line.split()[2])[:-1]
 				vout_b_real_array.append(-1*float(char_img))
@@ -604,7 +604,7 @@ def MOS_Resistor_Symmetry(file_directory_netlist,resistor_dict):
 def MOS_Resistor_DC_Analysis(file_directory_netlist,resistor_dict,file_directory_output):
 
 	# Storing the variable names
-	dc_input_array=np.linspace(0,1,6)
+	dc_input_array=np.linspace(0,1,5)
 	size_array=['ss','sl','ls','ll']
 	circuit_parameters={
 		'len':0,
@@ -646,11 +646,12 @@ def MOS_Resistor_DC_Analysis(file_directory_netlist,resistor_dict,file_directory
 
 			# Creating the output path
 			file_directory_current=file_directory_output+resistor+'/'+size+'/'
+			print(file_directory_current)
 			if not os.path.exists(file_directory_current):
 				os.makedirs(file_directory_current)
 
 			# Opening the file
-			f=open(file_directory_current+resistor+'_'+size+'_'+'dc_resistance.csv')
+			f=open(file_directory_current+resistor+'_'+size+'_'+'dc_resistance.csv','w')
 			f.write('V1,V2,DC_Resistance\n')
 
 			# Performing the analysis
@@ -816,7 +817,7 @@ def sweep_MOS_R(file_directory_netlist,resistor_list,file_directory):
 
 
 # Filenames for the netlist file
-file_directory='/home/ee18b028/cadence_project/test/resistor_test_4'
+file_directory='/home/ee18b028/cadence_project/test/resistor_test_5'
 
 # Creating the temperature, length, and width arrays
 resistor_list1=['rppolywo','rppolyl','rpodwo','rpodl','rnwsti','rnwod','rnpolywo','rnpolyl','rnodwo','rnodl']
@@ -861,8 +862,8 @@ MOS_Resistor_Distortion(file_directory,resistor_dict_2,write_directory_distortio
 
 #"""
 # Code to do DC Analysis
-file_directory_output='/home/ee18b028/Optimization/Simulation_Results/Resistance/DC_Analysis_1_10'
-MOS_Resistor_DC_Analysis(file_directory,resistor_dict_3,file_directory_output)
+file_directory_output='/home/ee18b028/Optimization/Simulation_Results/Resistance/DC_Analysis_1_10v2/'
+MOS_Resistor_DC_Analysis(file_directory,resistor_dict_2,file_directory_output)
 #"""
 
 """
