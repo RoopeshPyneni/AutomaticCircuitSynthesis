@@ -247,6 +247,7 @@ def write_tcsh_file(file_directory):
 	s=s+'source ~/.cshrc\n'
 	s=s+'cd '+file_directory+'\n'
 	s=s+'spectre circ.scs =log circ_log.txt\n'
+	#s=s+'spectre circ.scs\n'
 	s=s+'exit'
 	
 	f.truncate(0)
@@ -593,7 +594,7 @@ def MOS_Resistor_Distortion_single(file_directory_netlist,resistor_name,resistor
 	circuit_parameters={
 		'len':0,
 		'wid':0,
-		'i_sin':1e-2,
+		'i_sin':1e-4,
 		'v_1':1.0,
 		'v_2':0.0,
 		'v_b':0,
@@ -609,6 +610,7 @@ def MOS_Resistor_Distortion_single(file_directory_netlist,resistor_name,resistor
 	circuit_parameters['v_b']=resistor_dict['v_body']
 
 	for size in size_array:
+		print('\n\n\n\n\n\n\n Size:',size)
 			
 		if size=='ss':
 			circuit_parameters['wid']=resistor_dict['w_min']
@@ -645,6 +647,7 @@ def MOS_Resistor_Distortion_single(file_directory_netlist,resistor_name,resistor
 			for v2 in input_voltage_array:
 				if v1==v2:
 					continue
+				print('\n\n\n\n\n\n\n V1:',v1,' V2:',v2,' Start')
 				circuit_parameters['v_1']=v1
 				circuit_parameters['v_2']=v2
 				resistance_dc,resistance_dict,distortion_dict,symmetry=write_extract(file_directory_netlist,circuit_parameters)
@@ -662,6 +665,7 @@ def MOS_Resistor_Distortion_single(file_directory_netlist,resistor_name,resistor
 				vout_fund_array.append(distortion_dict['vout_fund_db'])
 				vout_harm_array.append(distortion_dict['vout_harm_db'])
 				distortion_array.append(distortion_dict['distortion_db'])
+				print('\n\n\n\n\n\n\n V1:',v1,' V2:',v2,' End')
 			
 			output_dictionary[v1]['v2']=np.array(v2_array)
 			output_dictionary[v1]['fund']=np.array(vout_fund_array)
@@ -674,8 +678,8 @@ def MOS_Resistor_Distortion_single(file_directory_netlist,resistor_name,resistor
 		colour_dict={0:'green',0.2:'red',0.4:'blue',0.6:'cyan',0.8:'lime',1.0:'maroon'}
 		figure()
 		for v1 in output_dictionary:
-			plot(output_dictionary[v1]['v2'],output_dictionary['fund'],color=colour_dict[v1],linestyle='-',label='Fundamental v1='+str(v1))
-			plot(output_dictionary[v1]['v2'],output_dictionary['harm'],color=colour_dict[v1],linestyle='-',label='Harmonics v1='+str(v1))
+			plot(output_dictionary[v1]['v2'],output_dictionary[v1]['fund'],color=colour_dict[round(v1,2)],linestyle='-',label='Fundamental v1='+str(v1))
+			plot(output_dictionary[v1]['v2'],output_dictionary[v1]['harm'],color=colour_dict[round(v1,2)],linestyle='-',label='Harmonics v1='+str(v1))
 		legend()
 		grid()
 		xlabel('V2')
@@ -686,7 +690,7 @@ def MOS_Resistor_Distortion_single(file_directory_netlist,resistor_name,resistor
 		# Plot 2
 		figure()
 		for v1 in output_dictionary:
-			plot(output_dictionary[v1]['v2'],output_dictionary['distortion'],color=colour_dict[v1],label='v1='+str(v1))
+			plot(output_dictionary[v1]['v2'],output_dictionary[v1]['distortion'],color=colour_dict[round(v1,2)],label='v1='+str(v1))
 		legend()
 		grid()
 		xlabel('V2')
