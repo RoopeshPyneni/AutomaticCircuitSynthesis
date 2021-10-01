@@ -152,19 +152,17 @@ def extract_hb_param(filename,freq,i_cur):
 				symmetry=1
 			break
 	
-	# Calculating AC Resistance and Impedance
-	ac_resistance=0
+	# Calculating Impedance
 	m_impedance=0
 	p_impedance=0
 	r_impedance=0
 	i_impedance=0
 	for i in range(len(frequency_array)):
 		if check_freq(frequency_array[i],freq,freq/1000)==1:
-			ac_resistance,m_impedance,p_impedance,r_impedance,i_impedance=calculate_impedance(i_cur,vout_a_real_array[i],vout_a_img_array[i],vout_b_real_array[i],vout_b_img_array[i])
+			m_impedance,p_impedance,r_impedance,i_impedance=calculate_impedance(i_cur,vout_a_real_array[i],vout_a_img_array[i],vout_b_real_array[i],vout_b_img_array[i])
 			break
 	
 	resistance_dict={
-		'AC_Resistance':ac_resistance,
 		'Magnitude':m_impedance,
 		'Phase':p_impedance,
 		'Real':r_impedance,
@@ -185,14 +183,7 @@ def calculate_impedance(cur,a_real,a_img,b_real,b_img):
 	Z_mag=np.sqrt(Z_real**2+Z_img**2)
 	Z_ph=np.arctan(Z_img/Z_real)*57.29577
 
-	# Calculating the AC Resistance
-	Ca_Cb=-1*b_real/a_real
-	a=a_real/cur
-	b=a_img/cur
-	c=a/(a**2+b**2)
-	Resistance=(1+Ca_Cb)/c
-
-	return Resistance,Z_mag,Z_ph,Z_real,Z_img
+	return Z_mag,Z_ph,Z_real,Z_img
 
 
 
@@ -229,18 +220,15 @@ def write_resistor_name(file_directory,resistor_name):
 # Function that modifies the .scs file
 # Inputs  : circuit_parameters, optimization input parameters
 # Outputs : NONE
-def write_circuit_parameters(filename,len,wid,temp,freq,i_cur):
+def write_circuit_parameters(filename,circuit_parameters):
 	
-	# Creating a dictionary of the parameters
-	write_dict={'len':len,'wid':wid,'cir_temp':temp,'fund_1':freq,'i_sin':i_cur}
-
 	# We will write the new values to the netlist file
 	f=open(filename,'r+')
 	s=''
 	for line in fileinput.input(filename):
-		for param in write_dict:
-			if 'parameters '+str(param) in line:								# Checking for a particular parameter in the .scs file
-				line='parameters '+str(param)+'='+str(write_dict[param])+'\n'	# Replacing the parameter in the .scs file
+		for param in circuit_parameters:
+			if 'parameters '+str(param) in line:										# Checking for a particular parameter in the .scs file
+				line='parameters '+str(param)+'='+str(circuit_parameters[param])+'\n'	# Replacing the parameter in the .scs file
 		s=s+line
 	f.truncate(0)
 	f.write(s)
@@ -282,7 +270,7 @@ def run_file():
 # This function will write the circuit parameters, run Eldo and extract the output parameters
 # Inputs  : Circuit_Parameters, Optimization_Input_Parameters
 # Outputs : resistance_dc,resistance_dict,distortion_dict,symmetry
-def write_extract(file_directory,length,wid,temp,freq,i_cur):
+def write_extract(file_directory,circuit_parameters):
 
 	# Getting the filenames
 	filename_w=file_directory+'/circ.scs'
@@ -293,7 +281,7 @@ def write_extract(file_directory,length,wid,temp,freq,i_cur):
 	write_tcsh_file(file_directory)
 
 	# Writing to netlist file
-	write_circuit_parameters(filename_w,length,wid,temp,freq,i_cur)
+	write_circuit_parameters(filename_w,circuit_parameters)
 
 	# Running netlist file
 	run_file()
@@ -302,6 +290,8 @@ def write_extract(file_directory,length,wid,temp,freq,i_cur):
 	resistance_dc=extract_dc_param(filename_e)
 
 	# Extracting the HB Parameters
+	freq=circuit_parameters['fund_1']
+	i_cur=circuit_parameters['i_sin']
 	resistance_dict,distortion_dict,symmetry=extract_hb_param(filename_h,freq,i_cur)
 	
 	return resistance_dc,resistance_dict,distortion_dict,symmetry
@@ -601,6 +591,102 @@ def MOS_Resistor_Symmetry(file_directory_netlist,resistor_dict):
 	for i in range(len(resistor_name)):
 		print('\nResistor : ',resistor_name[i])
 		print('Symmetry : ',resistor_symmetry[i])
+
+"""
+====================================================================================================================================================================================
+------------------------------------------------------------ CODE TO FIND THE DC RESISTANCE ----------------------------------------------------------------------------------------
+"""
+
+#---------------------------------------------------------------------------------------------------------------------------	
+# Performing DC Analysis
+# Inputs: filenames for netlist files, resistor list, output storing file directory
+# Output: NONE
+def MOS_Resistor_DC_Analysis(file_directory_netlist,resistor_dict,file_directory_output):
+
+	# Storing the variable names
+	dc_input_array=np.linspace(0,1,6)
+	size_array=['ss','sl','ls','ll']
+	circuit_parameters={
+		'len':0,
+		'wid':0,
+		'i_sin':1e-6,
+		'v_1':0,
+		'v_2':0,
+		'v_b':0,
+		'fund_1':1e9,
+		'n_harm':15,
+		'cir_temp':27
+	}
+	output_voltage_dictionary={}
+	
+	# Performing the analysis
+	for resistor in resistor_dict:
+
+		# Writing the resistor name in the file
+		write_resistor_name(file_directory_netlist,resistor)
+		print('\n\n Resistor : ', resistor)
+
+		# Storing the resistor body voltage
+		circuit_parameters['v_b']=resistor_dict[resistor]['v_body']
+		
+		# Choosing the width and length of the MOS Resistor
+		for size in size_array:
+			if size=='ss':
+				circuit_parameters['wid']=resistor_dict[resistor]['w_min']
+				circuit_parameters['len']=resistor_dict[resistor]['l_min']
+			elif size=='sl':
+				circuit_parameters['wid']=resistor_dict[resistor]['w_min']
+				circuit_parameters['len']=resistor_dict[resistor]['l_max']
+			elif size=='ls':
+				circuit_parameters['wid']=resistor_dict[resistor]['w_max']
+				circuit_parameters['len']=resistor_dict[resistor]['l_min']
+			else:
+				circuit_parameters['wid']=resistor_dict[resistor]['w_max']
+				circuit_parameters['len']=resistor_dict[resistor]['l_max']
+
+			# Creating the output path
+			file_directory_current=file_directory_output+resistor+'/'+size+'/'
+			if not os.path.exists(file_directory_current):
+				os.makedirs(file_directory_current)
+
+			# Opening the file
+			f=open(file_directory_current+resistor+'_'+size+'_'+'dc_resistance.csv')
+			f.write('V1,V2,DC_Resistance\n')
+
+			# Performing the analysis
+			for v1 in dc_input_array:
+				v2_array=[]
+				resistance_array=[]
+				for v2 in dc_input_array:
+					if v1==v2:
+						continue
+					circuit_parameters['v_1']=v1
+					circuit_parameters['v_2']=v2
+					resistance_dc,resistance_ac_dict,distortion_dict,symmetry=write_extract(file_directory_netlist,circuit_parameters)
+					f.write(str(v1)+',')
+					f.write(str(v2)+',')
+					f.write(str(resistance_dc)+'\n')
+					
+					v2_array.append(v2)
+					resistance_array.append(resistance_dc)
+
+				output_voltage_dictionary[v1]={}
+				output_voltage_dictionary[v1]['v2_array']=np.array(v2_array)
+				output_voltage_dictionary[v1]['resistance_array']=np.array(resistance_array)
+
+			f.close()
+			
+			# Plotting the data
+			figure()
+			for v1 in output_voltage_dictionary:
+				plot(output_voltage_dictionary[v1]['v2_array'],output_voltage_dictionary[v1]['resistance_array'],label='V1='+str(v1))
+			xlabel('V2')
+			ylabel('DC Resistance')
+			grid()
+			legend()
+			savefig(file_directory_current+resistor+'_'+size+'_'+'resistance_plot.pdf')
+			close()
+			
 		
 	
 """
@@ -739,25 +825,25 @@ resistor_list3=['rnpolywo','rnodl','rnwsti']
 resistor_list4=['rnpolywo_m','rnodl_m','rnwsti_m']
 
 resistor_dict_2={
-	'rnodl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6},
-	'rnods_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':2e-6},
-	'rnodwo_m':{'l_min':0.8e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':10e-6},
-	'rnpolyl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6},
-	'rnpolys_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':1e-6,'w_max':2e-6},
-	'rnpolywo_m':{'l_min':0.8e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':10e-6},
-	'rnwod_m':{'l_min':9e-6,'l_max':100e-6,'w_min':1.8e-6,'w_max':10e-6},
-	'rnwsti_m':{'l_min':9e-6,'l_max':100e-6,'w_min':1.8e-6,'w_max':10e-6},
-	'rpodl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6},
-	'rpods_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':1e-6,'w_max':2e-6},
-	'rpodwo_m':{'l_min':0.8e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':10e-6},
-	'rppolyl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6},
-	'rppolys_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':1e-6,'w_max':2e-6},
-	'rppolywo_m':{'l_min':0.8e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':10e-6}
+	'rnodl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6,'v_body':0.0},
+	'rnods_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':2e-6,'v_body':0.0},
+	'rnodwo_m':{'l_min':0.8e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':10e-6,'v_body':00},
+	'rnpolyl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6,'v_body':0.0},
+	'rnpolys_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':1e-6,'w_max':2e-6,'v_body':0.0},
+	'rnpolywo_m':{'l_min':0.8e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':10e-6,'v_body':0.0},
+	'rnwod_m':{'l_min':9e-6,'l_max':100e-6,'w_min':1.8e-6,'w_max':10e-6,'v_body':0.0},
+	'rnwsti_m':{'l_min':9e-6,'l_max':100e-6,'w_min':1.8e-6,'w_max':10e-6,'v_body':0.0},
+	'rpodl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6,'v_body':1.0},
+	'rpods_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':1e-6,'w_max':2e-6,'v_body':1.0},
+	'rpodwo_m':{'l_min':0.8e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':10e-6,'v_body':1.0},
+	'rppolyl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6,'v_body':1.0},
+	'rppolys_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':1e-6,'w_max':2e-6,'v_body':1.0},
+	'rppolywo_m':{'l_min':0.8e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':10e-6,'v_body':1.0}
 }
 
 resistor_dict_3={
-	'rnodl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6},
-	'rnods_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':2e-6}
+	'rnodl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6,'v_body':0.0},
+	'rnods_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':2e-6,'v_body':0.0}
 }
 
 
@@ -767,10 +853,16 @@ write_directory_temp='/home/ee18b028/Optimization/Simulation_Results/Resistance/
 temp_co_analysis(file_directory,resistor_list1,write_directory)
 """
 
-#"""
+"""
 # Code to do distortion analysis
 write_directory_distortion='/home/ee18b028/Optimization/Simulation_Results/Resistance/Distortion_30_9'
 MOS_Resistor_Distortion(file_directory,resistor_dict_2,write_directory_distortion)
+"""
+
+#"""
+# Code to do DC Analysis
+file_directory_output='/home/ee18b028/Optimization/Simulation_Results/Resistance/DC_Analysis_1_10'
+MOS_Resistor_DC_Analysis(file_directory,resistor_dict_3,file_directory_output)
 #"""
 
 """
