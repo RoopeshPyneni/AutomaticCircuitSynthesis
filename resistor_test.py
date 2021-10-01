@@ -522,10 +522,10 @@ def MOS_Resistor_Distortion(file_directory_netlist,resistor_dict,file_directory_
 			f.close()
 
 			output_dictionary[size]={}
-			output_dictionary[size]['fund']=vout_fund_array
-			output_dictionary[size]['harm']=vout_harm_array
-			output_dictionary[size]['distortion']=distortion_array
-
+			output_dictionary[size]['fund']=vout_fund_array.copy()
+			output_dictionary[size]['harm']=vout_harm_array.copy()
+			output_dictionary[size]['distortion']=distortion_array.copy()
+			
 			# ---------- Plots ----------
 
 			# Plot 1 - Vout_fund and Vout_extra
@@ -878,8 +878,8 @@ temp_co_analysis(file_directory,resistor_list1,write_directory)
 
 #"""
 # Code to do distortion analysis
-write_directory_distortion='/home/ee18b028/Optimization/Simulation_Results/Resistance/Distortion_1_10v2/'
-MOS_Resistor_Distortion(file_directory,resistor_dict_3,write_directory_distortion)
+write_directory_distortion='/home/ee18b028/Optimization/Simulation_Results/Resistance/Distortion_1_10v1/'
+MOS_Resistor_Distortion(file_directory,resistor_dict_2,write_directory_distortion)
 #"""
 
 """
