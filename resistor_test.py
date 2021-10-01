@@ -577,6 +577,123 @@ def MOS_Resistor_Distortion(file_directory_netlist,resistor_dict,file_directory_
 		close()
 		
 
+#---------------------------------------------------------------------------------------------------------------------------	
+# Calculating the distortion for all the resistors over extreme sizes and varying bias voltages but at a single current
+# Inputs: filenames for netlist files, resistor list, output storing file directory
+# Output: NONE
+def MOS_Resistor_Distortion_single(file_directory_netlist,resistor_name,resistor_dict,file_directory_output):
+
+	# Creating current array
+	output_dictionary={}
+
+	input_voltage_array=np.linspace(0,1,6)
+
+	# Storing the variable names
+	size_array=['ss','sl','ls','ll']
+	circuit_parameters={
+		'len':0,
+		'wid':0,
+		'i_sin':1e-2,
+		'v_1':1.0,
+		'v_2':0.0,
+		'v_b':0,
+		'fund_1':1e9,
+		'n_harm':15,
+		'cir_temp':27
+	}
+	
+	# Writing the resistor name in the file
+	write_resistor_name(file_directory_netlist,resistor_name)
+
+	# Storing the resistor body voltage
+	circuit_parameters['v_b']=resistor_dict['v_body']
+
+	for size in size_array:
+			
+		if size=='ss':
+			circuit_parameters['wid']=resistor_dict['w_min']
+			circuit_parameters['len']=resistor_dict['l_min']
+		elif size=='sl':
+			circuit_parameters['wid']=resistor_dict['w_min']
+			circuit_parameters['len']=resistor_dict['l_max']
+		elif size=='ls':
+			circuit_parameters['wid']=resistor_dict['w_max']
+			circuit_parameters['len']=resistor_dict['l_min']
+		else:
+			circuit_parameters['wid']=resistor_dict['w_max']
+			circuit_parameters['len']=resistor_dict['l_max']
+
+		# Creating the folder to store the outputs
+		file_directory_current=file_directory_output+resistor_name+'_'+size+'/'
+		if not os.path.exists(file_directory_current):
+			os.makedirs(file_directory_current)
+		
+		# Opening the file
+		filename_csv=file_directory_current+resistor_name+'_'+size+'_distortion.csv'
+		f=open(filename_csv,'w')
+
+		# Writing the first line in the csv file
+		f.write('v1,v2,Vout_fund_square,Vout_harmonics_square,Distortion,Vout_fund_dB,Vout_harmonics_dB,Distortion_dB\n')
+
+		output_dictionary={}
+		for v1 in input_voltage_array:
+			output_dictionary[v1]={}
+			v2_array=[]
+			vout_fund_array=[]
+			vout_harm_array=[]
+			distortion_array=[]
+			for v2 in input_voltage_array:
+				if v1==v2:
+					continue
+				circuit_parameters['v_1']=v1
+				circuit_parameters['v_2']=v2
+				resistance_dc,resistance_dict,distortion_dict,symmetry=write_extract(file_directory_netlist,circuit_parameters)
+				
+				f.write(str(v1)+',')
+				f.write(str(v2)+',')
+				f.write(str(distortion_dict['vout_fund'])+',')
+				f.write(str(distortion_dict['vout_harm'])+',')
+				f.write(str(distortion_dict['distortion'])+',')
+				f.write(str(distortion_dict['vout_fund_db'])+',')
+				f.write(str(distortion_dict['vout_harm_db'])+',')
+				f.write(str(distortion_dict['distortion_db'])+'\n')
+
+				v2_array.append(v2)
+				vout_fund_array.append(distortion_dict['vout_fund_db'])
+				vout_harm_array.append(distortion_dict['vout_harm_db'])
+				distortion_array.append(distortion_dict['distortion_db'])
+			
+			output_dictionary[v1]['v2']=np.array(v2_array)
+			output_dictionary[v1]['fund']=np.array(vout_fund_array)
+			output_dictionary[v1]['harm']=np.array(vout_harm_array)
+			output_dictionary[v1]['distortion']=np.array(distortion_array)
+
+		f.close()
+
+		# Plot 1
+		colour_dict={0:'green',0.2:'red',0.4:'blue',0.6:'cyan',0.8:'lime',1.0:'maroon'}
+		figure()
+		for v1 in output_dictionary:
+			plot(output_dictionary[v1]['v2'],output_dictionary['fund'],color=colour_dict[v1],linestyle='-',label='Fundamental v1='+str(v1))
+			plot(output_dictionary[v1]['v2'],output_dictionary['harm'],color=colour_dict[v1],linestyle='-',label='Harmonics v1='+str(v1))
+		legend()
+		grid()
+		xlabel('V2')
+		ylabel('Output Voltage ( in dB )')
+		savefig(file_directory_current+resistor_name+'_'+size+'_vout.pdf')
+		close()
+
+		# Plot 2
+		figure()
+		for v1 in output_dictionary:
+			plot(output_dictionary[v1]['v2'],output_dictionary['distortion'],color=colour_dict[v1],label='v1='+str(v1))
+		legend()
+		grid()
+		xlabel('V2')
+		ylabel('Distortion ( in dB )')
+		savefig(file_directory_current+resistor_name+'_'+size+'_distortion.pdf')
+		close()	
+	
 
 """
 ====================================================================================================================================================================================
@@ -876,11 +993,19 @@ write_directory_temp='/home/ee18b028/Optimization/Simulation_Results/Resistance/
 temp_co_analysis(file_directory,resistor_list1,write_directory)
 """
 
-#"""
-# Code to do distortion analysis
+"""
+# Code to do distortion analysis for multiple
 write_directory_distortion='/home/ee18b028/Optimization/Simulation_Results/Resistance/Distortion_1_10v1/'
 MOS_Resistor_Distortion(file_directory,resistor_dict_2,write_directory_distortion)
+"""
+
 #"""
+# Code to do distortion analysis for single
+write_directory_distortion2='/home/ee18b028/Optimization/Simulation_Results/Resistance/Distortion_2_10v1/'
+resistor_dict={'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6,'v_body':0.0}
+MOS_Resistor_Distortion_single(file_directory,'rnodl_m',resistor_dict,write_directory_distortion2)
+#"""
+
 
 """
 # Code to do DC Analysis
