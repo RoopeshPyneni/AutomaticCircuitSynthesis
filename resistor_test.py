@@ -309,65 +309,79 @@ def write_extract(file_directory,circuit_parameters):
 # Calculating AC Resistance as a function of frequency
 # Inputs: filenames for netlist files, resistor list, output storing file directory
 # Output: NONE
-def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_directory):
+def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_directory_output):
 
+	# Storing the variable names
 	size_types=['ss','sl','ls','ll']
-	for size in size_types:
-			
-		# Getting the frequency array
-		freq_array=np.logspace(8,10,11)
+	circuit_parameters={
+		'len':0,
+		'wid':0,
+		'i_sin':1e-6,
+		'v_1':1.0,
+		'v_2':0.0,
+		'v_b':0,
+		'fund_1':1e9,
+		'n_harm':15,
+		'cir_temp':27
+	}
 
-		# Arrays to store values
-		resistance_ac_array=np.zeros(len(freq_array),dtype=float)
-		impedance_m_array=np.zeros(len(freq_array),dtype=float)
-		impedance_p_array=np.zeros(len(freq_array),dtype=float)
-		impedance_r_array=np.zeros(len(freq_array),dtype=float)
-		impedance_i_array=np.zeros(len(freq_array),dtype=float)
-		resistance_dc_array=np.ones(len(freq_array),dtype=float)
+	# Getting the frequency array
+	freq_array=np.logspace(8,10,11)
 
-		
-		# Performing the analysis
-		for resistor in resistor_dict:
-			
-			file_directory_current=file_directory+'/'+size+'/'+resistor
+	# Performing the analysis
+	for resistor in resistor_dict:
+
+		# Writing the resistor name in the file
+		print('\n\n Resistor : ', resistor)
+		write_resistor_name(file_directory_netlist,resistor)
+
+		# Storing the resistor body voltage
+		circuit_parameters['v_b']=resistor_dict[resistor]['v_body']
+
+		for size in size_types:
+
+			if size=='ss':
+				circuit_parameters['wid']=resistor_dict[resistor]['w_min']
+				circuit_parameters['len']=resistor_dict[resistor]['l_min']
+			elif size=='sl':
+				circuit_parameters['wid']=resistor_dict[resistor]['w_min']
+				circuit_parameters['len']=resistor_dict[resistor]['l_max']
+			elif size=='ls':
+				circuit_parameters['wid']=resistor_dict[resistor]['w_max']
+				circuit_parameters['len']=resistor_dict[resistor]['l_min']
+			else:
+				circuit_parameters['wid']=resistor_dict[resistor]['w_max']
+				circuit_parameters['len']=resistor_dict[resistor]['l_max']
 
 			# Creating the folder to store the outputs
+			file_directory_current=file_directory_output+resistor+'/'+size+'/'
 			if not os.path.exists(file_directory_current):
 				os.makedirs(file_directory_current)
-
+			
 			# Opening the file
-			filename_csv=file_directory_current+'/frequency_sweep.csv'
+			filename_csv=file_directory_current+resistor+'_'+size+'_frequency_sweep.csv'
 			f=open(filename_csv,'w')
 
 			# Writing the first line in the csv file
-			f.write('Frequency,AC_Resistance,Impedance_Mag,Impedance_Phase,Impedance_Real,Impedance_Img,DC_Resistance\n')
+			f.write('Frequency,Impedance_Mag,Impedance_Phase,Impedance_Real,Impedance_Img,DC_Resistance\n')
 			
-			# Writing the resistor name in the file
-			print('\n\n Resistor : ', resistor)
-			write_resistor_name(file_directory_netlist,resistor)
-		
-			# Choosing the width and length
-			if size=='ss':
-				wid=resistor_dict[resistor]['w_min']
-				length=resistor_dict[resistor]['l_min']
-			elif size=='ls':
-				wid=resistor_dict[resistor]['w_max']
-				length=resistor_dict[resistor]['l_min']
-			elif size=='sl':
-				wid=resistor_dict[resistor]['w_min']
-				length=resistor_dict[resistor]['l_max']
-			else:
-				wid=resistor_dict[resistor]['w_max']
-				length=resistor_dict[resistor]['l_max']
+			# Arrays to store values
+			impedance_m_array=np.zeros(len(freq_array),dtype=float)
+			impedance_p_array=np.zeros(len(freq_array),dtype=float)
+			impedance_r_array=np.zeros(len(freq_array),dtype=float)
+			impedance_i_array=np.zeros(len(freq_array),dtype=float)
+			resistance_dc_array=np.ones(len(freq_array),dtype=float)
 			
 			i=0
 			for freq in freq_array:
+				
+				circuit_parameters['fund_1']=freq
+
 				# Running spectre
-				resistance_dc,resistance_dict,distortion,symmetry=write_extract(file_directory_netlist,length,wid,27,freq,1e-6)	# Finding resistance at 27o C
+				resistance_dc,resistance_dict,distortion,symmetry=write_extract(file_directory_netlist,circuit_parameters)
 
 				# Storing the values in arrays
 				resistance_dc_array[i]=resistance_dc
-				resistance_ac_array[i]=resistance_dict['AC_Resistance']
 				impedance_m_array[i]=resistance_dict['Magnitude']
 				impedance_p_array[i]=resistance_dict['Phase']
 				impedance_r_array[i]=resistance_dict['Real']
@@ -375,7 +389,6 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 
 				# Writing the values
 				f.write(str(freq)+',')
-				f.write(str(resistance_dict['AC_Resistance'])+',')
 				f.write(str(resistance_dict['Magnitude'])+',')
 				f.write(str(resistance_dict['Phase'])+',')
 				f.write(str(resistance_dict['Real'])+',')
@@ -387,18 +400,7 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 
 			# ---------- Plots ----------
 
-			# Plot 1 : AC Resistance
-			figure()
-			semilogx(freq_array,resistance_ac_array,color='green',label='AC Resistance')
-			semilogx(freq_array,resistance_dc_array,color='red',label='DC Resistance')
-			xlabel('Frequency')
-			ylabel('Resistance')
-			grid()
-			legend()
-			savefig(file_directory_current+'/AC_Resistance.pdf')
-			close()
-
-			# Plot 2 : Impedance ( Mag and Phase )
+			# Plot 1 : Impedance ( Mag and Phase )
 			figure()
 			subplot(2,1,1)
 			semilogx(freq_array,impedance_m_array,color='green',label='Impedance Magnitude')
@@ -412,23 +414,24 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 			ylabel('Impedance Phase')
 			grid()
 			legend()
-			savefig(file_directory_current+'/Impedance_M_P.pdf')
+			savefig(file_directory_current+resistor+'_'+size+'_Impedance_M_P.pdf')
 			close()
 
-			# Plot 3 : Impedance ( Real and Imaginary )
+			# Plot 2 : Impedance ( Real and Imaginary )
 			figure()
 			subplot(2,1,1)
 			semilogx(freq_array,impedance_r_array,color='green',label='Impedance Real')
+			semilogx(freq_array,resistance_dc_array,color='red',label='DC Resistance')
 			ylabel('Impedance Real')
 			grid()
 			legend()
 			subplot(2,1,2)
-			semilogx(freq_array,impedance_i_array,color='red',label='Impedance Imaginary')
+			semilogx(freq_array,impedance_i_array,color='green',label='Impedance Imaginary')
 			xlabel('Frequency')
 			ylabel('Impedance Imaginary')
 			grid()
 			legend()
-			savefig(file_directory_current+'/Impedance_R_I.pdf')
+			savefig(file_directory_current+resistor+'_'+size+'_Impedance_R_I.pdf')
 			close()
 
 		
@@ -441,6 +444,7 @@ def MOS_Resistor_Frequency_Sweep(file_directory_netlist,resistor_dict,file_direc
 # Calculating the distortion for all the resistors over extreme sizes
 # Inputs: filenames for netlist files, resistor list, output storing file directory
 # Output: NONE
+# UPTO DATE
 def MOS_Resistor_Distortion(file_directory_netlist,resistor_dict,file_directory_output):
 
 	# Creating current array
@@ -582,6 +586,7 @@ def MOS_Resistor_Distortion(file_directory_netlist,resistor_dict,file_directory_
 # Calculating the distortion for all the resistors over extreme sizes and varying bias voltages but at a single current
 # Inputs: filenames for netlist files, resistor list, output storing file directory
 # Output: NONE
+# UPTO DATE
 def MOS_Resistor_Distortion_single(file_directory_netlist,resistor_name,resistor_dict,file_directory_output):
 
 	# Creating current array
@@ -1003,12 +1008,12 @@ write_directory_distortion='/home/ee18b028/Optimization/Simulation_Results/Resis
 MOS_Resistor_Distortion(file_directory,resistor_dict_2,write_directory_distortion)
 """
 
-#"""
+"""
 # Code to do distortion analysis for single
 write_directory_distortion2='/home/ee18b028/Optimization/Simulation_Results/Resistance/Distortion_2_10v1/'
 resistor_dict={'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6,'v_body':0.0}
 MOS_Resistor_Distortion_single(file_directory,'rnodl_m',resistor_dict,write_directory_distortion2)
-#"""
+"""
 
 
 """
@@ -1017,11 +1022,11 @@ file_directory_output='/home/ee18b028/Optimization/Simulation_Results/Resistance
 MOS_Resistor_DC_Analysis(file_directory,resistor_dict_2,file_directory_output)
 """
 
-"""
+#"""
 # Code to frequency analysis
-write_directory_fsweep='/home/ee18b028/Optimization/Simulation_Results/Resistance/FrequencySweep_30_9'
-MOS_Resistor_Frequency_Sweep(file_directory,resistor_dict_2,write_directory_fsweep)
-"""
+write_directory_fsweep='/home/ee18b028/Optimization/Simulation_Results/Resistance/FrequencySweep_1_10/'
+MOS_Resistor_Frequency_Sweep(file_directory,resistor_dict_3,write_directory_fsweep)
+#"""
 
 """
 # Code to do symmetry analysis
