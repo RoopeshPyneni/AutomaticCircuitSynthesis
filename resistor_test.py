@@ -1025,7 +1025,7 @@ MOS_Resistor_DC_Analysis(file_directory,resistor_dict_2,file_directory_output)
 #"""
 # Code to frequency analysis
 write_directory_fsweep='/home/ee18b028/Optimization/Simulation_Results/Resistance/FrequencySweep_1_10/'
-MOS_Resistor_Frequency_Sweep(file_directory,resistor_dict_3,write_directory_fsweep)
+MOS_Resistor_Frequency_Sweep(file_directory,resistor_dict_2,write_directory_fsweep)
 #"""
 
 """
