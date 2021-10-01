@@ -140,9 +140,9 @@ def extract_hb_param(filename,freq,i_cur):
 	distortion_dict['vout_fund']=vout_square_normal
 	distortion_dict['vout_harm']=vout_square_extra
 	distortion_dict['distortion']=distortion
-	distortion_dict['vout_fund_db']=20*np.log10(vout_square_normal)
-	distortion_dict['vout_harm_db']=20*np.log10(vout_square_extra)
-	distortion_dict['distortion_db']=20*np.log10(distortion)
+	distortion_dict['vout_fund_db']=10*np.log10(vout_square_normal)
+	distortion_dict['vout_harm_db']=10*np.log10(vout_square_extra)
+	distortion_dict['distortion_db']=10*np.log10(distortion)
 
 	# Calculating symmetry
 	symmetry=0
@@ -496,7 +496,7 @@ def MOS_Resistor_Distortion1(file_directory_netlist,resistor_list,file_directory
 def MOS_Resistor_Distortion(file_directory_netlist,resistor_dict,file_directory):
 
 	# Creating current array
-	current_array=np.logspace(-6,-2,9)
+	current_array=np.logspace(-6,-1,11)
 	vout_fund_array=np.zeros(len(current_array),dtype=float)
 	vout_harm_array=np.zeros(len(current_array),dtype=float)
 	distortion_array=np.zeros(len(current_array),dtype=float)
@@ -506,15 +506,15 @@ def MOS_Resistor_Distortion(file_directory_netlist,resistor_dict,file_directory)
 
 		# Creating the folder to store the outputs
 		file_directory_current=file_directory+'/'+resistor
-		if not os.path.exists(file_directory):
-			os.makedirs(file_directory)
+		if not os.path.exists(file_directory_current):
+			os.makedirs(file_directory_current)
 		
 		# Opening the file
 		filename_csv=file_directory_current+'/distortion.csv'
 		f=open(filename_csv,'w')
 
 		# Writing the first line in the csv file
-		f.write('Current,Vout_fund,Vout_harmonics,Distortion,Vout_fund_dB,Vout_harmonics_dB,Distortion_dB\n')
+		f.write('Current,Vout_fund_square,Vout_harmonics_square,Distortion,Vout_fund_dB,Vout_harmonics_dB,Distortion_dB\n')
 		
 		# Writing the resistor name in the file
 		print('\n\n Resistor : ', resistor)
@@ -770,7 +770,7 @@ temp_co_analysis(file_directory,resistor_list1,write_directory)
 #"""
 # Code to do distortion analysis
 write_directory_distortion='/home/ee18b028/Optimization/Simulation_Results/Resistance/Distortion_30_9'
-MOS_Resistor_Distortion(file_directory,resistor_dict_3,write_directory_distortion)
+MOS_Resistor_Distortion(file_directory,resistor_dict_2,write_directory_distortion)
 #"""
 
 """
