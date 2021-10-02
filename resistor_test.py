@@ -126,6 +126,7 @@ def extract_hb_param(filename,freq,i_cur):
 	vout_b_img_array=np.array(vout_b_img_array)
 
 	# Calculating distortion
+	print(freq)
 	vout_square_extra=0
 	for i in range(len(frequency_array)):
 		if check_freq(frequency_array[i],0,freq/1000)==1:
@@ -246,8 +247,8 @@ def write_tcsh_file(file_directory):
 	s='#tcsh\n'
 	s=s+'source ~/.cshrc\n'
 	s=s+'cd '+file_directory+'\n'
-	s=s+'spectre circ.scs =log circ_log.txt\n'
-	#s=s+'spectre circ.scs\n'
+	#s=s+'spectre circ.scs =log circ_log.txt\n'
+	s=s+'spectre circ.scs\n'
 	s=s+'exit'
 	
 	f.truncate(0)
