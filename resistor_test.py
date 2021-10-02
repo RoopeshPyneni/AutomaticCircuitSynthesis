@@ -836,144 +836,17 @@ def MOS_Resistor_DC_Analysis(file_directory_netlist,resistor_dict,file_directory
 			savefig(file_directory_current+resistor+'_'+size+'_'+'resistance_plot.pdf')
 			close()
 			
-		
-	
-"""
-====================================================================================================================================================================================
------------------------------------------------------------- CODE TO SWEEP R vs W,L,T ----------------------------------------------------------------------------------------------
-"""
-
-#-----------------------------------------------------------------------------------------------
-# This function will plot all the graphs
-# Inputs  : Circuit_Parameters, Optimization_Input_Parameters
-# Outputs : Extracted_Parameters
-def plot_resistance(file_directory_plot,resistance_array,temp_array,len_array,wid_array,y_label):
-	
-	# First, we will plot R vs T for different l 
-	print('Start Plot vs Temperature')
-	file_directory=file_directory_plot+'/Temperature'
-	if not os.path.exists(file_directory):
-		os.makedirs(file_directory)
-
-	for k in range(len(wid_array)):
-		figure()
-		for j in range(len(len_array)):
-			plot(temp_array,resistance_array[:,j,k],label='Length = '+str(len_array[j]))
-		xlabel('Temperature')
-		ylabel(y_label)
-		grid()
-		legend()
-		savefig(file_directory+'/wid_'+str(wid_array[k])+'.pdf')
-		close()
-
-	# Second, we will plot R vs l for different w
-	print('Start Plot vs Length')
-	file_directory=file_directory_plot+'/Length'
-	if not os.path.exists(file_directory):
-		os.makedirs(file_directory)
-
-	for i in range(len(temp_array)):
-		figure()
-		for k in range(len(wid_array)):
-			loglog(len_array,resistance_array[i,:,k],label='Width = '+str(wid_array[k]))
-		xlabel('Length')
-		ylabel(y_label)
-		grid()
-		legend()
-		savefig(file_directory+'/temp_'+str(temp_array[i])+'.pdf')
-		close()
-
-	# Third, we will plot R vs w for different l
-	print('Start Plot vs Width')
-	file_directory=file_directory_plot+'/Width'
-	if not os.path.exists(file_directory):
-		os.makedirs(file_directory)
-
-	for i in range(len(temp_array)):
-		figure()
-		for j in range(len(len_array)):
-			loglog(wid_array,resistance_array[i,j,:],label='Length = '+str(len_array[j]))
-		xlabel('Width')
-		ylabel(y_label)
-		grid()
-		legend()
-		savefig(file_directory+'/temp_'+str(temp_array[i])+'.pdf')
-		close()
-
-	# Finally, we will plot R vs l/w for different w
-	print('Start Plot vs L by W')
-	file_directory=file_directory_plot+'/L_by_W'
-	if not os.path.exists(file_directory):
-		os.makedirs(file_directory)
-
-	for i in range(len(temp_array)):
-		figure()
-		for k in range(len(wid_array)):
-			loglog(len_array/wid_array[k],resistance_array[i,:,k],label='Width = '+str(wid_array[k]))
-		xlabel('Length/Width')
-		ylabel(y_label)
-		grid()
-		legend()
-		savefig(file_directory+'/temp_'+str(temp_array[i])+'.pdf')
-		close()
-
-#---------------------------------------------------------------------------------------------------------------------------	
-# Sweeping W,L,T and plotting the Resistance Values
-# Inputs: filenames for netlist files, resistor list, output storing file directory
-# Output: NONE
-def sweep_MOS_R(file_directory_netlist,resistor_list,file_directory):
-	
-	# Running the code 
-	freq=1e9
-	temp_array=np.linspace(-40,120,17)
-	lw_start=60e-9
-	lw_end=60e-7
-	len_array=lw_start*np.logspace(0,np.log10(lw_end/lw_start),7)
-	wid_array=len_array
-	for resistor in resistor_list:
-		print('Resistor name is : ',resistor)
-		write_resistor_name(file_directory_netlist,resistor)
-
-		file_directory_plot='/home/ee18b028/Optimization/Simulation_Results/Resistance/'+resistor
-		if not os.path.exists(file_directory_plot):
-			os.makedirs(file_directory_plot)
-
-		l_temp=len(temp_array)
-		l_len=len(len_array)
-		l_wid=len(wid_array)
-
-		resistance_dc_array=np.zeros((l_temp,l_len,l_wid),dtype=float)
-		resistance_ac_array=np.zeros((l_temp,l_len,l_wid),dtype=float)
-		distortion_array=np.zeros((l_temp,l_len,l_wid),dtype=float)
-
-		for i in range(l_temp):
-			for j in range(l_len):
-				for k in range(l_wid):
-					print('\n\ni=',i,'j=',j,'k=',k)
-					resistance_dc_array[i,j,k],resistance_ac_array[i,j,k],distortion_array[i,j,k]=write_extract(file_directory_netlist,
-					len_array[j],wid_array[k],temp_array[i],freq)
-
-		plot_resistance(file_directory_plot+'/DC_Resistance',resistance_dc_array,temp_array,len_array,wid_array,'DC Resistance')
-		plot_resistance(file_directory_plot+'/AC_Resistance',resistance_ac_array,temp_array,len_array,wid_array,'AC Resistance')
-		plot_resistance(file_directory_plot+'/Distortion',distortion_array,temp_array,len_array,wid_array,'Distortion')
-
 
 """
 ====================================================================================================================================================================================
 ------------------------------------------------------------ MAIN PROGRAM ----------------------------------------------------------------------------------------------------------
 """
 
-
 # Filenames for the netlist file
 file_directory='/home/ee18b028/cadence_project/test/resistor_test_5'
 
-# Creating the temperature, length, and width arrays
-resistor_list1=['rppolywo','rppolyl','rpodwo','rpodl','rnwsti','rnwod','rnpolywo','rnpolyl','rnodwo','rnodl']
-resistor_list2=['rppolywo_m','rppolyl_m','rpodwo_m','rpodl_m','rnwsti_m','rnwod_m','rnpolywo_m','rnpolyl_m','rnodwo_m','rnodl_m']
-resistor_list3=['rnpolywo','rnodl','rnwsti']
-resistor_list4=['rnpolywo_m','rnodl_m','rnwsti_m']
-
-resistor_dict_2={
+# Creating the resistor dictionary
+resistor_dict_1={
 	'rnodl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6,'v_body':0.0},
 	'rnods_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':2e-6,'v_body':0.0},
 	'rnodwo_m':{'l_min':0.8e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':10e-6,'v_body':00},
@@ -990,17 +863,15 @@ resistor_dict_2={
 	'rppolywo_m':{'l_min':0.8e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':10e-6,'v_body':1.0}
 }
 
-resistor_dict_3={
+resistor_dict_2={
 	'rnodl_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6,'v_body':0.0},
 	'rnods_m':{'l_min':0.4e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':2e-6,'v_body':0.0}
 }
 
+resistor_dict_3={
+	'rppolywo_m':{'l_min':0.8e-6,'l_max':100e-6,'w_min':0.4e-6,'w_max':10e-6,'v_body':1.0}
+}
 
-"""
-# Code to run temp co analysis
-write_directory_temp='/home/ee18b028/Optimization/Simulation_Results/Resistance/Temp Coefficient'
-temp_co_analysis(file_directory,resistor_list1,write_directory)
-"""
 
 """
 # Code to do distortion analysis for multiple
@@ -1025,82 +896,10 @@ MOS_Resistor_DC_Analysis(file_directory,resistor_dict_2,file_directory_output)
 #"""
 # Code to frequency analysis
 write_directory_fsweep='/home/ee18b028/Optimization/Simulation_Results/Resistance/FrequencySweep_1_10/'
-MOS_Resistor_Frequency_Sweep(file_directory,resistor_dict_2,write_directory_fsweep)
+MOS_Resistor_Frequency_Sweep(file_directory,resistor_dict_3,write_directory_fsweep)
 #"""
 
 """
 # Code to do symmetry analysis
 MOS_Resistor_Symmetry(file_directory,resistor_dict_2)
-"""
-
-"""
-====================================================================================================================================================================================
------------------------------------------------------------- TEMP CO FUNCTIONS -----------------------------------------------------------------------------------------------------
-
-#---------------------------------------------------------------------------------------------------------------------------	
-# Calculating the slope and y-intercept
-# Inputs: x and y coordinates of the points
-# Output: slope, y-intercept
-
-def calculate_slope(x,y):
-	A = np.vstack([x, np.ones(len(x))]).T
-	m, c = np.linalg.lstsq(A, y, rcond=None)[0]
-	return m,c
-
-#---------------------------------------------------------------------------------------------------------------------------	
-# Calculating the temperature coefficient
-# Inputs: filenames for netlist files, resistor list, output storing file directory
-# Output: NONE
-def temp_co_analysis(file_directory_netlist,resistor_list,file_directory):
-	
-	# Creating the folder to store the outputs
-	if not os.path.exists(file_directory):
-		os.makedirs(file_directory)
-			
-	# Creating the arrays to store the results
-	temp_array=np.linspace(-40,120,17)
-	resistance_array=np.zeros(17,dtype=float)
-	
-	# Opening the file
-	filename_csv=file_directory+'/temp_coeff.csv'
-	f=open(filename_csv,'w')
-
-	# Writing the first line in the csv file
-	f.write('Resistor Name,')
-	for temp in temp_array:
-		f.write(str(temp)+',')
-	f.write('Temperature Coefficient\n')
-	
-	# Performing the analysis
-	for resistor in resistor_list:
-		
-		# Writing the resistor name in the file
-		print('\n\n Resistor : ', resistor)
-		write_resistor_name(file_directory_netlist,resistor)
-		f.write(resistor+',')
-		
-		# Choosing the width and length of the MOS Resistor
-		freq=1e9
-		if resistor=='rnwsti' or resistor=='rnwod':
-			wid=5e-6
-			length=10e-6
-		else:
-			wid=1e-6
-			length=1e-6
-		
-		# Starting the sweep for temperature
-		i=0
-		for temp in temp_array:
-			print('Temperature : ',temp)
-			resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,temp,freq)	# Extracting the values
-			resistance_array[i]=resistance_dc	
-			i+=1
-			f.write(str(resistance_dc)+',') # Writing to csv file
-		temp_co,c=calculate_slope(temp_array,resistance_array)	# Calculating the slope of resistance vs temperature
-		resistance_dc,resistance_ac,distortion=write_extract(file_directory_netlist,length,wid,27,freq)	# Finding resistance at 27o C
-		temp_co/=resistance_dc	# Dividing the slope by resistance at 27o C
-		f.write(str(temp_co)+'\n')
-
-	f.close()
-
 """
