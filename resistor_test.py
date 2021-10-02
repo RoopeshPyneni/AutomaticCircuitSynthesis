@@ -126,7 +126,6 @@ def extract_hb_param(filename,freq,i_cur):
 	vout_b_img_array=np.array(vout_b_img_array)
 
 	# Calculating distortion
-	print(freq)
 	vout_square_extra=0
 	for i in range(len(frequency_array)):
 		if check_freq(frequency_array[i],0,freq/1000)==1:
@@ -247,8 +246,8 @@ def write_tcsh_file(file_directory):
 	s='#tcsh\n'
 	s=s+'source ~/.cshrc\n'
 	s=s+'cd '+file_directory+'\n'
-	#s=s+'spectre circ.scs =log circ_log.txt\n'
-	s=s+'spectre circ.scs\n'
+	s=s+'spectre circ.scs =log circ_log.txt\n'
+	#s=s+'spectre circ.scs\n'
 	s=s+'exit'
 	
 	f.truncate(0)
@@ -880,13 +879,12 @@ write_directory_distortion='/home/ee18b028/Optimization/Simulation_Results/Resis
 MOS_Resistor_Distortion(file_directory,resistor_dict_2,write_directory_distortion)
 """
 
-"""
+#"""
 # Code to do distortion analysis for single
 write_directory_distortion2='/home/ee18b028/Optimization/Simulation_Results/Resistance/Distortion_2_10v1/'
 resistor_dict={'l_min':0.4e-6,'l_max':100e-6,'w_min':2e-6,'w_max':10e-6,'v_body':0.0}
 MOS_Resistor_Distortion_single(file_directory,'rnodl_m',resistor_dict,write_directory_distortion2)
-"""
-
+#"""
 
 """
 # Code to do DC Analysis
@@ -894,11 +892,11 @@ file_directory_output='/home/ee18b028/Optimization/Simulation_Results/Resistance
 MOS_Resistor_DC_Analysis(file_directory,resistor_dict_2,file_directory_output)
 """
 
-#"""
+"""
 # Code to frequency analysis
 write_directory_fsweep='/home/ee18b028/Optimization/Simulation_Results/Resistance/FrequencySweep_1_10/'
 MOS_Resistor_Frequency_Sweep(file_directory,resistor_dict_3,write_directory_fsweep)
-#"""
+"""
 
 """
 # Code to do symmetry analysis
