@@ -1,9 +1,17 @@
 #===========================================================================================================================
 """
-Name: Pyneni Roopesh
-Roll Number: EE18B028
+Name				: Pyneni Roopesh
+Roll Number			: EE18B028
+File Name			: optimization_functions_loss.py
+File Description 	: This file will contain the functions for Loss Optimization
 
-Loss Functions:
+Functions structure in this file:
+	--> ramp_func
+	--> calc_fom_1
+	--> update_circuit_parameters
+	--> calc_check_loss
+	--> check_best_solution
+	
 """
 #===========================================================================================================================
 
@@ -13,6 +21,8 @@ Loss Functions:
 
 #-----------------------------------------------------------------------------------------------
 # This is the ramp function
+# Inputs  : x
+# Outputs : r(x)
 def ramp_func(x):
 	if x>0:
 		return x
@@ -24,6 +34,8 @@ def ramp_func(x):
 
 #-----------------------------------------------------------------------------------------------
 # This function calculates the loss for Io Optimization
+# Inputs  : extracted_parameters,output_conditions,loss_weights
+# Outputs : loss_dict
 def calc_loss_1(extracted_parameters,output_conditions,loss_weights):
 	
 	# Extracted Values
@@ -59,6 +71,8 @@ def calc_loss_1(extracted_parameters,output_conditions,loss_weights):
 
 #-----------------------------------------------------------------------------------------------
 # This function updates the values of circuit parameters by trying to minimize loss
+# Inputs  : circuit_parameters,circuit_parameters_slope,check_loss,optimization_input_parameters
+# Outputs : circuit_parameters
 def update_circuit_parameters(circuit_parameters,circuit_parameters_slope,check_loss,optimization_input_parameters):
 
 	alpha_parameters=optimization_input_parameters['optimization']['alpha']['values']
@@ -90,7 +104,9 @@ def update_circuit_parameters(circuit_parameters,circuit_parameters_slope,check_
 	return circuit_parameters
 	
 #-----------------------------------------------------------------------------------------------
-# This function updates the values of circuit parameters by trying to minimize loss
+# This function will check the loss of gain, iip3, nf, and s11
+# Inputs  : loss_iter,i,loss_type
+# Outputs : check_loss ( -1 if s11 loss is 0 )
 def calc_check_loss(loss_iter,i,loss_type):
 
 	if loss_type==0:
@@ -106,6 +122,8 @@ def calc_check_loss(loss_iter,i,loss_type):
 	
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to check the best solution
+# Inputs  : optimization_results,loss_max
+# Outputs : opt_dict
 def check_best_solution(optimization_results,loss_max):
 
 	# Defining some values

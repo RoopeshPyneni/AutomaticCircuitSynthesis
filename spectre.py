@@ -1,9 +1,41 @@
 #===========================================================================================================================
 """
-Name: Pyneni Roopesh
-Roll Number: EE18B028
+Name				: Pyneni Roopesh
+Roll Number			: EE18B028
+File Name			: spectre.py
+File Description 	: This file will contain the functions to write, run, and read from the spectre files
 
-Simulation File:
+Functions structure in this file:
+	--> valueName_to_value
+	--> valueE_to_value
+	--> extract_file
+	--> extract_basic_parameters
+		--> extract_dc_param
+		--> extract_ac_param
+		--> extract_sp_param
+		--> extract_noise_param
+	--> calculate_iip3_single_point
+	--> calculate_iip3_multiple_points
+		--> calculate_slope
+		--> calculate_best_iip3_point
+		--> check_freq
+		--> extract_vout_magnitude
+		--> extract_vout
+
+	--> print_param
+	--> dict_convert
+	--> write_circuit_parameters
+	--> write_MOS_parameters
+	--> write_simulation_parameters
+	--> write_tcsh_file
+
+	--> write_extract
+		--> write_extract_basic
+		--> write_extract_iip3
+		--> run_file
+
+
+	
 """
 #===========================================================================================================================
 from typing import no_type_check
@@ -24,7 +56,6 @@ import os
 # Changing the values extracted as a string to a floating point value 
 # Input: Value of the number in string format 	
 # Output: Value of the number in float
-
 def valueName_to_value(value_name):
 
 	# Checking if the last character of array is a string
@@ -67,7 +98,6 @@ def valueName_to_value(value_name):
 # Changing the values extracted as 10e1, 1.5e-2 to a floating point value 
 # Input: Value of the number in string format 	
 # Output: Value of the number in float
-
 def valueE_to_value(value_name):
     
     # Extracting the number before and after e
@@ -107,7 +137,6 @@ def extract_file(file_name):
 # Extracting the DC from the file
 # Inputs: Optimization_input_parameters
 # Output: Dictionary with all the parameters
-
 def extract_dc_param(optimization_input_parameters):
 
 	# Getting the filename
@@ -144,7 +173,6 @@ def extract_dc_param(optimization_input_parameters):
 # Extracting the AC from the file
 # Inputs: Optimization_input_parameters
 # Output: Dictionary with all the parameters
-
 def extract_ac_param(optimization_input_parameters):
 
 	# Getting the filename
@@ -167,7 +195,6 @@ def extract_ac_param(optimization_input_parameters):
 # Extracting the SP from the file
 # Inputs: Optimization_input_parameters
 # Output: Dictionary with all the parameters
-
 def extract_sp_param(optimization_input_parameters):
 
 	# Getting the filename
@@ -190,7 +217,6 @@ def extract_sp_param(optimization_input_parameters):
 # Extracting the Noise from the file
 # Inputs: Optimization_input_parameters
 # Output: Dictionary with all the parameters
-
 def extract_noise_param(optimization_input_parameters):
 
 	# Getting the filename
@@ -212,7 +238,6 @@ def extract_noise_param(optimization_input_parameters):
 # Extracting all the output parameters from chi file
 # Inputs: optimization_input parameters
 # Outputs: output parameters dictionary 
-
 def extract_basic_parameters(optimization_input_parameters):
 	
 	# Extracting the outputs 
@@ -243,7 +268,6 @@ def extract_basic_parameters(optimization_input_parameters):
 # Calculating the IIP3 from a single point
 # Inputs: Vout_fund, Vout_im3, pin
 # Output: IIP3
-
 def calculate_iip3_single_point(vout_fund_mag,vout_im3_mag,pin):
 
 	# Calculating values in log scale
@@ -259,7 +283,6 @@ def calculate_iip3_single_point(vout_fund_mag,vout_im3_mag,pin):
 # Calculating the IIP3 after extraction of Vout data
 # Inputs: Optimization_input_parameters, Vout_fund, Vout_im3, pin
 # Output: IIP3
-
 def calculate_iip3_multiple_points(optimization_input_parameters,vout_fund_mag,vout_im3_mag,pin):
 
 	# Calculating values in log scale
@@ -292,7 +315,6 @@ def calculate_iip3_multiple_points(optimization_input_parameters,vout_fund_mag,v
 # Calculating the slope and y-intercept
 # Inputs: x and y coordinates of the points
 # Output: slope, y-intercept
-
 def calculate_slope(x,y):
 	A = np.vstack([x, np.ones(len(x))]).T
 	m, c = np.linalg.lstsq(A, y, rcond=None)[0]
@@ -322,19 +344,16 @@ def calculate_best_iip3_point(fund_slope,im3_slope):
 # Checks if the frequency is within range ( within (target-error,target+error) )
 # Inputs: Test Frequency, Target Frequency, Error
 # Output: 1 if Yes and 0 if No
-
 def check_freq(f_test,f_target,f_error):
 	if f_test<f_target+f_error and f_test>f_target-f_error:
 		return 1
 	else:
 		return 0
 
-
 #---------------------------------------------------------------------------------------------------------------------------	
 # Extracting Vout magnitude of fundamental and im3 from file ( for hb_sweep )
 # Inputs: Filename, Optimization Input Parameters
 # Output: Magnitude of Vout at fundamental and im3
-
 def extract_vout_magnitude(file_name,optimization_input_parameters):
 
 	lines=extract_file(file_name)
@@ -396,7 +415,6 @@ def extract_vout_magnitude(file_name,optimization_input_parameters):
 # Extracts Vout_magnitude from hb,pss file line
 # Inputs: Line
 # Output: Vout_Magnitude
-
 def extract_vout(lines):
 	
 	# Extracting Vout Magnitude

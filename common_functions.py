@@ -10,10 +10,13 @@ Functions structure in this file:
 	--> dbm_to_normal
 	--> normal_to_db
 	--> normal_to_dbm
+	
 	--> num_trunc
+	
 	--> write_simulation_parameters
-	--> wait_key
 	--> update_MOS_parameters
+	
+	--> wait_key
 	--> print_MOS_parameters
 	--> print_circuit_parameters
 	--> print_DC_outputs

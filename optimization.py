@@ -1,9 +1,31 @@
 #===========================================================================================================================
 """
-Name: Pyneni Roopesh
-Roll Number: EE18B028
+Name				: Pyneni Roopesh
+Roll Number			: EE18B028
+File Name			: optimization.py
+File Description 	: This file will perform the optimization for different circuit parameters
 
-Optimization Algorithm:
+Functions structure in this file:
+	--> save_input_results_optimization
+	--> save_output_results_optimization
+	--> save_info_single_array_iter
+	--> save_info_double_array_iter
+	--> save_info
+	--> extract_double_array
+	--> plot_double_array
+	--> extract_single_array
+	--> plot_single_array
+	--> calc_loss_slope
+	--> update_alpha
+	--> check_circuit_parameters
+	--> update_C2_Rbias
+	--> check_stop_alpha
+	--> check_stop_loss
+	--> moving_avg
+	--> opt_single_run
+	--> main_opt
+
+	
 """
 #===========================================================================================================================
 import numpy as np
@@ -122,6 +144,8 @@ def save_output_results_optimization(optimization_results,optimization_input_par
 
 #-----------------------------------------------------------------
 # Function that stores the data of parameters vs iterations in a csv file
+# Inputs  : filename_root,filename_name,values_iter,niter
+# Outputs : NONE
 def save_info_single_array_iter(filename_root,filename_name,values_iter,niter):
 	
 	filename=filename_root+filename_name
@@ -143,6 +167,8 @@ def save_info_single_array_iter(filename_root,filename_name,values_iter,niter):
 	
 #-----------------------------------------------------------------
 # Function that stores the data of loss slopes vs iterations in a csv file
+# Inputs  : filename_root,filename_name,values_iter,niter
+# Outputs : NONE
 def save_info_double_array_iter(filename_root,filename_name,values_iter,niter):
 	
 	filename=filename_root+filename_name
@@ -169,6 +195,8 @@ def save_info_double_array_iter(filename_root,filename_name,values_iter,niter):
 
 #-----------------------------------------------------------------
 # Function that stores the all the simulation data in different csv files
+# Inputs  : optimization_input_parameters,optimization_results
+# Outputs : NONE
 def save_info(optimization_input_parameters,optimization_results):
 	filename=optimization_input_parameters['filename']['output']
 	newpath =filename+'/Optimization'+str(optimization_results['run_number'])+'/results/'
@@ -371,6 +399,8 @@ def plot_single_array(optimization_results,list_name,file_directory):
 	
 #-----------------------------------------------------------------------------------------------
 # This function updates the values of circuit parameters by trying to minimize loss
+# Inputs  : output_conditions,circuit_parameters,loss_dict,extracted_parameters,optimization_input_parameters
+# Outputs : circuit_parameters_slope,circuit_parameters_sensitivity
 def calc_loss_slope(output_conditions,circuit_parameters,loss_dict,extracted_parameters,optimization_input_parameters):
 
 	loss_weights=optimization_input_parameters['optimization']['loss_weights']
@@ -425,7 +455,9 @@ def calc_loss_slope(output_conditions,circuit_parameters,loss_dict,extracted_par
 	return circuit_parameters_slope,circuit_parameters_sensitivity
 	
 #-----------------------------------------------------------------------------------------------
-# Updating alpha
+# This function updates the value of alpha after each iteration
+# Inputs  : loss_iter,alpha,i,alpha_mult,optimization_type,optimization_input_parameters
+# Outputs : alpha
 def update_alpha(loss_iter,alpha,i,alpha_mult,optimization_type,optimization_input_parameters):
 
 	n_iter=optimization_input_parameters['optimization']['max_iteration']-1
@@ -453,7 +485,9 @@ def update_alpha(loss_iter,alpha,i,alpha_mult,optimization_type,optimization_inp
 	return alpha
 
 #-----------------------------------------------------------------------------------------------
-# Updating circuit parameters
+# This function updates circuit parameters to previous circuit parameters if loss increases
+# Inputs  : old_circuit_parameters,circuit_parameters,loss_iter,update_check,i,optimization_type
+# Outputs : circuit_parameters, old_circuit_parameters
 def check_circuit_parameters(old_circuit_parameters,circuit_parameters,loss_iter,update_check,i,optimization_type):
 
 	# Checking criteria for reducing threshold
@@ -467,7 +501,9 @@ def check_circuit_parameters(old_circuit_parameters,circuit_parameters,loss_iter
 	return circuit_parameters, old_circuit_parameters
 
 #-----------------------------------------------------------------------------------------------
-# Updating C2 and Rbias
+# Updating C2 and Rbias based on threshold
+# Inputs  : circuit_parameters,extracted_parameters,optimization_input_parameters
+# Outputs : circuit_parameters
 def update_C2_Rbias(circuit_parameters,extracted_parameters,optimization_input_parameters):
 
 	threshold2=optimization_input_parameters['pre_optimization']['C2_threshold']
@@ -497,7 +533,9 @@ def update_C2_Rbias(circuit_parameters,extracted_parameters,optimization_input_p
 	return circuit_parameters
 
 #-----------------------------------------------------------------------------------------------
-# Checking stopping condition 
+# Checking stopping condition ( if alpha<alpha_min )
+# Inputs  : loss_iter,alpha,i,alpha_min
+# Outputs : 1 if we need to stop iterations
 def check_stop_alpha(loss_iter,alpha,i,alpha_min):
 
 	if alpha_min<0:
@@ -508,7 +546,9 @@ def check_stop_alpha(loss_iter,alpha,i,alpha_min):
 	return 0
 	
 #-----------------------------------------------------------------------------------------------
-# Checking stopping condition 
+# Checking stopping condition ( if loss increases for n_iter number of iterations )
+# Inputs  : loss_iter,i,n_iter,optimization_type
+# Outputs : 1 if we need to stop iterations
 def check_stop_loss(loss_iter,i,n_iter,optimization_type):
 
 	flag=0
@@ -524,7 +564,9 @@ def check_stop_loss(loss_iter,i,n_iter,optimization_type):
 	return flag
 	
 #-----------------------------------------------------------------------------------------------
-# Checking stopping condition 
+# Performs moving average filter calculations
+# Inputs  : loss_iter,circuit_parameters_iter,average_parameters,i,n_points
+# Outputs : average_parameters
 def moving_avg(loss_iter,circuit_parameters_iter,average_parameters,i,n_points):
 
 	average_parameters[i]={}
@@ -552,7 +594,9 @@ def moving_avg(loss_iter,circuit_parameters_iter,average_parameters,i,n_points):
 #------------------------------------------- Output Functions --------------------------------------------------------------
 	
 #---------------------------------------------------------------------------------------------------------------------------
-# Function to do main optimization
+# Function to do optimization for a single run 
+# Inputs  : circuit_parameters,extracted_parameters,optimization_input_parameters,run_number
+# Outputs : circuit_parameters,extracted_parameters
 def opt_single_run(circuit_parameters,extracted_parameters,optimization_input_parameters,run_number):
 
 	optimization_results={}
@@ -743,7 +787,9 @@ def opt_single_run(circuit_parameters,extracted_parameters,optimization_input_pa
 	return circuit_parameters,extracted_parameters
 
 #---------------------------------------------------------------------------------------------------------------------------
-# Function to do main optimization
+# Function to do optimization for multiple runs
+# Inputs  : circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results
+# Outputs : circuit_parameters,extracted_parameters
 def main_opt(circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results):
 	
 	if optimization_input_parameters['optimization']['run']=='NO':

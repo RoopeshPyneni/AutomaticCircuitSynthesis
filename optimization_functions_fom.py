@@ -1,9 +1,18 @@
 #===========================================================================================================================
 """
-Name: Pyneni Roopesh
-Roll Number: EE18B028
+Name				: Pyneni Roopesh
+Roll Number			: EE18B028
+File Name			: optimization_functions_fom.py
+File Description 	: This file will contain the functions for FOM Optimization
 
-FoM Functions:
+Functions structure in this file:
+	--> ramp_func
+	--> calc_fom_1
+	--> update_circuit_parameters
+	--> calc_check_loss
+	--> check_best_solution
+	--> check_acceptable_solutions
+	
 """
 #===========================================================================================================================
 import common_functions as cf
@@ -13,6 +22,8 @@ import common_functions as cf
 
 #-----------------------------------------------------------------------------------------------
 # This is the ramp function
+# Inputs  : x
+# Outputs : r(x)
 def ramp_func(x):
 	if x>0:
 		return x
@@ -25,6 +36,8 @@ def ramp_func(x):
 
 #-----------------------------------------------------------------------------------------------
 # This function calculates the loss for FoM
+# Inputs  : extracted_parameters,output_conditions,loss_weights
+# Outputs : fom_dict
 def calc_fom_1(extracted_parameters,output_conditions,loss_weights):
 	
 	# Extracted Values
@@ -52,6 +65,8 @@ def calc_fom_1(extracted_parameters,output_conditions,loss_weights):
 
 #-----------------------------------------------------------------------------------------------
 # This function updates the values of circuit parameters by trying to minimize loss
+# Inputs  : circuit_parameters,circuit_parameters_slope,check_loss,optimization_input_parameters
+# Outputs : circuit_parameters
 def update_circuit_parameters(circuit_parameters,circuit_parameters_slope,check_loss,optimization_input_parameters):
 
 	alpha_parameters=optimization_input_parameters['optimization']['alpha']['values']
@@ -85,7 +100,9 @@ def update_circuit_parameters(circuit_parameters,circuit_parameters_slope,check_
 	return circuit_parameters
 
 #-----------------------------------------------------------------------------------------------
-# This function updates the values of circuit parameters by trying to minimize loss
+# This function will check the loss of s_11
+# Inputs  : loss_iter,i,loss_type
+# Outputs : check_loss ( -1 if s11 loss is 0 )
 def calc_check_loss(loss_iter,i,loss_type):
 
 	if loss_type==0:
@@ -101,6 +118,8 @@ def calc_check_loss(loss_iter,i,loss_type):
 	
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to check the best solution
+# Inputs  : optimization_results,loss_s11_max
+# Outputs : opt_dict
 def check_best_solution(optimization_results,loss_s11_max):
 
 	# Defining some values
@@ -131,7 +150,9 @@ def check_best_solution(optimization_results,loss_s11_max):
 	return opt_dict
 	
 #---------------------------------------------------------------------------------------------------------------------------
-# Function to check the best solution
+# Function to check the acceptable solutions ( those that satisfy a given criteria )
+# Inputs  : optimization_results,optimization_input_parameters
+# Outputs : acceptable_iter
 def check_acceptable_solutions(optimization_results,optimization_input_parameters):
 
 	# Defining some values

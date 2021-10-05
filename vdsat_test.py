@@ -25,7 +25,6 @@ from pylab import *
 # Changing the values extracted as 10e1, 1.5e-2 to a floating point value 
 # Input: Value of the number in string format 	
 # Output: Value of the number in float
-
 def valueE_to_value(value_name):
     
     # Extracting the number before and after e
@@ -61,7 +60,6 @@ def extract_file(file_name):
 # Extracting the DC from the file
 # Inputs: Optimization_input_parameters
 # Output: Dictionary with all the parameters
-
 def extract_dc_param(filename):
 
 	lines=extract_file(filename)
@@ -133,7 +131,6 @@ def write_tcsh_file():
 # This function will run the shell commands to run Spectre
 # Inputs  : Optimization Input Parameters
 # Outputs : NONE
-
 def run_file():
 	#os.system('cd /home/ee18b028/cadence_project')
 	os.system('tcsh /home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh')	# This is the command to run the spectre file
@@ -142,7 +139,6 @@ def run_file():
 # This function will write the circuit parameters, run Eldo and extract the output parameters
 # Inputs  : Circuit_Parameters, Optimization_Input_Parameters
 # Outputs : Extracted_Parameters
-
 def write_extract(filename_w,v_g,filename_e):
 	
 	# Writing the tcsh file for Basic Analysis
@@ -170,7 +166,6 @@ def write_extract(filename_w,v_g,filename_e):
 # 
 # Inputs  : 
 # Outputs : 
-
 def differentiation_array(arr_x,arr_y):
 	
 	arr_y1=np.zeros(len(arr_y)-1,dtype=float)
@@ -197,7 +192,6 @@ def differentiation_array(arr_x,arr_y):
 # 
 # Inputs  : 
 # Outputs : 
-
 def plot_curves(file_directory_plot,vg,i_d,gm1,gm2,gm3):
 	
 	# ID vs VG
@@ -253,7 +247,6 @@ def plot_curves(file_directory_plot,vg,i_d,gm1,gm2,gm3):
 	legend()
 	savefig(file_directory_plot+'/all_vs_vg.pdf')
 	close()
-
 
 
 """

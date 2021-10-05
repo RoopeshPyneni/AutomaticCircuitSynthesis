@@ -12,6 +12,7 @@ Functions structure in this file:
 	--> get_pre_optimization_parameters
 	--> get_optimization_parameters
 	--> get_temperature_analysis_parameters
+	--> get_process_analysis_parameters
 
 """
 
