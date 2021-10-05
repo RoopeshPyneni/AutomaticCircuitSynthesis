@@ -457,8 +457,32 @@ def dict_convert(circuit_parameters,optimization_input_parameters):
 	# param_names in write_dict will contain the name of the parameters as it is written in the .scs file
 	for param_name in optimization_input_parameters['simulation']['cir_writing_dict']:
 		write_dict[param_name]=circuit_parameters[optimization_input_parameters['simulation']['cir_writing_dict'][param_name]]
+
+	# Checking if we have TSMC Resistors
+	if optimization_input_parameters['simulation']['basic_circuit']=='basic_parameters_tsmc_65':
+		write_dict['Resb_L'],write_dict['Resb_W']=get_TSMC_resistor(circuit_parameters['Rb'])
+		write_dict['Resd_L'],write_dict['Resd_W']=get_TSMC_resistor(circuit_parameters['Rd'])
+		write_dict['Resbias_L'],write_dict['Resbias_W']=get_TSMC_resistor(circuit_parameters['Rbias'])
 	
 	return write_dict
+
+#-----------------------------------------------------------------      
+# Function that converts resistance to length and width
+# Inputs  : resistance
+# Outputs : length, width
+def get_TSMC_resistor(resistance):
+	sheet_resistance=124.45
+	L_min=0.8e-6
+	W_min=0.4e-6
+
+	if resistance<sheet_resistance:
+		length=L_min
+		width=L_min*sheet_resistance/resistance
+	else:
+		width=W_min
+		length=W_min*resistance/sheet_resistance
+	
+	return length,width
             
 #-----------------------------------------------------------------
 # Function that modifies the .scs file
