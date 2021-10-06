@@ -54,6 +54,10 @@ def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 # Output: NONE
 def write_extracted_parameters_initial(extracted_parameters,optimization_input_parameters,process_corner):
 	
+	newpath=optimization_input_parameters['filename']['output']+'/Process_Analysis/Results/'+str(process_corner)+'/'	# Creating the folder if it is not present
+	if not os.path.exists(newpath):
+		os.makedirs(newpath)
+		
 	filename=optimization_input_parameters['filename']['output']+'/Process_Analysis/Results/'+str(process_corner)+'/extracted_parameters.csv'	# Getting the filename
 
 	f=open(filename,'w')
@@ -170,7 +174,7 @@ def process_analysis(circuit_parameters,extracted_parameters,optimization_input_
 # Plotting results ( Parameters vs Io at different temperatures )
 # Inputs  : extracted_parameters_iter
 # Outputs : extracted_matrix, temp_array, current_array, param_array
-def plot_process_analysis(extracted_parameters_iter,file_directory,spec_current):
+def plot_process_analysis(extracted_parameters_iter,file_directory):
 	
 	# Creating a folder to store the results
 	pathname=file_directory+'/Process_Analysis/Plots/'
@@ -178,7 +182,7 @@ def plot_process_analysis(extracted_parameters_iter,file_directory,spec_current)
 		os.makedirs(pathname)
 	
 	# Creating output conditions dictionary
-	colour_dict_process={1:'red',2:'green',3:'blue',4:'cyan',5:'lime'}
+	colour_dict_process={0:'red',1:'green',2:'blue',3:'cyan',4:'lime'}
 	
 	# Extracting the values
 	extracted_matrix,process_array,temp_array,param_array=extract_process_analysis(extracted_parameters_iter)
@@ -191,7 +195,7 @@ def plot_process_analysis(extracted_parameters_iter,file_directory,spec_current)
 	# Plotting parameters vs temp for different process corners
 	for k in range(n_param):
 		figure()
-		for i in len(n_process):
+		for i in range(n_process):
 			plot(temp_array,extracted_matrix[i,:,k],color=colour_dict_process[i],label='Process : '+str(process_array[i]))
 		xlabel('Temperature')
 		ylabel(param_array[k])
