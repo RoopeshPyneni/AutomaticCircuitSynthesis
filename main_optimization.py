@@ -426,7 +426,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'TSMC65_Manual_2_with_MOS_Resistors'						# SET THE FILENAME HERE
+	filename=f_directory+'TSMC65_Manual_with_MOS_Resistors_with_nf'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=300	
 	# ------- Set Any Additional Parameters Here --------
 	
