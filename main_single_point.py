@@ -87,6 +87,7 @@ def get_simulation_conditions(optimization_input_parameters,fo):
 	optimization_input_parameters['simulation']['iip3_calc_points']=5
 	optimization_input_parameters['simulation']['process_corner']='tt'
 	optimization_input_parameters['simulation']['conservative']='NO'
+	optimization_input_parameters['simulation']['w_finger_max']=2e-6
 
 	optimization_input_parameters['simulation']['parameters_list']={
 		'pin':-65,

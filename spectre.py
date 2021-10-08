@@ -464,6 +464,10 @@ def dict_convert(circuit_parameters,optimization_input_parameters):
 		write_dict['Resd_L'],write_dict['Resd_W']=get_TSMC_resistor(circuit_parameters['Rd'])
 		write_dict['Resbias_L'],write_dict['Resbias_W']=get_TSMC_resistor(circuit_parameters['Rbias'])
 	
+	# Calculating the number of fingers
+	n_finger=int(circuit_parameters['W']/optimization_input_parameters['simulation']['w_finger_max'])+1
+	write_dict['n_finger']=n_finger
+	
 	return write_dict
 
 #-----------------------------------------------------------------      
@@ -472,15 +476,20 @@ def dict_convert(circuit_parameters,optimization_input_parameters):
 # Outputs : length, width
 def get_TSMC_resistor(resistance):
 	sheet_resistance=124.45
-	L_min=0.8e-6
+	#L_min=0.8e-6
 	W_min=0.4e-6
+	dW=0.0691e-6
 
+	"""
 	if resistance<sheet_resistance:
 		length=L_min
 		width=L_min*sheet_resistance/resistance
 	else:
 		width=W_min
 		length=W_min*resistance/sheet_resistance
+	"""
+	width=W_min-dW
+	length=width*resistance/sheet_resistance
 	
 	return length,width
             
