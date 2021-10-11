@@ -72,12 +72,8 @@ def get_simulation_conditions(optimization_input_parameters,fo):
 	
 	optimization_input_parameters['simulation']={}
 	optimization_input_parameters['simulation']['directory']='/home/ee18b028/cadence_project/lna1/'
-	#optimization_input_parameters['simulation']['basic_circuit']='basic_parameters'
-	#optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb'
-	#optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65'
-	#optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65'
-	optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65'
-	optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65'
+	optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65_resistor'
+	optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65_resistor'
 	optimization_input_parameters['simulation']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh'
 	optimization_input_parameters['simulation']['iip3_type']='advanced'		# 'basic' or 'advanced' 
 
@@ -126,50 +122,14 @@ fo=1e9
 get_simulation_conditions(optimization_input_parameters,fo)
 
 
-"""
 circuit_parameters={
-	'Rb':300,
-	'Rd':350,
-	'Io':750e-6,
-	'C1':159e-12,
-	'C2':1780e-12,
-	'W':300e-6,
-	'Rbias':8.87
-}
-"""
-
-"""
-circuit_parameters={
-	'Rb':267,
-	'Rd':384,
-	'Io':638e-6,
-	'C1':159e-12,
-	'C2':217e-12,
-	'W':392e-6,
-	'Rbias':73.0
-}
-"""
-
-"""
-circuit_parameters={
-	'Rb':275,
-	'Rd':365,
-	'Io':670e-6,
-	'C1':159e-12,
-	'C2':189e-12,
-	'W':353e-6,
-	'Rbias':5000
-}
-"""
-
-circuit_parameters={
-	'Rb':286,
-	'Rd':320,
-	'Io':674e-6,
-	'C1':159e-12,
-	'C2':1770e-12,
-	'W':298e-6,
-	'Rbias':5000
+	'Rb':225,
+	'Rd':298,
+	'Io':666e-6,
+	'C1':31.8e-12,
+	'C2':163e-12,
+	'W':275e-6,
+	'Rbias':1000
 }
 
 
@@ -188,8 +148,8 @@ for param_name in extracted_parameters:
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #------------------------------- CHANGING TO NEW SCHEMATIC -------------------------------------
 	
-optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65_test'
-optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65_test'
+optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65'
+optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65'
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #----------------------------------------- FILE RUN --------------------------------------------
