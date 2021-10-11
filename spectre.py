@@ -459,14 +459,21 @@ def dict_convert(circuit_parameters,optimization_input_parameters):
 		write_dict[param_name]=circuit_parameters[optimization_input_parameters['simulation']['cir_writing_dict'][param_name]]
 
 	# Checking if we have TSMC Resistors
-	if optimization_input_parameters['simulation']['basic_circuit']=='basic_parameters_tsmc_65':
-		write_dict['Resb_L'],write_dict['Resb_W']=get_TSMC_resistor(circuit_parameters['Rb'])
-		write_dict['Resd_L'],write_dict['Resd_W']=get_TSMC_resistor(circuit_parameters['Rd'])
-		write_dict['Resbias_L'],write_dict['Resbias_W']=get_TSMC_resistor(circuit_parameters['Rbias'])
+	#tsmc_resistor_netlists=['basic_parameters_tsmc_65','basic_parameters_tsmc_65_test']
+	#if optimization_input_parameters['simulation']['basic_circuit'] in 'basic_parameters_tsmc_65':
+	write_dict['Resb_L'],write_dict['Resb_W']=get_TSMC_resistor(circuit_parameters['Rb'])
+	write_dict['Resd_L'],write_dict['Resd_W']=get_TSMC_resistor(circuit_parameters['Rd'])
+	write_dict['Resbias_L'],write_dict['Resbias_W']=get_TSMC_resistor(circuit_parameters['Rbias'])
 	
 	# Calculating the number of fingers
 	n_finger=int(circuit_parameters['W']/optimization_input_parameters['simulation']['w_finger_max'])+1
 	write_dict['n_finger']=n_finger
+
+	# Checking if we have TSMC Capacitors
+	#tsmc_capacitor_netlists=['basic_parameters_tsmc_65','basic_parameters_tsmc_65_test']
+	#if optimization_input_parameters['simulation']['basic_circuit']=='basic_parameters_tsmc_65':
+	write_dict['mf_cap1']=1+int(circuit_parameters['C1']*1e11)
+	write_dict['mf_cap2']=1+int(circuit_parameters['C2']*1e11)
 	
 	return write_dict
 
