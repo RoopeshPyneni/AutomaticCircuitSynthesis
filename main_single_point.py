@@ -188,8 +188,8 @@ for param_name in extracted_parameters:
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #------------------------------- CHANGING TO NEW SCHEMATIC -------------------------------------
 	
-#optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65'
-#optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65'
+optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65_test'
+optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65_test'
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #----------------------------------------- FILE RUN --------------------------------------------
