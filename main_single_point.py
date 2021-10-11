@@ -75,7 +75,7 @@ def get_simulation_conditions(optimization_input_parameters,fo):
 	optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65_resistor'
 	optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65_resistor'
 	optimization_input_parameters['simulation']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh'
-	optimization_input_parameters['simulation']['iip3_type']='advanced'		# 'basic' or 'advanced' 
+	optimization_input_parameters['simulation']['iip3_type']='basic'		# 'basic' or 'advanced' 
 
 	optimization_input_parameters['simulation']['std_temp']=27
 	optimization_input_parameters['simulation']['pin_fixed']=-65
@@ -121,16 +121,28 @@ get_mos_parameters(optimization_input_parameters,'TSMC65_2')
 fo=1e9
 get_simulation_conditions(optimization_input_parameters,fo)
 
-
+"""
 circuit_parameters={
-	'Rb':225,
-	'Rd':298,
+	'Rb':272,
+	'Rd':360,
 	'Io':666e-6,
 	'C1':31.8e-12,
 	'C2':163e-12,
 	'W':275e-6,
 	'Rbias':1000
 }
+"""
+
+circuit_parameters={
+	'Rb':274,
+	'Rd':360,
+	'Io':666e-6,
+	'C1':31.8e-12,
+	'C2':163e-12,
+	'W':275e-6,
+	'Rbias':1000
+}
+
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,6 +162,7 @@ for param_name in extracted_parameters:
 	
 optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65'
 optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65'
+#circuit_parameters['C1']=31.8e-12
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #----------------------------------------- FILE RUN --------------------------------------------

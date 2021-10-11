@@ -498,7 +498,7 @@ def get_TSMC_resistor(resistance):
 	width=W_min-dW
 	length=width*resistance/sheet_resistance
 	
-	return length,width
+	return length,W_min
             
 #-----------------------------------------------------------------
 # Function that modifies the .scs file
