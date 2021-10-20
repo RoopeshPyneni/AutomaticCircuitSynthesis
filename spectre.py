@@ -186,10 +186,45 @@ def extract_ac_param(optimization_input_parameters):
 	lines=lines[0].split()
 
 	# Extracting the values frim the required line
-	extracted_parameters['gain_db']=valueE_to_value(lines[4])
 	extracted_parameters['freq']=valueE_to_value(lines[0])
+	vout_re=valueE_to_value(lines[1])
+	vout_im=valueE_to_value(lines[2])
+	vin_re=valueE_to_value(lines[3])
+	vin_im=valueE_to_value(lines[4])
+	extracted_parameters['gain_db'],extracted_parameters['gain_phase']=calculate_gain_phase(vout_re,vout_im,vin_re,vin_im)
 
 	return extracted_parameters
+
+#---------------------------------------------------------------------------------------------------------------------------	
+# Calculating the gain and angle from the vout and vin values
+# Inputs: vout and vin
+# Output: gain_db and phase
+def calculate_gain_phase(vout_re,vout_im,vin_re,vin_im):
+	
+	# Calculating gain_dB
+	gain=(vout_re**2+vout_im**2)/(vin_re**2+vin_im**2)
+	gain_db=10*np.log10(gain)
+
+	# Calculating the phase of vout and vin
+	if vout_re>0:
+		vout_phase=np.arctan(vout_im/vout_re)*180/np.pi
+	else:
+		vout_phase=180+np.arctan(vout_im/vout_re)*180/np.pi
+	if vin_re>0:
+		vin_phase=np.arctan(vin_im/vin_re)*180/np.pi
+	else:
+		vin_phase=180+np.arctan(vin_im/vin_re)*180/np.pi
+	
+	# Calculating the phase of the gain
+	phase=vout_phase-vin_phase
+	while phase<-180:
+		phase+=180
+	while phase>180:
+		phase-=180
+
+	return gain_db,phase
+
+
 
 #---------------------------------------------------------------------------------------------------------------------------	
 # Extracting the SP from the file
@@ -205,11 +240,18 @@ def extract_sp_param(optimization_input_parameters):
 	
 	# Skipping the first few lines
 	lines=lines[12:]
-	lines=lines[0].split()
+	line1=lines[0].split()
+	line2=lines[1].split()
 
 	# Extracting the value from the required line
-	num_char=lines[1].split(',')[0]
-	extracted_parameters['s11_db']=valueE_to_value(num_char)
+	num_char_s11=line1[1].split(',')[0]
+	num_char_s21=line1[3].split(',')[0]
+	num_char_s12=line2[0].split(',')[0]
+	num_char_s22=line2[2].split(',')[0]
+	extracted_parameters['s11_db']=valueE_to_value(num_char_s11)
+	extracted_parameters['s12_db']=valueE_to_value(num_char_s12)
+	extracted_parameters['s21_db']=valueE_to_value(num_char_s21)
+	extracted_parameters['s22_db']=valueE_to_value(num_char_s22)
 
 	return extracted_parameters
 
@@ -743,7 +785,6 @@ def write_tcsh_file(optimization_input_parameters,optimiztion_type):
 # This function will run the shell commands to run Spectre
 # Inputs  : Optimization Input Parameters
 # Outputs : NONE
-
 def run_file(optimization_input_parameters):
 	os.system('cd /home/ee18b028/cadence_project')
 	os.system('tcsh '+optimization_input_parameters['simulation']['tcsh'])	# This is the command to run the spectre file
@@ -752,7 +793,6 @@ def run_file(optimization_input_parameters):
 # This function will perform simulation for Basic Parameters
 # Inputs  : Circuit_Parameters, Optimization_Input_Parameters
 # Outputs : Extracted_Parameters
-
 def write_extract_basic(optimization_input_parameters):
 	
 	# Writing the simulation parameters
@@ -773,7 +813,6 @@ def write_extract_basic(optimization_input_parameters):
 # This function will perform simulation for IIP3 Parameters
 # Inputs  : Circuit_Parameters, Optimization_Input_Parameters
 # Outputs : Extracted_Parameters
-
 def write_extract_iip3(optimization_input_parameters):
 	
 	if optimization_input_parameters['simulation']['iip3_type']=='basic':
@@ -834,7 +873,6 @@ def write_extract_iip3(optimization_input_parameters):
 # This function will write the circuit parameters, run Eldo and extract the output parameters
 # Inputs  : Circuit_Parameters, Optimization_Input_Parameters
 # Outputs : Extracted_Parameters
-
 def write_extract(circuit_parameters,optimization_input_parameters):
 	
 	# Writing to netlist file
