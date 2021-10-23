@@ -201,7 +201,8 @@ def plot_process_analysis(extracted_parameters_iter,file_directory):
 		ylabel(param_array[k])
 		legend()
 		grid()
-		savefig(pathname+str(param_array[k])+'.pdf')	
+		savefig(pathname+str(param_array[k])+'.pdf')
+		close()
 
 #-----------------------------------------------------------------------------------------------
 # Function to extract the data from extracted_parameters_iter dictionary and store it in the form of a matrix

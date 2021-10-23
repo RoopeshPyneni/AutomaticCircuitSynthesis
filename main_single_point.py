@@ -72,8 +72,8 @@ def get_simulation_conditions(optimization_input_parameters,fo):
 	
 	optimization_input_parameters['simulation']={}
 	optimization_input_parameters['simulation']['directory']='/home/ee18b028/cadence_project/lna1/'
-	optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_test'
-	optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_test'
+	optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65'
+	optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65'
 	optimization_input_parameters['simulation']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh'
 	optimization_input_parameters['simulation']['iip3_type']='basic'		# 'basic' or 'advanced' 
 
@@ -157,6 +157,8 @@ print('Extracted_Parameters\n')
 for param_name in extracted_parameters:
 	print(param_name,' : ',extracted_parameters[param_name])
 	
+"""
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #------------------------------- CHANGING TO NEW SCHEMATIC -------------------------------------
 	
@@ -175,6 +177,8 @@ extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_para
 print('Extracted_Parameters\n')
 for param_name in extracted_parameters:
 	print(param_name,' : ',extracted_parameters[param_name])
+
+"""
 
 
 
