@@ -72,8 +72,8 @@ def get_simulation_conditions(optimization_input_parameters,fo):
 	
 	optimization_input_parameters['simulation']={}
 	optimization_input_parameters['simulation']['directory']='/home/ee18b028/cadence_project/lna1/'
-	optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65'
-	optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65'
+	optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65_test'
+	optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65_test'
 	optimization_input_parameters['simulation']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh'
 	optimization_input_parameters['simulation']['iip3_type']='basic'		# 'basic' or 'advanced' 
 
@@ -134,12 +134,12 @@ circuit_parameters={
 """
 
 circuit_parameters={
-	'Rb':274,
-	'Rd':360,
-	'Io':666e-6,
-	'C1':31.8e-12,
-	'C2':163e-12,
-	'W':275e-6,
+	'Rb':284,
+	'Rd':265,
+	'Io':911e-6,
+	'C1':21.7e-12,
+	'C2':110e-12,
+	'W':183e-6,
 	'Rbias':1000
 }
 

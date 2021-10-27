@@ -516,7 +516,12 @@ def dict_convert(circuit_parameters,optimization_input_parameters):
 	#if optimization_input_parameters['simulation']['basic_circuit']=='basic_parameters_tsmc_65':
 	write_dict['mf_cap1']=1+int(circuit_parameters['C1']*1e11)
 	write_dict['mf_cap2']=1+int(circuit_parameters['C2']*1e11)
+	
+	write_dict['wid_cap2']=900e-6
 	write_dict['len_cap2']=circuit_parameters['C2']*1e9/(17.25*900)
+	
+	write_dict['wid_cap2']=100e-6
+	write_dict['len_cap2']=100e-6
 	
 	return write_dict
 
