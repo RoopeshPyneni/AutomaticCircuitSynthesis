@@ -520,8 +520,8 @@ def dict_convert(circuit_parameters,optimization_input_parameters):
 	write_dict['wid_cap2']=900e-6
 	write_dict['len_cap2']=circuit_parameters['C2']*1e9/(17.25*900)
 	
-	write_dict['wid_cap2']=100e-6
-	write_dict['len_cap2']=100e-6
+	#write_dict['wid_cap2']=100e-6
+	#write_dict['len_cap2']=100e-6
 	
 	return write_dict
 

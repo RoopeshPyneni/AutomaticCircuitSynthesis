@@ -93,10 +93,10 @@ def get_simulation_conditions(optimization_input_parameters,fo):
 	
 	optimization_input_parameters['simulation']={}
 	optimization_input_parameters['simulation']['directory']='/home/ee18b028/cadence_project/lna1/'
-	optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65'
-	optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65'
+	optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65_test'
+	optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65_test'
 	optimization_input_parameters['simulation']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh'
-	optimization_input_parameters['simulation']['iip3_type']='advanced'		# 'basic' or 'advanced' 
+	optimization_input_parameters['simulation']['iip3_type']='basic'		# 'basic' or 'advanced' 
 
 	optimization_input_parameters['simulation']['std_temp']=27
 	optimization_input_parameters['simulation']['pin_fixed']=-65
@@ -202,7 +202,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization']['loss_type']=0
 	optimization_input_parameters['optimization']['update_check']=0
 
-	optimization_input_parameters['optimization']['optimizing_parameters']=['Rb','Rd','Io','W','C1']
+	optimization_input_parameters['optimization']['optimizing_parameters']=['Rb','Rd','Io','W','C1','C2']
 	optimization_input_parameters['optimization']['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','nf_db','p_source','gm1','vdsat','vg','vd','vs']
 
 	if optimization_name=='LOSS':
@@ -232,6 +232,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	alpha_parameters['W']=1
 	alpha_parameters['Io']=1
 	alpha_parameters['C1']=1
+	alpha_parameters['C2']=1
 	optimization_input_parameters['optimization']['alpha']={}
 	optimization_input_parameters['optimization']['alpha']['values']=alpha_parameters
 
@@ -427,7 +428,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'TSMC65_Manual_with_MOS_Capacitors3'						# SET THE FILENAME HERE
+	filename=f_directory+'TSMC65_Manual_with_C2_MOS_Capacitors_1'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=300	
 	# ------- Set Any Additional Parameters Here --------
 	

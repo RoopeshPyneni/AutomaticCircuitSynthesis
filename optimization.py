@@ -519,15 +519,16 @@ def update_C2_Rbias(circuit_parameters,extracted_parameters,optimization_input_p
 	wo=optimization_input_parameters['output_conditions']['wo']
 	
 	# Calculating C2
-	C2a=threshold2*cgs
-	C2b=threshold2*cgd*gain
-	C2=np.maximum(C2a,C2b)
-	
+	#C2a=threshold2*cgs
+	#C2b=threshold2*cgd*gain
+	#C2=np.maximum(C2a,C2b)
+	C2=circuit_parameters['C2']
+
 	# Calculating Rbias
 	Rbias=threshold3/(wo*C2)
 	Rbias=max(Rbias,Rbias_min)
 	
-	circuit_parameters['C2']=C2
+	#circuit_parameters['C2']=C2
 	circuit_parameters['Rbias']=Rbias
 
 	return circuit_parameters
