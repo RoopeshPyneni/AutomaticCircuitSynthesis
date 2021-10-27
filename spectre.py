@@ -569,13 +569,53 @@ def dict_convert(circuit_parameters,optimization_input_parameters):
 	write_dict['mf_cap1']=1+int(circuit_parameters['C1']*1e11)
 	write_dict['mf_cap2']=1+int(circuit_parameters['C2']*1e11)
 	
-	write_dict['wid_cap2']=900e-6
-	write_dict['len_cap2']=circuit_parameters['C2']*1e9/(17.25*900)
+	#write_dict['wid_cap2']=900e-6
+	#write_dict['len_cap2']=circuit_parameters['C2']*1e9/(17.25*900)
+
+	write_dict['wid_cap2'],write_dict['len_cap2']=calculate_MOS_capacitor(circuit_parameters['C2'])
 	
 	#write_dict['wid_cap2']=100e-6
 	#write_dict['len_cap2']=100e-6
 	
 	return write_dict
+
+#-----------------------------------------------------------------      
+# Function that converts capacitance to length and width for MOS capacitor
+# Inputs  : capacitance
+# Outputs : length, width
+def calculate_MOS_capacitor(cap):
+	cox=17.25*1e-3
+	w_check=np.sqrt(cap/cox)
+	if w_check>2e-5:
+		length=2e-5
+		width=cap/(cox*length)
+		return width,length
+	if w_check<1.2e-7:
+		width=1.2e-7
+		length=cap/(cox*width)
+		return width,length
+	return w_check,w_check
+
+#-----------------------------------------------------------------      
+# Function that converts capacitance to length and width for MOS capacitor
+# Inputs  : capacitance
+# Outputs : length, width
+def calculate_MOS_capacitor1(cap):
+	cox=17.25*1e-3
+	width=900e-6
+	length=cap/(cox*width)
+	return width,length
+	
+#-----------------------------------------------------------------      
+# Function that converts capacitance to length and width for MOS capacitor
+# Inputs  : capacitance
+# Outputs : length, width
+def calculate_MOS_capacitor2(cap):
+	cox=17.25*1e-3
+	length=2e-5
+	width=cap/(cox*length)
+	return width,length
+	
 
 #-----------------------------------------------------------------      
 # Function that converts resistance to length and width
