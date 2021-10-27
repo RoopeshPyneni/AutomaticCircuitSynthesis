@@ -162,8 +162,8 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	# Pre Optimization Simulation Parameters
 	optimization_input_parameters['pre_optimization']['simulation']={}
 
-	optimization_input_parameters['pre_optimization']['simulation']['basic_circuit']='basic_parameters'
-	optimization_input_parameters['pre_optimization']['simulation']['iip3_circuit']='iip3_hb'
+	optimization_input_parameters['pre_optimization']['simulation']['basic_circuit']='basic_parameters_tsmc_65_test'
+	optimization_input_parameters['pre_optimization']['simulation']['iip3_circuit']='iip3_hb_tsmc_65_test'
 	optimization_input_parameters['pre_optimization']['simulation']['iip3_type']='basic'
 	optimization_input_parameters['pre_optimization']['simulation']['std_temp']=27
 	optimization_input_parameters['pre_optimization']['simulation']['pin_fixed']=-65
@@ -253,8 +253,8 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 
 	optimization_input_parameters['optimization']['simulation'][1]={}
 
-	optimization_input_parameters['optimization']['simulation'][1]['basic_circuit']='basic_parameters_tsmc_65'
-	optimization_input_parameters['optimization']['simulation'][1]['iip3_circuit']='iip3_hb_tsmc_65'
+	optimization_input_parameters['optimization']['simulation'][1]['basic_circuit']='basic_parameters_tsmc_65_test'
+	optimization_input_parameters['optimization']['simulation'][1]['iip3_circuit']='iip3_hb_tsmc_65_test'
 	optimization_input_parameters['optimization']['simulation'][1]['iip3_type']='basic'
 	optimization_input_parameters['optimization']['simulation'][1]['std_temp']=27
 	optimization_input_parameters['optimization']['simulation'][1]['pin_fixed']=-65
@@ -328,8 +328,8 @@ def get_temperature_analysis_parameters(optimization_input_parameters,fo):
 	# Temperature Analysis Simulation Parameters
 	optimization_input_parameters['temperature_analysis']['simulation']={}
 
-	optimization_input_parameters['temperature_analysis']['simulation']['basic_circuit']='basic_parameters_tsmc_65'
-	optimization_input_parameters['temperature_analysis']['simulation']['iip3_circuit']='iip3_hb_tsmc_65'
+	optimization_input_parameters['temperature_analysis']['simulation']['basic_circuit']='basic_parameters_tsmc_65_test'
+	optimization_input_parameters['temperature_analysis']['simulation']['iip3_circuit']='iip3_hb_tsmc_65_test'
 	optimization_input_parameters['temperature_analysis']['simulation']['iip3_type']='basic'
 	optimization_input_parameters['temperature_analysis']['simulation']['std_temp']=27
 	optimization_input_parameters['temperature_analysis']['simulation']['pin_fixed']=-65
@@ -359,8 +359,8 @@ def get_process_analysis_parameters(optimization_input_parameters,fo):
 	# Temperature Analysis Simulation Parameters
 	optimization_input_parameters['process_analysis']['simulation']={}
 
-	optimization_input_parameters['process_analysis']['simulation']['basic_circuit']='basic_parameters_tsmc_65'
-	optimization_input_parameters['process_analysis']['simulation']['iip3_circuit']='iip3_hb_tsmc_65'
+	optimization_input_parameters['process_analysis']['simulation']['basic_circuit']='basic_parameters_tsmc_65_test'
+	optimization_input_parameters['process_analysis']['simulation']['iip3_circuit']='iip3_hb_tsmc_65_test'
 	optimization_input_parameters['process_analysis']['simulation']['iip3_type']='basic'
 	optimization_input_parameters['process_analysis']['simulation']['std_temp']=27
 	optimization_input_parameters['process_analysis']['simulation']['pin_fixed']=-65
@@ -428,7 +428,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'TSMC65_Manual_with_C2_MOS_Capacitors_1'						# SET THE FILENAME HERE
+	filename=f_directory+'TSMC65_Manual_with_C2_MOS_Capacitors_2'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=300	
 	# ------- Set Any Additional Parameters Here --------
 	
