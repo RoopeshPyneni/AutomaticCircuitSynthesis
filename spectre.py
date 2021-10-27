@@ -239,7 +239,14 @@ def extract_sp_param(optimization_input_parameters):
 	extracted_parameters={}
 	
 	# Skipping the first few lines
-	lines=lines[12:]
+	#lines=lines[12:]
+	while 1:
+		if 'format freq' not in lines[0]:
+			lines=lines[1:]
+		else:
+			break
+	lines=lines[4:]
+	
 	line1=lines[0].split()
 	line2=lines[1].split()
 
@@ -252,8 +259,8 @@ def extract_sp_param(optimization_input_parameters):
 	# Extracting the phase of the s-parameters
 	num_char_s11_rad=float(line1[2])
 	num_char_s21_rad=float(line1[4])
-	num_char_s12_rad=float(line1[1])
-	num_char_s22_rad=float(line1[3])
+	num_char_s12_rad=float(line2[1])
+	num_char_s22_rad=float(line2[3])
 
 	# Calculating the final values
 	extracted_parameters['s11_db']=valueE_to_value(num_char_s11)
