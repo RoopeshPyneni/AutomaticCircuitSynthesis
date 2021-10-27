@@ -243,17 +243,69 @@ def extract_sp_param(optimization_input_parameters):
 	line1=lines[0].split()
 	line2=lines[1].split()
 
-	# Extracting the value from the required line
+	# Extracting the value of s-parameters in dB from the required line
 	num_char_s11=line1[1].split(',')[0]
 	num_char_s21=line1[3].split(',')[0]
 	num_char_s12=line2[0].split(',')[0]
 	num_char_s22=line2[2].split(',')[0]
+
+	# Extracting the phase of the s-parameters
+	num_char_s11_rad=float(line1[2])
+	num_char_s21_rad=float(line1[4])
+	num_char_s12_rad=float(line1[1])
+	num_char_s22_rad=float(line1[3])
+
+	# Calculating the final values
 	extracted_parameters['s11_db']=valueE_to_value(num_char_s11)
 	extracted_parameters['s12_db']=valueE_to_value(num_char_s12)
 	extracted_parameters['s21_db']=valueE_to_value(num_char_s21)
 	extracted_parameters['s22_db']=valueE_to_value(num_char_s22)
 
+	extracted_parameters['k']=calculate_k(extracted_parameters['s11_db'],extracted_parameters['s12_db'],extracted_parameters['s21_db'],extracted_parameters['s22_db'],
+	num_char_s11_rad,num_char_s12_rad,num_char_s21_rad,num_char_s22_rad)
+
 	return extracted_parameters
+
+#---------------------------------------------------------------------------------------------------------------------------	
+# Calculating the value of K from the SP 
+# Inputs: s parameters and their phase in radians
+# Output: k
+def calculate_k(s11_db,s12_db,s21_db,s22_db,s11_ph,s12_ph,s21_ph,s22_ph):
+	
+	# Getting the phase in degrees
+	#s11_ph*=(180/np.pi)
+	#s12_ph*=(180/np.pi)
+	#s21_ph*=(180/np.pi)
+	#s22_ph*=(180/np.pi)
+
+	# Calculating the magnitude in normal scale
+	s11_mag=10**(s11_db/10)
+	s12_mag=10**(s12_db/10)
+	s21_mag=10**(s21_db/10)
+	s22_mag=10**(s22_db/10)
+
+	# Calculating the values in a+ib format
+	s11_real=s11_mag*np.cos(s11_ph)
+	s12_real=s12_mag*np.cos(s12_ph)
+	s21_real=s21_mag*np.cos(s21_ph)
+	s22_real=s22_mag*np.cos(s22_ph)
+
+	s11_img=s11_mag*np.sin(s11_ph)
+	s12_img=s12_mag*np.sin(s12_ph)
+	s21_img=s21_mag*np.sin(s21_ph)
+	s22_img=s22_mag*np.sin(s22_ph)
+
+	# Calculating delta squared
+	delta_squared=(s11_real*s22_real-s12_real*s21_real+s12_img*s21_img-s11_img*s22_img)**2+(s11_real*s22_img+s22_real*s11_img-s12_real*s21_img-s21_real*s12_img)**2
+
+	# Calculating k
+	k=(1-(s11_mag**2)-(s22_mag**2)+delta_squared)/(2*s21_mag*s12_mag)
+
+	return k
+
+
+
+
 
 #---------------------------------------------------------------------------------------------------------------------------	
 # Extracting the Noise from the file

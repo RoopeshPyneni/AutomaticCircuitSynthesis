@@ -203,7 +203,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization']['update_check']=0
 
 	optimization_input_parameters['optimization']['optimizing_parameters']=['Rb','Rd','Io','W','C1','C2']
-	optimization_input_parameters['optimization']['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','nf_db','p_source','gm1','vdsat','vg','vd','vs']
+	optimization_input_parameters['optimization']['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','s12_db','s21_db','s22_db','k','nf_db','p_source','gm1','vdsat','vg','vd','vs']
 
 	if optimization_name=='LOSS':
 		optimization_input_parameters['optimization']['optimization_name']='loss1'
