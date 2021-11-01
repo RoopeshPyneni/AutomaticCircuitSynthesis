@@ -25,12 +25,12 @@ import complete_optimization as co
 
 
 #---------------------------------------------------------------------------------------------------------------------------
-# Function that sets the MOSFET parameters to the optimization_input_parameters dictionary
-def get_mos_parameters(optimization_input_parameters,process_name):
+# Function that sets the MOSFET parameters to the circuit_initialization_parameters dictionary
+def get_mos_parameters(circuit_initialization_parameters,process_name):
 	
-	optimization_input_parameters['MOS']={}
-	optimization_input_parameters['MOS']['Process']=process_name
-	optimization_input_parameters['MOS']['filename']={}
+	circuit_initialization_parameters['MOS']={}
+	circuit_initialization_parameters['MOS']['Process']=process_name
+	circuit_initialization_parameters['MOS']['filename']={}
 	
 	f=open('/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/MOS_Files/'+process_name+'.txt')
 	lines=f.readlines()
@@ -40,38 +40,38 @@ def get_mos_parameters(optimization_input_parameters,process_name):
 	for i in range(len(lines)):
 		line=lines[i][:-1]
 		if line=='Vdd':
-			optimization_input_parameters['MOS']['Vdd']=float(lines[i+1][:-1])
+			circuit_initialization_parameters['MOS']['Vdd']=float(lines[i+1][:-1])
 		elif line=='Lmin':
-			optimization_input_parameters['MOS']['Lmin']=float(lines[i+1][:-1])
+			circuit_initialization_parameters['MOS']['Lmin']=float(lines[i+1][:-1])
 		elif line=='u0':
-			optimization_input_parameters['MOS']['un']=float(lines[i+1][:-1])*1e-4
+			circuit_initialization_parameters['MOS']['un']=float(lines[i+1][:-1])*1e-4
 		elif line=='tox':
-			optimization_input_parameters['MOS']['tox']=float(lines[i+1][:-1])
+			circuit_initialization_parameters['MOS']['tox']=float(lines[i+1][:-1])
 		elif line=='vth0':
-			optimization_input_parameters['MOS']['vt']=float(lines[i+1][:-1])
+			circuit_initialization_parameters['MOS']['vt']=float(lines[i+1][:-1])
 		elif line=='tt_file':
-			optimization_input_parameters['MOS']['filename']['tt']=''
+			circuit_initialization_parameters['MOS']['filename']['tt']=''
 			j=i+1
 			while lines[j][:-1]!='':
-				optimization_input_parameters['MOS']['filename']['tt']+=lines[j]
+				circuit_initialization_parameters['MOS']['filename']['tt']+=lines[j]
 				j+=1
 		elif line=='ff_file':
-			optimization_input_parameters['MOS']['filename']['ff']=''
+			circuit_initialization_parameters['MOS']['filename']['ff']=''
 			j=i+1
 			while lines[j][:-1]!='':
-				optimization_input_parameters['MOS']['filename']['ff']+=lines[j]
+				circuit_initialization_parameters['MOS']['filename']['ff']+=lines[j]
 				j+=1
 		elif line=='ss_file':
-			optimization_input_parameters['MOS']['filename']['ss']=''
+			circuit_initialization_parameters['MOS']['filename']['ss']=''
 			j=i+1
 			while lines[j][:-1]!='':
-				optimization_input_parameters['MOS']['filename']['ss']+=lines[j]
+				circuit_initialization_parameters['MOS']['filename']['ss']+=lines[j]
 				j+=1
                 
 	# Calculating Cox
 	eo=8.85*1e-12
 	er=3.9
-	optimization_input_parameters['MOS']['cox']=eo*er/optimization_input_parameters['MOS']['tox']
+	circuit_initialization_parameters['MOS']['cox']=eo*er/circuit_initialization_parameters['MOS']['tox']
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the output conditions to the optimization_input_parameters dictionary
@@ -88,27 +88,27 @@ def get_output_conditions(optimization_input_parameters,fo):
 	}
 
 #---------------------------------------------------------------------------------------------------------------------------
-# Function that sets the simulation conditions to the optimization_input_parameters dictionary
-def get_simulation_conditions(optimization_input_parameters,fo):
+# Function that sets the simulation conditions to the circuit_initialization_parameters dictionary
+def get_simulation_conditions(circuit_initialization_parameters,fo):
 	
-	optimization_input_parameters['simulation']={}
-	optimization_input_parameters['simulation']['directory']='/home/ee18b028/cadence_project/lna1/'
-	optimization_input_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65_rcm'
-	optimization_input_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65_rcm'
-	optimization_input_parameters['simulation']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh'
-	optimization_input_parameters['simulation']['iip3_type']='basic'		# 'basic' or 'advanced' 
+	circuit_initialization_parameters['simulation']={}
+	circuit_initialization_parameters['simulation']['directory']='/home/ee18b028/cadence_project/lna1/'
+	circuit_initialization_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65_rcm'
+	circuit_initialization_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65_rcm'
+	circuit_initialization_parameters['simulation']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh'
+	circuit_initialization_parameters['simulation']['iip3_type']='basic'		# 'basic' or 'advanced' 
 
-	optimization_input_parameters['simulation']['std_temp']=27
-	optimization_input_parameters['simulation']['pin_fixed']=-65
-	optimization_input_parameters['simulation']['pin_start']=-70
-	optimization_input_parameters['simulation']['pin_stop']=-40
-	optimization_input_parameters['simulation']['pin_points']=6
-	optimization_input_parameters['simulation']['iip3_calc_points']=3
-	optimization_input_parameters['simulation']['process_corner']='tt'
-	optimization_input_parameters['simulation']['conservative']='NO'
-	optimization_input_parameters['simulation']['w_finger_max']=2e-6
+	circuit_initialization_parameters['simulation']['std_temp']=27
+	circuit_initialization_parameters['simulation']['pin_fixed']=-65
+	circuit_initialization_parameters['simulation']['pin_start']=-70
+	circuit_initialization_parameters['simulation']['pin_stop']=-40
+	circuit_initialization_parameters['simulation']['pin_points']=6
+	circuit_initialization_parameters['simulation']['iip3_calc_points']=3
+	circuit_initialization_parameters['simulation']['process_corner']='tt'
+	circuit_initialization_parameters['simulation']['conservative']='NO'
+	circuit_initialization_parameters['simulation']['w_finger_max']=2e-6
 
-	optimization_input_parameters['simulation']['parameters_list']={
+	circuit_initialization_parameters['simulation']['parameters_list']={
 		'pin':-65,
 		'fund_2':fo+1e6,
 		'fund_1':fo,
@@ -374,21 +374,22 @@ def get_process_analysis_parameters(optimization_input_parameters,fo):
 #------------------------------------Main Program Code----------------------------------------------------------------------
 
 # Creating a dictionary with the optimization parameters
+circuit_initialization_parameters={}
 optimization_input_parameters={}
 optimization_name='LOSS'
 
 # ---------- MOSFET Parameters ----------
-#get_mos_parameters(optimization_input_parameters,'TSMC180')
-#get_mos_parameters(optimization_input_parameters,'TSMC65')
-get_mos_parameters(optimization_input_parameters,'TSMC65_2')
-#get_mos_parameters(optimization_input_parameters,'IBM130')
+#get_mos_parameters(circuit_initialization_parameters,'TSMC180')
+#get_mos_parameters(circuit_initialization_parameters,'TSMC65')
+get_mos_parameters(circuit_initialization_parameters,'TSMC65_2')
+#get_mos_parameters(circuit_initialization_parameters,'IBM130')
 
 # ---------- Output Conditions ----------
 fo=1e9
 get_output_conditions(optimization_input_parameters,fo)
 
 # ---------- Simulation Conditions ----------
-get_simulation_conditions(optimization_input_parameters,fo)
+get_simulation_conditions(circuit_initialization_parameters,fo)
 
 # ---------- Pre Optimization Parameters ----------
 get_pre_optimization_parameters(optimization_input_parameters,fo)
@@ -425,7 +426,7 @@ if file_choose=='S':
 
 	# ------- DON'T CHANGE THESE LINES -------------
 	optimization_input_parameters['filename']['output']=filename
-	co.complete_optimization(optimization_input_parameters)			
+	co.complete_optimization(circuit_initialization_parameters,optimization_input_parameters)			
 	# ------- DON'T CHANGE THESE LINES -------------		
 
 

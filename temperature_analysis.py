@@ -106,8 +106,7 @@ def temperature_analysis(cir,circuit_parameters,extracted_parameters,optimizatio
 	print('*********************************** Temperature Analysis ***************************************************')
 	
 	cir.update_simulation_parameters(optimization_input_parameters['temperature_analysis']['simulation'])
-	#cf.write_simulation_parameters(optimization_input_parameters,'temperature_analysis',0)
-
+	
 	initial_extracted_parameters=extracted_parameters.copy()
 	initial_circuit_parameters=circuit_parameters.copy()
 

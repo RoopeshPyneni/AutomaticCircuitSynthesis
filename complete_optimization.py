@@ -47,6 +47,7 @@ def save_input_results_initial(optimization_input_parameters):
 	f.write('\nOutput     : '+str(optimization_input_parameters['filename']['output']))
 	f.write('\nRun Status : '+str(optimization_input_parameters['filename']['run_status']))
 
+	"""
 	# Saving MOS Parameters
 	f.write('\n\n---------------------- MOS Parameters -----------------------')
 	f.write('\nProcess Name	:'+str(optimization_input_parameters['MOS']['Process']))
@@ -56,12 +57,14 @@ def save_input_results_initial(optimization_input_parameters):
 	f.write('\ntox  	   	:'+str(optimization_input_parameters['MOS']['tox']))
 	f.write('\ncox	     	:'+str(optimization_input_parameters['MOS']['cox']))
 	f.write('\nvth0	     	:'+str(optimization_input_parameters['MOS']['vt']))
+	"""
 
 	# Saving Output Conditions
 	f.write('\n\n---------------------- Output Conditions -----------------------')
 	for name in optimization_input_parameters['output_conditions']:
 		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['output_conditions'][name],3))
 
+	"""
 	# Saving Simulation Results
 	f.write('\n\n---------------------- Simulation Conditions -----------------------')
 	f.write('\nDirectory      :'+str(optimization_input_parameters['simulation']['directory']))
@@ -78,6 +81,7 @@ def save_input_results_initial(optimization_input_parameters):
 	# Parameter List for simulation
 	for name in optimization_input_parameters['simulation']['parameters_list']:
 		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['simulation']['parameters_list'][name],3))
+	"""
 	
 	f.close()
 
@@ -142,7 +146,7 @@ def save_time_results(timing_results,optimization_input_parameters):
 # Function that performs the complete optimization process
 # Inputs  : Optimization Input Parameters
 # Outputs : NONE
-def complete_optimization(optimization_input_parameters):
+def complete_optimization(circuit_initialization_parameters,optimization_input_parameters):
 
 	# Calculating Starting Time
 	timing_results={}
@@ -161,7 +165,7 @@ def complete_optimization(optimization_input_parameters):
 	#======================================================== MOSFET PARAMETERS ==================================================================================================
 
 	# Writing the MOSFET File Location to .scs file
-	cir=sp.Circuit(optimization_input_parameters)
+	cir=sp.Circuit(circuit_initialization_parameters,optimization_input_parameters)
 	#sp.write_MOS_parameters(optimization_input_parameters)
 
 	#======================================================== PRE OPTIMIZATION ===================================================================================================

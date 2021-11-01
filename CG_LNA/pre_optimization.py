@@ -149,7 +149,6 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 
 	save_input_results_pre_optimization(optimization_input_parameters)
 
-	#cff.write_simulation_parameters(optimization_input_parameters,'pre_optimization',0)
 	cir.update_simulation_parameters(optimization_input_parameters['pre_optimization']['simulation'])
 	cir.optimization_input_parameters=optimization_input_parameters
 

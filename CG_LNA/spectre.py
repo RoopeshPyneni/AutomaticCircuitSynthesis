@@ -51,17 +51,17 @@ import CG_LNA.extra_function as cff # type: ignore
 #---------------------------------------------------------------------------------------------------------------------------
 # Creating a class for the circuit 
 class Circuit():
-	def __init__(self,optimization_input_parameters):
+	def __init__(self,circuit_initialization_parameters):
 		self.circuit_parameters={}
 		self.extracted_parameters={}
 		self.simulation_parameters={}
-		self.optimization_input_parameters=optimization_input_parameters
-		write_MOS_parameters(self.optimization_input_parameters)
-		self.mos_parameters=calculate_mos_parameters(self.optimization_input_parameters)
+		self.circuit_initialization_parameters=circuit_initialization_parameters
+		write_MOS_parameters(self.circuit_initialization_parameters)
+		self.mos_parameters=calculate_mos_parameters(self.circuit_initialization_parameters)
 	
 	def update_circuit(self,circuit_parameters):
 		self.circuit_parameters=circuit_parameters
-		self.extracted_parameters=write_extract(circuit_parameters,self.optimization_input_parameters)
+		self.extracted_parameters=write_extract(circuit_parameters,self.circuit_initialization_parameters)
 		return self.extracted_parameters
 	
 	def update_circuit_parameters(self,circuit_parameters):
@@ -69,16 +69,16 @@ class Circuit():
 	
 	#def update_MOS_parameters(self,mos_parameters):
 	#	self.mos_parameters=mos_parameters
-	#	write_MOS_parameters(self.optimization_input_parameters)
+	#	write_MOS_parameters(self.circuit_initialization_parameters)
 
 	def update_simulation_parameters(self,simulation_parameters):
 		if 'parameters_list' in simulation_parameters:
 			for param_name in simulation_parameters['parameters_list']:
-				self.optimization_input_parameters['simulation']['parameters_list'][param_name]=simulation_parameters['parameters_list'][param_name]
+				self.circuit_initialization_parameters['simulation']['parameters_list'][param_name]=simulation_parameters['parameters_list'][param_name]
 		
 		for param_name in simulation_parameters:
 			if param_name != 'parameters_list':
-				self.optimization_input_parameters['simulation'][param_name]=simulation_parameters[param_name]
+				self.circuit_initialization_parameters['simulation'][param_name]=simulation_parameters[param_name]
 
 	def get_extracted_parameters(self):
 		return self.extracted_parameters
@@ -91,14 +91,14 @@ class Circuit():
 # Function that extracts the MOSFET File Parameeters
 # Inputs  : Optimization Input Parameters
 # Outputs : MOS_Parameters
-def calculate_mos_parameters(optimization_input_parameters):
+def calculate_mos_parameters(circuit_initialization_parameters):
 	
 	# Setting Lmin and Vdd
-	Lmin=optimization_input_parameters['MOS']['Lmin']
-	vdd=optimization_input_parameters['MOS']['Vdd']
-	cox=optimization_input_parameters['MOS']['cox']
-	un=optimization_input_parameters['MOS']['un']
-	vt=optimization_input_parameters['MOS']['vt']
+	Lmin=circuit_initialization_parameters['MOS']['Lmin']
+	vdd=circuit_initialization_parameters['MOS']['Vdd']
+	cox=circuit_initialization_parameters['MOS']['cox']
+	un=circuit_initialization_parameters['MOS']['un']
+	vt=circuit_initialization_parameters['MOS']['vt']
 
 	# Extracting From File
 	mos_parameters = {'un':un,'cox':cox,'vt':vt,'Lmin':Lmin,'vdd':vdd}
@@ -107,18 +107,18 @@ def calculate_mos_parameters(optimization_input_parameters):
 	cff.print_MOS_parameters(mos_parameters)
 
 	# Storing the results
-	save_mos_results(mos_parameters,optimization_input_parameters)
+	save_mos_results(mos_parameters,circuit_initialization_parameters)
 
 	return mos_parameters
 
 #-----------------------------------------------------------------
 # Function that stores output data of the MOS File Calculations
-# Inputs  : mos_parameters, optimization_input_parameters
+# Inputs  : mos_parameters, circuit_initialization_parameters
 # Outputs : NONE
-def save_mos_results(mos_parameters,optimization_input_parameters):
+def save_mos_results(mos_parameters,circuit_initialization_parameters):
 	
 	# Opening the file
-	filename=optimization_input_parameters['filename']['output']+str('/output_data.txt')
+	filename=circuit_initialization_parameters['filename']['output']+str('/output_data.txt')
 	f=open(filename,'a')
 
 	# Storing the results
@@ -224,12 +224,12 @@ def extract_file(file_name):
 
 #---------------------------------------------------------------------------------------------------------------------------	
 # Extracting the DC from the file
-# Inputs: Optimization_input_parameters
+# Inputs: circuit_initialization_parameters
 # Output: Dictionary with all the parameters
-def extract_dc_param(optimization_input_parameters):
+def extract_dc_param(circuit_initialization_parameters):
 
 	# Getting the filename
-	file_name=optimization_input_parameters['simulation']['directory']+optimization_input_parameters['simulation']['basic_circuit']+'/dc.out'
+	file_name=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/dc.out'
 	lines=extract_file(file_name)
 	
 	extracted_parameters={}
@@ -260,12 +260,12 @@ def extract_dc_param(optimization_input_parameters):
 
 #---------------------------------------------------------------------------------------------------------------------------	
 # Extracting the AC from the file
-# Inputs: Optimization_input_parameters
+# Inputs: circuit_initialization_parameters
 # Output: Dictionary with all the parameters
-def extract_ac_param(optimization_input_parameters):
+def extract_ac_param(circuit_initialization_parameters):
 
 	# Getting the filename
-	file_name=optimization_input_parameters['simulation']['directory']+optimization_input_parameters['simulation']['basic_circuit']+'/ac.out'
+	file_name=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/ac.out'
 	lines=extract_file(file_name)
 	
 	extracted_parameters={}
@@ -317,12 +317,12 @@ def calculate_gain_phase(vout_re,vout_im,vin_re,vin_im):
 
 #---------------------------------------------------------------------------------------------------------------------------	
 # Extracting the SP from the file
-# Inputs: Optimization_input_parameters
+# Inputs: circuit_initialization_parameters
 # Output: Dictionary with all the parameters
-def extract_sp_param(optimization_input_parameters):
+def extract_sp_param(circuit_initialization_parameters):
 
 	# Getting the filename
-	file_name=optimization_input_parameters['simulation']['directory']+optimization_input_parameters['simulation']['basic_circuit']+'/sp.out'
+	file_name=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/sp.out'
 	lines=extract_file(file_name)
 	
 	extracted_parameters={}
@@ -405,12 +405,12 @@ def calculate_k(s11_db,s12_db,s21_db,s22_db,s11_ph,s12_ph,s21_ph,s22_ph):
 
 #---------------------------------------------------------------------------------------------------------------------------	
 # Extracting the Noise from the file
-# Inputs: Optimization_input_parameters
+# Inputs: circuit_initialization_parameters
 # Output: Dictionary with all the parameters
-def extract_noise_param(optimization_input_parameters):
+def extract_noise_param(circuit_initialization_parameters):
 
 	# Getting the filename
-	file_name=optimization_input_parameters['simulation']['directory']+optimization_input_parameters['simulation']['basic_circuit']+'/noise.out'
+	file_name=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/noise.out'
 	lines=extract_file(file_name)
 	
 	extracted_parameters={}
@@ -428,13 +428,13 @@ def extract_noise_param(optimization_input_parameters):
 # Extracting all the output parameters from chi file
 # Inputs: optimization_input parameters
 # Outputs: output parameters dictionary 
-def extract_basic_parameters(optimization_input_parameters):
+def extract_basic_parameters(circuit_initialization_parameters):
 	
 	# Extracting the outputs 
-	extracted_parameters_dc=extract_dc_param(optimization_input_parameters)
-	extracted_parameters_ac=extract_ac_param(optimization_input_parameters)
-	extracted_parameters_sp=extract_sp_param(optimization_input_parameters)
-	extracted_parameters_noise=extract_noise_param(optimization_input_parameters)
+	extracted_parameters_dc=extract_dc_param(circuit_initialization_parameters)
+	extracted_parameters_ac=extract_ac_param(circuit_initialization_parameters)
+	extracted_parameters_sp=extract_sp_param(circuit_initialization_parameters)
+	extracted_parameters_noise=extract_noise_param(circuit_initialization_parameters)
 	
 	# Storing the outputs in a single dictionary
 	extracted_parameters={}
@@ -471,16 +471,16 @@ def calculate_iip3_single_point(vout_fund_mag,vout_im3_mag,pin):
 
 #---------------------------------------------------------------------------------------------------------------------------	
 # Calculating the IIP3 after extraction of Vout data
-# Inputs: Optimization_input_parameters, Vout_fund, Vout_im3, pin
+# Inputs: circuit_initialization_parameters, Vout_fund, Vout_im3, pin
 # Output: IIP3
-def calculate_iip3_multiple_points(optimization_input_parameters,vout_fund_mag,vout_im3_mag,pin):
+def calculate_iip3_multiple_points(circuit_initialization_parameters,vout_fund_mag,vout_im3_mag,pin):
 
 	# Calculating values in log scale
 	vout_fund_log=20*np.log10(vout_fund_mag)
 	vout_im3_log=20*np.log10(vout_im3_mag)
 
-	n_pin=optimization_input_parameters['simulation']['pin_points']
-	n_points=optimization_input_parameters['simulation']['iip3_calc_points']
+	n_pin=circuit_initialization_parameters['simulation']['pin_points']
+	n_points=circuit_initialization_parameters['simulation']['iip3_calc_points']
 	
 	# Creating arrays for slopes and y-intercepts of fundamental and im3 components
 	fund_slope=np.zeros(n_pin+1-n_points,dtype=float)
@@ -544,12 +544,12 @@ def check_freq(f_test,f_target,f_error):
 # Extracting Vout magnitude of fundamental and im3 from file ( for hb_sweep )
 # Inputs: Filename, Optimization Input Parameters
 # Output: Magnitude of Vout at fundamental and im3
-def extract_vout_magnitude(file_name,optimization_input_parameters):
+def extract_vout_magnitude(file_name,circuit_initialization_parameters):
 
 	lines=extract_file(file_name)
 
-	fund_1=optimization_input_parameters['simulation']['parameters_list']['fund_1']
-	fund_2=optimization_input_parameters['simulation']['parameters_list']['fund_2']
+	fund_1=circuit_initialization_parameters['simulation']['parameters_list']['fund_1']
+	fund_2=circuit_initialization_parameters['simulation']['parameters_list']['fund_2']
 
 	f_im3=2*fund_2-fund_1
 	f_error=(fund_2-fund_1)/100
@@ -641,7 +641,7 @@ def print_param(param_var,val):
 # Function that converts input parameter dictionary to writing dictionary
 # Inputs  : Circuit Parameters Dictionary, Optimization Input Parameters
 # Outputs : The dictionary containing the parameters to be written to the .scs file
-def dict_convert(circuit_parameters,optimization_input_parameters):
+def dict_convert(circuit_parameters,circuit_initialization_parameters):
 	write_dict={}
 	
 	# param_names in write_dict will contain the name of the parameters as it is written in the .scs file
@@ -663,7 +663,7 @@ def dict_convert(circuit_parameters,optimization_input_parameters):
 	write_dict['Resbias_L'],write_dict['Resbias_W']=get_TSMC_resistor(circuit_parameters['Rbias'])
 	
 	# Calculating the number of fingers
-	n_finger=int(circuit_parameters['W']/optimization_input_parameters['simulation']['w_finger_max'])+1
+	n_finger=int(circuit_parameters['W']/circuit_initialization_parameters['simulation']['w_finger_max'])+1
 	write_dict['n_finger']=n_finger
 
 	# Checking if we have TSMC Capacitors
@@ -745,14 +745,14 @@ def get_TSMC_resistor(resistance):
 # Function that modifies the .scs file
 # Inputs  : circuit_parameters, optimization input parameters
 # Outputs : NONE
-def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
+def write_circuit_parameters(circuit_parameters,circuit_initialization_parameters):
 	
 	# We will convert the circuit parameters to write_dict
-	write_dict=dict_convert(circuit_parameters,optimization_input_parameters)
+	write_dict=dict_convert(circuit_parameters,circuit_initialization_parameters)
 	
 	# Getting the filenames
-	filename1=optimization_input_parameters['simulation']['directory']+optimization_input_parameters['simulation']['basic_circuit']+'/circ.scs'
-	filename2=optimization_input_parameters['simulation']['directory']+optimization_input_parameters['simulation']['iip3_circuit']+'/circ.scs'
+	filename1=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/circ.scs'
+	filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
 
 	# We will write the new values to the Basic Circuit
 	f=open(filename1,'r+')
@@ -782,18 +782,18 @@ def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 # Function that adds MOSFET Parameters to the netlist
 # Inputs  : Optimization Input Parameters
 # Outputs : NONE
-def write_MOS_parameters(optimization_input_parameters):
+def write_MOS_parameters(circuit_initialization_parameters):
 	
 	# write_dict will contain the mosfet values
 	write_dict={
-		'len':optimization_input_parameters['MOS']['Lmin'],
-		'v_dd':optimization_input_parameters['MOS']['Vdd'],
+		'len':circuit_initialization_parameters['MOS']['Lmin'],
+		'v_dd':circuit_initialization_parameters['MOS']['Vdd'],
 	}
-	process_corner=optimization_input_parameters['simulation']['process_corner']
+	process_corner=circuit_initialization_parameters['simulation']['process_corner']
 
 	# Getting the filenames
-	filename1=optimization_input_parameters['simulation']['directory']+optimization_input_parameters['simulation']['basic_circuit']+'/circ.scs'
-	filename2=optimization_input_parameters['simulation']['directory']+optimization_input_parameters['simulation']['iip3_circuit']+'/circ.scs'
+	filename1=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/circ.scs'
+	filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
 
 	# Writing the MOS Parameters to Basic File
 	f=open(filename1,'r+')
@@ -808,7 +808,7 @@ def write_MOS_parameters(optimization_input_parameters):
 			write_check=0
 
 		elif "include" not in line and include_check==1:
-			s=s+optimization_input_parameters['MOS']['filename'][process_corner]
+			s=s+circuit_initialization_parameters['MOS']['filename'][process_corner]
 			include_check=0
 			write_check=1
 		
@@ -836,7 +836,7 @@ def write_MOS_parameters(optimization_input_parameters):
 			write_check=0
 
 		elif "include" not in line and include_check==1:
-			s=s+optimization_input_parameters['MOS']['filename'][process_corner]
+			s=s+circuit_initialization_parameters['MOS']['filename'][process_corner]
 			include_check=0
 			write_check=1
 		
@@ -844,7 +844,7 @@ def write_MOS_parameters(optimization_input_parameters):
 			if "parameters "+param_name+'=' in line:
 				line=line.replace(line,print_param(param_name,write_dict[param_name]))
 		
-		if 'hb_test' in line and 'errpreset=conservative' in line and optimization_input_parameters['simulation']['conservative']=='NO':
+		if 'hb_test' in line and 'errpreset=conservative' in line and circuit_initialization_parameters['simulation']['conservative']=='NO':
 			line_split=line.split()
 			line=''
 			for word in line_split:
@@ -852,7 +852,7 @@ def write_MOS_parameters(optimization_input_parameters):
 					line=line+word+' '
 			line=line+'\n'
 		
-		elif 'hb_test' in line and 'errpreset=conservative' not in line and optimization_input_parameters['simulation']['conservative']=='YES':
+		elif 'hb_test' in line and 'errpreset=conservative' not in line and circuit_initialization_parameters['simulation']['conservative']=='YES':
 			line=line[:-1]+' errpreset=conservative \n'
 
 		if write_check==1:
@@ -867,17 +867,17 @@ def write_MOS_parameters(optimization_input_parameters):
 # Function that adds Simulation Parameters
 # Inputs  : Optimization Input Parameters
 # Outputs : NONE
-def write_simulation_parameters(optimization_input_parameters):
+def write_simulation_parameters(circuit_initialization_parameters):
 	
 	# Adding simulation_parameters to write_dict
 	write_dict={}
-	for param_name in optimization_input_parameters['simulation']['parameters_list']:
-		write_dict[param_name]=optimization_input_parameters['simulation']['parameters_list'][param_name]
-	process_corner=optimization_input_parameters['simulation']['process_corner']
+	for param_name in circuit_initialization_parameters['simulation']['parameters_list']:
+		write_dict[param_name]=circuit_initialization_parameters['simulation']['parameters_list'][param_name]
+	process_corner=circuit_initialization_parameters['simulation']['process_corner']
 
 	# Getting the filenames
-	filename1=optimization_input_parameters['simulation']['directory']+optimization_input_parameters['simulation']['basic_circuit']+'/circ.scs'
-	filename2=optimization_input_parameters['simulation']['directory']+optimization_input_parameters['simulation']['iip3_circuit']+'/circ.scs'
+	filename1=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/circ.scs'
+	filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
 
 	# Writing the simulation parameters to Basic File
 	f=open(filename1,'r+')
@@ -892,7 +892,7 @@ def write_simulation_parameters(optimization_input_parameters):
 			write_check=0
 
 		elif "include" not in line and include_check==1:
-			s=s+optimization_input_parameters['MOS']['filename'][process_corner]
+			s=s+circuit_initialization_parameters['MOS']['filename'][process_corner]
 			include_check=0
 			write_check=1
 		
@@ -920,7 +920,7 @@ def write_simulation_parameters(optimization_input_parameters):
 			write_check=0
 
 		elif "include" not in line and include_check==1:
-			s=s+optimization_input_parameters['MOS']['filename'][process_corner]
+			s=s+circuit_initialization_parameters['MOS']['filename'][process_corner]
 			include_check=0
 			write_check=1
 		
@@ -928,7 +928,7 @@ def write_simulation_parameters(optimization_input_parameters):
 			if "parameters "+param_name+'=' in line:
 				line=line.replace(line,print_param(param_name,write_dict[param_name]))
 				
-		if 'hb_test' in line and 'errpreset=conservative' in line and optimization_input_parameters['simulation']['conservative']=='NO':
+		if 'hb_test' in line and 'errpreset=conservative' in line and circuit_initialization_parameters['simulation']['conservative']=='NO':
 			line_split=line.split()
 			line=''
 			for word in line_split:
@@ -936,7 +936,7 @@ def write_simulation_parameters(optimization_input_parameters):
 					line=line+word+' '
 			line=line+'\n'
 		
-		elif 'hb_test' in line and 'errpreset=conservative' not in line and optimization_input_parameters['simulation']['conservative']=='YES':
+		elif 'hb_test' in line and 'errpreset=conservative' not in line and circuit_initialization_parameters['simulation']['conservative']=='YES':
 			line=line[:-1]+' errpreset=conservative \n'
 			
 		
@@ -949,11 +949,11 @@ def write_simulation_parameters(optimization_input_parameters):
 
 #-----------------------------------------------------------------
 # Function that modifies tcsh file
-# Inputs  : Optimization_Input_Parameters
+# Inputs  : circuit_initialization_parameters
 # Outputs : NONE
-def write_tcsh_file(optimization_input_parameters,optimiztion_type):
+def write_tcsh_file(circuit_initialization_parameters,optimiztion_type):
 	
-	filename=optimization_input_parameters['simulation']['tcsh']
+	filename=circuit_initialization_parameters['simulation']['tcsh']
 	f=open(filename,'r+')
 	s=''
 	
@@ -961,9 +961,9 @@ def write_tcsh_file(optimization_input_parameters,optimiztion_type):
 	s=s+'source ~/.cshrc\n'
 	
 	if optimiztion_type=='basic':
-		s=s+'cd '+optimization_input_parameters['simulation']['directory']+optimization_input_parameters['simulation']['basic_circuit']+'\n'
+		s=s+'cd '+circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'\n'
 	else:
-		s=s+'cd '+optimization_input_parameters['simulation']['directory']+optimization_input_parameters['simulation']['iip3_circuit']+'\n'
+		s=s+'cd '+circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'\n'
 	
 	s=s+'spectre circ.scs =log circ_log.txt\n'
 	s=s+'exit'
@@ -984,61 +984,61 @@ def write_tcsh_file(optimization_input_parameters,optimiztion_type):
 # This function will run the shell commands to run Spectre
 # Inputs  : Optimization Input Parameters
 # Outputs : NONE
-def run_file(optimization_input_parameters):
+def run_file(circuit_initialization_parameters):
 	os.system('cd /home/ee18b028/cadence_project')
-	os.system('tcsh '+optimization_input_parameters['simulation']['tcsh'])	# This is the command to run the spectre file
+	os.system('tcsh '+circuit_initialization_parameters['simulation']['tcsh'])	# This is the command to run the spectre file
 	
 #-----------------------------------------------------------------------------------------------
 # This function will perform simulation for Basic Parameters
-# Inputs  : Circuit_Parameters, Optimization_Input_Parameters
+# Inputs  : Circuit_Parameters, circuit_initialization_parameters
 # Outputs : Extracted_Parameters
-def write_extract_basic(optimization_input_parameters):
+def write_extract_basic(circuit_initialization_parameters):
 	
 	# Writing the simulation parameters
-	write_simulation_parameters(optimization_input_parameters)
+	write_simulation_parameters(circuit_initialization_parameters)
 
 	# Writing the tcsh file for Basic Analysis
-	write_tcsh_file(optimization_input_parameters,'basic')
+	write_tcsh_file(circuit_initialization_parameters,'basic')
 
 	# Running netlist file
-	run_file(optimization_input_parameters)
+	run_file(circuit_initialization_parameters)
 
 	# Extracting the Basic Parameters
-	basic_extracted_parameters=extract_basic_parameters(optimization_input_parameters)
+	basic_extracted_parameters=extract_basic_parameters(circuit_initialization_parameters)
 	
 	return basic_extracted_parameters
 
 #-----------------------------------------------------------------------------------------------
 # This function will perform simulation for IIP3 Parameters
-# Inputs  : Circuit_Parameters, Optimization_Input_Parameters
+# Inputs  : Circuit_Parameters, circuit_initialization_parameters
 # Outputs : Extracted_Parameters
-def write_extract_iip3(optimization_input_parameters):
+def write_extract_iip3(circuit_initialization_parameters):
 	
-	if optimization_input_parameters['simulation']['iip3_type']=='basic':
+	if circuit_initialization_parameters['simulation']['iip3_type']=='basic':
 		
-		pin=optimization_input_parameters['simulation']['pin_fixed']
-		optimization_input_parameters['simulation']['parameters_list']['pin']=pin
+		pin=circuit_initialization_parameters['simulation']['pin_fixed']
+		circuit_initialization_parameters['simulation']['parameters_list']['pin']=pin
 		
 		# Writing the simulation parameters
-		write_simulation_parameters(optimization_input_parameters)
+		write_simulation_parameters(circuit_initialization_parameters)
 
 		# Writing the tcsh file for Basic Analysis
-		write_tcsh_file(optimization_input_parameters,'iip3')
+		write_tcsh_file(circuit_initialization_parameters,'iip3')
 
 		# Running netlist file
-		run_file(optimization_input_parameters)
+		run_file(circuit_initialization_parameters)
 
 		# Extracting Vout Magnitude
-		file_name=optimization_input_parameters['simulation']['directory']+optimization_input_parameters['simulation']['iip3_circuit']+'/circ.raw/hb_test.fd.qpss_hb'
-		vout_fund_mag,vout_im3_mag=extract_vout_magnitude(file_name,optimization_input_parameters)
+		file_name=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.raw/hb_test.fd.qpss_hb'
+		vout_fund_mag,vout_im3_mag=extract_vout_magnitude(file_name,circuit_initialization_parameters)
 
 		# Calculating the iip3
 		iip3=calculate_iip3_single_point(vout_fund_mag,vout_im3_mag,pin)
 
 	else:
-		pin_start=optimization_input_parameters['simulation']['pin_start']
-		pin_stop=optimization_input_parameters['simulation']['pin_stop']
-		pin_points=optimization_input_parameters['simulation']['pin_points']
+		pin_start=circuit_initialization_parameters['simulation']['pin_start']
+		pin_stop=circuit_initialization_parameters['simulation']['pin_stop']
+		pin_points=circuit_initialization_parameters['simulation']['pin_points']
 
 		pin=np.linspace(pin_start,pin_stop,pin_points)
 		
@@ -1047,22 +1047,22 @@ def write_extract_iip3(optimization_input_parameters):
 
 		for i in range(pin_points):
 		
-			optimization_input_parameters['simulation']['parameters_list']['pin']=pin[i]
+			circuit_initialization_parameters['simulation']['parameters_list']['pin']=pin[i]
 			
 			# Writing the simulation parameters
-			write_simulation_parameters(optimization_input_parameters)
+			write_simulation_parameters(circuit_initialization_parameters)
 
 			# Writing the tcsh file for Basic Analysis
-			write_tcsh_file(optimization_input_parameters,'iip3')
+			write_tcsh_file(circuit_initialization_parameters,'iip3')
 
 			# Running netlist file
-			run_file(optimization_input_parameters)
+			run_file(circuit_initialization_parameters)
 
 			# Extracting Vout Magnitude
-			file_name=optimization_input_parameters['simulation']['directory']+optimization_input_parameters['simulation']['iip3_circuit']+'/circ.raw/hb_test.fd.qpss_hb'
-			vout_fund_mag[i],vout_im3_mag[i]=extract_vout_magnitude(file_name,optimization_input_parameters)
+			file_name=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.raw/hb_test.fd.qpss_hb'
+			vout_fund_mag[i],vout_im3_mag[i]=extract_vout_magnitude(file_name,circuit_initialization_parameters)
 
-		iip3=calculate_iip3_multiple_points(optimization_input_parameters,vout_fund_mag,vout_im3_mag,pin)
+		iip3=calculate_iip3_multiple_points(circuit_initialization_parameters,vout_fund_mag,vout_im3_mag,pin)
 
 	iip3_extracted_parameters={'iip3_dbm':iip3}
 	
@@ -1070,18 +1070,18 @@ def write_extract_iip3(optimization_input_parameters):
 
 #-----------------------------------------------------------------------------------------------
 # This function will write the circuit parameters, run Eldo and extract the output parameters
-# Inputs  : Circuit_Parameters, Optimization_Input_Parameters
+# Inputs  : Circuit_Parameters, circuit_initialization_parameters
 # Outputs : Extracted_Parameters
-def write_extract(circuit_parameters,optimization_input_parameters):
+def write_extract(circuit_parameters,circuit_initialization_parameters):
 	
 	# Writing to netlist file
-	write_circuit_parameters(circuit_parameters,optimization_input_parameters)
+	write_circuit_parameters(circuit_parameters,circuit_initialization_parameters)
 
 	# Extracting the Basic Parameters
-	basic_extracted_parameters=write_extract_basic(optimization_input_parameters)
+	basic_extracted_parameters=write_extract_basic(circuit_initialization_parameters)
 
 	# Extracting the IIP3 Parameters
-	iip3_extracted_parameters=write_extract_iip3(optimization_input_parameters)
+	iip3_extracted_parameters=write_extract_iip3(circuit_initialization_parameters)
 
 	# Extracting Parameters from output files
 	extracted_parameters=basic_extracted_parameters.copy()

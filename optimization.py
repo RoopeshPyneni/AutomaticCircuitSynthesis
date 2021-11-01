@@ -822,7 +822,6 @@ def main_opt(cir,circuit_parameters,extracted_parameters,optimization_input_para
 		timing_results['optimization'][i]={}
 		timing_results['optimization'][i]['start']=datetime.datetime.now()
 
-		#cf.write_simulation_parameters(optimization_input_parameters,'optimization',i)
 		cir.update_simulation_parameters(optimization_input_parameters['optimization']['simulation'][i])
 		optimization_input_parameters['optimization']['max_iteration']=optimization_input_parameters['optimization'][i]['max_iteration']
 		circuit_parameters,extracted_parameters=opt_single_run(cir,circuit_parameters,extracted_parameters,optimization_input_parameters,i)
