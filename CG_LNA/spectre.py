@@ -106,30 +106,7 @@ def calculate_mos_parameters(circuit_initialization_parameters):
 	# Printing the MOSFET Parameters
 	cff.print_MOS_parameters(mos_parameters)
 
-	# Storing the results
-	save_mos_results(mos_parameters,circuit_initialization_parameters)
-
 	return mos_parameters
-
-#-----------------------------------------------------------------
-# Function that stores output data of the MOS File Calculations
-# Inputs  : mos_parameters, circuit_initialization_parameters
-# Outputs : NONE
-def save_mos_results(mos_parameters,circuit_initialization_parameters):
-	
-	# Opening the file
-	filename=circuit_initialization_parameters['filename']['output']+str('/output_data.txt')
-	f=open(filename,'a')
-
-	# Storing the results
-	f.write('\n\n********************************************************************************\n')
-	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ MOS Parameters ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-
-	for param_name in mos_parameters:
-		f.write('\n'+str(param_name)+': '+cff.num_trunc(mos_parameters[param_name],3))
-	
-	f.close()
-	
 
 
 

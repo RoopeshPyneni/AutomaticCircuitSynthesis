@@ -139,6 +139,25 @@ def save_time_results(timing_results,optimization_input_parameters):
 	
 	f.close()
 
+#-----------------------------------------------------------------
+# Function that stores output data of the MOS File Calculations
+# Inputs  : mos_parameters, circuit_initialization_parameters
+# Outputs : NONE
+def save_mos_results(mos_parameters,optimization_input_parameters):
+	
+	# Opening the file
+	filename=optimization_input_parameters['filename']['output']+str('/output_data.txt')
+	f=open(filename,'a')
+
+	# Storing the results
+	f.write('\n\n********************************************************************************\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ MOS Parameters ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+
+	for param_name in mos_parameters:
+		f.write('\n'+str(param_name)+': '+cf.num_trunc(mos_parameters[param_name],3))
+	
+	f.close()
+
 #===========================================================================================================================
 #------------------------------------Main Program Code----------------------------------------------------------------------
 
@@ -165,8 +184,8 @@ def complete_optimization(circuit_initialization_parameters,optimization_input_p
 	#======================================================== MOSFET PARAMETERS ==================================================================================================
 
 	# Writing the MOSFET File Location to .scs file
-	cir=sp.Circuit(circuit_initialization_parameters,optimization_input_parameters)
-	#sp.write_MOS_parameters(optimization_input_parameters)
+	cir=sp.Circuit(circuit_initialization_parameters)
+	save_mos_results(cir.mos_parameters,optimization_input_parameters)
 
 	#======================================================== PRE OPTIMIZATION ===================================================================================================
 
