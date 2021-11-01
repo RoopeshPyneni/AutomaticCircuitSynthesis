@@ -134,11 +134,14 @@ def process_analysis(cir,circuit_parameters,extracted_parameters,optimization_in
 	# Performing the analysis
 	for process_corner in process_corner_list:
 		extracted_parameters_iter[process_corner]={}
-		optimization_input_parameters['simulation']['process_corner']=process_corner
+		#optimization_input_parameters['simulation']['process_corner']=process_corner
+		cir.circuit_initialization_parameters['simulation']['process_corner']=process_corner
 		write_extracted_parameters_initial(extracted_parameters,optimization_input_parameters,process_corner)
-		sp.write_simulation_parameters(optimization_input_parameters)
+		#sp.write_simulation_parameters(optimization_input_parameters)
+		cir.write_simulation_parameters()
 		for temp in temp_array:
-			optimization_input_parameters['simulation']['parameters_list']['cir_temp']=temp				# Writing the temperature value to the netlist file
+			cir.update_temp(temp)
+			#optimization_input_parameters['simulation']['parameters_list']['cir_temp']=temp				# Writing the temperature value to the netlist file
 			extracted_parameters=cir.update_circuit(circuit_parameters)
 			#extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)	# Extracting the parameters
 			update_extracted_parameters(extracted_parameters,optimization_input_parameters,process_corner,temp)		# Writing the values to the output file
@@ -148,7 +151,8 @@ def process_analysis(cir,circuit_parameters,extracted_parameters,optimization_in
 	extracted_parameters=initial_extracted_parameters.copy()
 	circuit_parameters=initial_circuit_parameters.copy()
 
-	optimization_input_parameters['simulation']['parameters_list']['cir_temp']=optimization_input_parameters['simulation']['std_temp']	# Writing the temperature value to the netlist file
+	cir.reset_temp()
+	#optimization_input_parameters['simulation']['parameters_list']['cir_temp']=optimization_input_parameters['simulation']['std_temp']	# Writing the temperature value to the netlist file
 
 	# Plotting the graphs
 	file_directory=optimization_input_parameters['filename']['output']

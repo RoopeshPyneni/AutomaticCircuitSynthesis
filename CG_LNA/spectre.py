@@ -79,6 +79,16 @@ class Circuit():
 		for param_name in simulation_parameters:
 			if param_name != 'parameters_list':
 				self.circuit_initialization_parameters['simulation'][param_name]=simulation_parameters[param_name]
+	
+	def write_simulation_parameters(self):
+		write_simulation_parameters(self.circuit_initialization_parameters)
+	
+	def update_temp(self,temp):
+		self.circuit_initialization_parameters['simulation']['parameters_list']['cir_temp']=temp
+		#optimization_input_parameters['simulation']['parameters_list']['cir_temp']=temp
+	
+	def reset_temp(self):
+		self.circuit_initialization_parameters['simulation']['parameters_list']['cir_temp']=self.circuit_initialization_parameters['simulation']['std_temp']	
 
 	def get_extracted_parameters(self):
 		return self.extracted_parameters
