@@ -38,7 +38,6 @@ Functions structure in this file:
 	
 """
 #===========================================================================================================================
-from typing import no_type_check
 import numpy as np
 import fileinput
 import os

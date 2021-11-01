@@ -18,10 +18,10 @@ Functions structure in this file:
 
 #===========================================================================================================================
 import datetime
-import extra_function as cff
-import spectre as sp
-import hand_calculation_1 as hc1
-import hand_calculation_2 as hc2
+import CG_LNA.extra_function as cff
+import CG_LNA.spectre as sp
+import CG_LNA.hand_calculation_1 as hc1
+import CG_LNA.hand_calculation_2 as hc2
 
 
 #===========================================================================================================================

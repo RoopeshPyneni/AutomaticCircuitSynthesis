@@ -24,8 +24,8 @@ COMPLETE
 
 #===========================================================================================================================
 import numpy as np
-import extra_function as cff
-import spectre as sp
+import CG_LNA.extra_function as cff
+import CG_LNA.spectre as sp
 
 #===========================================================================================================================
 #------------------------------------Defining the functions for simple calculations-----------------------------------------
