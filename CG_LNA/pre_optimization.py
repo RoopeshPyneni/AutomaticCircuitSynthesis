@@ -18,7 +18,7 @@ Functions structure in this file:
 
 #===========================================================================================================================
 import datetime
-import common_function as cf
+import extra_function as cff
 import spectre as sp
 import hand_calculation_1 as hc1
 import hand_calculation_2 as hc2
@@ -72,37 +72,37 @@ def save_output_results_pre_optimization(optimization_results,optimization_input
 	if 'manual_hc' in optimization_results:
 		f.write('\n\n--------------------- Manual Hand Calculations ---------------------------------')
 		f.write('\n\n---------------- Circuit Parameters ------------------------')
-		cf.print_output_parameters(f,optimization_results['manual_hc']['circuit_parameters'])
+		cff.print_output_parameters(f,optimization_results['manual_hc']['circuit_parameters'])
 		f.write('\n\n---------------- Extracted Parameters ------------------------')
-		cf.print_output_parameters(f,optimization_results['manual_hc']['extracted_parameters'])
+		cff.print_output_parameters(f,optimization_results['manual_hc']['extracted_parameters'])
 
 	if 'auto_hc' in optimization_results:
 		f.write('\n\n--------------------- Automatic Hand Calculations ---------------------------------')
 		f.write('\n\n---------------- Circuit Parameters ------------------------')
-		cf.print_output_parameters(f,optimization_results['auto_hc']['circuit_parameters'])
+		cff.print_output_parameters(f,optimization_results['auto_hc']['circuit_parameters'])
 		f.write('\n\n---------------- Extracted Parameters ------------------------')
-		cf.print_output_parameters(f,optimization_results['auto_hc']['extracted_parameters'])
+		cff.print_output_parameters(f,optimization_results['auto_hc']['extracted_parameters'])
 
 	if 'hc_update' in optimization_results:
 		f.write('\n\n--------------------- Hand Calculations Update ---------------------------------')
 		f.write('\n\n---------------- Circuit Parameters ------------------------')
-		cf.print_output_parameters(f,optimization_results['hc_update']['circuit_parameters'])
+		cff.print_output_parameters(f,optimization_results['hc_update']['circuit_parameters'])
 		f.write('\n\n---------------- Extracted Parameters ------------------------')
-		cf.print_output_parameters(f,optimization_results['hc_update']['extracted_parameters'])
+		cff.print_output_parameters(f,optimization_results['hc_update']['extracted_parameters'])
 
 	if 'gm_update' in optimization_results:
 		f.write('\n\n--------------------- gm Update ---------------------------------')
 		f.write('\n\n---------------- Circuit Parameters ------------------------')
-		cf.print_output_parameters(f,optimization_results['gm_update']['circuit_parameters'])
+		cff.print_output_parameters(f,optimization_results['gm_update']['circuit_parameters'])
 		f.write('\n\n---------------- Extracted Parameters ------------------------')
-		cf.print_output_parameters(f,optimization_results['gm_update']['extracted_parameters'])
+		cff.print_output_parameters(f,optimization_results['gm_update']['extracted_parameters'])
 
 	if 'gmvd_update' in optimization_results:
 		f.write('\n\n--------------------- gmvd Update ---------------------------------')
 		f.write('\n\n---------------- Circuit Parameters ------------------------')
-		cf.print_output_parameters(f,optimization_results['gmvd_update']['circuit_parameters'])
+		cff.print_output_parameters(f,optimization_results['gmvd_update']['circuit_parameters'])
 		f.write('\n\n---------------- Extracted Parameters ------------------------')
-		cf.print_output_parameters(f,optimization_results['gmvd_update']['extracted_parameters'])
+		cff.print_output_parameters(f,optimization_results['gmvd_update']['extracted_parameters'])
 	
 	f.close()
 
@@ -121,7 +121,7 @@ def save_mos_results(mos_parameters,optimization_input_parameters):
 	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ MOS Parameters ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
 	for param_name in mos_parameters:
-		f.write('\n'+str(param_name)+': '+cf.num_trunc(mos_parameters[param_name],3))
+		f.write('\n'+str(param_name)+': '+cff.num_trunc(mos_parameters[param_name],3))
 	
 	f.close()
 
@@ -164,7 +164,7 @@ def calculate_mos_parameters(optimization_input_parameters):
 	mos_parameters = {'un':un,'cox':cox,'vt':vt,'Lmin':Lmin,'vdd':vdd}
 	
 	# Printing the MOSFET Parameters
-	cf.print_MOS_parameters(mos_parameters)
+	cff.print_MOS_parameters(mos_parameters)
 
 	# Storing the results
 	save_mos_results(mos_parameters,optimization_input_parameters)
@@ -195,7 +195,7 @@ def pre_optimization(optimization_input_parameters,timing_results):
 
 	save_input_results_pre_optimization(optimization_input_parameters)
 
-	cf.write_simulation_parameters(optimization_input_parameters,'pre_optimization',0)
+	cff.write_simulation_parameters(optimization_input_parameters,'pre_optimization',0)
 
 	optimization_results={}
 	
@@ -217,10 +217,10 @@ def pre_optimization(optimization_input_parameters,timing_results):
 		optimization_results['manual_hc']['extracted_parameters']=extracted_parameters.copy()
 
 		# Printing the values
-		cf.print_circuit_parameters(circuit_parameters)
-		cf.print_extracted_outputs(extracted_parameters)
+		cff.print_circuit_parameters(circuit_parameters)
+		cff.print_extracted_outputs(extracted_parameters)
 
-		#cf.wait_key()
+		#cff.wait_key()
 
 	
 	#======================================================== Automatic Initial Points =============================================================================================================
@@ -246,8 +246,8 @@ def pre_optimization(optimization_input_parameters,timing_results):
 		circuit_parameters,extracted_parameters=hc2.automatic_initial_parameters(mos_parameters,optimization_input_parameters,optimization_results)
 
 	# Printing the values
-	cf.print_circuit_parameters(circuit_parameters)
-	cf.print_extracted_outputs(extracted_parameters)
+	cff.print_circuit_parameters(circuit_parameters)
+	cff.print_extracted_outputs(extracted_parameters)
 
 	# Storing the results
 	save_output_results_pre_optimization(optimization_results,optimization_input_parameters)

@@ -24,7 +24,7 @@ COMPLETE
 
 #===========================================================================================================================
 import numpy as np
-import common_function as cf
+import extra_function as cff
 import spectre as sp
 
 #===========================================================================================================================
@@ -72,7 +72,7 @@ def calc_W(circuit_parameters,mos_parameters):
 def calc_Rd(opt_conditions):
 
 	# Calculating the required gain
-	gain=np.sqrt(cf.db_to_normal(opt_conditions['gain_db']))
+	gain=np.sqrt(cff.db_to_normal(opt_conditions['gain_db']))
 	gm=2e-3
 
 	# Calculating Rd
@@ -241,9 +241,9 @@ def automatic_initial_parameters(mos_parameters,optimization_input_parameters,op
 	optimization_results['auto_hc']['extracted_parameters']=extracted_parameters.copy()
 
 	# Printing the values
-	cf.print_circuit_parameters(circuit_parameters)
-	cf.print_DC_outputs(dc_initial_outputs,mos_parameters)
-	cf.print_extracted_outputs(extracted_parameters)
+	cff.print_circuit_parameters(circuit_parameters)
+	cff.print_DC_outputs(dc_initial_outputs,mos_parameters)
+	cff.print_extracted_outputs(extracted_parameters)
 
 
 
@@ -260,9 +260,9 @@ def automatic_initial_parameters(mos_parameters,optimization_input_parameters,op
 	optimization_results['hc_update']['extracted_parameters']=extracted_parameters.copy()
 
 	# Printing the values
-	cf.print_circuit_parameters(circuit_parameters)
-	cf.print_DC_outputs(dc_initial_outputs,mos_parameters)
-	cf.print_extracted_outputs(extracted_parameters)
+	cff.print_circuit_parameters(circuit_parameters)
+	cff.print_DC_outputs(dc_initial_outputs,mos_parameters)
+	cff.print_extracted_outputs(extracted_parameters)
 
 
 	return circuit_parameters,extracted_parameters
