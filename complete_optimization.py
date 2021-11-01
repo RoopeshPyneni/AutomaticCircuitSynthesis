@@ -189,19 +189,19 @@ def complete_optimization(circuit_initialization_parameters,optimization_input_p
 
 	#======================================================== PRE OPTIMIZATION ===================================================================================================
 
-	circuit_parameters,extracted_parameters=pr.pre_optimization(cir,optimization_input_parameters,timing_results)
+	pr.pre_optimization(cir,optimization_input_parameters,timing_results)
 
 	#======================================================== OPTIMIZATION =======================================================================================================
 
-	circuit_parameters,extracted_parameters=op.main_opt(cir,circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results)
+	op.main_opt(cir,optimization_input_parameters,timing_results)
 
 	#======================================================== TEMPERATURE ANALYSIS ===============================================================================================
 
-	circuit_parameters,extracted_parameters=ta.temperature_analysis(cir,circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results)
+	ta.temperature_analysis(cir,optimization_input_parameters,timing_results)
 
 	#========================================================== PROCESS ANALYSIS =================================================================================================
 
-	circuit_parameters,extracted_parameters=pa.process_analysis(cir,circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results)
+	pa.process_analysis(cir,optimization_input_parameters,timing_results)
 	
 	#======================================================== AFTER OPTIMIZATION =================================================================================================
 	

@@ -88,10 +88,10 @@ def update_extracted_parameters(extracted_parameters,optimization_input_paramete
 # Function that will perform the temperature analysis
 # Input: circuit_parameters, extracted_parameters, optimization_input_parameters
 # Output: circuit_parameters, extracted_parameters
-def temperature_analysis(cir,circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results):
+def temperature_analysis(cir,optimization_input_parameters,timing_results):
 	
 	if optimization_input_parameters['temperature_analysis']['run']=='NO':
-		return circuit_parameters,extracted_parameters
+		return
 
 	# Opening the Run_Status File
 	f=open(optimization_input_parameters['filename']['run_status'],'a')
@@ -107,8 +107,8 @@ def temperature_analysis(cir,circuit_parameters,extracted_parameters,optimizatio
 	
 	cir.update_simulation_parameters(optimization_input_parameters['temperature_analysis']['simulation'])
 	
-	initial_extracted_parameters=extracted_parameters.copy()
-	initial_circuit_parameters=circuit_parameters.copy()
+	initial_extracted_parameters=cir.extracted_parameters.copy()
+	initial_circuit_parameters=cir.circuit_parameters.copy()
 
 	# Creating Dictionaries to Store Values
 	extracted_parameters_iter={}
@@ -123,39 +123,36 @@ def temperature_analysis(cir,circuit_parameters,extracted_parameters,optimizatio
 		temp_array=np.linspace(start_temp,stop_temp,n_temp)
 	
 	# Creating an array for Io sweep
-	room_temp_current_log=np.log10(circuit_parameters['Io'])
+	room_temp_current_log=np.log10(cir.circuit_parameters['Io'])
 	start_current=np.log10(optimization_input_parameters['temperature_analysis']['start_current'])
 	stop_current=np.log10(optimization_input_parameters['temperature_analysis']['stop_current'])
 	n_current=optimization_input_parameters['temperature_analysis']['n_current']
 	if n_current==1:
-		current_array=np.array([circuit_parameters['Io']])
+		current_array=np.array([cir.circuit_parameters['Io']])
 	else:
 		current_array=np.logspace(room_temp_current_log+start_current,room_temp_current_log+stop_current,n_current)
 	
 	# Writing the values to output files
-	write_circuit_parameters(circuit_parameters,optimization_input_parameters)
+	write_circuit_parameters(cir.circuit_parameters,optimization_input_parameters)
 	
 	# Performing the analysis
 	for temp in temp_array:
 		extracted_parameters_iter[temp]={}
-		write_extracted_parameters_initial(extracted_parameters,optimization_input_parameters,temp)
+		write_extracted_parameters_initial(cir.extracted_parameters,optimization_input_parameters,temp)
 		for current in current_array:
-			circuit_parameters['Io']=current
-			optimization_input_parameters['simulation']['parameters_list']['cir_temp']=temp				# Writing the temperature value to the netlist file
-			extracted_parameters=cir.update_circuit(circuit_parameters)
-			#extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)			# Extracting the parameters
-			update_extracted_parameters(extracted_parameters,optimization_input_parameters,temp,current)		# Writing the values to the output file
-			extracted_parameters_iter[temp][current]=extracted_parameters.copy()
+			cir.circuit_parameters['Io']=current
+			cir.update_temp(temp)
+			cir.run_circuit()
+			update_extracted_parameters(cir.extracted_parameters,optimization_input_parameters,temp,current)		# Writing the values to the output file
+			extracted_parameters_iter[temp][current]=cir.extracted_parameters.copy()
 
 	# Restoring the value of initial extracted and circuit parameters
-	extracted_parameters=initial_extracted_parameters.copy()
-	circuit_parameters=initial_circuit_parameters.copy()
-
-	optimization_input_parameters['simulation']['parameters_list']['cir_temp']=optimization_input_parameters['simulation']['std_temp']	# Writing the temperature value to the netlist file
+	cir.reset_temp()
+	cir.update_circuit(initial_circuit_parameters.copy())
 
 	# Plotting the graphs
 	file_directory=optimization_input_parameters['filename']['output']
-	spec_current=circuit_parameters['Io']
+	spec_current=cir.circuit_parameters['Io']
 	plot_temp_analysis(extracted_parameters_iter,file_directory,spec_current)
 
 	# Storing the starting time
@@ -166,7 +163,6 @@ def temperature_analysis(cir,circuit_parameters,extracted_parameters,optimizatio
 	f.write('Temperature Analysis End\n Time : '+str(datetime.datetime.now())+'\n\n')
 	f.close()
 	
-	return circuit_parameters,extracted_parameters
 	
 #===========================================================================================================================
 

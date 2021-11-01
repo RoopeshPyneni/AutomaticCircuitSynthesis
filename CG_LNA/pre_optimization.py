@@ -116,13 +116,8 @@ def save_output_results_pre_optimization(optimization_results,optimization_input
 # Outputs :	circuit_parameters, extracted_parameters
 def manual_initial_parameters(cir,optimization_input_parameters):
 
-	# Getting Circuit Parameters
-	circuit_parameters=optimization_input_parameters['pre_optimization']['manual_circuit_parameters'].copy()
-		
 	# Running Eldo
-	extracted_parameters=cir.update_circuit(circuit_parameters)
-	
-	return circuit_parameters,extracted_parameters
+	cir.update_circuit(optimization_input_parameters['pre_optimization']['manual_circuit_parameters'].copy())
 
 
 
@@ -150,7 +145,7 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 	save_input_results_pre_optimization(optimization_input_parameters)
 
 	cir.update_simulation_parameters(optimization_input_parameters['pre_optimization']['simulation'])
-	cir.optimization_input_parameters=optimization_input_parameters
+	#cir.optimization_input_parameters=optimization_input_parameters
 
 	optimization_results={}
 	
@@ -164,16 +159,16 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 		#--------------------Initial Point Calculations-------------------------
 
 		# Calculating the Values of Circuit Parameters
-		circuit_parameters,extracted_parameters=manual_initial_parameters(cir,optimization_input_parameters)
+		manual_initial_parameters(cir,optimization_input_parameters)
 
 		# Storing the Circuit and Extracted Parameters
 		optimization_results['manual_hc']={}
-		optimization_results['manual_hc']['circuit_parameters']=circuit_parameters.copy()
-		optimization_results['manual_hc']['extracted_parameters']=extracted_parameters.copy()
+		optimization_results['manual_hc']['circuit_parameters']=cir.circuit_parameters.copy()
+		optimization_results['manual_hc']['extracted_parameters']=cir.extracted_parameters.copy()
 
 		# Printing the values
-		cff.print_circuit_parameters(circuit_parameters)
-		cff.print_extracted_outputs(extracted_parameters)
+		cff.print_circuit_parameters(cir.circuit_parameters)
+		cff.print_extracted_outputs(cir.extracted_parameters)
 
 		#cff.wait_key()
 
@@ -186,7 +181,7 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 		print('*********************************** MOSFET Parameters ******************************************************')
 
 		# Extracting the MOSFET Parameters from the MOS file
-		circuit_parameters,extracted_parameters=hc1.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
+		hc1.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
 
 	if optimization_input_parameters['pre_optimization']['type']==2:
 
@@ -194,11 +189,11 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 		print('*********************************** MOSFET Parameters ******************************************************')
 
 		# Extracting the MOSFET Parameters from the MOS file
-		circuit_parameters,extracted_parameters=hc2.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
+		hc2.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
 
 	# Printing the values
-	cff.print_circuit_parameters(circuit_parameters)
-	cff.print_extracted_outputs(extracted_parameters)
+	cff.print_circuit_parameters(cir.circuit_parameters)
+	cff.print_extracted_outputs(cir.extracted_parameters)
 
 	# Storing the results
 	save_output_results_pre_optimization(optimization_results,optimization_input_parameters)
@@ -210,8 +205,6 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 	f=open(optimization_input_parameters['filename']['run_status'],'a')
 	f.write('Pre Optimization End\n Time : '+str(datetime.datetime.now())+'\n\n')
 	f.close()
-
-	return circuit_parameters,extracted_parameters
 	
 
 #===========================================================================================================================

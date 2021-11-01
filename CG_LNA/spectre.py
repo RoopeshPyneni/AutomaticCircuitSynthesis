@@ -59,10 +59,13 @@ class Circuit():
 		write_MOS_parameters(self.circuit_initialization_parameters)
 		self.mos_parameters=calculate_mos_parameters(self.circuit_initialization_parameters)
 	
+	def run_circuit(self):
+		self.extracted_parameters=write_extract(self.circuit_parameters,self.circuit_initialization_parameters)
+
 	def update_circuit(self,circuit_parameters):
 		self.circuit_parameters=circuit_parameters
 		self.extracted_parameters=write_extract(circuit_parameters,self.circuit_initialization_parameters)
-		return self.extracted_parameters
+		#return self.extracted_parameters
 	
 	def update_circuit_parameters(self,circuit_parameters):
 		self.circuit_parameters=circuit_parameters

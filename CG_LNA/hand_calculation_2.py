@@ -154,7 +154,7 @@ def calc_C2_updated(extracted_parameters,opt_conditions,circuit_parameters,optim
 # Function to calculate the Initial Circuit Parameters
 # Inputs  : mos_parameters, optimization_input_parameters
 # Outputs : circuit_parameters, dc_outputs, extracted_parameters
-def calculate_initial_parameters(cir,mos_parameters,optimization_input_parameters):
+def calculate_initial_parameters(cir,optimization_input_parameters):
 
 	opt_conditions=optimization_input_parameters['output_conditions']
 	
@@ -174,45 +174,45 @@ def calculate_initial_parameters(cir,mos_parameters,optimization_input_parameter
 	circuit_parameters['Io']=100e-6
 
 	# Calculating W
-	circuit_parameters['W']=calc_W(circuit_parameters,mos_parameters)
+	circuit_parameters['W']=calc_W(circuit_parameters,cir.mos_parameters)
 	
 	# Calculating Rd
 	circuit_parameters['Rd']=calc_Rd(opt_conditions)
 	
 	# Calculating C2 and Rbias
-	circuit_parameters['C2'],circuit_parameters['Rbias']=calc_C2(mos_parameters,opt_conditions,circuit_parameters,optimization_input_parameters)
+	circuit_parameters['C2'],circuit_parameters['Rbias']=calc_C2(cir.mos_parameters,opt_conditions,circuit_parameters,optimization_input_parameters)
 	
 	# Calculating dc outputs
-	dc_outputs=calc_dc_opt(circuit_parameters,mos_parameters,opt_conditions)
+	dc_outputs=calc_dc_opt(circuit_parameters,cir.mos_parameters,opt_conditions)
 	
 	# Running Eldo
-	extracted_parameters=cir.update_circuit(circuit_parameters)
+	cir.update_circuit(circuit_parameters)
 	
-	return circuit_parameters,dc_outputs,extracted_parameters
+	return dc_outputs
 
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to update the Initial Circuit Parameters	
 # Inputs  : circuit_parameters, mos_parameters, extracted_parameters, optimization_input_parameters
 # Outputs : circuit_parameters, dc_outputs, mos_parameters, extracted_parameters
-def update_initial_parameters(cir,circuit_parameters,mos_parameters,extracted_parameters,optimization_input_parameters):
+def update_initial_parameters(cir,optimization_input_parameters):
 
 	opt_conditions=optimization_input_parameters['output_conditions']
-	mos_parameters['vt']=extracted_parameters['vt']
+	cir.mos_parameters['vt']=cir.extracted_parameters['vt']
 		
 	# Calculating C2 and Rbias
-	circuit_parameters['C2'],circuit_parameters['Rbias']=calc_C2_updated(extracted_parameters,opt_conditions,circuit_parameters,optimization_input_parameters)
+	cir.circuit_parameters['C2'],cir.circuit_parameters['Rbias']=calc_C2_updated(cir.extracted_parameters,opt_conditions,cir.circuit_parameters,optimization_input_parameters)
 		
 	# Running Eldo
-	extracted_parameters=cir.update_circuit(circuit_parameters)
+	cir.run_circuit()
 		
 	# Updating the value of vt
-	mos_parameters['vt']=extracted_parameters['vt']	
+	cir.mos_parameters['vt']=cir.extracted_parameters['vt']	
 		
 	# Calculating dc outputs
-	dc_outputs=calc_dc_opt(circuit_parameters,mos_parameters,opt_conditions)
+	dc_outputs=calc_dc_opt(cir.circuit_parameters,cir.mos_parameters,opt_conditions)
 	
-	return circuit_parameters,dc_outputs,mos_parameters,extracted_parameters
+	return dc_outputs
 
 
 
@@ -226,23 +226,22 @@ def update_initial_parameters(cir,circuit_parameters,mos_parameters,extracted_pa
 def automatic_initial_parameters(cir,optimization_input_parameters,optimization_results):
 	
 	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-	mos_parameters=cir.mos_parameters
 
 	#======================================================== Step 1 =============================================================================================================
 	print('\n\n--------------------------------- Operating Point Calculations ------------------------------------')
 
 	# Calculating the Values of Circuit Parameters
-	circuit_parameters,dc_initial_outputs,extracted_parameters=calculate_initial_parameters(cir,mos_parameters,optimization_input_parameters)
+	dc_initial_outputs=calculate_initial_parameters(cir,optimization_input_parameters)
 
 	# Storing the Circuit and Extracted Parameters
 	optimization_results['auto_hc']={}
-	optimization_results['auto_hc']['circuit_parameters']=circuit_parameters.copy()
-	optimization_results['auto_hc']['extracted_parameters']=extracted_parameters.copy()
+	optimization_results['auto_hc']['circuit_parameters']=cir.circuit_parameters.copy()
+	optimization_results['auto_hc']['extracted_parameters']=cir.extracted_parameters.copy()
 
 	# Printing the values
-	cff.print_circuit_parameters(circuit_parameters)
-	cff.print_DC_outputs(dc_initial_outputs,mos_parameters)
-	cff.print_extracted_outputs(extracted_parameters)
+	cff.print_circuit_parameters(cir.circuit_parameters)
+	cff.print_DC_outputs(dc_initial_outputs,cir.mos_parameters)
+	cff.print_extracted_outputs(cir.extracted_parameters)
 
 
 
@@ -250,20 +249,16 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	print('\n\n--------------------------------- Operating Point Updations ------------------------------------')
 
 	# Calculating the Values of Circuit Parameters
-	circuit_parameters,dc_initial_outputs,mos_parameters,extracted_parameters=update_initial_parameters(cir,circuit_parameters,
-	mos_parameters,extracted_parameters,optimization_input_parameters)
+	dc_initial_outputs=update_initial_parameters(cir,optimization_input_parameters)
 
 	# Storing the Circuit and Extracted Parameters
 	optimization_results['hc_update']={}
-	optimization_results['hc_update']['circuit_parameters']=circuit_parameters.copy()
-	optimization_results['hc_update']['extracted_parameters']=extracted_parameters.copy()
+	optimization_results['hc_update']['circuit_parameters']=cir.circuit_parameters.copy()
+	optimization_results['hc_update']['extracted_parameters']=cir.extracted_parameters.copy()
 
 	# Printing the values
-	cff.print_circuit_parameters(circuit_parameters)
-	cff.print_DC_outputs(dc_initial_outputs,mos_parameters)
-	cff.print_extracted_outputs(extracted_parameters)
-
-
-	return circuit_parameters,extracted_parameters
+	cff.print_circuit_parameters(cir.circuit_parameters)
+	cff.print_DC_outputs(dc_initial_outputs,cir.mos_parameters)
+	cff.print_extracted_outputs(cir.extracted_parameters)
 	
 #===========================================================================================================================
