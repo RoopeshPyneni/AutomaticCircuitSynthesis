@@ -411,6 +411,8 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 		circuit_parameters_sensitivity[param_name]=0
 	
 	# Creating new dictionaries
+	circuit_parameters_initial=cir.circuit_parameters.copy()
+	extracted_parameters_initial=cir.extracted_parameters.copy()
 	circuit_parameters1=cir.circuit_parameters.copy() # This dictionary will store the values of parameters after increment to calculate the slope
 	extracted_parameters1=cir.extracted_parameters.copy() # This dictionary will store the values of parameters after increment to calculate the slope
 	circuit_parameters_slope={} # This dictionary will store the values of slope of different losses with change of all circuit parameters
@@ -422,21 +424,18 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 		increment_factor=delta_threshold # The value by which parameter increases = increment_factor*parameter
 		increment=cir.circuit_parameters[param_name]*increment_factor
 	
-	
 		# Incrementing the circuit parameter
 		circuit_parameters1=cir.circuit_parameters.copy()
 		circuit_parameters1[param_name]=circuit_parameters1[param_name]+increment
 		
-		
 		# Extracting Loss
-		cir.run_circuit()
+		cir.update_circuit(circuit_parameters1)
 		extracted_parameters1=cir.extracted_parameters.copy()
 		
 		if optimization_input_parameters['optimization']['optimization_name']=='loss1':
 			loss_dict1=ofl.calc_loss_1(extracted_parameters1,output_conditions,loss_weights)
 		elif optimization_input_parameters['optimization']['optimization_name']=='fom1':
 			loss_dict1=off.calc_fom_1(extracted_parameters1,output_conditions,loss_weights)
-			
 		
 		# Calculating Slope	
 		circuit_parameters_slope[param_name]={}
@@ -447,10 +446,13 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 		
 		# Calculating Sensitivity
 		for categ_name in optimization_input_parameters['optimization']['output_parameters_list']:
-			initial_param=cir.extracted_parameters[categ_name]
+			initial_param=extracted_parameters_initial[categ_name]
 			final_param=extracted_parameters1[categ_name]
 			percent_change=(final_param-initial_param)/(initial_param*increment_factor)
 			circuit_parameters_sensitivity[param_name][categ_name]=percent_change
+	
+	cir.circuit_parameters=circuit_parameters_initial.copy()
+	cir.extracted_parameters=extracted_parameters_initial.copy()
 		
 	return circuit_parameters_slope,circuit_parameters_sensitivity
 	
@@ -665,7 +667,7 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		# Updating the circuit parameters
 		circuit_parameters_slope,circuit_parameters_sensitivity=calc_loss_slope(cir,output_conditions,loss_iter[i-1],optimization_input_parameters)
 		if optimization_input_parameters['optimization']['optimization_name']=='loss1':
-			print('Before Uodate : ',cir.circuit_parameters)
+			print('Before Uodate : ',cir.circuit_parameters,circuit_parameters_slope)
 			ofl.update_circuit_parameters(cir,circuit_parameters_slope,check_loss,optimization_input_parameters)
 			print('After Uodate : ',cir.circuit_parameters)
 		elif optimization_input_parameters['optimization']['optimization_name']=='fom1':
