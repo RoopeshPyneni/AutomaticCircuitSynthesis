@@ -67,7 +67,7 @@ def calc_fom_1(extracted_parameters,output_conditions,loss_weights):
 # This function updates the values of circuit parameters by trying to minimize loss
 # Inputs  : circuit_parameters,circuit_parameters_slope,check_loss,optimization_input_parameters
 # Outputs : circuit_parameters
-def update_circuit_parameters(circuit_parameters,circuit_parameters_slope,check_loss,optimization_input_parameters):
+def update_circuit_parameters(cir,circuit_parameters_slope,check_loss,optimization_input_parameters):
 
 	alpha_parameters=optimization_input_parameters['optimization']['alpha']['values']
 
@@ -77,27 +77,26 @@ def update_circuit_parameters(circuit_parameters,circuit_parameters_slope,check_
 		# Calculating the Increment Value
 		if check_loss==-1:
 			change=circuit_parameters_slope[param_name]['loss']
-			change=change*(circuit_parameters[param_name]**2)*alpha_parameters['common']*alpha_parameters[param_name]
+			change=change*(cir.circuit_parameters[param_name]**2)*alpha_parameters['common']*alpha_parameters[param_name]
 		elif check_loss==1:
 			change=circuit_parameters_slope[param_name]['loss']-circuit_parameters_slope[param_name]['loss_s11']
-			change=change*(circuit_parameters[param_name]**2)*alpha_parameters['common']*alpha_parameters[param_name]
+			change=change*(cir.circuit_parameters[param_name]**2)*alpha_parameters['common']*alpha_parameters[param_name]
 		else:
 			change=(circuit_parameters_slope[param_name]['loss_s11'])
-			change=change*(circuit_parameters[param_name]**2)*alpha_parameters['common']*alpha_parameters[param_name]
+			change=change*(cir.circuit_parameters[param_name]**2)*alpha_parameters['common']*alpha_parameters[param_name]
 	
 	
 		# Checking if the parameter is updated by a large value
 		change_limit=0.25 # If the incremented value is more than +- change_limit*parameter_name, then we will limit the change
-		if change>change_limit*circuit_parameters[param_name]:
-			change=change_limit*circuit_parameters[param_name]
-		if change<-1*change_limit*circuit_parameters[param_name]:
-			change=-1*change_limit*circuit_parameters[param_name]
+		if change>change_limit*cir.circuit_parameters[param_name]:
+			change=change_limit*cir.circuit_parameters[param_name]
+		if change<-1*change_limit*cir.circuit_parameters[param_name]:
+			change=-1*change_limit*cir.circuit_parameters[param_name]
 		
 		
 		# Updating circuit_parameters
-		circuit_parameters[param_name]=circuit_parameters[param_name]+change
+		cir.circuit_parameters[param_name]=cir.circuit_parameters[param_name]+change
 		
-	return circuit_parameters
 
 #-----------------------------------------------------------------------------------------------
 # This function will check the loss of s_11

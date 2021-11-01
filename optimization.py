@@ -488,33 +488,32 @@ def update_alpha(loss_iter,alpha,i,alpha_mult,optimization_type,optimization_inp
 # This function updates circuit parameters to previous circuit parameters if loss increases
 # Inputs  : old_circuit_parameters,circuit_parameters,loss_iter,update_check,i,optimization_type
 # Outputs : circuit_parameters, old_circuit_parameters
-def check_circuit_parameters(old_circuit_parameters,circuit_parameters,loss_iter,update_check,i,optimization_type):
+def check_circuit_parameters(old_circuit_parameters,cir,loss_iter,update_check,i,optimization_type):
 
 	# Checking criteria for reducing threshold
 	if update_check==1:
 		if i>0:
 			if loss_iter[i]['loss']>=loss_iter[i-1]['loss'] and optimization_type==0:
-				circuit_parameters=old_circuit_parameters.copy()
+				cir.circuit_parameters=old_circuit_parameters.copy()
 			elif loss_iter[i]['loss']<=loss_iter[i-1]['loss'] and optimization_type==1:
-				circuit_parameters=old_circuit_parameters.copy()
-	old_circuit_parameters=circuit_parameters.copy()
-	return circuit_parameters, old_circuit_parameters
+				cir.circuit_parameters=old_circuit_parameters.copy()
+	return cir.circuit_parameters
 
 #-----------------------------------------------------------------------------------------------
 # Updating C2 and Rbias based on threshold
 # Inputs  : circuit_parameters,extracted_parameters,optimization_input_parameters
 # Outputs : circuit_parameters
-def update_C2_Rbias(circuit_parameters,extracted_parameters,optimization_input_parameters):
+def update_C2_Rbias(cir,optimization_input_parameters):
 
 	threshold2=optimization_input_parameters['pre_optimization']['C2_threshold']
 	threshold3=optimization_input_parameters['pre_optimization']['Rbias_threshold']
 	Rbias_min=optimization_input_parameters['pre_optimization']['Rbias_minimum']
 
 	# Assigning the values
-	cgs=extracted_parameters['cgs1']
-	cgd=extracted_parameters['cgd1']
+	cgs=cir.extracted_parameters['cgs1']
+	cgd=cir.extracted_parameters['cgd1']
 	
-	gain_db=extracted_parameters['gain_db']
+	gain_db=cir.extracted_parameters['gain_db']
 	gain=cf.db_to_normal(gain_db)
 	wo=optimization_input_parameters['output_conditions']['wo']
 	
@@ -522,16 +521,15 @@ def update_C2_Rbias(circuit_parameters,extracted_parameters,optimization_input_p
 	#C2a=threshold2*cgs
 	#C2b=threshold2*cgd*gain
 	#C2=np.maximum(C2a,C2b)
-	C2=circuit_parameters['C2']
+	C2=cir.circuit_parameters['C2']
 
 	# Calculating Rbias
 	Rbias=threshold3/(wo*C2)
 	Rbias=max(Rbias,Rbias_min)
 	
 	#circuit_parameters['C2']=C2
-	circuit_parameters['Rbias']=Rbias
+	cir.circuit_parameters['Rbias']=Rbias
 
-	return circuit_parameters
 
 #-----------------------------------------------------------------------------------------------
 # Checking stopping condition ( if alpha<alpha_min )
@@ -668,10 +666,10 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		circuit_parameters_slope,circuit_parameters_sensitivity=calc_loss_slope(cir,output_conditions,loss_iter[i-1],optimization_input_parameters)
 		if optimization_input_parameters['optimization']['optimization_name']=='loss1':
 			print('Before Uodate : ',cir.circuit_parameters)
-			cir.circuit_parameters=ofl.update_circuit_parameters(cir.circuit_parameters,circuit_parameters_slope,check_loss,optimization_input_parameters)
+			ofl.update_circuit_parameters(cir,circuit_parameters_slope,check_loss,optimization_input_parameters)
 			print('After Uodate : ',cir.circuit_parameters)
 		elif optimization_input_parameters['optimization']['optimization_name']=='fom1':
-			cir.circuit_parameters=off.update_circuit_parameters(cir.circuit_parameters,circuit_parameters_slope,check_loss,optimization_input_parameters)
+			off.update_circuit_parameters(cir,circuit_parameters_slope,check_loss,optimization_input_parameters)
 		
 	
 		# Extracting output parameters for new circuit parameters
@@ -717,9 +715,8 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		
 
 		# Updating the value of circuit_parameters
-		old_circuit_parameters,cir.circuit_parameters=check_circuit_parameters(old_circuit_parameters,cir.circuit_parameters,
-		loss_iter,optimization_input_parameters['optimization']['update_check'],i,optimization_type)
-		cir.circuit_parameters=update_C2_Rbias(cir.circuit_parameters,cir.extracted_parameters,optimization_input_parameters)
+		old_circuit_parameters=check_circuit_parameters(old_circuit_parameters,cir,loss_iter,optimization_input_parameters['optimization']['update_check'],i,optimization_type)
+		update_C2_Rbias(cir,optimization_input_parameters)
 		
 
 		# Checking for stopping condition
