@@ -41,6 +41,7 @@ Functions structure in this file:
 import numpy as np
 import fileinput
 import os
+import CG_LNA.extra_function as cff
 
 """
 ====================================================================================================================================================================================
@@ -56,6 +57,7 @@ class Circuit():
 		self.simulation_parameters={}
 		self.optimization_input_parameters=optimization_input_parameters
 		write_MOS_parameters(self.optimization_input_parameters)
+		self.mos_parameters=calculate_mos_parameters(self.optimization_input_parameters)
 	
 	def update_circuit(self,circuit_parameters):
 		self.circuit_parameters=circuit_parameters
@@ -71,6 +73,53 @@ class Circuit():
 
 	def get_extracted_parameters(self):
 		return self.extracted_parameters
+
+
+#===========================================================================================================================
+#------------------------------------ MOSFET EXTRACTION --------------------------------------------------------------------
+
+#-----------------------------------------------------------------
+# Function that extracts the MOSFET File Parameeters
+# Inputs  : Optimization Input Parameters
+# Outputs : MOS_Parameters
+def calculate_mos_parameters(optimization_input_parameters):
+	
+	# Setting Lmin and Vdd
+	Lmin=optimization_input_parameters['MOS']['Lmin']
+	vdd=optimization_input_parameters['MOS']['Vdd']
+	cox=optimization_input_parameters['MOS']['cox']
+	un=optimization_input_parameters['MOS']['un']
+	vt=optimization_input_parameters['MOS']['vt']
+
+	# Extracting From File
+	mos_parameters = {'un':un,'cox':cox,'vt':vt,'Lmin':Lmin,'vdd':vdd}
+	
+	# Printing the MOSFET Parameters
+	cff.print_MOS_parameters(mos_parameters)
+
+	# Storing the results
+	save_mos_results(mos_parameters,optimization_input_parameters)
+
+	return mos_parameters
+
+#-----------------------------------------------------------------
+# Function that stores output data of the MOS File Calculations
+# Inputs  : mos_parameters, optimization_input_parameters
+# Outputs : NONE
+def save_mos_results(mos_parameters,optimization_input_parameters):
+	
+	# Opening the file
+	filename=optimization_input_parameters['filename']['output']+str('/output_data.txt')
+	f=open(filename,'a')
+
+	# Storing the results
+	f.write('\n\n********************************************************************************\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ MOS Parameters ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+
+	for param_name in mos_parameters:
+		f.write('\n'+str(param_name)+': '+cff.num_trunc(mos_parameters[param_name],3))
+	
+	f.close()
 	
 
 

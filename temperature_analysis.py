@@ -20,7 +20,6 @@ COMPLETE
 
 #===========================================================================================================================
 import numpy as np
-#import CG_LNA.spectre as sp
 import os
 import common_functions as cf
 from matplotlib import pylab

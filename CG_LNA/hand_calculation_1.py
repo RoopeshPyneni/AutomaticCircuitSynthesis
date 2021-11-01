@@ -31,7 +31,6 @@ COMPLETE
 #===========================================================================================================================
 import numpy as np
 import CG_LNA.extra_function as cff
-import CG_LNA.spectre as sp
 
 #===========================================================================================================================
 #------------------------------------Defining the functions for simple calculations-----------------------------------------
@@ -334,7 +333,6 @@ def calculate_initial_parameters(cir,mos_parameters,optimization_input_parameter
 	
 	# Running Eldo
 	extracted_parameters=cir.update_circuit(circuit_parameters)
-	#extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)
 	
 	return circuit_parameters,dc_outputs,extracted_parameters
 
@@ -362,7 +360,6 @@ def update_initial_parameters(cir,circuit_parameters,mos_parameters,extracted_pa
 		
 		# Running Eldo
 		extracted_parameters=cir.update_circuit(circuit_parameters)
-		#extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)
 		
 		# Updating the value of vt
 		mos_parameters['vt']=extracted_parameters['vt']
@@ -378,7 +375,7 @@ def update_initial_parameters(cir,circuit_parameters,mos_parameters,extracted_pa
 # Function to change circuit parameters to get better gm
 # Inputs  : mos_parameters, circuit_parameters, extracted_parameters, optimization_input_parameters
 # Outputs : circuit_parameters, extracted_parameters
-def dc_optimize_gm(mos_parameters,circuit_parameters,extracted_parameters,optimization_input_parameters):
+def dc_optimize_gm(cir,mos_parameters,circuit_parameters,extracted_parameters,optimization_input_parameters):
 	
 	# Getting the output conditions
 	output_conditions=optimization_input_parameters['output_conditions']
@@ -407,7 +404,7 @@ def dc_optimize_gm(mos_parameters,circuit_parameters,extracted_parameters,optimi
 		circuit_parameters['Rb']=calc_Rb(output_conditions,mos_parameters,circuit_parameters)
 		
 		# Running Eldo
-		extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)
+		extracted_parameters=cir.update_circuit(circuit_parameters)
 		
 		i+=1
 		
@@ -453,7 +450,6 @@ def dc_optimize_gm_vdsat(cir,mos_parameters,circuit_parameters,extracted_paramet
 		
 		# Running Eldo
 		extracted_parameters=cir.update_circuit(circuit_parameters)
-		#extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)
 		
 		i+=1
 		
@@ -468,10 +464,10 @@ def dc_optimize_gm_vdsat(cir,mos_parameters,circuit_parameters,extracted_paramet
 # Function to calculate the initial parameters by completing all the sub steps of pre optimization
 # Inputs  : mos_parameters, optimization_input_parameters, optimization_results
 # Outputs : circuit_parameters, extracted_parameters
-def automatic_initial_parameters(cir,mos_parameters,optimization_input_parameters,optimization_results):
+def automatic_initial_parameters(cir,optimization_input_parameters,optimization_results):
 		
 	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-
+	mos_parameters=cir.mos_parameters
 
 
 	#======================================================== Step 1 =============================================================================================================
