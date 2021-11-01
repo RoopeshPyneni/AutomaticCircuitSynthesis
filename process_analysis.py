@@ -91,7 +91,7 @@ def update_extracted_parameters(extracted_parameters,optimization_input_paramete
 # Function that will perform the temperature analysis
 # Input: circuit_parameters, extracted_parameters, optimization_input_parameters
 # Output: circuit_parameters, extracted_parameters
-def process_analysis(circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results):
+def process_analysis(cir,circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results):
 	
 	if optimization_input_parameters['process_analysis']['run']=='NO':
 		return circuit_parameters,extracted_parameters
@@ -139,7 +139,8 @@ def process_analysis(circuit_parameters,extracted_parameters,optimization_input_
 		sp.write_simulation_parameters(optimization_input_parameters)
 		for temp in temp_array:
 			optimization_input_parameters['simulation']['parameters_list']['cir_temp']=temp				# Writing the temperature value to the netlist file
-			extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)	# Extracting the parameters
+			extracted_parameters=cir.update_circuit(circuit_parameters)
+			#extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)	# Extracting the parameters
 			update_extracted_parameters(extracted_parameters,optimization_input_parameters,process_corner,temp)		# Writing the values to the output file
 			extracted_parameters_iter[process_corner][temp]=extracted_parameters.copy()
 		

@@ -155,7 +155,7 @@ def calc_C2_updated(extracted_parameters,opt_conditions,circuit_parameters,optim
 # Function to calculate the Initial Circuit Parameters
 # Inputs  : mos_parameters, optimization_input_parameters
 # Outputs : circuit_parameters, dc_outputs, extracted_parameters
-def calculate_initial_parameters(mos_parameters,optimization_input_parameters):
+def calculate_initial_parameters(cir,mos_parameters,optimization_input_parameters):
 
 	opt_conditions=optimization_input_parameters['output_conditions']
 	
@@ -187,7 +187,8 @@ def calculate_initial_parameters(mos_parameters,optimization_input_parameters):
 	dc_outputs=calc_dc_opt(circuit_parameters,mos_parameters,opt_conditions)
 	
 	# Running Eldo
-	extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)
+	extracted_parameters=cir.update_circuit(circuit_parameters)
+	#extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)
 	
 	return circuit_parameters,dc_outputs,extracted_parameters
 
@@ -196,7 +197,7 @@ def calculate_initial_parameters(mos_parameters,optimization_input_parameters):
 # Function to update the Initial Circuit Parameters	
 # Inputs  : circuit_parameters, mos_parameters, extracted_parameters, optimization_input_parameters
 # Outputs : circuit_parameters, dc_outputs, mos_parameters, extracted_parameters
-def update_initial_parameters(circuit_parameters,mos_parameters,extracted_parameters,optimization_input_parameters):
+def update_initial_parameters(cir,circuit_parameters,mos_parameters,extracted_parameters,optimization_input_parameters):
 
 	opt_conditions=optimization_input_parameters['output_conditions']
 	mos_parameters['vt']=extracted_parameters['vt']
@@ -205,7 +206,8 @@ def update_initial_parameters(circuit_parameters,mos_parameters,extracted_parame
 	circuit_parameters['C2'],circuit_parameters['Rbias']=calc_C2_updated(extracted_parameters,opt_conditions,circuit_parameters,optimization_input_parameters)
 		
 	# Running Eldo
-	extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)
+	extracted_parameters=cir.update_circuit(circuit_parameters)
+	#extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)
 		
 	# Updating the value of vt
 	mos_parameters['vt']=extracted_parameters['vt']	
@@ -224,7 +226,7 @@ def update_initial_parameters(circuit_parameters,mos_parameters,extracted_parame
 # Function to calculate the initial parameters by completing all the sub steps of pre optimization
 # Inputs  : mos_parameters, optimization_input_parameters, optimization_results
 # Outputs : circuit_parameters, extracted_parameters
-def automatic_initial_parameters(mos_parameters,optimization_input_parameters,optimization_results):
+def automatic_initial_parameters(cir,mos_parameters,optimization_input_parameters,optimization_results):
 	
 	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
@@ -233,7 +235,7 @@ def automatic_initial_parameters(mos_parameters,optimization_input_parameters,op
 	print('\n\n--------------------------------- Operating Point Calculations ------------------------------------')
 
 	# Calculating the Values of Circuit Parameters
-	circuit_parameters,dc_initial_outputs,extracted_parameters=calculate_initial_parameters(mos_parameters,optimization_input_parameters)
+	circuit_parameters,dc_initial_outputs,extracted_parameters=calculate_initial_parameters(cir,mos_parameters,optimization_input_parameters)
 
 	# Storing the Circuit and Extracted Parameters
 	optimization_results['auto_hc']={}
@@ -251,7 +253,7 @@ def automatic_initial_parameters(mos_parameters,optimization_input_parameters,op
 	print('\n\n--------------------------------- Operating Point Updations ------------------------------------')
 
 	# Calculating the Values of Circuit Parameters
-	circuit_parameters,dc_initial_outputs,mos_parameters,extracted_parameters=update_initial_parameters(circuit_parameters,
+	circuit_parameters,dc_initial_outputs,mos_parameters,extracted_parameters=update_initial_parameters(cir,circuit_parameters,
 	mos_parameters,extracted_parameters,optimization_input_parameters)
 
 	# Storing the Circuit and Extracted Parameters

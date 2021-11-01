@@ -165,23 +165,24 @@ def complete_optimization(optimization_input_parameters):
 	#======================================================== MOSFET PARAMETERS ==================================================================================================
 
 	# Writing the MOSFET File Location to .scs file
-	sp.write_MOS_parameters(optimization_input_parameters)
+	cir=sp.Circuit(optimization_input_parameters)
+	#sp.write_MOS_parameters(optimization_input_parameters)
 
 	#======================================================== PRE OPTIMIZATION ===================================================================================================
 
-	circuit_parameters,extracted_parameters=pr.pre_optimization(optimization_input_parameters,timing_results)
+	circuit_parameters,extracted_parameters=pr.pre_optimization(cir,optimization_input_parameters,timing_results)
 
 	#======================================================== OPTIMIZATION =======================================================================================================
 
-	circuit_parameters,extracted_parameters=op.main_opt(circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results)
+	circuit_parameters,extracted_parameters=op.main_opt(cir,circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results)
 
 	#======================================================== TEMPERATURE ANALYSIS ===============================================================================================
 
-	circuit_parameters,extracted_parameters=ta.temperature_analysis(circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results)
+	circuit_parameters,extracted_parameters=ta.temperature_analysis(cir,circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results)
 
 	#========================================================== PROCESS ANALYSIS =================================================================================================
 
-	circuit_parameters,extracted_parameters=pa.process_analysis(circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results)
+	circuit_parameters,extracted_parameters=pa.process_analysis(cir,circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results)
 	
 	#======================================================== AFTER OPTIMIZATION =================================================================================================
 	

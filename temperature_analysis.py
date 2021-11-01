@@ -20,7 +20,7 @@ COMPLETE
 
 #===========================================================================================================================
 import numpy as np
-import CG_LNA.spectre as sp
+#import CG_LNA.spectre as sp
 import os
 import common_functions as cf
 from matplotlib import pylab
@@ -89,7 +89,7 @@ def update_extracted_parameters(extracted_parameters,optimization_input_paramete
 # Function that will perform the temperature analysis
 # Input: circuit_parameters, extracted_parameters, optimization_input_parameters
 # Output: circuit_parameters, extracted_parameters
-def temperature_analysis(circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results):
+def temperature_analysis(cir,circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results):
 	
 	if optimization_input_parameters['temperature_analysis']['run']=='NO':
 		return circuit_parameters,extracted_parameters
@@ -143,7 +143,8 @@ def temperature_analysis(circuit_parameters,extracted_parameters,optimization_in
 		for current in current_array:
 			circuit_parameters['Io']=current
 			optimization_input_parameters['simulation']['parameters_list']['cir_temp']=temp				# Writing the temperature value to the netlist file
-			extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)			# Extracting the parameters
+			extracted_parameters=cir.update_circuit(circuit_parameters)
+			#extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)			# Extracting the parameters
 			update_extracted_parameters(extracted_parameters,optimization_input_parameters,temp,current)		# Writing the values to the output file
 			extracted_parameters_iter[temp][current]=extracted_parameters.copy()
 

@@ -19,7 +19,7 @@ Functions structure in this file:
 #===========================================================================================================================
 import datetime
 import CG_LNA.extra_function as cff
-import CG_LNA.spectre as sp
+#import CG_LNA.spectre as sp
 import CG_LNA.hand_calculation_1 as hc1
 import CG_LNA.hand_calculation_2 as hc2
 
@@ -133,13 +133,15 @@ def save_mos_results(mos_parameters,optimization_input_parameters):
 # Function to manually choose the Initial Circuit Parameters
 # Inputs  : optimization_input_parameters
 # Outputs :	circuit_parameters, extracted_parameters
-def manual_initial_parameters(optimization_input_parameters):
+def manual_initial_parameters(cir,optimization_input_parameters):
 
 	# Getting Circuit Parameters
 	circuit_parameters=optimization_input_parameters['pre_optimization']['manual_circuit_parameters'].copy()
 		
 	# Running Eldo
-	extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)	
+	#extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_parameters)	
+
+	extracted_parameters=cir.update_circuit(circuit_parameters)
 	
 	return circuit_parameters,extracted_parameters
 
@@ -179,7 +181,7 @@ def calculate_mos_parameters(optimization_input_parameters):
 # Function to perform pre-optimization
 # Inputs  : mos_parameters, optimization_input_parameters, timing_results
 # Outputs :	circuit_parameters, extracted_parameters
-def pre_optimization(optimization_input_parameters,timing_results):
+def pre_optimization(cir,optimization_input_parameters,timing_results):
 
 	# Opening the Run_Status File
 	f=open(optimization_input_parameters['filename']['run_status'],'a')
@@ -196,6 +198,7 @@ def pre_optimization(optimization_input_parameters,timing_results):
 	save_input_results_pre_optimization(optimization_input_parameters)
 
 	cff.write_simulation_parameters(optimization_input_parameters,'pre_optimization',0)
+	cir.optimization_input_parameters=optimization_input_parameters
 
 	optimization_results={}
 	
@@ -209,7 +212,7 @@ def pre_optimization(optimization_input_parameters,timing_results):
 		#--------------------Initial Point Calculations-------------------------
 
 		# Calculating the Values of Circuit Parameters
-		circuit_parameters,extracted_parameters=manual_initial_parameters(optimization_input_parameters)
+		circuit_parameters,extracted_parameters=manual_initial_parameters(cir,optimization_input_parameters)
 
 		# Storing the Circuit and Extracted Parameters
 		optimization_results['manual_hc']={}
@@ -233,7 +236,7 @@ def pre_optimization(optimization_input_parameters,timing_results):
 		# Extracting the MOSFET Parameters from the MOS file
 		mos_parameters=calculate_mos_parameters(optimization_input_parameters)
 		
-		circuit_parameters,extracted_parameters=hc1.automatic_initial_parameters(mos_parameters,optimization_input_parameters,optimization_results)
+		circuit_parameters,extracted_parameters=hc1.automatic_initial_parameters(cir,mos_parameters,optimization_input_parameters,optimization_results)
 
 	if optimization_input_parameters['pre_optimization']['type']==2:
 
@@ -243,7 +246,7 @@ def pre_optimization(optimization_input_parameters,timing_results):
 		# Extracting the MOSFET Parameters from the MOS file
 		mos_parameters=calculate_mos_parameters(optimization_input_parameters)
 
-		circuit_parameters,extracted_parameters=hc2.automatic_initial_parameters(mos_parameters,optimization_input_parameters,optimization_results)
+		circuit_parameters,extracted_parameters=hc2.automatic_initial_parameters(cir,mos_parameters,optimization_input_parameters,optimization_results)
 
 	# Printing the values
 	cff.print_circuit_parameters(circuit_parameters)
