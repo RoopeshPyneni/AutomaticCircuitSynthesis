@@ -41,7 +41,7 @@ Functions structure in this file:
 import numpy as np
 import fileinput
 import os
-import CG_LNA.extra_function as cff # type: ignore
+import CS_LNA.extra_function as cff # type: ignore
 
 """
 ====================================================================================================================================================================================
@@ -65,14 +65,9 @@ class Circuit():
 	def update_circuit(self,circuit_parameters):
 		self.circuit_parameters=circuit_parameters
 		self.extracted_parameters=write_extract(circuit_parameters,self.circuit_initialization_parameters)
-		#return self.extracted_parameters
 	
 	def update_circuit_parameters(self,circuit_parameters):
 		self.circuit_parameters=circuit_parameters
-	
-	#def update_MOS_parameters(self,mos_parameters):
-	#	self.mos_parameters=mos_parameters
-	#	write_MOS_parameters(self.circuit_initialization_parameters)
 
 	def update_simulation_parameters(self,simulation_parameters):
 		if 'parameters_list' in simulation_parameters:
@@ -88,7 +83,6 @@ class Circuit():
 	
 	def update_temp(self,temp):
 		self.circuit_initialization_parameters['simulation']['parameters_list']['cir_temp']=temp
-		#optimization_input_parameters['simulation']['parameters_list']['cir_temp']=temp
 	
 	def reset_temp(self):
 		self.circuit_initialization_parameters['simulation']['parameters_list']['cir_temp']=self.circuit_initialization_parameters['simulation']['std_temp']	
@@ -120,7 +114,6 @@ def calculate_mos_parameters(circuit_initialization_parameters):
 	cff.print_MOS_parameters(mos_parameters)
 
 	return mos_parameters
-
 
 
 """
@@ -229,22 +222,21 @@ def extract_dc_param(circuit_initialization_parameters):
 	lines=lines[0].split()
 
 	# Extracting the values from the required line
-	extracted_parameters['vd']=valueE_to_value(lines[1])
-	extracted_parameters['vg']=valueE_to_value(lines[2])
-	extracted_parameters['vs']=valueE_to_value(lines[3])
-
-	extracted_parameters['i_source']=np.absolute(valueE_to_value(lines[4]))
-	extracted_parameters['v_source']=np.absolute(valueE_to_value(lines[5]))
+	extracted_parameters['vg1']=valueE_to_value(lines[2])
+	extracted_parameters['vd1']=valueE_to_value(lines[4])
+	
+	extracted_parameters['i_source']=np.absolute(valueE_to_value(lines[5]))
+	extracted_parameters['v_source']=np.absolute(valueE_to_value(lines[1]))
 	extracted_parameters['p_source']=extracted_parameters['i_source']*extracted_parameters['v_source']
 
 	extracted_parameters['Io']=valueE_to_value(lines[6])
 	extracted_parameters['gm1']=valueE_to_value(lines[7])
 	extracted_parameters['gds1']=valueE_to_value(lines[8])
-	extracted_parameters['vt']=valueE_to_value(lines[9])
-	extracted_parameters['vdsat']=valueE_to_value(lines[10])
+	extracted_parameters['vth1']=valueE_to_value(lines[9])
+	extracted_parameters['vdsat1']=valueE_to_value(lines[10])
 
-	extracted_parameters['cgd1']=np.absolute(valueE_to_value(lines[11]))
-	extracted_parameters['cgs1']=np.absolute(valueE_to_value(lines[12]))
+	extracted_parameters['cgs1']=np.absolute(valueE_to_value(lines[11]))
+	extracted_parameters['cgd1']=np.absolute(valueE_to_value(lines[12]))
 
 	return extracted_parameters
 
@@ -304,7 +296,6 @@ def calculate_gain_phase(vout_re,vout_im,vin_re,vin_im):
 	return gain_db,phase
 
 
-
 #---------------------------------------------------------------------------------------------------------------------------	
 # Extracting the SP from the file
 # Inputs: circuit_initialization_parameters
@@ -350,6 +341,8 @@ def extract_sp_param(circuit_initialization_parameters):
 	extracted_parameters['k']=calculate_k(extracted_parameters['s11_db'],extracted_parameters['s12_db'],extracted_parameters['s21_db'],extracted_parameters['s22_db'],
 	num_char_s11_rad,num_char_s12_rad,num_char_s21_rad,num_char_s22_rad)
 
+	extracted_parameters['Zin_R'],extracted_parameters['Zin_I']=calculate_Z(extracted_parameters['s11_db'],num_char_s11_rad)
+
 	return extracted_parameters
 
 #---------------------------------------------------------------------------------------------------------------------------	
@@ -389,7 +382,25 @@ def calculate_k(s11_db,s12_db,s21_db,s22_db,s11_ph,s12_ph,s21_ph,s22_ph):
 
 	return k
 
+#---------------------------------------------------------------------------------------------------------------------------	
+# Calculating the value of K from the SP 
+# Inputs: s parameters and their phase in radians
+# Output: k
+def calculate_Z(s11_db,s11_ph):
+	
+	# Calculating the magnitude in normal scale
+	s11_mag=10**(s11_db/10)
 
+	# Calculating the values in a+ib format
+	s11_real=s11_mag*np.cos(s11_ph)
+	s11_img=s11_mag*np.sin(s11_ph)
+
+	# Calculating the outputs
+	denominator=(1-s11_real)**2+s11_img**2
+	Zin_R=50*(1-s11_real**2-s11_img**2)/denominator
+	Zin_I=50*(2*s11_img)/denominator
+
+	return Zin_R,Zin_I
 
 
 
@@ -638,98 +649,20 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 	cir_writing_dict={
 		'wid':'W',
 		'cur0':'Io',
-		'Resb':'Rb',
-		'Resd':'Rd',
-		'cap1':'C1',
-		'cap2':'C2',
-		'Resbias':'Rbias'
+		'res_b':'Rb',
+		'res_g':'Rg',
+		'res_d':'Rd',
+		'res_ls':'Rls',
+		'ind_d':'Ld',
+		'ind_g':'Lg',
+		'ind_s':'Ls',
+		'cap_s':'Cs'
 	}
 	for param_name in cir_writing_dict:
 		write_dict[param_name]=circuit_parameters[cir_writing_dict[param_name]]
 
-	# Checking if we have TSMC Resistors
-	write_dict['Resb_L'],write_dict['Resb_W']=get_TSMC_resistor(circuit_parameters['Rb'])
-	write_dict['Resd_L'],write_dict['Resd_W']=get_TSMC_resistor(circuit_parameters['Rd'])
-	write_dict['Resbias_L'],write_dict['Resbias_W']=get_TSMC_resistor(circuit_parameters['Rbias'])
-	
-	# Calculating the number of fingers
-	n_finger=int(circuit_parameters['W']/circuit_initialization_parameters['simulation']['w_finger_max'])+1
-	write_dict['n_finger']=n_finger
-
-	# Checking if we have TSMC Capacitors
-	write_dict['mf_cap1']=1+int(circuit_parameters['C1']*1e11)
-	write_dict['mf_cap2']=1+int(circuit_parameters['C2']*1e11)
-	
-	#write_dict['wid_cap2']=900e-6
-	#write_dict['len_cap2']=circuit_parameters['C2']*1e9/(17.25*900)
-
-	write_dict['wid_cap2'],write_dict['len_cap2']=calculate_MOS_capacitor(circuit_parameters['C2'])
-	
-	#write_dict['wid_cap2']=100e-6
-	#write_dict['len_cap2']=100e-6
-	
 	return write_dict
 
-#-----------------------------------------------------------------      
-# Function that converts capacitance to length and width for MOS capacitor
-# Inputs  : capacitance
-# Outputs : length, width
-def calculate_MOS_capacitor(cap):
-	cox=17.25*1e-3
-	w_check=np.sqrt(cap/cox)
-	if w_check>2e-5:
-		length=2e-5
-		width=cap/(cox*length)
-		return width,length
-	if w_check<1.2e-7:
-		width=1.2e-7
-		length=cap/(cox*width)
-		return width,length
-	return w_check,w_check
-
-#-----------------------------------------------------------------      
-# Function that converts capacitance to length and width for MOS capacitor
-# Inputs  : capacitance
-# Outputs : length, width
-def calculate_MOS_capacitor1(cap):
-	cox=17.25*1e-3
-	width=900e-6
-	length=cap/(cox*width)
-	return width,length
-	
-#-----------------------------------------------------------------      
-# Function that converts capacitance to length and width for MOS capacitor
-# Inputs  : capacitance
-# Outputs : length, width
-def calculate_MOS_capacitor2(cap):
-	cox=17.25*1e-3
-	length=2e-5
-	width=cap/(cox*length)
-	return width,length
-	
-
-#-----------------------------------------------------------------      
-# Function that converts resistance to length and width
-# Inputs  : resistance
-# Outputs : length, width
-def get_TSMC_resistor(resistance):
-	sheet_resistance=124.45
-	#L_min=0.8e-6
-	W_min=0.4e-6
-	dW=0.0691e-6
-
-	"""
-	if resistance<sheet_resistance:
-		length=L_min
-		width=L_min*sheet_resistance/resistance
-	else:
-		width=W_min
-		length=W_min*resistance/sheet_resistance
-	"""
-	width=W_min-dW
-	length=width*resistance/sheet_resistance
-	
-	return length,W_min
             
 #-----------------------------------------------------------------
 # Function that modifies the .scs file
@@ -742,7 +675,7 @@ def write_circuit_parameters(circuit_parameters,circuit_initialization_parameter
 	
 	# Getting the filenames
 	filename1=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/circ.scs'
-	filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
+	#filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
 
 	# We will write the new values to the Basic Circuit
 	f=open(filename1,'r+')
@@ -756,6 +689,7 @@ def write_circuit_parameters(circuit_parameters,circuit_initialization_parameter
 	f.write(s)
 	f.close()
 
+	"""
 	# We will write the new values to the IIP3 Circuit
 	f=open(filename2,'r+')
 	s=''
@@ -767,6 +701,7 @@ def write_circuit_parameters(circuit_parameters,circuit_initialization_parameter
 	f.truncate(0)
 	f.write(s)
 	f.close()
+	"""
 
 #-----------------------------------------------------------------
 # Function that adds MOSFET Parameters to the netlist
@@ -783,7 +718,7 @@ def write_MOS_parameters(circuit_initialization_parameters):
 
 	# Getting the filenames
 	filename1=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/circ.scs'
-	filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
+	#filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
 
 	# Writing the MOS Parameters to Basic File
 	f=open(filename1,'r+')
@@ -813,6 +748,7 @@ def write_MOS_parameters(circuit_initialization_parameters):
 	f.write(s)
 	f.close()
 
+	"""
 	# Writing the MOS Parameters to IIP3 File
 	f=open(filename2,'r+')
 	s=''
@@ -852,6 +788,7 @@ def write_MOS_parameters(circuit_initialization_parameters):
 	f.truncate(0)
 	f.write(s)
 	f.close()
+	"""
 
 #-----------------------------------------------------------------
 # Function that adds Simulation Parameters
@@ -867,7 +804,7 @@ def write_simulation_parameters(circuit_initialization_parameters):
 
 	# Getting the filenames
 	filename1=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/circ.scs'
-	filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
+	#filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
 
 	# Writing the simulation parameters to Basic File
 	f=open(filename1,'r+')
@@ -897,6 +834,7 @@ def write_simulation_parameters(circuit_initialization_parameters):
 	f.write(s)
 	f.close()
 
+	"""
 	# Writing the simulation parameters to IIP3 File
 	f=open(filename2,'r+')
 	s=''
@@ -936,6 +874,7 @@ def write_simulation_parameters(circuit_initialization_parameters):
 	f.truncate(0)
 	f.write(s)
 	f.close()
+	"""
 
 #-----------------------------------------------------------------
 # Function that modifies tcsh file
@@ -1071,12 +1010,12 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 	basic_extracted_parameters=write_extract_basic(circuit_initialization_parameters)
 
 	# Extracting the IIP3 Parameters
-	iip3_extracted_parameters=write_extract_iip3(circuit_initialization_parameters)
+	#iip3_extracted_parameters=write_extract_iip3(circuit_initialization_parameters)
 
 	# Extracting Parameters from output files
 	extracted_parameters=basic_extracted_parameters.copy()
-	for param_name in iip3_extracted_parameters:
-		extracted_parameters[param_name]=iip3_extracted_parameters[param_name]
+	#for param_name in iip3_extracted_parameters:
+	#	extracted_parameters[param_name]=iip3_extracted_parameters[param_name]
 	
 	return extracted_parameters
 

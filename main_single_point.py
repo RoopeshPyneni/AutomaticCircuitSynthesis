@@ -12,7 +12,8 @@ Functions structure in this file:
 """
 
 #===========================================================================================================================
-import CG_LNA.spectre as sp
+#import CG_LNA.spectre as sp
+import CS_LNA.spectre as sp
 
 #===========================================================================================================================
 #------------------------------------ Other Functions ----------------------------------------------------------------------
@@ -68,12 +69,41 @@ def get_mos_parameters(circuit_initialization_parameters,process_name):
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the simulation conditions to the optimization_input_parameters dictionary
-def get_simulation_conditions(circuit_initialization_parameters,fo):
+def get_simulation_conditions_CG_LNA(circuit_initialization_parameters,fo):
 	
 	circuit_initialization_parameters['simulation']={}
 	circuit_initialization_parameters['simulation']['directory']='/home/ee18b028/cadence_project/lna1/'
 	circuit_initialization_parameters['simulation']['basic_circuit']='basic_parameters_tsmc_65_rcm'
 	circuit_initialization_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc_65_rcm'
+	circuit_initialization_parameters['simulation']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh'
+	circuit_initialization_parameters['simulation']['iip3_type']='basic'		# 'basic' or 'advanced' 
+
+	circuit_initialization_parameters['simulation']['std_temp']=27
+	circuit_initialization_parameters['simulation']['pin_fixed']=-65
+	circuit_initialization_parameters['simulation']['pin_start']=-70
+	circuit_initialization_parameters['simulation']['pin_stop']=-40
+	circuit_initialization_parameters['simulation']['pin_points']=6
+	circuit_initialization_parameters['simulation']['iip3_calc_points']=3
+	circuit_initialization_parameters['simulation']['process_corner']='tt'
+	circuit_initialization_parameters['simulation']['conservative']='NO'
+	circuit_initialization_parameters['simulation']['w_finger_max']=2e-6
+
+	circuit_initialization_parameters['simulation']['parameters_list']={
+		'pin':-65,
+		'fund_2':fo+1e6,
+		'fund_1':fo,
+		'cir_temp':27,
+		'n_harm':5
+	}
+
+#---------------------------------------------------------------------------------------------------------------------------
+# Function that sets the simulation conditions to the optimization_input_parameters dictionary
+def get_simulation_conditions_CS_LNA(circuit_initialization_parameters,fo):
+	
+	circuit_initialization_parameters['simulation']={}
+	circuit_initialization_parameters['simulation']['directory']='/home/ee18b028/cadence_project/lna2/'
+	circuit_initialization_parameters['simulation']['basic_circuit']='basic_parameters'
+	circuit_initialization_parameters['simulation']['iip3_circuit']='iip3_hb'
 	circuit_initialization_parameters['simulation']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh'
 	circuit_initialization_parameters['simulation']['iip3_type']='basic'		# 'basic' or 'advanced' 
 
@@ -109,7 +139,7 @@ get_mos_parameters(circuit_initialization_parameters,'TSMC65_2')
 
 # ---------- Simulation Conditions ----------
 fo=1e9
-get_simulation_conditions(circuit_initialization_parameters,fo)
+get_simulation_conditions_CS_LNA(circuit_initialization_parameters,fo)
 
 """
 circuit_parameters={
@@ -123,6 +153,7 @@ circuit_parameters={
 }
 """
 
+"""
 circuit_parameters={
 	'Rb':274,
 	'Rd':260,
@@ -131,6 +162,20 @@ circuit_parameters={
 	'C2':124e-12,
 	'W':190e-6,
 	'Rbias':1000
+}
+"""
+
+circuit_parameters={
+	'Rb':5000,
+	'Rd':1193,
+	'Rg':7234,
+	'Rls':830,
+	'Lg':76.7e-9,
+	'Ls':8.81e-9,
+	'Ld':12.66e-9,
+	'Cs':318.3e-12,
+	'W':31.6e-6,
+	'Io':1.24e-6
 }
 
 
