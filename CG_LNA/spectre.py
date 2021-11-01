@@ -42,6 +42,38 @@ import numpy as np
 import fileinput
 import os
 
+"""
+====================================================================================================================================================================================
+------------------------------------------------------------ CIRCUIT CLASS ---------------------------------------------------------------------------------------------------------
+"""
+
+#---------------------------------------------------------------------------------------------------------------------------
+# Creating a class for the circuit 
+class Circuit():
+	def __init__(self,optimization_input_parameters):
+		self.circuit_parameters={}
+		self.extracted_parameters={}
+		self.simulation_parameters={}
+		self.optimization_input_parameters=optimization_input_parameters
+		write_MOS_parameters(self.optimization_input_parameters)
+	
+	def update_circuit(self,circuit_parameters):
+		self.circuit_parameters=circuit_parameters
+		self.extracted_parameters=write_extract(circuit_parameters,self.optimization_input_parameters)
+		return self.extracted_parameters
+	
+	def update_circuit_parameters(self,circuit_parameters):
+		self.circuit_parameters=circuit_parameters
+	
+	#def update_MOS_parameters(self,mos_parameters):
+	#	self.mos_parameters=mos_parameters
+	#	write_MOS_parameters(self.optimization_input_parameters)
+
+	def get_extracted_parameters(self):
+		return self.extracted_parameters
+	
+
+
 
 """
 ====================================================================================================================================================================================

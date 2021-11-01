@@ -144,7 +144,7 @@ circuit_parameters={
 }
 
 
-
+"""
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #----------------------------------------- FILE RUN --------------------------------------------
 
@@ -156,7 +156,20 @@ extracted_parameters=sp.write_extract(circuit_parameters,optimization_input_para
 print('Extracted_Parameters\n')
 for param_name in extracted_parameters:
 	print(param_name,' : ',extracted_parameters[param_name])
-	
+"""	
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#----------------------------------------- FILE RUN --------------------------------------------
+cir=sp.Circuit(optimization_input_parameters)
+extracted_parameters=cir.update_circuit(circuit_parameters)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#------------------------------------- OUTPUT PRINT --------------------------------------------
+print('Extracted_Parameters\n')
+for param_name in extracted_parameters:
+	print(param_name,' : ',extracted_parameters[param_name])
+
+
+
 """
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
