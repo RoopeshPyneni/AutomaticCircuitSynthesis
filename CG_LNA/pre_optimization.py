@@ -18,9 +18,9 @@ Functions structure in this file:
 
 #===========================================================================================================================
 import datetime
-import CG_LNA.extra_function as cff
-import CG_LNA.hand_calculation_1 as hc1
-import CG_LNA.hand_calculation_2 as hc2
+import CG_LNA.extra_function as cff		# type: ignore
+import CG_LNA.hand_calculation_1 as hc1 # type: ignore
+import CG_LNA.hand_calculation_2 as hc2 # type: ignore
 
 
 #===========================================================================================================================
@@ -149,7 +149,8 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 
 	save_input_results_pre_optimization(optimization_input_parameters)
 
-	cff.write_simulation_parameters(optimization_input_parameters,'pre_optimization',0)
+	#cff.write_simulation_parameters(optimization_input_parameters,'pre_optimization',0)
+	cir.update_simulation_parameters(optimization_input_parameters['pre_optimization']['simulation'])
 	cir.optimization_input_parameters=optimization_input_parameters
 
 	optimization_results={}

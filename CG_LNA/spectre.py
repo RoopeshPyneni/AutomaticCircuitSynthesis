@@ -41,7 +41,7 @@ Functions structure in this file:
 import numpy as np
 import fileinput
 import os
-import CG_LNA.extra_function as cff
+import CG_LNA.extra_function as cff # type: ignore
 
 """
 ====================================================================================================================================================================================
@@ -70,6 +70,15 @@ class Circuit():
 	#def update_MOS_parameters(self,mos_parameters):
 	#	self.mos_parameters=mos_parameters
 	#	write_MOS_parameters(self.optimization_input_parameters)
+
+	def update_simulation_parameters(self,simulation_parameters):
+		if 'parameters_list' in simulation_parameters:
+			for param_name in simulation_parameters['parameters_list']:
+				self.optimization_input_parameters['simulation']['parameters_list'][param_name]=simulation_parameters['parameters_list'][param_name]
+		
+		for param_name in simulation_parameters:
+			if param_name != 'parameters_list':
+				self.optimization_input_parameters['simulation'][param_name]=simulation_parameters[param_name]
 
 	def get_extracted_parameters(self):
 		return self.extracted_parameters
@@ -636,12 +645,19 @@ def dict_convert(circuit_parameters,optimization_input_parameters):
 	write_dict={}
 	
 	# param_names in write_dict will contain the name of the parameters as it is written in the .scs file
-	for param_name in optimization_input_parameters['simulation']['cir_writing_dict']:
-		write_dict[param_name]=circuit_parameters[optimization_input_parameters['simulation']['cir_writing_dict'][param_name]]
+	cir_writing_dict={
+		'wid':'W',
+		'cur0':'Io',
+		'Resb':'Rb',
+		'Resd':'Rd',
+		'cap1':'C1',
+		'cap2':'C2',
+		'Resbias':'Rbias'
+	}
+	for param_name in cir_writing_dict:
+		write_dict[param_name]=circuit_parameters[cir_writing_dict[param_name]]
 
 	# Checking if we have TSMC Resistors
-	#tsmc_resistor_netlists=['basic_parameters_tsmc_65','basic_parameters_tsmc_65_test']
-	#if optimization_input_parameters['simulation']['basic_circuit'] in 'basic_parameters_tsmc_65':
 	write_dict['Resb_L'],write_dict['Resb_W']=get_TSMC_resistor(circuit_parameters['Rb'])
 	write_dict['Resd_L'],write_dict['Resd_W']=get_TSMC_resistor(circuit_parameters['Rd'])
 	write_dict['Resbias_L'],write_dict['Resbias_W']=get_TSMC_resistor(circuit_parameters['Rbias'])
@@ -651,8 +667,6 @@ def dict_convert(circuit_parameters,optimization_input_parameters):
 	write_dict['n_finger']=n_finger
 
 	# Checking if we have TSMC Capacitors
-	#tsmc_capacitor_netlists=['basic_parameters_tsmc_65','basic_parameters_tsmc_65_test']
-	#if optimization_input_parameters['simulation']['basic_circuit']=='basic_parameters_tsmc_65':
 	write_dict['mf_cap1']=1+int(circuit_parameters['C1']*1e11)
 	write_dict['mf_cap2']=1+int(circuit_parameters['C2']*1e11)
 	

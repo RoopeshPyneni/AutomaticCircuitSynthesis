@@ -116,16 +116,6 @@ def get_simulation_conditions(optimization_input_parameters,fo):
 		'n_harm':5
 	}
 
-	optimization_input_parameters['simulation']['cir_writing_dict']={
-		'wid':'W',
-		'cur0':'Io',
-		'Resb':'Rb',
-		'Resd':'Rd',
-		'cap1':'C1',
-		'cap2':'C2',
-		'Resbias':'Rbias'
-	}
-
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the pre_optimization parameters to the optimization_input_parameters dictionary
 def get_pre_optimization_parameters(optimization_input_parameters,fo):
