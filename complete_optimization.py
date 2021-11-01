@@ -17,10 +17,10 @@ Functions structure in this file:
 import datetime
 import optimization as op
 import common_functions as cf
-import pre_optimization as pr
+import CG_LNA.pre_optimization as pr
 import temperature_analysis as ta
 import process_analysis as pa
-import spectre as sp
+import CG_LNA.spectre as sp
 import os
 
 #===========================================================================================================================

@@ -30,7 +30,7 @@ Functions structure in this file:
 #===========================================================================================================================
 import numpy as np
 import common_functions as cf
-import spectre as sp
+import CG_LNA.spectre as sp
 import optimization_functions_loss as ofl
 import optimization_functions_fom as off
 import os

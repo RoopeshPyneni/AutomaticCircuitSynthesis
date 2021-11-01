@@ -18,7 +18,7 @@ Functions structure in this file:
 
 #===========================================================================================================================
 import datetime
-import common_functions as cf
+import common_function as cf
 import spectre as sp
 import hand_calculation_1 as hc1
 import hand_calculation_2 as hc2
