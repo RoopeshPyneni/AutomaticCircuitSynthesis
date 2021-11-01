@@ -667,7 +667,9 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		# Updating the circuit parameters
 		circuit_parameters_slope,circuit_parameters_sensitivity=calc_loss_slope(cir,output_conditions,loss_iter[i-1],optimization_input_parameters)
 		if optimization_input_parameters['optimization']['optimization_name']=='loss1':
+			print('Before Uodate : ',cir.circuit_parameters)
 			cir.circuit_parameters=ofl.update_circuit_parameters(cir.circuit_parameters,circuit_parameters_slope,check_loss,optimization_input_parameters)
+			print('After Uodate : ',cir.circuit_parameters)
 		elif optimization_input_parameters['optimization']['optimization_name']=='fom1':
 			cir.circuit_parameters=off.update_circuit_parameters(cir.circuit_parameters,circuit_parameters_slope,check_loss,optimization_input_parameters)
 		
