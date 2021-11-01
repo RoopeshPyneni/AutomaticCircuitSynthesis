@@ -79,10 +79,6 @@ def save_input_results_initial(optimization_input_parameters):
 	for name in optimization_input_parameters['simulation']['parameters_list']:
 		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['simulation']['parameters_list'][name],3))
 	
-	# Circuit Writing List for simulation
-	for name in optimization_input_parameters['simulation']['cir_writing_dict']:
-		f.write('\n'+str(name)+': '+str(optimization_input_parameters['simulation']['cir_writing_dict'][name]))
-
 	f.close()
 
 #-----------------------------------------------------------------
