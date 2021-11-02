@@ -134,8 +134,8 @@ circuit_initialization_parameters={}
 # ---------- MOSFET Parameters ----------
 #get_mos_parameters(circuit_initialization_parameters,'TSMC180')
 #get_mos_parameters(circuit_initialization_parameters,'TSMC65')
-get_mos_parameters(circuit_initialization_parameters,'TSMC65_2')
-#get_mos_parameters(circuit_initialization_parameters,'IBM130')
+#get_mos_parameters(circuit_initialization_parameters,'TSMC65_2')
+get_mos_parameters(circuit_initialization_parameters,'IBM130')
 
 # ---------- Simulation Conditions ----------
 fo=1e9
@@ -164,19 +164,33 @@ circuit_parameters={
 	'Rbias':1000
 }
 """
-
 circuit_parameters={
 	'Rb':5000,
 	'Rd':1193,
-	'Rg':7234,
+	'Rg':24000,
 	'Rls':830,
 	'Lg':76.7e-9,
 	'Ls':8.81e-9,
 	'Ld':12.66e-9,
 	'Cs':318.3e-12,
-	'W':31.6e-6,
+	'W':316e-6,
 	'Io':1.24e-6
 }
+
+circuit_parameters={
+	'Rb':5000,
+	'Rd':1193,
+	'Rg':9000,
+	'Rls':150,
+	'Lg':29e-9,
+	'Ls':1.59e-9,
+	'Ld':12.66e-9,
+	'Cs':318.3e-12,
+	'W':682e-6,
+	'Io':171e-6
+}
+
+
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

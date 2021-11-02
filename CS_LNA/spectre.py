@@ -358,10 +358,10 @@ def calculate_k(s11_db,s12_db,s21_db,s22_db,s11_ph,s12_ph,s21_ph,s22_ph):
 	#s22_ph*=(180/np.pi)
 
 	# Calculating the magnitude in normal scale
-	s11_mag=10**(s11_db/10)
-	s12_mag=10**(s12_db/10)
-	s21_mag=10**(s21_db/10)
-	s22_mag=10**(s22_db/10)
+	s11_mag=10**(s11_db/20)
+	s12_mag=10**(s12_db/20)
+	s21_mag=10**(s21_db/20)
+	s22_mag=10**(s22_db/20)
 
 	# Calculating the values in a+ib format
 	s11_real=s11_mag*np.cos(s11_ph)
@@ -389,7 +389,7 @@ def calculate_k(s11_db,s12_db,s21_db,s22_db,s11_ph,s12_ph,s21_ph,s22_ph):
 def calculate_Z(s11_db,s11_ph):
 	
 	# Calculating the magnitude in normal scale
-	s11_mag=10**(s11_db/10)
+	s11_mag=10**(s11_db/20)
 
 	# Calculating the values in a+ib format
 	s11_real=s11_mag*np.cos(s11_ph)
