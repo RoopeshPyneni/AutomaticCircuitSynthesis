@@ -193,8 +193,8 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization']['loss_type']=0
 	optimization_input_parameters['optimization']['update_check']=0
 
-	optimization_input_parameters['optimization']['optimizing_parameters']=['Rb','Rd','Io','W','C1','C2']
-	optimization_input_parameters['optimization']['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','s12_db','s21_db','s22_db','k','nf_db','p_source','gm1','vdsat','vg','vd','vs']
+	optimization_input_parameters['optimization']['optimizing_parameters']=['Lg','Io','W','Ls','Ld']
+	optimization_input_parameters['optimization']['output_parameters_list']=['Io','gain_db','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
 
 	if optimization_name=='LOSS':
 		optimization_input_parameters['optimization']['optimization_name']='loss1'
@@ -206,7 +206,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Assigning values to the loss weights
 	loss_weights={}
-	loss_weights['gain_db']=1/20.0	
+	loss_weights['gain_db']=1/10.0	
 	#loss_weights['iip3_dbm']=1/10.0	
 	loss_weights['s11_db']=1/15.0	
 	loss_weights['nf_db']=1/2.0	
@@ -217,7 +217,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Assigning Values of Alpha
 	alpha_parameters={}
-	alpha_parameters['common']=0.2
+	alpha_parameters['common']=0.05
 	alpha_parameters['Ld']=1
 	alpha_parameters['Lg']=1
 	alpha_parameters['Ls']=1
@@ -233,7 +233,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Iterations
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=100
+	optimization_input_parameters['optimization'][1]['max_iteration']=300
 	#optimization_input_parameters['optimization'][2]={}
 	#optimization_input_parameters['optimization'][2]['max_iteration']=100
 

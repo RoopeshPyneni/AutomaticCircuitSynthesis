@@ -219,6 +219,9 @@ def print_MOS_parameters(mos_parameters):
 def print_circuit_parameters(circuit_parameters):
 	print ('\n____________________________________________________________________')
 	print ('-------------------------Circuit Parameters-------------------------\n')
+	for param_name in circuit_parameters:
+		print(param_name,' = ',num_trunc(circuit_parameters[param_name],trunc_val))
+	"""
 	print ('W     = ', num_trunc(circuit_parameters['W'],trunc_val))
 	print ('Rb    = ',num_trunc(circuit_parameters['Rb'],trunc_val))
 	print ('Rd    = ',num_trunc(circuit_parameters['Rd'],trunc_val))
@@ -226,6 +229,7 @@ def print_circuit_parameters(circuit_parameters):
 	print ('C1    = ',num_trunc(circuit_parameters['C1'],trunc_val))
 	print ('C2    = ',num_trunc(circuit_parameters['C2'],trunc_val))
 	print ('Rbias = ', num_trunc(circuit_parameters['Rbias'],trunc_val))
+	"""
 	
 #-----------------------------------------------------------------------------------------------
 # Printing the DC outputs
@@ -246,6 +250,9 @@ def print_DC_outputs(dc_outputs,mos_parameters):
 def print_extracted_outputs(extracted_parameters):
 	print ('\n____________________________________________________________________')
 	print ('-------------------------Extracted Outputs--------------------------\n')
+	for param_name in extracted_parameters:
+		print(param_name,' = ',num_trunc(extracted_parameters[param_name],trunc_val))
+	"""
 	print ('gm1      = ',num_trunc(extracted_parameters['gm1'],trunc_val))
 	print ('gds1     = ',num_trunc(extracted_parameters['gds1'],trunc_val))
 	print ('vt1      = ',num_trunc(extracted_parameters['vt'],trunc_val))
@@ -266,6 +273,7 @@ def print_extracted_outputs(extracted_parameters):
 	print ('s11_db   = ',num_trunc(extracted_parameters['s11_db'],trunc_val))
 	print ('Gain_db  = ',num_trunc(extracted_parameters['gain_db'],trunc_val))
 	print ('NF_db    = ',num_trunc(extracted_parameters['nf_db'],trunc_val))
+	"""
 	
 	
 #-----------------------------------------------------------------------------------------------
