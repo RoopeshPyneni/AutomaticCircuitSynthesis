@@ -95,7 +95,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	circuit_initialization_parameters['simulation']={}
 	circuit_initialization_parameters['simulation']['directory']='/home/ee18b028/cadence_project/lna2/'
 	circuit_initialization_parameters['simulation']['basic_circuit']='basic_parameters'
-	circuit_initialization_parameters['simulation']['iip3_circuit']='iip3_hb_tsmc'
+	circuit_initialization_parameters['simulation']['iip3_circuit']='iip3_hb'
 	circuit_initialization_parameters['simulation']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh'
 	circuit_initialization_parameters['simulation']['iip3_type']='basic'		# 'basic' or 'advanced' 
 
@@ -232,7 +232,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Iterations
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=300
+	optimization_input_parameters['optimization'][1]['max_iteration']=250
 	#optimization_input_parameters['optimization'][2]={}
 	#optimization_input_parameters['optimization'][2]['max_iteration']=100
 
@@ -418,8 +418,8 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Test2'						# SET THE FILENAME HERE
-	optimization_input_parameters['optimization']['max_iteration']=300	
+	filename=f_directory+'Test4'						# SET THE FILENAME HERE
+	optimization_input_parameters['optimization']['max_iteration']=5	
 	# ------- Set Any Additional Parameters Here --------
 	
 
