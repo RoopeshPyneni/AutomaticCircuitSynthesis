@@ -650,9 +650,6 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 		'wid':'W',
 		'cur0':'Io',
 		'res_b':'Rb',
-		'res_g':'Rg',
-		'res_d':'Rd',
-		'res_ls':'Rls',
 		'ind_d':'Ld',
 		'ind_g':'Lg',
 		'ind_s':'Ls',
@@ -660,6 +657,10 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 	}
 	for param_name in cir_writing_dict:
 		write_dict[param_name]=circuit_parameters[cir_writing_dict[param_name]]
+	
+	write_dict['res_g']=circuit_parameters['Lg']*circuit_initialization_parameters['simulation']['parameters_list']['fund_1']*2*np.pi*50
+	write_dict['res_d']=circuit_parameters['Ld']*circuit_initialization_parameters['simulation']['parameters_list']['fund_1']*2*np.pi*15
+	write_dict['res_ls']=circuit_parameters['Ls']*circuit_initialization_parameters['simulation']['parameters_list']['fund_1']*2*np.pi*15
 
 	return write_dict
 

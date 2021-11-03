@@ -38,11 +38,10 @@ def calculate_resistance_inductor(ind,fo,Q):
 #-----------------------------------------------------------------------------------------------
 # Calculating Ld and Rd
 # Outputs : Ld, Rd
-def calculate_Ld_Rd(Cload,fo):
+def calculate_Ld(Cload,fo):
     wo=2*np.pi*fo
     Ld=1/(wo*wo*Cload)
-    Rd=calculate_resistance_inductor(Ld,fo,15)
-    return Ld,Rd
+    return Ld
 
 #-----------------------------------------------------------------------------------------------
 # Calculating gm
@@ -73,19 +72,16 @@ def calculate_Io(gm,un,cox,W,Lmin):
 #-----------------------------------------------------------------------------------------------
 # Calculating Ls and Rs
 # Outputs : Ls,Rs
-def calculate_Ls_Rls(rsource,cgs,gm,fo):
-    Ls=rsource*cgs/gm
-    Rls=calculate_resistance_inductor(Ls,fo,15)
-    return Ls,Rls
-
+def calculate_Ls(rsource,cgs,gm,fo):
+    return rsource*cgs/gm
+    
 #-----------------------------------------------------------------------------------------------
 # Calculating Lg and Rg
 # Outputs : Lg,Rg
-def calculate_Lg_Rg(Ls,cgs,fo):
+def calculate_Lg(Ls,cgs,fo):
     w=2*np.pi*fo
     Lg=1/(w*w*cgs)-Ls
-    Rg=calculate_resistance_inductor(Lg,fo,50)
-    return Lg,Rg
+    return Lg
 	
 
 	
@@ -114,13 +110,13 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 
     # Calculating the circuit parameters
 	circuit_parameters={}
-	circuit_parameters['Ld'],circuit_parameters['Rd']=calculate_Ld_Rd(Cload,fo)
+	circuit_parameters['Ld']=calculate_Ld(Cload,fo)
 	gm=20e-3
 	cgs=calculate_cgs(Rs,fo)
 	circuit_parameters['W']=calculate_W(cgs,Lmin,Cox)
 	circuit_parameters['Io']=calculate_Io(gm,un,Cox,circuit_parameters['W'],Lmin)
-	circuit_parameters['Ls'],circuit_parameters['Rls']=calculate_Ls_Rls(Rs,cgs,gm,fo)
-	circuit_parameters['Lg'],circuit_parameters['Rg']=calculate_Lg_Rg(circuit_parameters['Ls'],cgs,fo)
+	circuit_parameters['Ls']=calculate_Ls(Rs,cgs,gm,fo)
+	circuit_parameters['Lg']=calculate_Lg(circuit_parameters['Ls'],cgs,fo)
 	circuit_parameters['Rb']=5000
 	circuit_parameters['Cs']=100/(2*np.pi*50*fo)
 
@@ -144,11 +140,8 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		# Updating the values
 		fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
 		cir.circuit_parameters['Ls']=cir.circuit_parameters['Ls']*50/cir.extracted_parameters['Zin_R']
-		cir.circuit_parameters['Rls']=calculate_resistance_inductor(cir.circuit_parameters['Ls'],fo,15)
-
 		cir.circuit_parameters['Lg']=cir.circuit_parameters['Lg']-cir.extracted_parameters['Zin_I']/(2*np.pi*fo)
-		cir.circuit_parameters['Rg']=calculate_resistance_inductor(cir.circuit_parameters['Lg'],fo,50)
-
+		
 		# Running the circuit
 		cir.run_circuit()
 	

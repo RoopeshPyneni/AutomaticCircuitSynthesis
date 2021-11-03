@@ -166,9 +166,6 @@ circuit_parameters={
 """
 circuit_parameters={
 	'Rb':5000,
-	'Rd':1193,
-	'Rg':24000,
-	'Rls':830,
 	'Lg':76.7e-9,
 	'Ls':8.81e-9,
 	'Ld':12.66e-9,
@@ -179,9 +176,6 @@ circuit_parameters={
 
 circuit_parameters={
 	'Rb':5000,
-	'Rd':1193,
-	'Rg':9000,
-	'Rls':150,
 	'Lg':29e-9,
 	'Ls':1.59e-9,
 	'Ld':12.66e-9,

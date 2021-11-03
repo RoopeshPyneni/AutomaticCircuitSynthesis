@@ -140,9 +140,6 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	# Manual Hand Calculations
 	optimization_input_parameters['pre_optimization']['manual_circuit_parameters']={
 	'Rb':5000,
-	'Rd':1193,
-	'Rg':9000,
-	'Rls':150,
 	'Lg':29e-9,
 	'Ls':1.59e-9,
 	'Ld':12.66e-9,
@@ -182,7 +179,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 
 	optimization_input_parameters['optimization']={}
 
-	optimization_input_parameters['optimization']['run']='NO'
+	optimization_input_parameters['optimization']['run']='YES'
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Parameters for Optimization
@@ -209,10 +206,10 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Assigning values to the loss weights
 	loss_weights={}
-	loss_weights['gain_db']=1/10.0	
-	loss_weights['iip3_dbm']=1/5.0	
+	loss_weights['gain_db']=1/20.0	
+	#loss_weights['iip3_dbm']=1/10.0	
 	loss_weights['s11_db']=1/15.0	
-	loss_weights['nf_db']=1/4.0	
+	loss_weights['nf_db']=1/2.0	
 	loss_weights['Io']=1000	
 	optimization_input_parameters['optimization']['loss_weights']=loss_weights
 
@@ -221,12 +218,11 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	# Assigning Values of Alpha
 	alpha_parameters={}
 	alpha_parameters['common']=0.2
-	alpha_parameters['Rb']=1
-	alpha_parameters['Rd']=1
+	alpha_parameters['Ld']=1
+	alpha_parameters['Lg']=1
+	alpha_parameters['Ls']=1
 	alpha_parameters['W']=1
 	alpha_parameters['Io']=1
-	alpha_parameters['C1']=1
-	alpha_parameters['C2']=1
 	optimization_input_parameters['optimization']['alpha']={}
 	optimization_input_parameters['optimization']['alpha']['values']=alpha_parameters
 
@@ -237,7 +233,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Iterations
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=3
+	optimization_input_parameters['optimization'][1]['max_iteration']=100
 	#optimization_input_parameters['optimization'][2]={}
 	#optimization_input_parameters['optimization'][2]['max_iteration']=100
 
@@ -247,8 +243,8 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 
 	optimization_input_parameters['optimization']['simulation'][1]={}
 
-	optimization_input_parameters['optimization']['simulation'][1]['basic_circuit']='basic_parameters_tsmc_65_rcm'
-	optimization_input_parameters['optimization']['simulation'][1]['iip3_circuit']='iip3_hb_tsmc_65_rcm'
+	optimization_input_parameters['optimization']['simulation'][1]['basic_circuit']='basic_parameters'
+	optimization_input_parameters['optimization']['simulation'][1]['iip3_circuit']='iip3_hb'
 	optimization_input_parameters['optimization']['simulation'][1]['iip3_type']='basic'
 	optimization_input_parameters['optimization']['simulation'][1]['std_temp']=27
 	optimization_input_parameters['optimization']['simulation'][1]['pin_fixed']=-65
@@ -423,7 +419,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Test1'						# SET THE FILENAME HERE
+	filename=f_directory+'Test2'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=300	
 	# ------- Set Any Additional Parameters Here --------
 	

@@ -40,32 +40,34 @@ def calc_loss_1(extracted_parameters,output_conditions,loss_weights):
 	
 	# Extracted Values
 	gain=extracted_parameters['gain_db']
-	iip3=extracted_parameters['iip3_dbm']
+	#iip3=extracted_parameters['iip3_dbm']
 	s11=extracted_parameters['s11_db']
 	nf=extracted_parameters['nf_db']
 	Io=extracted_parameters['Io']
 	
 	# Reference Values
 	gain_ref=output_conditions['gain_db']
-	iip3_ref=output_conditions['iip3_dbm']
+	#iip3_ref=output_conditions['iip3_dbm']
 	s11_ref=output_conditions['s11_db']
 	nf_ref=output_conditions['nf_db']
 	
 	#Defining the weights to calculate Loss
 	A1=loss_weights['gain_db']	# Weight for gain
-	A2=loss_weights['iip3_dbm']	# Weight for iip3
+	#A2=loss_weights['iip3_dbm']	# Weight for iip3
 	A3=loss_weights['s11_db']	# Weight for s11
 	A4=loss_weights['nf_db']	# Weight for nf
 	A5=loss_weights['Io']	# Weight for Io
 	
 	# Calculating Loss
 	loss_gain=A1*ramp_func(gain_ref-gain)
-	loss_iip3=A2*ramp_func(iip3_ref-iip3)
+	#loss_iip3=A2*ramp_func(iip3_ref-iip3)
 	loss_s11=A3*ramp_func(s11-s11_ref)
 	loss_nf=A4*ramp_func(nf-nf_ref)
 	loss_Io=A5*Io
-	loss=loss_gain+loss_iip3+loss_s11+loss_nf+loss_Io
-	loss_dict={'loss':loss,'loss_gain':loss_gain,'loss_iip3':loss_iip3,'loss_s11':loss_s11,'loss_nf':loss_nf,'loss_Io':loss_Io}
+	#loss=loss_gain+loss_iip3+loss_s11+loss_nf+loss_Io
+	loss=loss_gain+loss_s11+loss_nf+loss_Io
+	#loss_dict={'loss':loss,'loss_gain':loss_gain,'loss_iip3':loss_iip3,'loss_s11':loss_s11,'loss_nf':loss_nf,'loss_Io':loss_Io}
+	loss_dict={'loss':loss,'loss_gain':loss_gain,'loss_s11':loss_s11,'loss_nf':loss_nf,'loss_Io':loss_Io}
 	
 	return loss_dict
 
