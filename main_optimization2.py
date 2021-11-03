@@ -194,20 +194,19 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization']['update_check']=0
 
 	optimization_input_parameters['optimization']['optimizing_parameters']=['Lg','Io','W','Ls','Ld']
-	optimization_input_parameters['optimization']['output_parameters_list']=['Io','gain_db','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
+	optimization_input_parameters['optimization']['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
 
 	if optimization_name=='LOSS':
 		optimization_input_parameters['optimization']['optimization_name']='loss1'
 	else:
 		optimization_input_parameters['optimization']['optimization_name']='fom1'
-		
 	optimization_input_parameters['optimization']['optimization_type']=0
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Assigning values to the loss weights
 	loss_weights={}
 	loss_weights['gain_db']=1/10.0	
-	#loss_weights['iip3_dbm']=1/10.0	
+	loss_weights['iip3_dbm']=1/10.0	
 	loss_weights['s11_db']=1/15.0	
 	loss_weights['nf_db']=1/2.0	
 	loss_weights['Io']=1000	

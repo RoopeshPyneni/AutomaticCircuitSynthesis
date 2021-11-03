@@ -676,7 +676,7 @@ def write_circuit_parameters(circuit_parameters,circuit_initialization_parameter
 	
 	# Getting the filenames
 	filename1=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/circ.scs'
-	#filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
+	filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
 
 	# We will write the new values to the Basic Circuit
 	f=open(filename1,'r+')
@@ -690,7 +690,6 @@ def write_circuit_parameters(circuit_parameters,circuit_initialization_parameter
 	f.write(s)
 	f.close()
 
-	"""
 	# We will write the new values to the IIP3 Circuit
 	f=open(filename2,'r+')
 	s=''
@@ -702,8 +701,7 @@ def write_circuit_parameters(circuit_parameters,circuit_initialization_parameter
 	f.truncate(0)
 	f.write(s)
 	f.close()
-	"""
-
+	
 #-----------------------------------------------------------------
 # Function that adds MOSFET Parameters to the netlist
 # Inputs  : Optimization Input Parameters
@@ -719,7 +717,7 @@ def write_MOS_parameters(circuit_initialization_parameters):
 
 	# Getting the filenames
 	filename1=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/circ.scs'
-	#filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
+	filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
 
 	# Writing the MOS Parameters to Basic File
 	f=open(filename1,'r+')
@@ -749,7 +747,6 @@ def write_MOS_parameters(circuit_initialization_parameters):
 	f.write(s)
 	f.close()
 
-	"""
 	# Writing the MOS Parameters to IIP3 File
 	f=open(filename2,'r+')
 	s=''
@@ -789,8 +786,7 @@ def write_MOS_parameters(circuit_initialization_parameters):
 	f.truncate(0)
 	f.write(s)
 	f.close()
-	"""
-
+	
 #-----------------------------------------------------------------
 # Function that adds Simulation Parameters
 # Inputs  : Optimization Input Parameters
@@ -805,7 +801,7 @@ def write_simulation_parameters(circuit_initialization_parameters):
 
 	# Getting the filenames
 	filename1=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/circ.scs'
-	#filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
+	filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
 
 	# Writing the simulation parameters to Basic File
 	f=open(filename1,'r+')
@@ -835,7 +831,6 @@ def write_simulation_parameters(circuit_initialization_parameters):
 	f.write(s)
 	f.close()
 
-	"""
 	# Writing the simulation parameters to IIP3 File
 	f=open(filename2,'r+')
 	s=''
@@ -875,8 +870,7 @@ def write_simulation_parameters(circuit_initialization_parameters):
 	f.truncate(0)
 	f.write(s)
 	f.close()
-	"""
-
+	
 #-----------------------------------------------------------------
 # Function that modifies tcsh file
 # Inputs  : circuit_initialization_parameters
@@ -1011,12 +1005,12 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 	basic_extracted_parameters=write_extract_basic(circuit_initialization_parameters)
 
 	# Extracting the IIP3 Parameters
-	#iip3_extracted_parameters=write_extract_iip3(circuit_initialization_parameters)
+	iip3_extracted_parameters=write_extract_iip3(circuit_initialization_parameters)
 
 	# Extracting Parameters from output files
 	extracted_parameters=basic_extracted_parameters.copy()
-	#for param_name in iip3_extracted_parameters:
-	#	extracted_parameters[param_name]=iip3_extracted_parameters[param_name]
+	for param_name in iip3_extracted_parameters:
+		extracted_parameters[param_name]=iip3_extracted_parameters[param_name]
 	
 	return extracted_parameters
 
