@@ -13,7 +13,7 @@ Functions structure in this file:
 #===========================================================================================================================
 #=========================================== IMPORT FILES ==================================================================
 import numpy as np
-import CG_LNA.extra_function as cff # type:ignore
+import CS_LNA.extra_function as cff # type:ignore
 
 #===========================================================================================================================
 
@@ -109,7 +109,7 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
     gain=db_to_normal(output_conditions['gain_db'])
     F=db_to_normal(output_conditions['nf_db'])
     Lmin=cir.mos_parameters['Lmin']
-    Cox=cir.mos_parameters['Cox']
+    Cox=cir.mos_parameters['cox']
     un=cir.mos_parameters['un']
 
     # Calculating the circuit parameters

@@ -109,7 +109,7 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	fo=output_conditions['wo']/(2*np.pi)
 	Rs=output_conditions['Rs']
 	Lmin=cir.mos_parameters['Lmin']
-	Cox=cir.mos_parameters['Cox']
+	Cox=cir.mos_parameters['cox']
 	un=cir.mos_parameters['un']
 
     # Calculating the circuit parameters

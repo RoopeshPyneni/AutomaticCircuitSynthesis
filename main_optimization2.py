@@ -127,7 +127,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['pre_optimization']['Step2_Limit']=5
 	optimization_input_parameters['pre_optimization']['vdsat_reqd']=0.07
 
-	optimization_input_parameters['pre_optimization']['type']='manual'
+	optimization_input_parameters['pre_optimization']['type']=2 #'manual'
 	optimization_input_parameters['pre_optimization']['gmrs_threshold']=0.2
 	optimization_input_parameters['pre_optimization']['vdsat_threshold']=0.02
 

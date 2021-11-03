@@ -219,25 +219,16 @@ def print_MOS_parameters(mos_parameters):
 def print_circuit_parameters(circuit_parameters):
 	print ('\n____________________________________________________________________')
 	print ('-------------------------Circuit Parameters-------------------------\n')
-	print ('W     = ', num_trunc(circuit_parameters['W'],trunc_val))
-	print ('Rb    = ',num_trunc(circuit_parameters['Rb'],trunc_val))
+	print ('Ld    = ',num_trunc(circuit_parameters['Ld'],trunc_val))
+	print ('Lg    = ',num_trunc(circuit_parameters['Lg'],trunc_val))
+	print ('Ls    = ',num_trunc(circuit_parameters['Ls'],trunc_val))
 	print ('Rd    = ',num_trunc(circuit_parameters['Rd'],trunc_val))
+	print ('Rg    = ',num_trunc(circuit_parameters['Rg'],trunc_val))
+	print ('Rls   = ',num_trunc(circuit_parameters['Rls'],trunc_val))
+	print ('Cs    = ',num_trunc(circuit_parameters['Cs'],trunc_val))
+	print ('W     = ', num_trunc(circuit_parameters['W'],trunc_val))
 	print ('Io    = ',num_trunc(circuit_parameters['Io'],trunc_val))
-	print ('C1    = ',num_trunc(circuit_parameters['C1'],trunc_val))
-	print ('C2    = ',num_trunc(circuit_parameters['C2'],trunc_val))
-	print ('Rbias = ', num_trunc(circuit_parameters['Rbias'],trunc_val))
-	
-#-----------------------------------------------------------------------------------------------
-# Printing the DC outputs
-# Inputs  : dc_outputs, mos_parameters
-# Outputs : NONE
-def print_DC_outputs(dc_outputs,mos_parameters):
-	print ('\n____________________________________________________________________')
-	print ('-------------------Hand Calculation DC Outputs----------------------\n')
-	print ('vg     = ',num_trunc(dc_outputs['vg'],trunc_val))
-	print ('vs     = ',num_trunc(dc_outputs['vs'],trunc_val))
-	print ('vd     = ',num_trunc(dc_outputs['vd'],trunc_val))
-	print ('vgs-vt = ',num_trunc(dc_outputs['vg']-dc_outputs['vs']-mos_parameters['vt'],trunc_val))
+	print ('Rb    = ', num_trunc(circuit_parameters['Rb'],trunc_val))
 		
 #-----------------------------------------------------------------------------------------------
 # Printing the extracted parameters
@@ -246,12 +237,20 @@ def print_DC_outputs(dc_outputs,mos_parameters):
 def print_extracted_outputs(extracted_parameters):
 	print ('\n____________________________________________________________________')
 	print ('-------------------------Extracted Outputs--------------------------\n')
+	
+	"""
+	print ('vd1      = ',num_trunc(extracted_parameters['vd1'],trunc_val))
+	print ('vg1      = ',num_trunc(extracted_parameters['vg1'],trunc_val))
+	
+	print ('isource  = ',num_trunc(extracted_parameters['gm1'],trunc_val))
+	print ('vsource  = ',num_trunc(extracted_parameters['gds1'],trunc_val))
+	print ('vt1      = ',num_trunc(extracted_parameters['vt'],trunc_val))
+	
 	print ('gm1      = ',num_trunc(extracted_parameters['gm1'],trunc_val))
 	print ('gds1     = ',num_trunc(extracted_parameters['gds1'],trunc_val))
 	print ('vt1      = ',num_trunc(extracted_parameters['vt'],trunc_val))
 	
-	print ('vd       = ',num_trunc(extracted_parameters['vd'],trunc_val))
-	print ('vg       = ',num_trunc(extracted_parameters['vg'],trunc_val))
+	
 	print ('vs       = ',num_trunc(extracted_parameters['vs'],trunc_val))
 	print ('Io       = ',num_trunc(extracted_parameters['Io'],trunc_val))
 	
@@ -262,10 +261,18 @@ def print_extracted_outputs(extracted_parameters):
 	print ('cgs1     = ',num_trunc(extracted_parameters['cgs1'],trunc_val))
 	print ('cgd1     = ',num_trunc(extracted_parameters['cgd1'],trunc_val))
 	
-	print ('iip3_dbm = ',num_trunc(extracted_parameters['iip3_dbm'],trunc_val))
+	print ('iip3_dbm = ',num_trunc(extracted_parameters['iip3_dbm'],trunc_val)
 	print ('s11_db   = ',num_trunc(extracted_parameters['s11_db'],trunc_val))
 	print ('Gain_db  = ',num_trunc(extracted_parameters['gain_db'],trunc_val))
 	print ('NF_db    = ',num_trunc(extracted_parameters['nf_db'],trunc_val))
+	"""
+	
+	for param_name in extracted_parameters:
+		print(param_name,' = ',num_trunc(extracted_parameters[param_name],trunc_val))
+	
+
+	
+	
 	
 	
 #-----------------------------------------------------------------------------------------------
