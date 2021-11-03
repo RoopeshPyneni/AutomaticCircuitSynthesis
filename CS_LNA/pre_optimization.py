@@ -18,9 +18,9 @@ Functions structure in this file:
 
 #===========================================================================================================================
 import datetime
-import CG_LNA.extra_function as cff		# type: ignore
-import CG_LNA.hand_calculation_1 as hc1 # type: ignore
-import CG_LNA.hand_calculation_2 as hc2 # type: ignore
+import CS_LNA.extra_function as cff		# type: ignore
+import CS_LNA.hand_calculation_1 as hc1 # type: ignore
+import CS_LNA.hand_calculation_2 as hc2 # type: ignore
 
 
 #===========================================================================================================================
@@ -131,9 +131,9 @@ def manual_initial_parameters(cir,optimization_input_parameters):
 def pre_optimization(cir,optimization_input_parameters,timing_results):
 
 	# Opening the Run_Status File
-	f=open(optimization_input_parameters['filename']['run_status'],'a')
-	f.write('Pre Optimization Start\n Time : '+str(datetime.datetime.now())+'\n\n')
-	f.close()
+	#f=open(optimization_input_parameters['filename']['run_status'],'a')
+	#f.write('Pre Optimization Start\n Time : '+str(datetime.datetime.now())+'\n\n')
+	#f.close()
 
 	# Storing the starting time
 	timing_results['pre_optimization']={}
@@ -142,10 +142,9 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 	print('************************************************************************************************************')
 	print('*********************************** Pre Optimization *******************************************************')
 
-	save_input_results_pre_optimization(optimization_input_parameters)
+	#save_input_results_pre_optimization(optimization_input_parameters)
 
 	cir.update_simulation_parameters(optimization_input_parameters['pre_optimization']['simulation'])
-	#cir.optimization_input_parameters=optimization_input_parameters
 
 	optimization_results={}
 	
@@ -196,15 +195,15 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 	cff.print_extracted_outputs(cir.extracted_parameters)
 
 	# Storing the results
-	save_output_results_pre_optimization(optimization_results,optimization_input_parameters)
+	#save_output_results_pre_optimization(optimization_results,optimization_input_parameters)
 
 	# Storing the finishing time
 	timing_results['pre_optimization']['stop']=datetime.datetime.now()
 
 	# Opening the Run_Status File
-	f=open(optimization_input_parameters['filename']['run_status'],'a')
-	f.write('Pre Optimization End\n Time : '+str(datetime.datetime.now())+'\n\n')
-	f.close()
+	#f=open(optimization_input_parameters['filename']['run_status'],'a')
+	#f.write('Pre Optimization End\n Time : '+str(datetime.datetime.now())+'\n\n')
+	#f.close()
 	
 
 #===========================================================================================================================

@@ -17,10 +17,12 @@ Functions structure in this file:
 import datetime
 import optimization as op
 import common_functions as cf
-import CG_LNA.pre_optimization as pr
+import CG_LNA.pre_optimization as pr1
+import CS_LNA.pre_optimization as pr2
 import temperature_analysis as ta
 import process_analysis as pa
-import CG_LNA.spectre as sp
+import CG_LNA.spectre as sp1
+import CS_LNA.spectre as sp2
 import os
 
 #===========================================================================================================================
@@ -165,7 +167,7 @@ def save_mos_results(mos_parameters,optimization_input_parameters):
 # Function that performs the complete optimization process
 # Inputs  : Optimization Input Parameters
 # Outputs : NONE
-def complete_optimization(circuit_initialization_parameters,optimization_input_parameters):
+def complete_optimization(circuit_initialization_parameters,optimization_input_parameters,name):
 
 	# Calculating Starting Time
 	timing_results={}
@@ -184,12 +186,18 @@ def complete_optimization(circuit_initialization_parameters,optimization_input_p
 	#======================================================== MOSFET PARAMETERS ==================================================================================================
 
 	# Writing the MOSFET File Location to .scs file
-	cir=sp.Circuit(circuit_initialization_parameters)
+	if name=='CG_LNA':
+		cir=sp1.Circuit(circuit_initialization_parameters)
+	else:
+		cir=sp2.Circuit(circuit_initialization_parameters)
 	save_mos_results(cir.mos_parameters,optimization_input_parameters)
 
 	#======================================================== PRE OPTIMIZATION ===================================================================================================
 
-	pr.pre_optimization(cir,optimization_input_parameters,timing_results)
+	if name=='CG_LNA':
+		pr1.pre_optimization(cir,optimization_input_parameters,timing_results)
+	else:
+		pr2.pre_optimization(cir,optimization_input_parameters,timing_results)
 
 	#======================================================== OPTIMIZATION =======================================================================================================
 
