@@ -3,7 +3,7 @@
 Name				: Pyneni Roopesh
 Roll Number			: EE18B028
 File Name			: CS_LNA/hand_calculation_2.py
-File Description 		: This file will initialize the optimization_input_parameters and run the complete_optimization file
+File Description 	: This file will initialize the optimization_input_parameters and run the complete_optimization file
 
 Functions structure in this file:
 	--> TBD
@@ -211,23 +211,5 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	# Printing the values
 	cff.print_circuit_parameters(cir.circuit_parameters)
 	cff.print_extracted_outputs(cir.extracted_parameters)
-
-
-	"""
-	#======================================================== Step 2 =======================================================
-	print('\n\n--------------------------------- gm and vdsat Updation ------------------------------------')
-	
-	# Calculating the Values of Circuit Parameters
-	dc_optimize_gm_vdsat(cir,optimization_input_parameters)
-
-	# Storing the Circuit and Extracted Parameters
-	optimization_results['gmvd_update']={}
-	optimization_results['gmvd_update']['circuit_parameters']=cir.circuit_parameters.copy()
-	optimization_results['gmvd_update']['extracted_parameters']=cir.extracted_parameters.copy()
-
-	# Printing the values
-	cff.print_circuit_parameters(cir.circuit_parameters)
-	cff.print_extracted_outputs(cir.extracted_parameters)
-	"""
 
 #===========================================================================================================================

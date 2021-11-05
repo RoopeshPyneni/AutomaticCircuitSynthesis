@@ -40,17 +40,17 @@ def save_input_results_pre_optimization(optimization_input_parameters):
 	f.write('\n\n********************************************************************************\n')
 	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Pre Optimization ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 	
-	f.write('\nStep1b_Limit :'+str(optimization_input_parameters['pre_optimization']['Step1b_Limit']))
-	f.write('\nStep2_Limit  :'+str(optimization_input_parameters['pre_optimization']['Step2_Limit']))
-	f.write('\nvdsat_reqd      :'+str(optimization_input_parameters['pre_optimization']['vdsat_reqd']))
+	#f.write('\nStep1b_Limit :'+str(optimization_input_parameters['pre_optimization']['Step1b_Limit']))
+	#f.write('\nStep2_Limit  :'+str(optimization_input_parameters['pre_optimization']['Step2_Limit']))
+	#f.write('\nvdsat_reqd      :'+str(optimization_input_parameters['pre_optimization']['vdsat_reqd']))
 
-	f.write('\nPre_Opt_Type	   :'+str(optimization_input_parameters['pre_optimization']['type']))
-	f.write('\ngmrs_threshold  :'+str(optimization_input_parameters['pre_optimization']['gmrs_threshold']))
-	f.write('\nvdsat_threshold :'+str(optimization_input_parameters['pre_optimization']['vdsat_threshold']))
+	#f.write('\nPre_Opt_Type	   :'+str(optimization_input_parameters['pre_optimization']['type']))
+	#f.write('\ngmrs_threshold  :'+str(optimization_input_parameters['pre_optimization']['gmrs_threshold']))
+	#f.write('\nvdsat_threshold :'+str(optimization_input_parameters['pre_optimization']['vdsat_threshold']))
 	
-	f.write('\nC1_threshold    :'+str(optimization_input_parameters['pre_optimization']['C1_threshold']))
-	f.write('\nC1_threshold    :'+str(optimization_input_parameters['pre_optimization']['C2_threshold']))
-	f.write('\nRbias_threshold :'+str(optimization_input_parameters['pre_optimization']['Rbias_threshold']))
+	#f.write('\nC1_threshold    :'+str(optimization_input_parameters['pre_optimization']['C1_threshold']))
+	#f.write('\nC1_threshold    :'+str(optimization_input_parameters['pre_optimization']['C2_threshold']))
+	#f.write('\nRbias_threshold :'+str(optimization_input_parameters['pre_optimization']['Rbias_threshold']))
 
 	f.close()
 
@@ -131,9 +131,9 @@ def manual_initial_parameters(cir,optimization_input_parameters):
 def pre_optimization(cir,optimization_input_parameters,timing_results):
 
 	# Opening the Run_Status File
-	#f=open(optimization_input_parameters['filename']['run_status'],'a')
-	#f.write('Pre Optimization Start\n Time : '+str(datetime.datetime.now())+'\n\n')
-	#f.close()
+	f=open(optimization_input_parameters['filename']['run_status'],'a')
+	f.write('Pre Optimization Start\n Time : '+str(datetime.datetime.now())+'\n\n')
+	f.close()
 
 	# Storing the starting time
 	timing_results['pre_optimization']={}
@@ -195,15 +195,15 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 	cff.print_extracted_outputs(cir.extracted_parameters)
 
 	# Storing the results
-	#save_output_results_pre_optimization(optimization_results,optimization_input_parameters)
+	save_output_results_pre_optimization(optimization_results,optimization_input_parameters)
 
 	# Storing the finishing time
 	timing_results['pre_optimization']['stop']=datetime.datetime.now()
 
 	# Opening the Run_Status File
-	#f=open(optimization_input_parameters['filename']['run_status'],'a')
-	#f.write('Pre Optimization End\n Time : '+str(datetime.datetime.now())+'\n\n')
-	#f.close()
+	f=open(optimization_input_parameters['filename']['run_status'],'a')
+	f.write('Pre Optimization End\n Time : '+str(datetime.datetime.now())+'\n\n')
+	f.close()
 	
 
 #===========================================================================================================================

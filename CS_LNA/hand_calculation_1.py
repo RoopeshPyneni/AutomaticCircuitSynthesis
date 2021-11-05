@@ -123,6 +123,27 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	# Running the circuit
     cir.update_circuit(circuit_parameters)
 
+#---------------------------------------------------------------------------------------------------------------------------
+# Function to update the Initial Circuit Parameters	after calculating the new value of vt
+# Inputs  : circuit_parameters, mos_parameters, extracted_parameters, optimization_input_parameters
+# Outputs : circuit_parameters, dc_outputs, mos_parameters, extracted_parameters
+def update_initial_parameters(cir,optimization_input_parameters):
+
+	i=0
+	while i<5 and cir.extracted_parameters['s11_db']>-15.0:
+
+		# Printing the iteration number
+		i+=1
+		print('----- Iteration ',i,' -----')
+
+		# Updating the values
+		fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
+		cir.circuit_parameters['Ls']=cir.circuit_parameters['Ls']*50/cir.extracted_parameters['Zin_R']
+		cir.circuit_parameters['Lg']=cir.circuit_parameters['Lg']-cir.extracted_parameters['Zin_I']/(2*np.pi*fo)
+		
+		# Running the circuit
+		cir.run_circuit()
+
 
 
 """
@@ -149,6 +170,21 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
     optimization_results['auto_hc']={}
     optimization_results['auto_hc']['circuit_parameters']=cir.circuit_parameters.copy()
     optimization_results['auto_hc']['extracted_parameters']=cir.extracted_parameters.copy()
+
+	# Printing the values
+    cff.print_circuit_parameters(cir.circuit_parameters)
+    cff.print_extracted_outputs(cir.extracted_parameters)
+
+    #======================================================== Step 2 =======================================================
+    print('\n\n--------------------------------- Operating Point Updations ------------------------------------')
+
+	# Calculating the Values of Circuit Parameters
+    update_initial_parameters(cir,optimization_input_parameters)
+
+	# Storing the Circuit and Extracted Parameters
+    optimization_results['hc_update']={}
+    optimization_results['hc_update']['circuit_parameters']=cir.circuit_parameters.copy()
+    optimization_results['hc_update']['extracted_parameters']=cir.extracted_parameters.copy()
 
 	# Printing the values
     cff.print_circuit_parameters(cir.circuit_parameters)

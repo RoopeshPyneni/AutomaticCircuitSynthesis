@@ -140,8 +140,10 @@ def num_trunc(num,pts):
 	return char_val
 
 
-#===========================================================================================================================
-#------------------------------------ Dictionary Modification Functions ----------------------------------------------------
+"""
+===========================================================================================================================
+------------------------------------ Dictionary Modification Functions ----------------------------------------------------
+"""
 
 #-----------------------------------------------------------------------------------------------
 # This function that is used to modify the simulation parameters
@@ -178,9 +180,12 @@ def update_MOS_parameters(mos,un,cox,vt,Lmin,vdd):
 	mos['un']=vdd
 	return mos
 
-	
-#===========================================================================================================================
-#--------------------------------------- Output Printing Functions ---------------------------------------------------------
+
+"""
+===========================================================================================================================
+--------------------------------------- Output Printing Functions ---------------------------------------------------------
+"""
+
 
 trunc_val=3
 
@@ -219,13 +224,8 @@ def print_MOS_parameters(mos_parameters):
 def print_circuit_parameters(circuit_parameters):
 	print ('\n____________________________________________________________________')
 	print ('-------------------------Circuit Parameters-------------------------\n')
-	print ('Ld    = ',num_trunc(circuit_parameters['Ld'],trunc_val))
-	print ('Lg    = ',num_trunc(circuit_parameters['Lg'],trunc_val))
-	print ('Ls    = ',num_trunc(circuit_parameters['Ls'],trunc_val))
-	print ('Cs    = ',num_trunc(circuit_parameters['Cs'],trunc_val))
-	print ('W     = ', num_trunc(circuit_parameters['W'],trunc_val))
-	print ('Io    = ',num_trunc(circuit_parameters['Io'],trunc_val))
-	print ('Rb    = ', num_trunc(circuit_parameters['Rb'],trunc_val))
+	for param_name in circuit_parameters:
+		print(param_name,' = ',num_trunc(circuit_parameters[param_name],trunc_val))
 		
 #-----------------------------------------------------------------------------------------------
 # Printing the extracted parameters
@@ -234,58 +234,7 @@ def print_circuit_parameters(circuit_parameters):
 def print_extracted_outputs(extracted_parameters):
 	print ('\n____________________________________________________________________')
 	print ('-------------------------Extracted Outputs--------------------------\n')
-	
-	"""
-	print ('vd1      = ',num_trunc(extracted_parameters['vd1'],trunc_val))
-	print ('vg1      = ',num_trunc(extracted_parameters['vg1'],trunc_val))
-	
-	print ('isource  = ',num_trunc(extracted_parameters['gm1'],trunc_val))
-	print ('vsource  = ',num_trunc(extracted_parameters['gds1'],trunc_val))
-	print ('vt1      = ',num_trunc(extracted_parameters['vt'],trunc_val))
-	
-	print ('gm1      = ',num_trunc(extracted_parameters['gm1'],trunc_val))
-	print ('gds1     = ',num_trunc(extracted_parameters['gds1'],trunc_val))
-	print ('vt1      = ',num_trunc(extracted_parameters['vt'],trunc_val))
-	
-	
-	print ('vs       = ',num_trunc(extracted_parameters['vs'],trunc_val))
-	print ('Io       = ',num_trunc(extracted_parameters['Io'],trunc_val))
-	
-	print ('2*Io/gm  = ',num_trunc(2*extracted_parameters['Io']/extracted_parameters['gm1'],trunc_val))
-	print ('vgs-vt   = ',num_trunc(extracted_parameters['vg']-extracted_parameters['vs']-extracted_parameters['vt'],trunc_val))
-	print ('vdsat    = ',num_trunc(extracted_parameters['vdsat'],trunc_val))
-	
-	print ('cgs1     = ',num_trunc(extracted_parameters['cgs1'],trunc_val))
-	print ('cgd1     = ',num_trunc(extracted_parameters['cgd1'],trunc_val))
-	
-	print ('iip3_dbm = ',num_trunc(extracted_parameters['iip3_dbm'],trunc_val)
-	print ('s11_db   = ',num_trunc(extracted_parameters['s11_db'],trunc_val))
-	print ('Gain_db  = ',num_trunc(extracted_parameters['gain_db'],trunc_val))
-	print ('NF_db    = ',num_trunc(extracted_parameters['nf_db'],trunc_val))
-	"""
-	
 	for param_name in extracted_parameters:
 		print(param_name,' = ',num_trunc(extracted_parameters[param_name],trunc_val))
-	
-
-	
-	
-	
-	
-#-----------------------------------------------------------------------------------------------
-# Printing the extracted parameters for main optimization
-# Inputs  : extracted_parameters
-# Outputs : NONE
-def print_extracted_outputs_optimization(extracted_parameters):
-	print ('\n____________________________________________________________________')
-	print ('-------------------------Extracted Outputs--------------------------\n')
-	print ('Io       = ',num_trunc(extracted_parameters['Io'],trunc_val))
-	print ('iip3_dbm = ',num_trunc(extracted_parameters['iip3_dbm'],trunc_val))
-	print ('s11_db   = ',num_trunc(extracted_parameters['s11_db'],trunc_val))
-	print ('Gain_db  = ',num_trunc(extracted_parameters['gain_db'],trunc_val))
-	print ('NF_db    = ',num_trunc(extracted_parameters['nf_db'],trunc_val))
-	print ('gm1      = ',num_trunc(extracted_parameters['gm1'],trunc_val))
-	print ('vgs-vt   = ',num_trunc(extracted_parameters['vg']-extracted_parameters['vs']-extracted_parameters['vt'],trunc_val))
-	print ('vdsat    = ',num_trunc(extracted_parameters['vdsat'],trunc_val))
 	
 #===========================================================================================================================
