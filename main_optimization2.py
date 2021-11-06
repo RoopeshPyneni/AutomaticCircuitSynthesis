@@ -123,18 +123,8 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['Step1b_Limit']=5
-	optimization_input_parameters['pre_optimization']['Step2_Limit']=5
-	optimization_input_parameters['pre_optimization']['vdsat_reqd']=0.07
-
-	optimization_input_parameters['pre_optimization']['type']=2 #'manual'
-	optimization_input_parameters['pre_optimization']['gmrs_threshold']=0.2
-	optimization_input_parameters['pre_optimization']['vdsat_threshold']=0.02
-
-	optimization_input_parameters['pre_optimization']['C1_threshold']=100
-	optimization_input_parameters['pre_optimization']['C2_threshold']=100
-	optimization_input_parameters['pre_optimization']['Rbias_threshold']=100
-	optimization_input_parameters['pre_optimization']['Rbias_minimum']=1000
+	optimization_input_parameters['pre_optimization']['type']=1 #'manual'
+	
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Manual Hand Calculations
@@ -179,7 +169,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 
 	optimization_input_parameters['optimization']={}
 
-	optimization_input_parameters['optimization']['run']='YES'
+	optimization_input_parameters['optimization']['run']='NO'
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Parameters for Optimization
@@ -418,7 +408,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Test4'						# SET THE FILENAME HERE
+	filename=f_directory+'Test_HCI_Step2'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=5	
 	# ------- Set Any Additional Parameters Here --------
 	

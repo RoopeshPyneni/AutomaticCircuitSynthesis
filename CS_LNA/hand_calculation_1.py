@@ -47,13 +47,15 @@ def calculate_Ld(Cload,fo):
 #-----------------------------------------------------------------------------------------------
 # Calculating gm
 # Outputs : gm
-def calculate_gm(gain,Rd):
+def calculate_gm(gain,Ld,fo):
+    Rd=2*np.pi*fo*Ld*15
     return gain/(2*Rd*2.5)
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Cgs
 # Outputs : cgs
-def calculate_cgs(Rs,Rd,F,fo,gm):
+def calculate_cgs(Rs,Ld,F,fo,gm):
+    Rd=2*np.pi*fo*Ld*15
     wo=2*np.pi*fo
     wt=wo*np.sqrt((2*gm*Rs+4*Rs/Rd)/(F-1))
     cgs=gm/wt
@@ -111,8 +113,8 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
     # Calculating the circuit parameters
     circuit_parameters={}
     circuit_parameters['Ld']=calculate_Ld(Cload,fo)
-    gm=calculate_gm(gain,circuit_parameters['Rd'])
-    cgs=calculate_cgs(Rs,circuit_parameters['Rd'],F,fo,gm)
+    gm=calculate_gm(gain,circuit_parameters['Ld'],fo)
+    cgs=calculate_cgs(Rs,circuit_parameters['Ld'],F,fo,gm)
     circuit_parameters['W']=calculate_W(cgs,Lmin,Cox)
     circuit_parameters['Io']=calculate_Io(gm,un,Cox,circuit_parameters['W'],Lmin)
     circuit_parameters['Ls']=calculate_Ls(Rs,cgs,gm,fo)
