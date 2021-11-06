@@ -656,12 +656,11 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 	for param_name in cir_writing_dict:
 		write_dict[param_name]=circuit_parameters[cir_writing_dict[param_name]]
 	
-	write_dict['res_g']=circuit_parameters['Lg']*circuit_initialization_parameters['simulation']['netlist_parameters']['fund_1']*2*np.pi*50
-	write_dict['res_d']=circuit_parameters['Ld']*circuit_initialization_parameters['simulation']['netlist_parameters']['fund_1']*2*np.pi*15
-	write_dict['res_ls']=circuit_parameters['Ls']*circuit_initialization_parameters['simulation']['netlist_parameters']['fund_1']*2*np.pi*15
+	write_dict['res_g']=circuit_parameters['Lg']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi*50
+	write_dict['res_d']=circuit_parameters['Ld']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi*15
+	write_dict['res_ls']=circuit_parameters['Ls']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi*15
 
 	return write_dict
-
             
 #-----------------------------------------------------------------
 # Function that modifies the .scs file
@@ -916,18 +915,91 @@ def run_file(circuit_initialization_parameters):
 # Outputs : Extracted_Parameters
 def write_extract_basic(circuit_initialization_parameters):
 	
-	# Writing the simulation parameters
-	write_simulation_parameters(circuit_initialization_parameters)
-
 	# Writing the tcsh file for Basic Analysis
 	write_tcsh_file(circuit_initialization_parameters,'basic')
 
-	# Running netlist file
-	run_file(circuit_initialization_parameters)
+	f_operating=circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']
+	f_range=circuit_initialization_parameters['simulation']['standard_parameters']['f_range']
+	frequency_array=[f_operating-f_range,f_operating,f_operating+f_range]
 
-	# Extracting the Basic Parameters
-	basic_extracted_parameters=extract_basic_parameters(circuit_initialization_parameters)
+	basic_extracted_parameters={}
+
+	for i in range(len(frequency_array)):
+
+		# Writing the simulation parameters
+		circuit_initialization_parameters['simulation']['netlist_parameters']['fund_1']=frequency_array[i]
+		circuit_initialization_parameters['simulation']['netlist_parameters']['fund_2']=frequency_array[i]+1e6
+		write_simulation_parameters(circuit_initialization_parameters)
+
+		# Running netlist file
+		run_file(circuit_initialization_parameters)
+
+		# Extracting the Basic Parameters
+		basic_extracted_parameters[i]=extract_basic_parameters(circuit_initialization_parameters).copy()
 	
+	basic_extracted_parameters_select={
+		'vg1':'mid',
+		'vd1':'mid',
+		'i_source':'mid',
+		'v_source':'mid',
+		'p_source':'mid',
+		'Io':'mid',
+		'gm1':'mid',
+		'gds1':'mid',
+		'vth1':'mid',
+		'vdsat1':'mid',
+		'cgs1':'mid',
+		'cgd1':'mid',
+		'freq':'mid',
+		's12_db':'max',
+		's21_db':'max',
+		's22_db':'max',
+		'k':'min',
+		'nf_db':'max'
+	}
+	n_mid=len(frequency_array)//2
+	
+	final_extracted_parameters={}
+	for param in basic_extracted_parameters_select:
+		if basic_extracted_parameters_select[param]=='mid':
+			final_extracted_parameters[param]=basic_extracted_parameters[n_mid][param]
+		elif basic_extracted_parameters_select[param]=='min':
+			param_array=[]
+			for i in basic_extracted_parameters:
+				param_array.append(basic_extracted_parameters[i][param])
+			final_extracted_parameters[param]=min(param_array)
+		else:
+			param_array=[]
+			for i in basic_extracted_parameters:
+				param_array.append(basic_extracted_parameters[i][param])
+			final_extracted_parameters[param]=max(param_array)
+	
+	# Calculating the value of gain
+	gain_array=[]
+	gain_phase_array=[]
+	for i in basic_extracted_parameters:
+		gain_array.append(basic_extracted_parameters[i]['gain_db'])
+		gain_phase_array.append(basic_extracted_parameters[i]['gain_phase'])
+	gain_min=min(gain_array)
+	gain_index=gain_array.index(gain_min)
+	final_extracted_parameters['gain']=gain_min
+	final_extracted_parameters['gain_phase']=basic_extracted_parameters[gain_index]['gain_phase']
+
+	# Calculating the value of s11
+	s11_array=[]
+	ZR_array=[]
+	ZI_array=[]
+	for i in basic_extracted_parameters:
+		s11_array.append(basic_extracted_parameters[i]['s11_db'])
+		ZR_array.append(basic_extracted_parameters[i]['Zin_R'])
+		ZI_array.append(basic_extracted_parameters[i]['Zin_I'])
+	s11_max=max(s11_array)
+	s11_index=s11_array.index(s11_max)
+	final_extracted_parameters['s11_db']=gain_min
+	final_extracted_parameters['Zin_R']=basic_extracted_parameters[s11_index]['Zin_R']
+	final_extracted_parameters['Zin_I']=basic_extracted_parameters[s11_index]['Zin_I']
+	
+
 	return basic_extracted_parameters
 
 #-----------------------------------------------------------------------------------------------
@@ -935,58 +1007,74 @@ def write_extract_basic(circuit_initialization_parameters):
 # Inputs  : Circuit_Parameters, circuit_initialization_parameters
 # Outputs : Extracted_Parameters
 def write_extract_iip3(circuit_initialization_parameters):
+
+	f_operating=circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']
+	f_range=circuit_initialization_parameters['simulation']['standard_parameters']['f_range']
+	frequency_array=[f_operating-f_range,f_operating,f_operating+f_range]
+
+	iip3_array=[]
 	
 	if circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']=='basic':
 		
-		pin=circuit_initialization_parameters['simulation']['standard_parameters']['pin_fixed']
-		circuit_initialization_parameters['simulation']['netlist_parameters']['pin']=pin
-		
-		# Writing the simulation parameters
-		write_simulation_parameters(circuit_initialization_parameters)
-
 		# Writing the tcsh file for Basic Analysis
 		write_tcsh_file(circuit_initialization_parameters,'iip3')
 
-		# Running netlist file
-		run_file(circuit_initialization_parameters)
+		for freq in frequency_array:
 
-		# Extracting Vout Magnitude
-		file_name=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']+'/circ.raw/hb_test.fd.qpss_hb'
-		vout_fund_mag,vout_im3_mag=extract_vout_magnitude(file_name,circuit_initialization_parameters)
-
-		# Calculating the iip3
-		iip3=calculate_iip3_single_point(vout_fund_mag,vout_im3_mag,pin)
-
-	else:
-		pin_start=circuit_initialization_parameters['simulation']['standard_parameters']['pin_start']
-		pin_stop=circuit_initialization_parameters['simulation']['standard_parameters']['pin_stop']
-		pin_points=circuit_initialization_parameters['simulation']['standard_parameters']['pin_points']
-
-		pin=np.linspace(pin_start,pin_stop,pin_points)
-		
-		vout_fund_mag=np.zeros(pin_points,dtype=float)
-		vout_im3_mag=np.zeros(pin_points,dtype=float)
-
-		for i in range(pin_points):
-		
-			circuit_initialization_parameters['simulation']['netlist_parameters']['pin']=pin[i]
+			pin=circuit_initialization_parameters['simulation']['standard_parameters']['pin_fixed']
+			circuit_initialization_parameters['simulation']['netlist_parameters']['pin']=pin
 			
 			# Writing the simulation parameters
+			circuit_initialization_parameters['simulation']['netlist_parameters']['fund_1']=freq
+			circuit_initialization_parameters['simulation']['netlist_parameters']['fund_2']=freq+1e6
 			write_simulation_parameters(circuit_initialization_parameters)
-
-			# Writing the tcsh file for Basic Analysis
-			write_tcsh_file(circuit_initialization_parameters,'iip3')
 
 			# Running netlist file
 			run_file(circuit_initialization_parameters)
 
 			# Extracting Vout Magnitude
 			file_name=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']+'/circ.raw/hb_test.fd.qpss_hb'
-			vout_fund_mag[i],vout_im3_mag[i]=extract_vout_magnitude(file_name,circuit_initialization_parameters)
+			vout_fund_mag,vout_im3_mag=extract_vout_magnitude(file_name,circuit_initialization_parameters)
 
-		iip3=calculate_iip3_multiple_points(circuit_initialization_parameters,vout_fund_mag,vout_im3_mag,pin)
+			# Calculating the iip3
+			iip3_array.append(calculate_iip3_single_point(vout_fund_mag,vout_im3_mag,pin))
 
-	iip3_extracted_parameters={'iip3_dbm':iip3}
+	else:
+
+		for freq in frequency_array:
+
+			circuit_initialization_parameters['simulation']['netlist_parameters']['fund_1']=freq
+			circuit_initialization_parameters['simulation']['netlist_parameters']['fund_2']=freq+1e6
+
+			pin_start=circuit_initialization_parameters['simulation']['standard_parameters']['pin_start']
+			pin_stop=circuit_initialization_parameters['simulation']['standard_parameters']['pin_stop']
+			pin_points=circuit_initialization_parameters['simulation']['standard_parameters']['pin_points']
+
+			pin=np.linspace(pin_start,pin_stop,pin_points)
+			
+			vout_fund_mag=np.zeros(pin_points,dtype=float)
+			vout_im3_mag=np.zeros(pin_points,dtype=float)
+
+			for i in range(pin_points):
+			
+				circuit_initialization_parameters['simulation']['netlist_parameters']['pin']=pin[i]
+				
+				# Writing the simulation parameters
+				write_simulation_parameters(circuit_initialization_parameters)
+
+				# Writing the tcsh file for Basic Analysis
+				write_tcsh_file(circuit_initialization_parameters,'iip3')
+
+				# Running netlist file
+				run_file(circuit_initialization_parameters)
+
+				# Extracting Vout Magnitude
+				file_name=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']+'/circ.raw/hb_test.fd.qpss_hb'
+				vout_fund_mag[i],vout_im3_mag[i]=extract_vout_magnitude(file_name,circuit_initialization_parameters)
+
+			iip3_array.append(calculate_iip3_multiple_points(circuit_initialization_parameters,vout_fund_mag,vout_im3_mag,pin))
+
+	iip3_extracted_parameters={'iip3_dbm':min(iip3_array)}
 	
 	return iip3_extracted_parameters
 
