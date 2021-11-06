@@ -70,25 +70,23 @@ class Circuit():
 		self.circuit_parameters=circuit_parameters
 
 	def update_simulation_parameters(self,simulation_parameters):
-		if 'parameters_list' in simulation_parameters:
-			for param_name in simulation_parameters['parameters_list']:
-				self.circuit_initialization_parameters['simulation']['parameters_list'][param_name]=simulation_parameters['parameters_list'][param_name]
+		if 'netlist_parameters' in simulation_parameters:
+			for param_name in simulation_parameters['netlist_parameters']:
+				self.circuit_initialization_parameters['simulation']['netlist_parameters'][param_name]=simulation_parameters['netlist_parameters'][param_name]
 		
-		for param_name in simulation_parameters:
-			if param_name != 'parameters_list':
-				self.circuit_initialization_parameters['simulation'][param_name]=simulation_parameters[param_name]
+		if 'standard_parameters' in simulation_parameters:
+			for param_name in simulation_parameters['standard_parameters']:
+				self.circuit_initialization_parameters['simulation']['standard_parameters'][param_name]=simulation_parameters['standard_parameters'][param_name]
 	
 	def write_simulation_parameters(self):
 		write_simulation_parameters(self.circuit_initialization_parameters)
 	
 	def update_temp(self,temp):
-		self.circuit_initialization_parameters['simulation']['parameters_list']['cir_temp']=temp
+		self.circuit_initialization_parameters['simulation']['netlist_parameters']['cir_temp']=temp
 	
 	def reset_temp(self):
-		self.circuit_initialization_parameters['simulation']['parameters_list']['cir_temp']=self.circuit_initialization_parameters['simulation']['std_temp']	
+		self.circuit_initialization_parameters['simulation']['netlist_parameters']['cir_temp']=self.circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']	
 
-	def get_extracted_parameters(self):
-		return self.extracted_parameters
 
 
 #===========================================================================================================================
@@ -212,7 +210,7 @@ def extract_file(file_name):
 def extract_dc_param(circuit_initialization_parameters):
 
 	# Getting the filename
-	file_name=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/dc.out'
+	file_name=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']+'/dc.out'
 	lines=extract_file(file_name)
 	
 	extracted_parameters={}
@@ -247,7 +245,7 @@ def extract_dc_param(circuit_initialization_parameters):
 def extract_ac_param(circuit_initialization_parameters):
 
 	# Getting the filename
-	file_name=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/ac.out'
+	file_name=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']+'/ac.out'
 	lines=extract_file(file_name)
 	
 	extracted_parameters={}
@@ -303,7 +301,7 @@ def calculate_gain_phase(vout_re,vout_im,vin_re,vin_im):
 def extract_sp_param(circuit_initialization_parameters):
 
 	# Getting the filename
-	file_name=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/sp.out'
+	file_name=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']+'/sp.out'
 	lines=extract_file(file_name)
 	
 	extracted_parameters={}
@@ -411,7 +409,7 @@ def calculate_Z(s11_db,s11_ph):
 def extract_noise_param(circuit_initialization_parameters):
 
 	# Getting the filename
-	file_name=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/noise.out'
+	file_name=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']+'/noise.out'
 	lines=extract_file(file_name)
 	
 	extracted_parameters={}
@@ -480,8 +478,8 @@ def calculate_iip3_multiple_points(circuit_initialization_parameters,vout_fund_m
 	vout_fund_log=20*np.log10(vout_fund_mag)
 	vout_im3_log=20*np.log10(vout_im3_mag)
 
-	n_pin=circuit_initialization_parameters['simulation']['pin_points']
-	n_points=circuit_initialization_parameters['simulation']['iip3_calc_points']
+	n_pin=circuit_initialization_parameters['simulation']['standard_parameters']['pin_points']
+	n_points=circuit_initialization_parameters['simulation']['standard_parameters']['iip3_calc_points']
 	
 	# Creating arrays for slopes and y-intercepts of fundamental and im3 components
 	fund_slope=np.zeros(n_pin+1-n_points,dtype=float)
@@ -549,8 +547,8 @@ def extract_vout_magnitude(file_name,circuit_initialization_parameters):
 
 	lines=extract_file(file_name)
 
-	fund_1=circuit_initialization_parameters['simulation']['parameters_list']['fund_1']
-	fund_2=circuit_initialization_parameters['simulation']['parameters_list']['fund_2']
+	fund_1=circuit_initialization_parameters['simulation']['netlist_parameters']['fund_1']
+	fund_2=circuit_initialization_parameters['simulation']['netlist_parameters']['fund_2']
 
 	f_im3=2*fund_2-fund_1
 	f_error=(fund_2-fund_1)/100
@@ -658,9 +656,9 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 	for param_name in cir_writing_dict:
 		write_dict[param_name]=circuit_parameters[cir_writing_dict[param_name]]
 	
-	write_dict['res_g']=circuit_parameters['Lg']*circuit_initialization_parameters['simulation']['parameters_list']['fund_1']*2*np.pi*50
-	write_dict['res_d']=circuit_parameters['Ld']*circuit_initialization_parameters['simulation']['parameters_list']['fund_1']*2*np.pi*15
-	write_dict['res_ls']=circuit_parameters['Ls']*circuit_initialization_parameters['simulation']['parameters_list']['fund_1']*2*np.pi*15
+	write_dict['res_g']=circuit_parameters['Lg']*circuit_initialization_parameters['simulation']['netlist_parameters']['fund_1']*2*np.pi*50
+	write_dict['res_d']=circuit_parameters['Ld']*circuit_initialization_parameters['simulation']['netlist_parameters']['fund_1']*2*np.pi*15
+	write_dict['res_ls']=circuit_parameters['Ls']*circuit_initialization_parameters['simulation']['netlist_parameters']['fund_1']*2*np.pi*15
 
 	return write_dict
 
@@ -675,8 +673,8 @@ def write_circuit_parameters(circuit_parameters,circuit_initialization_parameter
 	write_dict=dict_convert(circuit_parameters,circuit_initialization_parameters)
 	
 	# Getting the filenames
-	filename1=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/circ.scs'
-	filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
+	filename1=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']+'/circ.scs'
+	filename2=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']+'/circ.scs'
 
 	# We will write the new values to the Basic Circuit
 	f=open(filename1,'r+')
@@ -713,11 +711,11 @@ def write_MOS_parameters(circuit_initialization_parameters):
 		'len':circuit_initialization_parameters['MOS']['Lmin'],
 		'v_dd':circuit_initialization_parameters['MOS']['Vdd'],
 	}
-	process_corner=circuit_initialization_parameters['simulation']['process_corner']
+	process_corner=circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
 
 	# Getting the filenames
-	filename1=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/circ.scs'
-	filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
+	filename1=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']+'/circ.scs'
+	filename2=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']+'/circ.scs'
 
 	# Writing the MOS Parameters to Basic File
 	f=open(filename1,'r+')
@@ -768,7 +766,7 @@ def write_MOS_parameters(circuit_initialization_parameters):
 			if "parameters "+param_name+'=' in line:
 				line=line.replace(line,print_param(param_name,write_dict[param_name]))
 		
-		if 'hb_test' in line and 'errpreset=conservative' in line and circuit_initialization_parameters['simulation']['conservative']=='NO':
+		if 'hb_test' in line and 'errpreset=conservative' in line and circuit_initialization_parameters['simulation']['standard_parameters']['conservative']=='NO':
 			line_split=line.split()
 			line=''
 			for word in line_split:
@@ -776,7 +774,7 @@ def write_MOS_parameters(circuit_initialization_parameters):
 					line=line+word+' '
 			line=line+'\n'
 		
-		elif 'hb_test' in line and 'errpreset=conservative' not in line and circuit_initialization_parameters['simulation']['conservative']=='YES':
+		elif 'hb_test' in line and 'errpreset=conservative' not in line and circuit_initialization_parameters['simulation']['standard_parameters']['conservative']=='YES':
 			line=line[:-1]+' errpreset=conservative \n'
 
 		if write_check==1:
@@ -795,13 +793,13 @@ def write_simulation_parameters(circuit_initialization_parameters):
 	
 	# Adding simulation_parameters to write_dict
 	write_dict={}
-	for param_name in circuit_initialization_parameters['simulation']['parameters_list']:
-		write_dict[param_name]=circuit_initialization_parameters['simulation']['parameters_list'][param_name]
+	for param_name in circuit_initialization_parameters['simulation']['netlist_parameters']:
+		write_dict[param_name]=circuit_initialization_parameters['simulation']['netlist_parameters'][param_name]
 	process_corner=circuit_initialization_parameters['simulation']['process_corner']
 
 	# Getting the filenames
-	filename1=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'/circ.scs'
-	filename2=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.scs'
+	filename1=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']+'/circ.scs'
+	filename2=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']+'/circ.scs'
 
 	# Writing the simulation parameters to Basic File
 	f=open(filename1,'r+')
@@ -852,7 +850,7 @@ def write_simulation_parameters(circuit_initialization_parameters):
 			if "parameters "+param_name+'=' in line:
 				line=line.replace(line,print_param(param_name,write_dict[param_name]))
 				
-		if 'hb_test' in line and 'errpreset=conservative' in line and circuit_initialization_parameters['simulation']['conservative']=='NO':
+		if 'hb_test' in line and 'errpreset=conservative' in line and circuit_initialization_parameters['simulation']['standard_parameters']['conservative']=='NO':
 			line_split=line.split()
 			line=''
 			for word in line_split:
@@ -860,7 +858,7 @@ def write_simulation_parameters(circuit_initialization_parameters):
 					line=line+word+' '
 			line=line+'\n'
 		
-		elif 'hb_test' in line and 'errpreset=conservative' not in line and circuit_initialization_parameters['simulation']['conservative']=='YES':
+		elif 'hb_test' in line and 'errpreset=conservative' not in line and circuit_initialization_parameters['simulation']['standard_parameters']['conservative']=='YES':
 			line=line[:-1]+' errpreset=conservative \n'
 			
 		
@@ -877,7 +875,7 @@ def write_simulation_parameters(circuit_initialization_parameters):
 # Outputs : NONE
 def write_tcsh_file(circuit_initialization_parameters,optimiztion_type):
 	
-	filename=circuit_initialization_parameters['simulation']['tcsh']
+	filename=circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']
 	f=open(filename,'r+')
 	s=''
 	
@@ -885,9 +883,9 @@ def write_tcsh_file(circuit_initialization_parameters,optimiztion_type):
 	s=s+'source ~/.cshrc\n'
 	
 	if optimiztion_type=='basic':
-		s=s+'cd '+circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['basic_circuit']+'\n'
+		s=s+'cd '+circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']+'\n'
 	else:
-		s=s+'cd '+circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'\n'
+		s=s+'cd '+circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']+'\n'
 	
 	s=s+'spectre circ.scs =log circ_log.txt\n'
 	s=s+'exit'
@@ -910,7 +908,7 @@ def write_tcsh_file(circuit_initialization_parameters,optimiztion_type):
 # Outputs : NONE
 def run_file(circuit_initialization_parameters):
 	os.system('cd /home/ee18b028/cadence_project')
-	os.system('tcsh '+circuit_initialization_parameters['simulation']['tcsh'])	# This is the command to run the spectre file
+	os.system('tcsh '+circuit_initialization_parameters['simulation']['standard_parameters']['tcsh'])	# This is the command to run the spectre file
 	
 #-----------------------------------------------------------------------------------------------
 # This function will perform simulation for Basic Parameters
@@ -938,10 +936,10 @@ def write_extract_basic(circuit_initialization_parameters):
 # Outputs : Extracted_Parameters
 def write_extract_iip3(circuit_initialization_parameters):
 	
-	if circuit_initialization_parameters['simulation']['iip3_type']=='basic':
+	if circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']=='basic':
 		
-		pin=circuit_initialization_parameters['simulation']['pin_fixed']
-		circuit_initialization_parameters['simulation']['parameters_list']['pin']=pin
+		pin=circuit_initialization_parameters['simulation']['standard_parameters']['pin_fixed']
+		circuit_initialization_parameters['simulation']['netlist_parameters']['pin']=pin
 		
 		# Writing the simulation parameters
 		write_simulation_parameters(circuit_initialization_parameters)
@@ -953,16 +951,16 @@ def write_extract_iip3(circuit_initialization_parameters):
 		run_file(circuit_initialization_parameters)
 
 		# Extracting Vout Magnitude
-		file_name=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.raw/hb_test.fd.qpss_hb'
+		file_name=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']+'/circ.raw/hb_test.fd.qpss_hb'
 		vout_fund_mag,vout_im3_mag=extract_vout_magnitude(file_name,circuit_initialization_parameters)
 
 		# Calculating the iip3
 		iip3=calculate_iip3_single_point(vout_fund_mag,vout_im3_mag,pin)
 
 	else:
-		pin_start=circuit_initialization_parameters['simulation']['pin_start']
-		pin_stop=circuit_initialization_parameters['simulation']['pin_stop']
-		pin_points=circuit_initialization_parameters['simulation']['pin_points']
+		pin_start=circuit_initialization_parameters['simulation']['standard_parameters']['pin_start']
+		pin_stop=circuit_initialization_parameters['simulation']['standard_parameters']['pin_stop']
+		pin_points=circuit_initialization_parameters['simulation']['standard_parameters']['pin_points']
 
 		pin=np.linspace(pin_start,pin_stop,pin_points)
 		
@@ -971,7 +969,7 @@ def write_extract_iip3(circuit_initialization_parameters):
 
 		for i in range(pin_points):
 		
-			circuit_initialization_parameters['simulation']['parameters_list']['pin']=pin[i]
+			circuit_initialization_parameters['simulation']['netlist_parameters']['pin']=pin[i]
 			
 			# Writing the simulation parameters
 			write_simulation_parameters(circuit_initialization_parameters)
@@ -983,7 +981,7 @@ def write_extract_iip3(circuit_initialization_parameters):
 			run_file(circuit_initialization_parameters)
 
 			# Extracting Vout Magnitude
-			file_name=circuit_initialization_parameters['simulation']['directory']+circuit_initialization_parameters['simulation']['iip3_circuit']+'/circ.raw/hb_test.fd.qpss_hb'
+			file_name=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']+'/circ.raw/hb_test.fd.qpss_hb'
 			vout_fund_mag[i],vout_im3_mag[i]=extract_vout_magnitude(file_name,circuit_initialization_parameters)
 
 		iip3=calculate_iip3_multiple_points(circuit_initialization_parameters,vout_fund_mag,vout_im3_mag,pin)

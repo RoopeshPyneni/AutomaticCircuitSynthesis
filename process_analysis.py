@@ -134,10 +134,8 @@ def process_analysis(cir,optimization_input_parameters,timing_results):
 	# Performing the analysis
 	for process_corner in process_corner_list:
 		extracted_parameters_iter[process_corner]={}
-		#optimization_input_parameters['simulation']['process_corner']=process_corner
-		cir.circuit_initialization_parameters['simulation']['process_corner']=process_corner
+		cir.circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']=process_corner
 		write_extracted_parameters_initial(cir.extracted_parameters,optimization_input_parameters,process_corner)
-		#sp.write_simulation_parameters(optimization_input_parameters)
 		cir.write_simulation_parameters()
 		for temp in temp_array:
 			cir.update_temp(temp)
