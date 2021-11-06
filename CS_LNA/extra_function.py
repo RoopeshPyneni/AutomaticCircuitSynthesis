@@ -235,6 +235,7 @@ def print_extracted_outputs(extracted_parameters):
 	print ('\n____________________________________________________________________')
 	print ('-------------------------Extracted Outputs--------------------------\n')
 	for param_name in extracted_parameters:
+		print(param_name,' = ',extracted_parameters[param_name])
 		print(param_name,' = ',num_trunc(extracted_parameters[param_name],trunc_val))
 	
 #===========================================================================================================================

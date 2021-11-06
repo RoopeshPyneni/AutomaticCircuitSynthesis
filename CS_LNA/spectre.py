@@ -982,7 +982,9 @@ def write_extract_basic(circuit_initialization_parameters):
 		gain_phase_array.append(basic_extracted_parameters[i]['gain_phase'])
 	gain_min=min(gain_array)
 	gain_index=gain_array.index(gain_min)
-	final_extracted_parameters['gain']=gain_min
+	#if isinstance(gain_index,list)==True:
+	#	gain_index=min(gain_index)
+	final_extracted_parameters['gain_db']=gain_min
 	final_extracted_parameters['gain_phase']=basic_extracted_parameters[gain_index]['gain_phase']
 
 	# Calculating the value of s11
@@ -995,12 +997,14 @@ def write_extract_basic(circuit_initialization_parameters):
 		ZI_array.append(basic_extracted_parameters[i]['Zin_I'])
 	s11_max=max(s11_array)
 	s11_index=s11_array.index(s11_max)
-	final_extracted_parameters['s11_db']=gain_min
+	#if isinstance(s11_index,list)==True:
+	#	s11_index=min(s11_index)
+	final_extracted_parameters['s11_db']=s11_max
 	final_extracted_parameters['Zin_R']=basic_extracted_parameters[s11_index]['Zin_R']
 	final_extracted_parameters['Zin_I']=basic_extracted_parameters[s11_index]['Zin_I']
 	
 
-	return basic_extracted_parameters
+	return final_extracted_parameters
 
 #-----------------------------------------------------------------------------------------------
 # This function will perform simulation for IIP3 Parameters
