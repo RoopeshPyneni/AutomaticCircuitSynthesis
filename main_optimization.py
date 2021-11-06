@@ -308,7 +308,7 @@ def get_temperature_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['temperature_analysis']={}
 
-	optimization_input_parameters['temperature_analysis']['run']='NO'
+	optimization_input_parameters['temperature_analysis']['run']='YES'
 
 	optimization_input_parameters['temperature_analysis']['start_temp']=-40
 	optimization_input_parameters['temperature_analysis']['stop_temp']=120
@@ -426,14 +426,14 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Test5'						# SET THE FILENAME HERE
+	filename=f_directory+'Test_Simulation_Parameters'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=300	
 	# ------- Set Any Additional Parameters Here --------
 	
 
 	# ------- DON'T CHANGE THESE LINES -------------
 	optimization_input_parameters['filename']['output']=filename
-	co.complete_optimization(circuit_initialization_parameters,optimization_input_parameters)			
+	co.complete_optimization(circuit_initialization_parameters,optimization_input_parameters,'CG_LNA')			
 	# ------- DON'T CHANGE THESE LINES -------------		
 
 

@@ -795,7 +795,7 @@ def write_simulation_parameters(circuit_initialization_parameters):
 	write_dict={}
 	for param_name in circuit_initialization_parameters['simulation']['netlist_parameters']:
 		write_dict[param_name]=circuit_initialization_parameters['simulation']['netlist_parameters'][param_name]
-	process_corner=circuit_initialization_parameters['simulation']['process_corner']
+	process_corner=circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
 
 	# Getting the filenames
 	filename1=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']+'/circ.scs'
