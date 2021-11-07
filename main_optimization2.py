@@ -134,7 +134,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']=1 #'manual'
+	optimization_input_parameters['pre_optimization']['type']=2 #'manual'
 	
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -234,7 +234,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Iterations
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=200
+	optimization_input_parameters['optimization'][1]['max_iteration']=3
 	#optimization_input_parameters['optimization'][2]={}
 	#optimization_input_parameters['optimization'][2]['max_iteration']=100
 
@@ -385,8 +385,8 @@ optimization_name='LOSS'
 # ---------- MOSFET Parameters ----------
 #get_mos_parameters(circuit_initialization_parameters,'TSMC180')
 #get_mos_parameters(circuit_initialization_parameters,'TSMC65')
-#get_mos_parameters(circuit_initialization_parameters,'TSMC65_2')
-get_mos_parameters(circuit_initialization_parameters,'IBM130')
+get_mos_parameters(circuit_initialization_parameters,'TSMC65_2')
+#get_mos_parameters(circuit_initialization_parameters,'IBM130')
 
 # ---------- Output Conditions ----------
 fo=1e9
@@ -423,7 +423,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Test_Multiple_Frequency_Optimization'						# SET THE FILENAME HERE
+	filename=f_directory+'TSMC_65_Optimization_1'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=5	
 	# ------- Set Any Additional Parameters Here --------
 	

@@ -546,7 +546,7 @@ def check_freq(f_test,f_target,f_error):
 def extract_vout_magnitude(file_name,circuit_initialization_parameters):
 
 	lines=extract_file(file_name)
-
+	
 	fund_1=circuit_initialization_parameters['simulation']['netlist_parameters']['fund_1']
 	fund_2=circuit_initialization_parameters['simulation']['netlist_parameters']['fund_2']
 
@@ -1089,6 +1089,7 @@ def write_extract_iip3(circuit_initialization_parameters):
 def write_extract(circuit_parameters,circuit_initialization_parameters):
 	
 	# Writing to netlist file
+	print(circuit_parameters)
 	write_circuit_parameters(circuit_parameters,circuit_initialization_parameters)
 
 	# Extracting the Basic Parameters
