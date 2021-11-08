@@ -1090,7 +1090,6 @@ def write_extract_iip3(circuit_initialization_parameters):
 def write_extract(circuit_parameters,circuit_initialization_parameters):
 	
 	# Writing to netlist file
-	print(circuit_parameters)
 	write_circuit_parameters(circuit_parameters,circuit_initialization_parameters)
 
 	# Extracting the Basic Parameters
