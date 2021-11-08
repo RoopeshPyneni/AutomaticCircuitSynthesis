@@ -195,7 +195,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization']['loss_type']=0
 	optimization_input_parameters['optimization']['update_check']=0
 
-	optimization_input_parameters['optimization']['optimizing_parameters']=['Lg','Io','W','Ls','Ld']
+	optimization_input_parameters['optimization']['optimizing_parameters']=['Lg','Io','W','Ls','Ld','C1']
 	optimization_input_parameters['optimization']['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
 
 	if optimization_name=='LOSS':
@@ -423,7 +423,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'TSMC_65_Optimization_1'						# SET THE FILENAME HERE
+	filename=f_directory+'TSMC_65_with_C1_Optimization_1'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=5	
 	# ------- Set Any Additional Parameters Here --------
 	
