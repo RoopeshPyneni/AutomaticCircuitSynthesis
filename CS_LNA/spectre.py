@@ -43,6 +43,7 @@ import fileinput
 import os
 import multiprocessing as mp
 import CS_LNA.extra_function as cff # type: ignore
+import copy
 
 """
 ====================================================================================================================================================================================
@@ -1083,7 +1084,7 @@ def write_extract_iip31(circuit_initialization_parameters):
 
 			iip3_array.append(calculate_iip3_multiple_points(circuit_initialization_parameters,vout_fund_mag,vout_im3_mag,pin))
 
-	iip3_extracted_parameters={'iip3_dbm':min(iip3_array)}
+	iip3_extracted_parameters={'iip3_dbm':iip3_array}
 	
 	return iip3_extracted_parameters
 
@@ -1165,7 +1166,7 @@ def write_extract_iip3(circuit_initialization_parameters):
 
 		iip3=calculate_iip3_multiple_points(circuit_initialization_parameters,vout_fund_mag,vout_im3_mag,pin)
 
-	iip3_extracted_parameters={'iip3_dbm':min(iip3)}
+	iip3_extracted_parameters={'iip3_dbm':iip3}
 	
 	return iip3_extracted_parameters
 
@@ -1357,34 +1358,44 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 	pool=mp.Pool()
 
 	# Creating new circuit parameter files
+	circuit_parameters_run={}
+	circuit_parameters_run[0]=circuit_parameters.copy()
+	circuit_parameters_run[1]=circuit_parameters.copy()
+	circuit_parameters_run[2]=circuit_parameters.copy()
 	circuit_initialization_parameters_run={}
+	
 
 	# Getting the values of frequency and range
 	f_operating=circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']
 	f_range=circuit_initialization_parameters['simulation']['standard_parameters']['f_range']
 
 	# Creating new circuit initialization parameters
-	circuit_initialization_parameters_run[0]=circuit_initialization_parameters.copy()
-	circuit_initialization_parameters_run[0]['simulation']['standard_parameters']['directory']=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+'T1/'
-	circuit_initialization_parameters_run[0]['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T1/spectre_run.tcsh'
+	circuit_initialization_parameters_run[0]={}
+	circuit_initialization_parameters_run[0]=copy.deepcopy(circuit_initialization_parameters)
+	circuit_initialization_parameters_run[0]['simulation']['standard_parameters']['directory']=circuit_initialization_parameters_run[0]['simulation']['standard_parameters']['directory']+'T1/'
+	circuit_initialization_parameters_run[0]['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters_run[0]['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T1/spectre_run.tcsh'
 	circuit_initialization_parameters_run[0]['simulation']['netlist_parameters']['fund_1']=f_operating-f_range
 	circuit_initialization_parameters_run[0]['simulation']['netlist_parameters']['fund_2']=f_operating-f_range+1e6
 
-	circuit_initialization_parameters_run[1]=circuit_initialization_parameters.copy()
-	circuit_initialization_parameters_run[1]['simulation']['standard_parameters']['directory']=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+'T2/'
-	circuit_initialization_parameters_run[1]['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T2/spectre_run.tcsh'
+
+	circuit_initialization_parameters_run[1]={}
+	circuit_initialization_parameters_run[1]=copy.deepcopy(circuit_initialization_parameters)
+	circuit_initialization_parameters_run[1]['simulation']['standard_parameters']['directory']=circuit_initialization_parameters_run[1]['simulation']['standard_parameters']['directory']+'T2/'
+	circuit_initialization_parameters_run[1]['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters_run[1]['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T2/spectre_run.tcsh'
 	circuit_initialization_parameters_run[1]['simulation']['netlist_parameters']['fund_1']=f_operating
 	circuit_initialization_parameters_run[1]['simulation']['netlist_parameters']['fund_2']=f_operating+1e6
+	
 
-	circuit_initialization_parameters_run[2]=circuit_initialization_parameters.copy()
-	circuit_initialization_parameters_run[2]['simulation']['standard_parameters']['directory']=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+'T3/'
-	circuit_initialization_parameters_run[2]['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T3/spectre_run.tcsh'
+	circuit_initialization_parameters_run[2]={}
+	circuit_initialization_parameters_run[2]=copy.deepcopy(circuit_initialization_parameters)
+	circuit_initialization_parameters_run[2]['simulation']['standard_parameters']['directory']=circuit_initialization_parameters_run[2]['simulation']['standard_parameters']['directory']+'T3/'
+	circuit_initialization_parameters_run[2]['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters_run[2]['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T3/spectre_run.tcsh'
 	circuit_initialization_parameters_run[2]['simulation']['netlist_parameters']['fund_1']=f_operating+f_range
 	circuit_initialization_parameters_run[2]['simulation']['netlist_parameters']['fund_2']=f_operating+f_range+1e6
 		
 
 	# Creating processes
-	results_async=[pool.apply_async(write_extract_single,args=(i,circuit_parameters,circuit_initialization_parameters_run[i])) for i in range(3)]
+	results_async=[pool.apply_async(write_extract_single,args=(i,circuit_parameters_run[i],circuit_initialization_parameters_run[i])) for i in range(3)]
 
 	extracted_parameters_combined={}
 	for r in results_async:
