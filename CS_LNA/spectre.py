@@ -1278,6 +1278,86 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 	with mp.Manager() as manager:
 		print('\n\n\nIn write_extract')
 
+		# Getting the values of frequency and range
+		f_operating=circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']
+		f_range=circuit_initialization_parameters['simulation']['standard_parameters']['f_range']
+
+		# Creating new circuit parameter files
+		circuit_parameters_run_1=manager.dict()
+		circuit_parameters_run_1=circuit_parameters.copy()
+
+		extracted_parameters_run_1=manager.dict()
+
+		circuit_initialization_parameters_run_1=manager.dict()
+		circuit_initialization_parameters_run_1=circuit_initialization_parameters.copy()
+		circuit_initialization_parameters_run_1['simulation']['standard_parameters']['directory']=circuit_initialization_parameters_run_1['simulation']['standard_parameters']['directory']+'T1/'
+		circuit_initialization_parameters_run_1['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters_run_1['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T1/spectre_run.tcsh'
+		circuit_initialization_parameters_run_1['simulation']['netlist_parameters']['fund_1']=f_operating-f_range
+		circuit_initialization_parameters_run_1['simulation']['netlist_parameters']['fund_2']=f_operating-f_range+1e6
+
+		print('\n\n\n')
+		print(circuit_initialization_parameters_run_1)
+
+		p1 = mp.Process(target=write_extract_single,args=(circuit_parameters_run_1,circuit_initialization_parameters_run_1,extracted_parameters_run_1))
+		p1.start()
+		p1.join()
+
+
+		circuit_parameters_run_2=manager.dict()
+		circuit_parameters_run_2=circuit_parameters.copy()
+
+		extracted_parameters_run_2=manager.dict()
+
+		circuit_initialization_parameters_run_2=manager.dict()
+		circuit_initialization_parameters_run_2=circuit_initialization_parameters.copy()
+		circuit_initialization_parameters_run_2['simulation']['standard_parameters']['directory']=circuit_initialization_parameters_run_2['simulation']['standard_parameters']['directory']+'T2/'
+		circuit_initialization_parameters_run_2['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters_run_2['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T2/spectre_run.tcsh'
+		circuit_initialization_parameters_run_2['simulation']['netlist_parameters']['fund_1']=f_operating
+		circuit_initialization_parameters_run_2['simulation']['netlist_parameters']['fund_2']=f_operating+1e6
+
+		print('\n\n\n')
+		print(circuit_initialization_parameters_run_2)
+
+		p2 = mp.Process(target=write_extract_single,args=(circuit_parameters_run_2,circuit_initialization_parameters_run_2,extracted_parameters_run_2))
+		p2.start()
+		p2.join()
+
+		circuit_parameters_run_3=manager.dict()
+		circuit_parameters_run_3=circuit_parameters.copy()
+		
+		extracted_parameters_run_3=manager.dict()
+		
+		circuit_initialization_parameters_run_3=manager.dict()
+		circuit_initialization_parameters_run_3=circuit_initialization_parameters.copy()
+		circuit_initialization_parameters_run_3['simulation']['standard_parameters']['directory']=circuit_initialization_parameters_run_3['simulation']['standard_parameters']['directory']+'T3/'
+		circuit_initialization_parameters_run_3['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters_run_3['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T3/spectre_run.tcsh'
+		circuit_initialization_parameters_run_3['simulation']['netlist_parameters']['fund_1']=f_operating+f_range
+		circuit_initialization_parameters_run_3['simulation']['netlist_parameters']['fund_2']=f_operating+f_range+1e6
+		
+		print('\n\n\n')
+		print(circuit_initialization_parameters_run_3)
+
+		# Creating processes
+		p3 = mp.Process(target=write_extract_single,args=(circuit_parameters_run_3,circuit_initialization_parameters_run_3,extracted_parameters_run_3))
+		p3.start()
+		p3.join()
+		
+		
+	final_extracted_parameters=get_final_extracted_parameters(extracted_parameters_run_1,extracted_parameters_run_2,extracted_parameters_run_3)
+
+	return final_extracted_parameters
+
+
+
+#-----------------------------------------------------------------------------------------------
+# This function will write the circuit parameters, run Eldo and extract the output parameters
+# Inputs  : Circuit_Parameters, circuit_initialization_parameters
+# Outputs : Extracted_Parameters
+def write_extract1(circuit_parameters,circuit_initialization_parameters):
+	
+	with mp.Manager() as manager:
+		print('\n\n\nIn write_extract')
+
 		# Creating new circuit parameter files
 		circuit_parameters_run_1=manager.dict()
 		circuit_parameters_run_1=circuit_parameters.copy()
