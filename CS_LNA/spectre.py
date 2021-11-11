@@ -1173,13 +1173,8 @@ def write_extract_iip3(circuit_initialization_parameters):
 # This function will write the circuit parameters, run Eldo and extract the output parameters
 # Inputs  : Circuit_Parameters, circuit_initialization_parameters
 # Outputs : Extracted_Parameters
-def write_extract_single(run_dictionary,i):
+def write_extract_single(i,circuit_parameters,circuit_initialization_parameters):
 	
-	# Getting the dictionaries
-	circuit_parameters=run_dictionary[i]['circuit_parameters']
-	circuit_initialization_parameters=run_dictionary[i]['circuit_initialization_parameters']
-	extracted_parameters=run_dictionary[i]['extracted_parameters']
-
 	# Writing to netlist file
 	write_circuit_parameters(circuit_parameters,circuit_initialization_parameters)
 
@@ -1194,18 +1189,15 @@ def write_extract_single(run_dictionary,i):
 	for param_name in iip3_extracted_parameters:
 		extracted_parameters[param_name]=iip3_extracted_parameters[param_name]
 
+	return (i,extracted_parameters)
+
 #-----------------------------------------------------------------------------------------------
 # This function will write the circuit parameters, run Eldo and extract the output parameters
 # Inputs  : Circuit_Parameters, circuit_initialization_parameters
 # Outputs : Extracted_Parameters
-def get_final_extracted_parameters(extracted_parameters_1,extracted_parameters_2,extracted_parameters_3):
+def get_final_extracted_parameters(extracted_parameters_combined):
 	
 	final_extracted_parameters={}
-
-	extracted_parameters_combined={}
-	extracted_parameters_combined[0]=extracted_parameters_1
-	extracted_parameters_combined[1]=extracted_parameters_2
-	extracted_parameters_combined[2]=extracted_parameters_3
 
 	extracted_parameters_select={
 		'vg1':'mid',
@@ -1229,7 +1221,7 @@ def get_final_extracted_parameters(extracted_parameters_1,extracted_parameters_2
 		'iip3_dbm':'max'
 	}
 
-	for param in extracted_parameters_1:
+	for param in extracted_parameters_combined[0]:
 		for i in range(3):
 			final_extracted_parameters[str(i)+'_'+param]=extracted_parameters_combined[i][param]
 	
@@ -1360,66 +1352,46 @@ def write_extract1(circuit_parameters,circuit_initialization_parameters):
 # Outputs : Extracted_Parameters
 def write_extract(circuit_parameters,circuit_initialization_parameters):
 	
-	with mp.Manager() as manager:
-		print('\n\n\nIn write_extract')
+	print('\n\n\nIn write_extract')
 
-		# Creating new circuit parameter files
-		run_dictionary=manager.dict()
+	pool=mp.Pool()
 
-		run_dictionary[0]={}
-		run_dictionary[1]={}
-		run_dictionary[2]={}
+	# Creating new circuit parameter files
+	circuit_initialization_parameters_run={}
 
-		run_dictionary[0]['circuit_parameters']=circuit_parameters.copy()
-		run_dictionary[1]['circuit_parameters']=circuit_parameters.copy()
-		run_dictionary[2]['circuit_parameters']=circuit_parameters.copy()
+	# Getting the values of frequency and range
+	f_operating=circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']
+	f_range=circuit_initialization_parameters['simulation']['standard_parameters']['f_range']
 
-		# Creating new extracted parameter files
-		run_dictionary[0]['extracted_parameters']={}
-		run_dictionary[1]['extracted_parameters']={}
-		run_dictionary[2]['extracted_parameters']={}
+	# Creating new circuit initialization parameters
+	circuit_initialization_parameters_run[0]=circuit_initialization_parameters.copy()
+	circuit_initialization_parameters_run[0]['simulation']['standard_parameters']['directory']=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+'T1/'
+	circuit_initialization_parameters_run[0]['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T1/spectre_run.tcsh'
+	circuit_initialization_parameters_run[0]['simulation']['netlist_parameters']['fund_1']=f_operating-f_range
+	circuit_initialization_parameters_run[0]['simulation']['netlist_parameters']['fund_2']=f_operating-f_range+1e6
 
-		# Getting the values of frequency and range
-		f_operating=circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']
-		f_range=circuit_initialization_parameters['simulation']['standard_parameters']['f_range']
+	circuit_initialization_parameters_run[1]=circuit_initialization_parameters.copy()
+	circuit_initialization_parameters_run[1]['simulation']['standard_parameters']['directory']=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+'T2/'
+	circuit_initialization_parameters_run[1]['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T2/spectre_run.tcsh'
+	circuit_initialization_parameters_run[1]['simulation']['netlist_parameters']['fund_1']=f_operating
+	circuit_initialization_parameters_run[1]['simulation']['netlist_parameters']['fund_2']=f_operating+1e6
 
-		# Creating new circuit initialization parameters
-		run_dictionary[0]['circuit_initialization_parameters']=circuit_initialization_parameters.copy()
-		run_dictionary[0]['circuit_initialization_parameters']['simulation']['standard_parameters']['directory']=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+'T1/'
-		run_dictionary[0]['circuit_initialization_parameters']['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T1/spectre_run.tcsh'
-		run_dictionary[0]['circuit_initialization_parameters']['simulation']['netlist_parameters']['fund_1']=f_operating-f_range
-		run_dictionary[0]['circuit_initialization_parameters']['simulation']['netlist_parameters']['fund_2']=f_operating-f_range+1e6
-
-		run_dictionary[1]['circuit_initialization_parameters']=circuit_initialization_parameters.copy()
-		run_dictionary[1]['circuit_initialization_parameters']['simulation']['standard_parameters']['directory']=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+'T2/'
-		run_dictionary[1]['circuit_initialization_parameters']['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T2/spectre_run.tcsh'
-		run_dictionary[1]['circuit_initialization_parameters']['simulation']['netlist_parameters']['fund_1']=f_operating
-		run_dictionary[1]['circuit_initialization_parameters']['simulation']['netlist_parameters']['fund_2']=f_operating+1e6
-
-		run_dictionary[2]['circuit_initialization_parameters']=circuit_initialization_parameters.copy()
-		run_dictionary[2]['circuit_initialization_parameters']['simulation']['standard_parameters']['directory']=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+'T3/'
-		run_dictionary[2]['circuit_initialization_parameters']['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T3/spectre_run.tcsh'
-		run_dictionary[2]['circuit_initialization_parameters']['simulation']['netlist_parameters']['fund_1']=f_operating+f_range
-		run_dictionary[2]['circuit_initialization_parameters']['simulation']['netlist_parameters']['fund_2']=f_operating+f_range+1e6
+	circuit_initialization_parameters_run[2]=circuit_initialization_parameters.copy()
+	circuit_initialization_parameters_run[2]['simulation']['standard_parameters']['directory']=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+'T3/'
+	circuit_initialization_parameters_run[2]['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T3/spectre_run.tcsh'
+	circuit_initialization_parameters_run[2]['simulation']['netlist_parameters']['fund_1']=f_operating+f_range
+	circuit_initialization_parameters_run[2]['simulation']['netlist_parameters']['fund_2']=f_operating+f_range+1e6
 		
 
-		# Creating processes
-		p1 = mp.Process(target=write_extract_single,args=(run_dictionary,0))
-		p2 = mp.Process(target=write_extract_single,args=(run_dictionary,1))
-		p3 = mp.Process(target=write_extract_single,args=(run_dictionary,2))
+	# Creating processes
+	results_async=[pool.apply_async(write_extract_single,args=(i,circuit_parameters,circuit_initialization_parameters_run[i])) for i in range(3)]
 
-		# starting process
-		p1.start()
-		p2.start()
-		p3.start()
+	extracted_parameters_combined={}
+	for r in results_async:
+		(i,extracted_parameters)=r.get()
+		extracted_parameters_combined[i]=extracted_parameters
 		
-		# wait until process is finished
-		p1.join()
-		p2.join()
-		p3.join()
-	
-		
-	final_extracted_parameters=get_final_extracted_parameters(run_dictionary[0]['extracted_parameters'],run_dictionary[1]['extracted_parameters'],run_dictionary[2]['extracted_parameters'])
+	final_extracted_parameters=get_final_extracted_parameters(extracted_parameters_combined)
 
 	return final_extracted_parameters
 
