@@ -1276,6 +1276,7 @@ def get_final_extracted_parameters(extracted_parameters_1,extracted_parameters_2
 def write_extract(circuit_parameters,circuit_initialization_parameters):
 	
 	with mp.Manager() as manager:
+		print('\n\n\nIn write_extract')
 
 		# Creating new circuit parameter files
 		circuit_parameters_run_1=manager.dict()
@@ -1317,6 +1318,13 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 		circuit_initialization_parameters_run_3['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters_run_3['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T3/spectre_run.tcsh'
 		circuit_initialization_parameters_run_3['simulation']['netlist_parameters']['fund_1']=f_operating+f_range
 		circuit_initialization_parameters_run_3['simulation']['netlist_parameters']['fund_2']=f_operating+f_range+1e6
+		
+		print('\n\n\n')
+		print(circuit_initialization_parameters_run_1)
+		print('\n\n\n')
+		print(circuit_initialization_parameters_run_2)
+		print('\n\n\n')
+		print(circuit_initialization_parameters_run_3)
 
 		# Creating processes
 		p1 = mp.Process(target=write_extract_single,args=(circuit_parameters_run_1,circuit_initialization_parameters_run_1,extracted_parameters_run_1))
@@ -1324,14 +1332,16 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 		p3 = mp.Process(target=write_extract_single,args=(circuit_parameters_run_3,circuit_initialization_parameters_run_3,extracted_parameters_run_3))
 
 		# starting process
-        p1.start()
-        p2.start()
-        p3.start()
-
-        # wait until process is finished
-        p1.join()
-        p2.join()
-        p3.join()
+		p1.start()
+		p2.start()
+		p3.start()
+		
+		# wait until process is finished
+		p1.join()
+		p2.join()
+		p3.join()
+		
+		
 		
 	final_extracted_parameters=get_final_extracted_parameters(extracted_parameters_run_1,extracted_parameters_run_2,extracted_parameters_run_3)
 
