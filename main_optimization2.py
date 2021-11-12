@@ -210,9 +210,9 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	loss_weights={}
 	loss_weights['gain_db']=1/10.0	
 	loss_weights['iip3_dbm']=1/10.0	
-	loss_weights['s11_db']=1/15.0	
+	loss_weights['s11_db']=3/15.0	
 	loss_weights['nf_db']=1/2.0	
-	loss_weights['Io']=1000	
+	loss_weights['Io']=100	
 	optimization_input_parameters['optimization']['loss_weights']=loss_weights
 
 
@@ -425,7 +425,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Optimization_with_multiple_frequencies_corrected'						# SET THE FILENAME HERE
+	filename=f_directory+'Optimization_with_multiple_frequencies_corrected_3'						# SET THE FILENAME HERE
 	optimization_input_parameters['optimization']['max_iteration']=5	
 	# ------- Set Any Additional Parameters Here --------
 	

@@ -62,10 +62,14 @@ class Circuit():
 		self.mos_parameters=calculate_mos_parameters(self.circuit_initialization_parameters)
 	
 	def run_circuit(self):
+		if self.circuit_parameters['W']>900e-6:
+			self.circuit_parameters['W']=850e-6
 		self.extracted_parameters=write_extract(self.circuit_parameters,self.circuit_initialization_parameters)
 
 	def update_circuit(self,circuit_parameters):
 		self.circuit_parameters=circuit_parameters
+		if self.circuit_parameters['W']>900e-6:
+			self.circuit_parameters['W']=850e-6
 		self.extracted_parameters=write_extract(circuit_parameters,self.circuit_initialization_parameters)
 	
 	def update_circuit_parameters(self,circuit_parameters):
@@ -1403,6 +1407,9 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 		extracted_parameters_combined[i]=extracted_parameters
 		
 	final_extracted_parameters=get_final_extracted_parameters(extracted_parameters_combined)
+	
+	pool.close()
+	pool.join()
 
 	return final_extracted_parameters
 
