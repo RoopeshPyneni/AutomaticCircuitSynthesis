@@ -78,7 +78,7 @@ def get_mos_parameters(circuit_initialization_parameters,process_name):
 def get_output_conditions(optimization_input_parameters,fo):
 	
 	optimization_input_parameters['output_conditions']={
-		's11_db':-15.0,
+		's11_db':-10.0,
 		'iip3_dbm':-10.0,
 		'gain_db':20.0,
 		'nf_db':1.5,
@@ -113,7 +113,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 
 	# Operating frequency points
 	circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=fo
-	circuit_initialization_parameters['simulation']['standard_parameters']['f_range']=1e8
+	circuit_initialization_parameters['simulation']['standard_parameters']['f_range']=50e6
 
 	# Other Values
 	circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']=27

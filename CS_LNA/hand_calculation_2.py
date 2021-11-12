@@ -152,24 +152,6 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		# Running the circuit
 		cir.run_circuit()
 	
-	
-	
-#---------------------------------------------------------------------------------------------------------------------------
-# Function to change circuit parameters to get better gm
-# Inputs  : mos_parameters, circuit_parameters, extracted_parameters, optimization_input_parameters
-# Outputs : circuit_parameters, extracted_parameters
-def dc_optimize_gm(cir,optimization_input_parameters):
-	
-	print(1)
-	
-
-#---------------------------------------------------------------------------------------------------------------------------
-# Function to optimize gm and vdsat
-# Inputs  : mos_parameters, circuit_parameters, extracted_parameters, optimization_input_parameters
-# Outputs : circuit_parameters, extracted_parameters
-def dc_optimize_gm_vdsat(cir,optimization_input_parameters):
-	
-	print(1)
 
 
 """
