@@ -156,8 +156,8 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['pre_optimization']['simulation']={}
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']={}
 
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['basic_circuit']='basic_parameters_2'
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_2'
+	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
+	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['iip3_type']='basic'
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['std_temp']=27
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['pin_fixed']=-65
@@ -187,6 +187,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Parameters for Optimization
 	optimization_input_parameters['optimization']['n_runs']=1
+	optimization_input_parameters['optimization']['max_iteration']=300
 	optimization_input_parameters['optimization']['alpha_min']=-1
 	optimization_input_parameters['optimization']['consec_iter']=-1
 	optimization_input_parameters['optimization']['delta_threshold']=0.001
@@ -244,8 +245,8 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization']['simulation'][1]={}
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']={}
 
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['basic_circuit']='basic_parameters_2'
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['iip3_circuit']='iip3_hb_2'
+	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['basic_circuit']='basic_parameters'
+	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['iip3_circuit']='iip3_hb'
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['iip3_type']='basic'
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['std_temp']=27
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['pin_fixed']=-65

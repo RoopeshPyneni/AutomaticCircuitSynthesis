@@ -658,7 +658,6 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 		'ind_g':'Lg',
 		'ind_s':'Ls',
 		'cap_s':'Cs',
-		'cap_1':'C1'
 	}
 	for param_name in cir_writing_dict:
 		write_dict[param_name]=circuit_parameters[cir_writing_dict[param_name]]
