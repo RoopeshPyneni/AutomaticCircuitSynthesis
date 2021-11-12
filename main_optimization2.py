@@ -135,7 +135,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']=2 #'manual'
+	optimization_input_parameters['pre_optimization']['type']=3 #'manual'
 	
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -423,7 +423,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'TSMC_with_nf_1'						# SET THE FILENAME HERE
+	filename=f_directory+'TSMC_with_new-HC'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
