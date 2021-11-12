@@ -61,7 +61,7 @@ def calculate_cgs(Rs,fo):
 # Calculating W
 # Outputs : W
 def calculate_W(cgs,Lmin,Cox):
-    return min(3*cgs/(2*Lmin*Cox),500e-6)
+    return 3*cgs/(2*Lmin*Cox)
 
 #-----------------------------------------------------------------------------------------------
 # Calculating C1
@@ -120,7 +120,7 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	gm=20e-3
 	cgs=calculate_cgs(Rs,fo)
 	circuit_parameters['W']=calculate_W(cgs,Lmin,Cox)
-	circuit_parameters['C1']=calculate_C1(Cox,Lmin,circuit_parameters['W'],cgs)
+	#circuit_parameters['C1']=calculate_C1(Cox,Lmin,circuit_parameters['W'],cgs)
 	circuit_parameters['Io']=calculate_Io(gm,un,Cox,circuit_parameters['W'],Lmin)
 	circuit_parameters['Ls']=calculate_Ls(Rs,cgs,gm,fo)
 	circuit_parameters['Lg']=calculate_Lg(circuit_parameters['Ls'],cgs,fo)

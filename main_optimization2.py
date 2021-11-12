@@ -187,16 +187,14 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Parameters for Optimization
 	optimization_input_parameters['optimization']['n_runs']=1
-	optimization_input_parameters['optimization']['max_iteration']=300
 	optimization_input_parameters['optimization']['alpha_min']=-1
 	optimization_input_parameters['optimization']['consec_iter']=-1
-
 	optimization_input_parameters['optimization']['delta_threshold']=0.001
 	optimization_input_parameters['optimization']['alpha_mult']=1
 	optimization_input_parameters['optimization']['loss_type']=0
 	optimization_input_parameters['optimization']['update_check']=0
 
-	optimization_input_parameters['optimization']['optimizing_parameters']=['Lg','Io','W','Ls','Ld','C1']
+	optimization_input_parameters['optimization']['optimizing_parameters']=['Lg','Io','W','Ls','Ld']
 	optimization_input_parameters['optimization']['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
 
 	if optimization_name=='LOSS':
@@ -225,7 +223,6 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	alpha_parameters['Ls']=1
 	alpha_parameters['W']=1
 	alpha_parameters['Io']=1
-	alpha_parameters['C1']=1
 	optimization_input_parameters['optimization']['alpha']={}
 	optimization_input_parameters['optimization']['alpha']['values']=alpha_parameters
 
@@ -425,8 +422,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Optimization_with_multiple_frequencies_corrected_3'						# SET THE FILENAME HERE
-	optimization_input_parameters['optimization']['max_iteration']=5	
+	filename=f_directory+'TSMC_with_nf_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
