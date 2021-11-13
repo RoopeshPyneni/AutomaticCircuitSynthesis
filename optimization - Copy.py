@@ -133,8 +133,8 @@ def save_output_results_optimization(optimization_results,optimization_input_par
 	f.write('\n\n------------------------- Circuit Parameter Values ----------------------------------------')
 	cf.print_output_parameters(f,optimization_results['circuit_parameters_iter'][iter_number])
 	
-	f.write('\n\n------------------------- Extracted Parameter Values --------------------------------------')
-	cf.print_output_parameters(f,optimization_results['extracted_parameters_iter'][iter_number])
+	f.write('\n\n------------------------- Output Parameter Values ----------------------------------------')
+	cf.print_output_parameters(f,optimization_results['output_parameters_iter'][iter_number])
 
 	if 'acceptable_solution' in optimization_results:
 		f.write('Acceptable Solutions:\n')
@@ -153,84 +153,82 @@ def save_output_results_optimization(optimization_results,optimization_input_par
 # Function that stores the data of parameters vs iterations in a csv file
 # Inputs  : filename_root,filename_name,values_iter,niter
 # Outputs : NONE
-def save_info_single_array_iter(filename_root,filename_name,values_iter,iter_no):
+def save_info_single_array_iter(filename_root,filename_name,values_iter,niter):
 	
 	filename=filename_root+filename_name
 	f=open(filename,'w')
-
-	if iter_no==0:
-		f.write('Iteration No,')
-		for param in values_iter[1]:
-			f.write(str(param)+',')
-		f.write('\n')
 	
-	
-	f.write(str(iter_no+1)+',')
-	for param in values_iter[iter_no]:
-		f.write(str(values_iter[iter_no][param])+',')
+	f.write('Iteration No,')
+	for param in values_iter[1]:
+		f.write(str(param)+',')
 	f.write('\n')
 	
+	i=0
+	while i<niter:
+		f.write(str(i+1)+',')
+		for param in values_iter[i]:
+			f.write(str(values_iter[i][param])+',')
+		f.write('\n')
+		i+=1
 	f.close()
 	
 #-----------------------------------------------------------------
 # Function that stores the data of loss slopes vs iterations in a csv file
 # Inputs  : filename_root,filename_name,values_iter,niter
 # Outputs : NONE
-def save_info_double_array_iter(filename_root,filename_name,values_iter,iter_no):
+def save_info_double_array_iter(filename_root,filename_name,values_iter,niter):
 	
 	filename=filename_root+filename_name
 	f=open(filename,'w')
 	
-	if iter_no==0:
-		return
-	iter_no=iter_no-1
-
-	if iter_no==0:
-		f.write('Iteration No,')
-		for param in values_iter[1]:
-			f.write(str(param)+',')
-			for categ in values_iter[1][param]:
-				f.write(str(categ)+',')
-		f.write('\n')
-	
-	f.write(str(iter_no+1)+',')
-	for param in values_iter[iter_no]:
+	f.write('Iteration No,')
+	for param in values_iter[1]:
 		f.write(str(param)+',')
-		for categ in values_iter[iter_no][param]:
-			f.write(str(values_iter[iter_no][param][categ])+',')
+		for categ in values_iter[1][param]:
+			f.write(str(categ)+',')
 	f.write('\n')
 	
+	i=0
+	while i<niter:
+		f.write(str(i+1)+',')
+		for param in values_iter[i]:
+			f.write(str(param)+',')
+			for categ in values_iter[i][param]:
+				f.write(str(values_iter[i][param][categ])+',')
+		f.write('\n')
+		i+=1
 	f.close()
+
 
 #-----------------------------------------------------------------
 # Function that stores the all the simulation data in different csv files
 # Inputs  : optimization_input_parameters,optimization_results
 # Outputs : NONE
-def save_info(optimization_input_parameters,optimization_results,iter_no,flag):
-	
-	# Creating the folder to store the results
+def save_info(optimization_input_parameters,optimization_results):
 	filename=optimization_input_parameters['filename']['output']
 	newpath =filename+'/Optimization'+str(optimization_results['run_number'])+'/results/'
 	if not os.path.exists(newpath):
 		os.makedirs(newpath)
 		
-	loss_slope_iter				= optimization_results['loss_slope_iter']
-	sensitivity_iter			= optimization_results['sensitivity_iter']
-	loss_iter					= optimization_results['loss_iter']
-	alpha_parameters_iter		= optimization_results['alpha_parameters_iter']
-	extracted_parameters_iter	= optimization_results['extracted_parameters_iter']
-	circuit_parameters_iter		= optimization_results['circuit_parameters_iter']
+	loss_slope_iter=optimization_results['loss_slope_iter']
+	sensitivity_iter=optimization_results['sensitivity_iter']
+	loss_iter=optimization_results['loss_iter']
+	alpha_parameters_iter=optimization_results['alpha_parameters_iter']
+	output_parameters_iter=optimization_results['output_parameters_iter']
+	circuit_parameters_iter=optimization_results['circuit_parameters_iter']
+	average_parameters_iter=optimization_results['average_parameters_iter']
 	
+	niter=optimization_results['n_iter']
 	
-	save_info_double_array_iter(newpath,'loss_slope.csv',loss_slope_iter,iter_no)
-	save_info_double_array_iter(newpath,'sensitivity.csv',sensitivity_iter,iter_no)
+	save_info_double_array_iter(newpath,'loss_slope.csv',loss_slope_iter,niter)
+	save_info_double_array_iter(newpath,'sensitivity.csv',sensitivity_iter,niter)
 	
-	if flag==1:
-		save_info_single_array_iter(newpath,'loss.csv',loss_iter,iter_no)
-		save_info_single_array_iter(newpath,'alpha_parameters.csv',alpha_parameters_iter,iter_no)
-		save_info_single_array_iter(newpath,'output_parameters.csv',extracted_parameters_iter,iter_no)
-		save_info_single_array_iter(newpath,'circuit_parameters.csv',circuit_parameters_iter,iter_no)
-	
+	save_info_single_array_iter(newpath,'loss.csv',loss_iter,niter)
+	save_info_single_array_iter(newpath,'alpha_parameters.csv',alpha_parameters_iter,niter)
+	save_info_single_array_iter(newpath,'output_parameters.csv',output_parameters_iter,niter)
+	save_info_single_array_iter(newpath,'circuit_parameters.csv',circuit_parameters_iter,niter)
+	save_info_single_array_iter(newpath,'average_parameters.csv',average_parameters_iter,niter)
+
 
 """
 ===========================================================================================================================
@@ -406,19 +404,6 @@ def plot_single_array(optimization_results,list_name,file_directory):
 	print('Plotting Over '+list_name)
 
 
-#-----------------------------------------------------------------------------------------------
-# Plotting various plots for optimization process
-def plot_optimization(optimization_input_parameters,optimization_results,run_number):
-	file_directory=optimization_input_parameters['filename']['output']+'/Optimization'+str(run_number)
-	plot_single_array(optimization_results,'loss_iter',file_directory)
-	plot_single_array(optimization_results,'alpha_parameters_iter',file_directory)
-	plot_single_array(optimization_results,'extracted_parameters_iter',file_directory)
-	plot_single_array(optimization_results,'circuit_parameters_iter',file_directory)
-	
-	plot_double_array(optimization_results,'loss_slope_iter',file_directory)
-	plot_double_array(optimization_results,'sensitivity_iter',file_directory)
-
-
 """
 ===========================================================================================================================
 ------------------------------------Defining the functions ----------------------------------------------------------------
@@ -560,6 +545,31 @@ def check_stop_loss(loss_iter,i,n_iter,optimization_type):
 				flag=0
 	return flag
 	
+#-----------------------------------------------------------------------------------------------
+# Performs moving average filter calculations
+# Inputs  : loss_iter,circuit_parameters_iter,average_parameters,i,n_points
+# Outputs : average_parameters
+def moving_avg(loss_iter,circuit_parameters_iter,average_parameters,i,n_points):
+
+	average_parameters[i]={}
+	#average_parameters[i]['loss_Io']=0
+	average_parameters[i]['Io']=0
+		
+	if i<n_points:
+		for j in range(i+1):
+			#average_parameters[i]['loss_Io']+=loss_iter[i-j]['loss_Io']
+			average_parameters[i]['Io']+=circuit_parameters_iter[i-j]['Io']
+		#average_parameters[i]['loss_Io']/=(i+1)
+		average_parameters[i]['Io']/=(i+1)
+	else:
+		for j in range(n_points):
+			#average_parameters[i]['loss_Io']+=loss_iter[i-j]['loss_Io']
+			average_parameters[i]['Io']+=circuit_parameters_iter[i-j]['Io']
+		#average_parameters[i]['loss_Io']/=n_points
+		average_parameters[i]['Io']/=n_points
+		
+	return average_parameters
+
 
 """
 ===========================================================================================================================
@@ -600,8 +610,9 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	loss_iter={} 				# This dictionary will store the value of all loss values for different iterations
 	loss_slope_iter={} 			# This dictionary will store the value of slope of losses for all parameters for different iterations
 	alpha_parameters_iter={} 	# This dictionary will store the value of threshold for different iterations
-	extracted_parameters_iter={}# This dictionary will store the value of output parameters for different iterations
+	output_parameters_iter={} 	# This dictionary will store the value of output parameters for different iterations
 	circuit_parameters_iter={} 	# This dictionary will store the value of circuit parameters for different iterations
+	average_parameters_iter={}	# This dictionary will store the value of moving average filtering of certain output parameters
 	sensitivity_iter={}			# This dictionary will store the value of output parameter sensitivty for different circuit parameters 
 	check_loss=1	
 	
@@ -621,16 +632,8 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	
 	# Printing the values of loss before optimization
 	print('-----------------------------Before Iteration---------------------------------')
+	#print('Loss = ',cf.num_trunc(loss_iter[-1]['loss'],3))	
 	cf.print_loss_parameters(loss_iter[-1])
-
-
-	# Storing optimization results
-	optimization_results['loss_iter']					= loss_iter
-	optimization_results['loss_slope_iter']				= loss_slope_iter
-	optimization_results['alpha_parameters_iter']		= alpha_parameters_iter
-	optimization_results['extracted_parameters_iter']	= extracted_parameters_iter
-	optimization_results['circuit_parameters_iter']		= circuit_parameters_iter
-	optimization_results['sensitivity_iter']			= sensitivity_iter
 
 
 	#--------------------------- Performing the iterations ---------------------------------
@@ -664,23 +667,29 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 
 		# Storing some parameters
 		alpha_parameters_iter[i]	= alpha_parameters.copy()
-		loss_slope_iter[i-1]		= circuit_parameters_slope.copy()
+		loss_slope_iter[i]			= circuit_parameters_slope.copy()
 		sensitivity_iter[i-1]		= circuit_parameters_sensitivity.copy()
 		circuit_parameters_iter[i]	= cir.circuit_parameters.copy()
-		extracted_parameters_iter[i]= cir.extracted_parameters.copy()
 
-		# Saving Results of Each Iteration
-		save_info(optimization_input_parameters,optimization_results,i,1)
+
+		# Storing output parameters list
+		output_parameters_iter[i]={}
+		for output_param_name in optimization_input_parameters['optimization']['output_parameters_list']:
+			output_parameters_iter[i][output_param_name]=cir.extracted_parameters[output_param_name]
 		
 
+		# Storing average parameters ( using a moving average filter )
+		n_points=4
+		average_parameters_iter=moving_avg(loss_iter,circuit_parameters_iter,average_parameters_iter,i,n_points)
+		
 		# Opening the Run_Status File
 		f=open(optimization_input_parameters['filename']['run_status'],'a')
 		f.write('Iteration Number:'+str(i+1)+'\n')
 		f.close()
 
-
 		# Printing the values of loss for given iteration
 		print('\n-----------------------------Iteration Number ',i+1,'-------------------------------')
+		#print('Loss = ',cf.num_trunc(loss_iter[i]['loss'],3))
 		cf.print_loss_parameters(loss_iter[i])
 		
 
@@ -688,35 +697,35 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		alpha_parameters['common']=update_alpha(loss_iter,alpha_parameters['common'],i,alpha_mult,optimization_type,optimization_input_parameters)
 		
 
-		# Updating the value of circuit_parameters based on loss increase
+		# Updating the value of circuit_parameters
 		old_circuit_parameters=check_circuit_parameters(old_circuit_parameters,cir,loss_iter,optimization_input_parameters['optimization']['update_check'],i,optimization_type)
-
 
 		# Checking for stopping condition
 		flag_alpha=check_stop_alpha(loss_iter,alpha_parameters['common'],i,alpha_min)
 		flag_loss=check_stop_loss(loss_iter,i,consec_iter,optimization_type)
 		
 
-		# Incrementing i and breaking the loop if necessary
+		# Incrementing i
 		i+=1
 		if flag_loss==1 or flag_alpha==1:
 			break
 	
-
 	# Calculating slope and sensitivity
 	circuit_parameters_slope,circuit_parameters_sensitivity=calc_loss_slope(cir,output_conditions,loss_iter[i-1],optimization_input_parameters)
-	loss_slope_iter[i-1]=circuit_parameters_slope.copy()
 	sensitivity_iter[i-1]=circuit_parameters_sensitivity.copy()
-
 	
 	# Storing the final results
+	optimization_results['loss_iter']=loss_iter
+	optimization_results['loss_slope_iter']=loss_slope_iter
+	optimization_results['alpha_parameters_iter']=alpha_parameters_iter
+	optimization_results['output_parameters_iter']=output_parameters_iter
+	optimization_results['circuit_parameters_iter']=circuit_parameters_iter
+	optimization_results['average_parameters_iter']=average_parameters_iter
+	optimization_results['sensitivity_iter']=sensitivity_iter
 	optimization_results['n_iter']=i
-	save_info(optimization_input_parameters,optimization_results,i,0)
 	
-
 	# Resetting the value of alpha
 	optimization_input_parameters['optimization']['alpha']['values']=alpha_parameters_initial.copy()
-
 
 	# Finding the best optimization results
 	if optimization_input_parameters['optimization']['optimization_name']=='loss1':
@@ -724,7 +733,6 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	elif optimization_input_parameters['optimization']['optimization_name']=='fom1':
 		optimization_results['optimized_results']=off.check_best_solution(optimization_results,0)
 		optimization_results['acceptable_solution']=off.check_acceptable_solutions(optimization_results,optimization_input_parameters)
-
 
 	# Assigning circuit_parameters and extracted_parameters with the best result
 	print_dict=optimization_results['optimized_results']
@@ -738,10 +746,20 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 
 	# Storing the results of Optimization
 	save_output_results_optimization(optimization_results,optimization_input_parameters)
+	
+	# Saving Results of Each Iteration
+	save_info(optimization_input_parameters,optimization_results)
 
 	# Plotting the results of optimization
-	plot_optimization(optimization_input_parameters,optimization_results,run_number)
-	
+	file_directory=optimization_input_parameters['filename']['output']+'/Optimization'+str(run_number)
+	plot_single_array(optimization_results,'loss_iter',file_directory)
+	plot_single_array(optimization_results,'alpha_parameters_iter',file_directory)
+	plot_single_array(optimization_results,'output_parameters_iter',file_directory)
+	plot_single_array(optimization_results,'circuit_parameters_iter',file_directory)
+	plot_single_array(optimization_results,'average_parameters_iter',file_directory)
+
+	plot_double_array(optimization_results,'loss_slope_iter',file_directory)
+	plot_double_array(optimization_results,'sensitivity_iter',file_directory)
 
 	
 

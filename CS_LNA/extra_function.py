@@ -195,6 +195,12 @@ def print_output_parameters(f,parameters):
 	for param_name in parameters:
 		f.write('\n'+str(param_name)+': '+num_trunc(parameters[param_name],3))
 
+#-----------------------------------------------------------------
+# Function that prints parameters without truncation
+def print_output_parameters_complete(f,parameters):
+	for param_name in parameters:
+		f.write('\n'+str(param_name)+': '+str(parameters[param_name]))
+
 #-----------------------------------------------------------------------------------------------
 # This function is used to wait for key press
 # Inputs  : NONE

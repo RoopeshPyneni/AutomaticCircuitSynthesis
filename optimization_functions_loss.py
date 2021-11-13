@@ -149,6 +149,10 @@ def check_best_solution(optimization_results,loss_max):
 	# Creating output dictionary
 	opt_dict={}
 	opt_dict['loss_max']=loss_max
+	if flag==1:
+		opt_dict['perfect_point']='Yes'
+	else:
+		opt_dict['perfect_point']='No'
 	opt_dict['iter_number']=iter_min+1
 	opt_dict['Io_loss']=loss_Io_min
 	

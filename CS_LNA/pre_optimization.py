@@ -24,8 +24,11 @@ import CS_LNA.hand_calculation_2 as hc2 # type: ignore
 import CS_LNA.hand_calculation_3 as hc3 # type: ignore
 
 
-#===========================================================================================================================
-#----------------------------------- File Writing Functions ----------------------------------------------------------------
+"""
+===========================================================================================================================
+----------------------------------- File Writing Functions ----------------------------------------------------------------
+"""
+
 
 #-----------------------------------------------------------------
 # Function that stores input data of the simulation
@@ -41,18 +44,8 @@ def save_input_results_pre_optimization(optimization_input_parameters):
 	f.write('\n\n********************************************************************************\n')
 	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Pre Optimization ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 	
-	#f.write('\nStep1b_Limit :'+str(optimization_input_parameters['pre_optimization']['Step1b_Limit']))
-	#f.write('\nStep2_Limit  :'+str(optimization_input_parameters['pre_optimization']['Step2_Limit']))
-	#f.write('\nvdsat_reqd      :'+str(optimization_input_parameters['pre_optimization']['vdsat_reqd']))
-
-	#f.write('\nPre_Opt_Type	   :'+str(optimization_input_parameters['pre_optimization']['type']))
-	#f.write('\ngmrs_threshold  :'+str(optimization_input_parameters['pre_optimization']['gmrs_threshold']))
-	#f.write('\nvdsat_threshold :'+str(optimization_input_parameters['pre_optimization']['vdsat_threshold']))
+	f.write('\nPre_Opt_Type	   :'+str(optimization_input_parameters['pre_optimization']['type']))
 	
-	#f.write('\nC1_threshold    :'+str(optimization_input_parameters['pre_optimization']['C1_threshold']))
-	#f.write('\nC1_threshold    :'+str(optimization_input_parameters['pre_optimization']['C2_threshold']))
-	#f.write('\nRbias_threshold :'+str(optimization_input_parameters['pre_optimization']['Rbias_threshold']))
-
 	f.close()
 
 #-----------------------------------------------------------------
@@ -71,6 +64,8 @@ def save_output_results_pre_optimization(optimization_results,optimization_input
 	
 	if 'manual_hc' in optimization_results:
 		f.write('\n\n--------------------- Manual Hand Calculations ---------------------------------')
+		f.write('\n\n---------------- Circuit Parameters Complete ---------------')
+		cff.print_output_parameters_complete(f,optimization_results['manual_hc']['circuit_parameters'])
 		f.write('\n\n---------------- Circuit Parameters ------------------------')
 		cff.print_output_parameters(f,optimization_results['manual_hc']['circuit_parameters'])
 		f.write('\n\n---------------- Extracted Parameters ------------------------')
@@ -78,6 +73,8 @@ def save_output_results_pre_optimization(optimization_results,optimization_input
 
 	if 'auto_hc' in optimization_results:
 		f.write('\n\n--------------------- Automatic Hand Calculations ---------------------------------')
+		f.write('\n\n---------------- Circuit Parameters Complete ---------------')
+		cff.print_output_parameters_complete(f,optimization_results['auto_hc']['circuit_parameters'])
 		f.write('\n\n---------------- Circuit Parameters ------------------------')
 		cff.print_output_parameters(f,optimization_results['auto_hc']['circuit_parameters'])
 		f.write('\n\n---------------- Extracted Parameters ------------------------')
@@ -85,31 +82,20 @@ def save_output_results_pre_optimization(optimization_results,optimization_input
 
 	if 'hc_update' in optimization_results:
 		f.write('\n\n--------------------- Hand Calculations Update ---------------------------------')
+		f.write('\n\n---------------- Circuit Parameters Complete ---------------')
+		cff.print_output_parameters_complete(f,optimization_results['hc_update']['circuit_parameters'])
 		f.write('\n\n---------------- Circuit Parameters ------------------------')
 		cff.print_output_parameters(f,optimization_results['hc_update']['circuit_parameters'])
 		f.write('\n\n---------------- Extracted Parameters ------------------------')
 		cff.print_output_parameters(f,optimization_results['hc_update']['extracted_parameters'])
-
-	if 'gm_update' in optimization_results:
-		f.write('\n\n--------------------- gm Update ---------------------------------')
-		f.write('\n\n---------------- Circuit Parameters ------------------------')
-		cff.print_output_parameters(f,optimization_results['gm_update']['circuit_parameters'])
-		f.write('\n\n---------------- Extracted Parameters ------------------------')
-		cff.print_output_parameters(f,optimization_results['gm_update']['extracted_parameters'])
-
-	if 'gmvd_update' in optimization_results:
-		f.write('\n\n--------------------- gmvd Update ---------------------------------')
-		f.write('\n\n---------------- Circuit Parameters ------------------------')
-		cff.print_output_parameters(f,optimization_results['gmvd_update']['circuit_parameters'])
-		f.write('\n\n---------------- Extracted Parameters ------------------------')
-		cff.print_output_parameters(f,optimization_results['gmvd_update']['extracted_parameters'])
 	
 	f.close()
 
 
-
-#===========================================================================================================================
-#----------------------------------- Defining the functions for simple calculations ----------------------------------------
+"""
+===========================================================================================================================
+----------------------------------- Manual Hand Calculations --------------------------------------------------------------
+"""
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to manually choose the Initial Circuit Parameters
@@ -122,10 +108,12 @@ def manual_initial_parameters(cir,optimization_input_parameters):
 
 
 
-#===========================================================================================================================
-#------------------------------------------- Output Functions --------------------------------------------------------------
+"""
+===========================================================================================================================
+------------------------------------------- Output Functions --------------------------------------------------------------
+"""
 
-#---------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------
 # Function to perform pre-optimization
 # Inputs  : mos_parameters, optimization_input_parameters, timing_results
 # Outputs :	circuit_parameters, extracted_parameters
@@ -143,7 +131,7 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 	print('************************************************************************************************************')
 	print('*********************************** Pre Optimization *******************************************************')
 
-	#save_input_results_pre_optimization(optimization_input_parameters)
+	save_input_results_pre_optimization(optimization_input_parameters)
 
 	cir.update_simulation_parameters(optimization_input_parameters['pre_optimization']['simulation'])
 
