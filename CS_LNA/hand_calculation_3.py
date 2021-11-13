@@ -71,14 +71,14 @@ def calculate_W(cgs,Lmin,Cox):
 #-----------------------------------------------------------------------------------------------
 # Calculating gm
 # Outputs : gm
-def calculate_gm(un,Cox,W,Lmin,vdd):
-	return un*Cox*W/Lmin*0.4*vdd
+#def calculate_gm(un,Cox,W,Lmin,vdd):
+#	return un*Cox*W/Lmin*0.4*vdd
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Io
 # Outputs : Io
-def calculate_Io(un,cox,W,Lmin,vdd):
-    return 0.5*un*cox*W/Lmin*0.4*0.4*vdd*vdd
+def calculate_Io(gm,un,cox,W,Lmin):
+    return (gm*gm)/(2*un*cox*W/Lmin)
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Ls
@@ -137,8 +137,9 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	Qin=calculate_Qin(s11,fo,f_range)
 	cgs=calculate_cgs(Rs,fo,Qin)
 	circuit_parameters['W']=calculate_W(cgs,Lmin,Cox)
-	gm=calculate_gm(un,Cox,circuit_parameters['W'],Lmin,vdd)
-	circuit_parameters['Io']=calculate_Io(un,Cox,circuit_parameters['W'],Lmin,vdd)
+	#gm=calculate_gm(un,Cox,circuit_parameters['W'],Lmin,vdd)
+	gm=20e-3
+	circuit_parameters['Io']=calculate_Io(gm,un,Cox,circuit_parameters['W'],Lmin)
 	circuit_parameters['Ls']=calculate_Ls(Rs,cgs,gm,fo)
 	circuit_parameters['Lg']=calculate_Lg(circuit_parameters['Ls'],cgs,fo)
 	circuit_parameters['Rb']=5000
@@ -166,11 +167,15 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		print('----- Iteration ',i,' -----')
 
 		# Updating W to improve the Qin
-		#Z_max=calculate_Zim_max(optimization_input_parameters['output_conditions']['s11_db'])
-		#Z_diff=np.abs(cir.extracted_parameters['0_Zin_I']-cir.extracted_parameters['2_Zin_I'])
-		#cir.circuit_parameters['W']=cir.circuit_parameters['W']*Z_diff/Z_max*1.2
-		#cir.circuit_parameters['Io']=calculate_Io(20e-3,un,Cox,cir.circuit_parameters['W'],Lmin)
+		Z_max=calculate_Zim_max(optimization_input_parameters['output_conditions']['s11_db'])
+		Z_diff=np.abs(cir.extracted_parameters['0_Zin_I']-cir.extracted_parameters['2_Zin_I'])
+		cir.circuit_parameters['W']=cir.circuit_parameters['W']*Z_diff/Z_max*1.2
+		gm=20e-3
+		cir.circuit_parameters['Io']=calculate_Io(gm,un,Cox,cir.circuit_parameters['W'],Lmin)
 
+		# Running the circuit
+		cir.run_circuit()
+		
 
 		# Updating the values
 		fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
