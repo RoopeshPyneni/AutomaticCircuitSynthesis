@@ -46,46 +46,54 @@ from pylab import *
 # Function that stores input data of the simulation
 # Inputs  : optimization_input_parameters
 # Outputs : NONE
-def save_input_results_optimization(optimization_input_parameters):
+def save_input_results_optimization(optimization_input_parameters,run_number):
 
 	# Opening the file
 	filename=optimization_input_parameters['filename']['output']+str('/input_data.txt')
 	f=open(filename,'a')
 
 	# Storing the results
-	f.write('\n\n---------------------- Optimization Parameters -----------------------')
-	
-	f.write('\nMax Iterations :'+str(optimization_input_parameters['optimization']['max_iteration']))
-	f.write('\nAlpha Min      :'+str(optimization_input_parameters['optimization']['alpha_min']))
-	f.write('\nConsec Iter    :'+str(optimization_input_parameters['optimization']['consec_iter']))
-	
-	f.write('\nAlpha Mult      :'+str(optimization_input_parameters['optimization']['alpha_mult']))
-	f.write('\nDelta Threshold :'+str(optimization_input_parameters['optimization']['delta_threshold']))
-	f.write('\nLoss Type       :'+str(optimization_input_parameters['optimization']['loss_type']))
-	f.write('\nUpdate Check    :'+str(optimization_input_parameters['optimization']['update_check']))
+	if run_number==1:
+		f.write('\n\n---------------------- Optimization Parameters -----------------------')
+		f.write('\nOptimization Name :'+str(optimization_input_parameters['optimization']['optimization_name']))
 
-	f.write('\nOptimization Name :'+str(optimization_input_parameters['optimization']['optimization_name']))
-	f.write('\nOptimization Type :'+str(optimization_input_parameters['optimization']['optimization_type']))
+		if 'acceptable_solution' in optimization_input_parameters:
+			f.write('\n\n---------------------- Acceptable Solution Parameters -----------------------')
+			for name in optimization_input_parameters['acceptable_solution']:
+				f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['acceptable_solution'][name],3))
+	
+
+	f.write('\n\n---------------------- Run Number '+str(run_number)+' -----------------------')
+	
+	f.write('\nMax Iterations :'+str(optimization_input_parameters['optimization'][run_number]['max_iteration']))
+	f.write('\nAlpha Min      :'+str(optimization_input_parameters['optimization'][run_number]['alpha_min']))
+	f.write('\nConsec Iter    :'+str(optimization_input_parameters['optimization'][run_number]['consec_iter']))
+	f.write('\nAlpha Mult      :'+str(optimization_input_parameters['optimization'][run_number]['alpha_mult']))
+	f.write('\nDelta Threshold :'+str(optimization_input_parameters['optimization'][run_number]['delta_threshold']))
+	f.write('\nLoss Type       :'+str(optimization_input_parameters['optimization'][run_number]['loss_type']))
+	f.write('\nUpdate Check    :'+str(optimization_input_parameters['optimization'][run_number]['update_check']))
+	f.write('\nOptimization Type :'+str(optimization_input_parameters['optimization'][run_number]['optimization_type']))
 
 	f.write('\nOptimization Parameters : ')
-	for name in optimization_input_parameters['optimization']['optimizing_parameters']:
+	for name in optimization_input_parameters['optimization'][run_number]['optimizing_parameters']:
 		f.write(str(name)+' ,')
 
 	f.write('\n\n---------------------- Loss Weights -----------------------')
-	for name in optimization_input_parameters['optimization']['loss_weights']:
-		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['optimization']['loss_weights'][name],3))
+	for name in optimization_input_parameters['optimization'][run_number]['loss_weights']:
+		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['optimization'][run_number]['loss_weights'][name],3))
 
 	f.write('\n\n---------------------- Alpha Parameters -----------------------')
-	for name in optimization_input_parameters['optimization']['alpha']['values']:
-		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['optimization']['alpha']['values'][name],3))
-	f.write('\nAlpha Type  :'+str(optimization_input_parameters['optimization']['alpha']['type']))
-	f.write('\nAlpha Start :'+str(optimization_input_parameters['optimization']['alpha']['start']))
-	f.write('\nAlpha End   :'+str(optimization_input_parameters['optimization']['alpha']['end']))
+	for name in optimization_input_parameters['optimization'][run_number]['alpha']['values']:
+		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['optimization'][run_number]['alpha']['values'][name],3))
+	f.write('\nAlpha Type  :'+str(optimization_input_parameters['optimization'][run_number]['alpha']['type']))
+	f.write('\nAlpha Start :'+str(optimization_input_parameters['optimization'][run_number]['alpha']['start']))
+	f.write('\nAlpha End   :'+str(optimization_input_parameters['optimization'][run_number]['alpha']['end']))
 
-	if 'acceptable_solution' in optimization_input_parameters:
-		f.write('\n\n---------------------- Acceptable Solution Parameters -----------------------')
-		for name in optimization_input_parameters['acceptable_solution']:
-			f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['acceptable_solution'][name],3))
+	f.write('\n\n---------------------- Simulation Parameters -----------------------')
+	for param_name in optimization_input_parameters['optimization']['simulation'][run_number]['standard_parameters']:
+		f.write('\n'+param_name+' : '+str(optimization_input_parameters['optimization']['simulation'][run_number]['standard_parameters'][param_name]))
+	for param_name in optimization_input_parameters['optimization']['simulation'][run_number]['netlist_parameters']:
+		f.write('\n'+param_name+' : '+str(optimization_input_parameters['optimization']['simulation'][run_number]['netlist_parameters'][param_name]))
 	
 	f.close()
 
@@ -130,10 +138,10 @@ def save_output_results_optimization(optimization_results,optimization_input_par
 		f.write('\nOptimized Point occured at iteration='+str(print_dict['iter_number']))
 		f.write('\nOptimized FOM in dB='+cf.num_trunc(print_dict['FOM'],3))
 	
-	f.write('\n\n------------------------- Circuit Parameter Values ----------------------------------------')
+	f.write('\n\n--------------------- Optimization End ---------------------------------')
+	f.write('\n\n---------------- Circuit Parameters ------------------------')
 	cf.print_output_parameters(f,optimization_results['circuit_parameters_iter'][iter_number])
-	
-	f.write('\n\n------------------------- Extracted Parameter Values --------------------------------------')
+	f.write('\n\n---------------- Extracted Parameters ------------------------')
 	cf.print_output_parameters(f,optimization_results['extracted_parameters_iter'][iter_number])
 
 	if 'acceptable_solution' in optimization_results:
@@ -439,14 +447,14 @@ def plot_optimization(optimization_input_parameters,optimization_results,run_num
 # This function updates the values of circuit parameters by trying to minimize loss
 # Inputs  : output_conditions,circuit_parameters,loss_dict,extracted_parameters,optimization_input_parameters
 # Outputs : circuit_parameters_slope,circuit_parameters_sensitivity
-def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameters):
+def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameters,run_number):
 
-	loss_weights=optimization_input_parameters['optimization']['loss_weights']
-	delta_threshold=optimization_input_parameters['optimization']['delta_threshold']
+	loss_weights=optimization_input_parameters['optimization'][run_number]['loss_weights']
+	delta_threshold=optimization_input_parameters['optimization'][run_number]['delta_threshold']
 	
 	# Getting the sensitivity dictionary
 	circuit_parameters_sensitivity={}
-	for param_name in optimization_input_parameters['optimization']['optimizing_parameters']:
+	for param_name in optimization_input_parameters['optimization'][run_number]['optimizing_parameters']:
 		circuit_parameters_sensitivity[param_name]=0
 	
 	# Creating new dictionaries
@@ -457,7 +465,7 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 	circuit_parameters_slope={} # This dictionary will store the values of slope of different losses with change of all circuit parameters
 	
 	# Calculating the value to update each parameter with
-	for param_name in optimization_input_parameters['optimization']['optimizing_parameters']:
+	for param_name in optimization_input_parameters['optimization'][run_number]['optimizing_parameters']:
 		
 		# Calculating the increment value
 		increment_factor=delta_threshold # The value by which parameter increases = increment_factor*parameter
@@ -484,7 +492,7 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 		circuit_parameters_sensitivity[param_name]={}
 		
 		# Calculating Sensitivity
-		for categ_name in optimization_input_parameters['optimization']['output_parameters_list']:
+		for categ_name in optimization_input_parameters['optimization'][run_number]['output_parameters_list']:
 			initial_param=extracted_parameters_initial[categ_name]
 			final_param=extracted_parameters1[categ_name]
 			percent_change=(final_param-initial_param)/(initial_param*increment_factor)
@@ -499,17 +507,17 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 # This function updates the value of alpha after each iteration
 # Inputs  : loss_iter,alpha,i,alpha_mult,optimization_type,optimization_input_parameters
 # Outputs : alpha
-def update_alpha(loss_iter,alpha,i,alpha_mult,optimization_type,optimization_input_parameters):
+def update_alpha(loss_iter,alpha,i,alpha_mult,optimization_type,optimization_input_parameters,run_number):
 
-	n_iter=optimization_input_parameters['optimization']['max_iteration']-1
-	alpha_start=optimization_input_parameters['optimization']['alpha']['start']
-	alpha_end=optimization_input_parameters['optimization']['alpha']['end']
+	n_iter=optimization_input_parameters['optimization'][run_number]['max_iteration']-1
+	alpha_start=optimization_input_parameters['optimization'][run_number]['alpha']['start']
+	alpha_end=optimization_input_parameters['optimization'][run_number]['alpha']['end']
 
-	if optimization_input_parameters['optimization']['alpha']['type']=='Linear':
+	if optimization_input_parameters['optimization'][run_number]['alpha']['type']=='Linear':
 		alpha=alpha_start+((alpha_end-alpha_start)*(i+1)/n_iter)
 		print(alpha)
 
-	elif optimization_input_parameters['optimization']['alpha']['type']=='Log':
+	elif optimization_input_parameters['optimization'][run_number]['alpha']['type']=='Log':
 		alpha_start_log=np.log(alpha_start)
 		alpha_end_log=np.log(alpha_end)
 		alpha_log=alpha_start_log+((alpha_end_log-alpha_start_log)*(i+1)/n_iter)
@@ -552,7 +560,7 @@ def check_stop_alpha(loss_iter,alpha,i,alpha_min):
 		if alpha<=alpha_min:
 			return 1
 	return 0
-	
+
 #-----------------------------------------------------------------------------------------------
 # Checking stopping condition ( if loss increases for n_iter number of iterations )
 # Inputs  : loss_iter,i,n_iter,optimization_type
@@ -592,17 +600,20 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	
 	output_conditions=optimization_input_parameters['output_conditions']
 	
-	loss_weights      = optimization_input_parameters['optimization']['loss_weights']
-	alpha_min         = optimization_input_parameters['optimization']['alpha_min']
-	consec_iter       = optimization_input_parameters['optimization']['consec_iter']
-	alpha_mult        = optimization_input_parameters['optimization']['alpha_mult']
-	max_iteration     = optimization_input_parameters['optimization']['max_iteration']
-	delta_threshold   = optimization_input_parameters['optimization']['delta_threshold']
-	loss_type         = optimization_input_parameters['optimization']['loss_type']
-	optimization_type = optimization_input_parameters['optimization']['optimization_type']
+	loss_weights      = optimization_input_parameters['optimization'][run_number]['loss_weights']
+	alpha_min         = optimization_input_parameters['optimization'][run_number]['alpha_min']
+	consec_iter       = optimization_input_parameters['optimization'][run_number]['consec_iter']
+	alpha_mult        = optimization_input_parameters['optimization'][run_number]['alpha_mult']
+	max_iteration     = optimization_input_parameters['optimization'][run_number]['max_iteration']
+	delta_threshold   = optimization_input_parameters['optimization'][run_number]['delta_threshold']
+	loss_type         = optimization_input_parameters['optimization'][run_number]['loss_type']
+	optimization_type = optimization_input_parameters['optimization'][run_number]['optimization_type']
 	
-	alpha_parameters         = optimization_input_parameters['optimization']['alpha']['values']
-	alpha_parameters_initial = optimization_input_parameters['optimization']['alpha']['values'].copy()
+	#alpha_parameters         = optimization_input_parameters['optimization'][run_number]['alpha']['values']
+	#alpha_parameters_initial = optimization_input_parameters['optimization'][run_number]['alpha']['values'].copy()
+
+	alpha         = optimization_input_parameters['optimization'][run_number]['alpha']['value']
+	alpha_initial = optimization_input_parameters['optimization'][run_number]['alpha']['value']
 	
 	# Creating old circuit parameters
 	old_circuit_parameters=cir.circuit_parameters.copy() # This dictionary will store the value of parameters for previous iterations
@@ -655,11 +666,11 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		
 		
 		# Calculating the slope of loss and output sensitivity and updating the circuit parameters
-		circuit_parameters_slope,circuit_parameters_sensitivity=calc_loss_slope(cir,output_conditions,loss_iter[i-1],optimization_input_parameters)
+		circuit_parameters_slope,circuit_parameters_sensitivity=calc_loss_slope(cir,output_conditions,loss_iter[i-1],optimization_input_parameters,run_number)
 		if optimization_input_parameters['optimization']['optimization_name']=='loss1':
-			ofl.update_circuit_parameters(cir,circuit_parameters_slope,check_loss,optimization_input_parameters)
+			ofl.update_circuit_parameters(cir,circuit_parameters_slope,check_loss,optimization_input_parameters,run_number)
 		elif optimization_input_parameters['optimization']['optimization_name']=='fom1':
-			off.update_circuit_parameters(cir,circuit_parameters_slope,check_loss,optimization_input_parameters)
+			off.update_circuit_parameters(cir,circuit_parameters_slope,check_loss,optimization_input_parameters,run_number)
 		
 
 		# Extracting output parameters for new circuit parameters
@@ -674,7 +685,8 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 			
 
 		# Storing some parameters
-		alpha_parameters_iter[i]	= alpha_parameters.copy()
+		#alpha_parameters_iter[i]	= alpha_parameters.copy()
+		alpha_parameters_iter[i]	= {'alpha':alpha}
 		loss_slope_iter[i-1]		= circuit_parameters_slope.copy()
 		sensitivity_iter[i-1]		= circuit_parameters_sensitivity.copy()
 		circuit_parameters_iter[i]	= cir.circuit_parameters.copy()
@@ -696,15 +708,16 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		
 
 		# Updating the value of alpha	
-		alpha_parameters['common']=update_alpha(loss_iter,alpha_parameters['common'],i,alpha_mult,optimization_type,optimization_input_parameters)
+		#alpha_parameters['common']=update_alpha(loss_iter,alpha_parameters['common'],i,alpha_mult,optimization_type,optimization_input_parameters,run_number)
+		alpha=update_alpha(loss_iter,alpha,i,alpha_mult,optimization_type,optimization_input_parameters,run_number)
 		
 
 		# Updating the value of circuit_parameters based on loss increase
-		old_circuit_parameters=check_circuit_parameters(old_circuit_parameters,cir,loss_iter,optimization_input_parameters['optimization']['update_check'],i,optimization_type)
+		old_circuit_parameters=check_circuit_parameters(old_circuit_parameters,cir,loss_iter,optimization_input_parameters['optimization'][run_number]['update_check'],i,optimization_type)
 
 
 		# Checking for stopping condition
-		flag_alpha=check_stop_alpha(loss_iter,alpha_parameters['common'],i,alpha_min)
+		flag_alpha=check_stop_alpha(loss_iter,alpha,i,alpha_min)
 		flag_loss=check_stop_loss(loss_iter,i,consec_iter,optimization_type)
 		
 
@@ -726,7 +739,8 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	
 
 	# Resetting the value of alpha
-	optimization_input_parameters['optimization']['alpha']['values']=alpha_parameters_initial.copy()
+	#optimization_input_parameters['optimization'][run_number]['alpha']['values']=alpha_parameters_initial.copy()
+	optimization_input_parameters['optimization'][run_number]['alpha']['value']=alpha_initial
 
 
 	# Finding the best optimization results
@@ -775,9 +789,9 @@ def main_opt(cir,optimization_input_parameters,timing_results):
 	print('************************************************************************************************************')
 	print('*********************************** Main Optimization ******************************************************')
 
-	save_input_results_optimization(optimization_input_parameters)
-
 	for i in range(1,1+n_runs):
+
+		save_input_results_optimization(optimization_input_parameters,i)
 		
 		# Opening the Run_Status File
 		f=open(optimization_input_parameters['filename']['run_status'],'a')
@@ -789,7 +803,6 @@ def main_opt(cir,optimization_input_parameters,timing_results):
 		timing_results['optimization'][i]['start']=datetime.datetime.now()
 
 		cir.update_simulation_parameters(optimization_input_parameters['optimization']['simulation'][i])
-		optimization_input_parameters['optimization']['max_iteration']=optimization_input_parameters['optimization'][i]['max_iteration']
 		opt_single_run(cir,optimization_input_parameters,i)
 
 		# Storing the optimization completion time

@@ -75,21 +75,25 @@ def calc_loss_1(extracted_parameters,output_conditions,loss_weights):
 # This function updates the values of circuit parameters by trying to minimize loss
 # Inputs  : circuit_parameters,circuit_parameters_slope,check_loss,optimization_input_parameters
 # Outputs : circuit_parameters
-def update_circuit_parameters(cir,circuit_parameters_slope,check_loss,optimization_input_parameters):
+def update_circuit_parameters(cir,circuit_parameters_slope,check_loss,optimization_input_parameters,run_number):
 
-	alpha_parameters=optimization_input_parameters['optimization']['alpha']['values']
+	#alpha_parameters=optimization_input_parameters['optimization'][run_number]['alpha']['values']
+	alpha=optimization_input_parameters['optimization'][run_number]['alpha']['value']
 
 	# Calculating the value to update each parameter with
 	for param_name in circuit_parameters_slope:
 		
 		# Calculating the Increment Value
 		if check_loss==-1:
-			change=circuit_parameters_slope[param_name]['loss']*(cir.circuit_parameters[param_name]**2)*alpha_parameters['common']*alpha_parameters[param_name]
+			#change=circuit_parameters_slope[param_name]['loss']*(cir.circuit_parameters[param_name]**2)*alpha_parameters['common']*alpha_parameters[param_name]
+			change=circuit_parameters_slope[param_name]['loss']*(cir.circuit_parameters[param_name]**2)*alpha
 		elif check_loss==1:
-			change=circuit_parameters_slope[param_name]['loss_Io']*(cir.circuit_parameters[param_name]**2)*alpha_parameters['common']*alpha_parameters[param_name]
+			#change=circuit_parameters_slope[param_name]['loss_Io']*(cir.circuit_parameters[param_name]**2)*alpha_parameters['common']*alpha_parameters[param_name]
+			change=circuit_parameters_slope[param_name]['loss_Io']*(cir.circuit_parameters[param_name]**2)*alpha
 		else:
 			change=(circuit_parameters_slope[param_name]['loss']-circuit_parameters_slope[param_name]['loss_Io'])
-			change=change*(cir.circuit_parameters[param_name]**2)*alpha_parameters['common']*alpha_parameters[param_name]
+			#change=change*(cir.circuit_parameters[param_name]**2)*alpha_parameters['common']*alpha_parameters[param_name]
+			change=change*(cir.circuit_parameters[param_name]**2)*alpha
 	
 	
 		# Checking if the parameter is updated by a large value

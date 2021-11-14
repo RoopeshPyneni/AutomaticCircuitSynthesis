@@ -179,71 +179,60 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 # Function that sets the optimization parameters to the optimization_input_parameters dictionary
 def get_optimization_parameters(optimization_input_parameters,fo,optimization_name):
 
+	# Getting the number of optimization runs
 	optimization_input_parameters['optimization']={}
-
 	optimization_input_parameters['optimization']['run']='YES'
-
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Parameters for Optimization
 	optimization_input_parameters['optimization']['n_runs']=1
-	optimization_input_parameters['optimization']['max_iteration']=300
-	optimization_input_parameters['optimization']['alpha_min']=-1
-	optimization_input_parameters['optimization']['consec_iter']=-1
-	optimization_input_parameters['optimization']['delta_threshold']=0.001
-	optimization_input_parameters['optimization']['alpha_mult']=1
-	optimization_input_parameters['optimization']['loss_type']=0
-	optimization_input_parameters['optimization']['update_check']=0
 
-	optimization_input_parameters['optimization']['optimizing_parameters']=['Lg','Io','W','Ls','Ld']
-	optimization_input_parameters['optimization']['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
-
+	# Getting the type of optimization
 	if optimization_name=='LOSS':
 		optimization_input_parameters['optimization']['optimization_name']='loss1'
 	else:
 		optimization_input_parameters['optimization']['optimization_name']='fom1'
-	optimization_input_parameters['optimization']['optimization_type']=0
 
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Assigning values to the loss weights
-	loss_weights={}
-	loss_weights['gain_db']=1/10.0	
-	loss_weights['iip3_dbm']=1/10.0	
-	loss_weights['s11_db']=3/15.0	
-	loss_weights['nf_db']=1/2.0	
-	loss_weights['Io']=100	
-	optimization_input_parameters['optimization']['loss_weights']=loss_weights
-
-
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Assigning Values of Alpha
-	alpha_parameters={}
-	alpha_parameters['common']=0.05
-	alpha_parameters['Ld']=1
-	alpha_parameters['Lg']=1
-	alpha_parameters['Ls']=1
-	alpha_parameters['W']=1
-	alpha_parameters['Io']=1
-	optimization_input_parameters['optimization']['alpha']={}
-	optimization_input_parameters['optimization']['alpha']['values']=alpha_parameters
-
-	optimization_input_parameters['optimization']['alpha']['type']='Normal'
-	optimization_input_parameters['optimization']['alpha']['start']=0.8
-	optimization_input_parameters['optimization']['alpha']['end']=0.05
-
-	#~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Optimization Iterations
-	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=200
-	#optimization_input_parameters['optimization'][2]={}
-	#optimization_input_parameters['optimization'][2]['max_iteration']=100
-
-	#~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Optimization Simulation Parameters
+	# This dictionary will store the simulation parameters
 	optimization_input_parameters['optimization']['simulation']={}
 
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# Optimization Run 1
+	optimization_input_parameters['optimization'][1]={}
+	optimization_input_parameters['optimization'][1]['max_iteration']=300
+	optimization_input_parameters['optimization'][1]['alpha_min']=-1
+	optimization_input_parameters['optimization'][1]['consec_iter']=-1
+	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
+	optimization_input_parameters['optimization'][1]['alpha_mult']=1
+	optimization_input_parameters['optimization'][1]['loss_type']=0
+	optimization_input_parameters['optimization'][1]['update_check']=0
+	optimization_input_parameters['optimization'][1]['optimization_type']=0
+	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Ld']
+	optimization_input_parameters['optimization'][1]['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
+
+	optimization_input_parameters['optimization'][1]['loss_weights']={
+		'gain_db':1/10.0,
+		'iip3_dbm':1/10.0,
+		's11_db':3/15.0,
+		'nf_db':1/2.0,
+		'Io':100
+	}
+
+	optimization_input_parameters['optimization'][1]['alpha']={}
+	#optimization_input_parameters['optimization'][1]['alpha']['values']={
+	#	'common':0.05,
+	#	'Ld':1,
+	#	'Lg':1,
+	#	'Ls':1,
+	#	'W':1,
+	#	'Io':1
+	#}
+	optimization_input_parameters['optimization'][1]['alpha']['value']=0.05
+	optimization_input_parameters['optimization'][1]['alpha']['type']='Normal'
+	optimization_input_parameters['optimization'][1]['alpha']['start']=0.8
+	optimization_input_parameters['optimization'][1]['alpha']['end']=0.05
+
+
+	# Optimization Simulation Parameters
 	optimization_input_parameters['optimization']['simulation'][1]={}
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']={}
-
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['basic_circuit']='basic_parameters'
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['iip3_circuit']='iip3_hb'
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['iip3_type']='basic'
@@ -265,26 +254,64 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	}
 
 	"""
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# Optimization Run 2
+	optimization_input_parameters['optimization'][2]={}
+	optimization_input_parameters['optimization'][2]['max_iteration']=300
+	optimization_input_parameters['optimization'][2]['alpha_min']=-1
+	optimization_input_parameters['optimization'][2]['consec_iter']=-1
+	optimization_input_parameters['optimization'][2]['delta_threshold']=0.001
+	optimization_input_parameters['optimization'][2]['alpha_mult']=1
+	optimization_input_parameters['optimization'][2]['loss_type']=0
+	optimization_input_parameters['optimization'][2]['update_check']=0
+	optimization_input_parameters['optimization'][2]['optimization_type']=0
+	optimization_input_parameters['optimization'][2]['optimizing_parameters']=['Lg','Io','W','Ls','Ld']
+	optimization_input_parameters['optimization'][2]['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
+
+
+	optimization_input_parameters['optimization'][2]['loss_weights']={
+		'gain_db':1/10.0,
+		'iip3_dbm':1/10.0,
+		's11_db':3/15.0,
+		'nf_db':1/2.0,
+		'Io':100
+	}
+
+	optimization_input_parameters['optimization'][2]['alpha']={}
+	optimization_input_parameters['optimization'][2]['alpha']['values']={
+		'common':0.05,
+		'Ld':1,
+		'Lg':1,
+		'Ls':1,
+		'W':1,
+		'Io':1
+	}
+	optimization_input_parameters['optimization'][2]['alpha']['type']='Normal'
+	optimization_input_parameters['optimization'][2]['alpha']['start']=0.8
+	optimization_input_parameters['optimization'][2]['alpha']['end']=0.05
+
+
+	# Optimization Simulation Parameters
 	optimization_input_parameters['optimization']['simulation'][2]={}
+	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']={}
+	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['basic_circuit']='basic_parameters'
+	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['iip3_circuit']='iip3_hb'
+	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['iip3_type']='basic'
+	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['std_temp']=27
+	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['pin_fixed']=-65
+	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['pin_start']=-70
+	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['pin_stop']=-40
+	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['pin_points']=16
+	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['iip3_calc_points']=5
+	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['process_corner']='tt'
+	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['conservative']='NO'
 
-	optimization_input_parameters['optimization']['simulation'][2]['basic_circuit']='basic_parameters_tsmc_65'
-	optimization_input_parameters['optimization']['simulation'][2]['iip3_circuit']='iip3_hb_tsmc_65'
-	optimization_input_parameters['optimization']['simulation'][2]['iip3_type']='basic'
-	optimization_input_parameters['optimization']['simulation'][2]['std_temp']=27
-	optimization_input_parameters['optimization']['simulation'][2]['pin_fixed']=-65
-	optimization_input_parameters['optimization']['simulation'][2]['pin_start']=-70
-	optimization_input_parameters['optimization']['simulation'][2]['pin_stop']=-40
-	optimization_input_parameters['optimization']['simulation'][2]['pin_points']=16
-	optimization_input_parameters['optimization']['simulation'][2]['iip3_calc_points']=5
-	optimization_input_parameters['optimization']['simulation'][2]['process_corner']='tt'
-	optimization_input_parameters['optimization']['simulation'][2]['conservative']='YES'
-
-	optimization_input_parameters['optimization']['simulation'][2]['parameters_list']={
+	optimization_input_parameters['optimization']['simulation'][2]['netlist_parameters']={
 		'pin':-65,
 		'fund_2':fo+1e6,
 		'fund_1':fo,
 		'cir_temp':27,
-		'n_harm':15
+		'n_harm':5
 	}
 	"""
 	
