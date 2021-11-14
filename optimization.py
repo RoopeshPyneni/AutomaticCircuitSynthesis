@@ -156,11 +156,15 @@ def save_output_results_optimization(optimization_results,optimization_input_par
 def save_info_single_array_iter(filename_root,filename_name,values_iter,iter_no):
 	
 	filename=filename_root+filename_name
-	f=open(filename,'w')
+	if iter_no==0:
+		f=open(filename,'w')
+	
+	else:
+		f=open(filename,'a')
 
 	if iter_no==0:
 		f.write('Iteration No,')
-		for param in values_iter[1]:
+		for param in values_iter[0]:
 			f.write(str(param)+',')
 		f.write('\n')
 	
@@ -178,18 +182,25 @@ def save_info_single_array_iter(filename_root,filename_name,values_iter,iter_no)
 # Outputs : NONE
 def save_info_double_array_iter(filename_root,filename_name,values_iter,iter_no):
 	
-	filename=filename_root+filename_name
-	f=open(filename,'w')
-	
 	if iter_no==0:
 		return
 	iter_no=iter_no-1
+	
+	filename=filename_root+filename_name
+	
+	if iter_no==0:
+		f=open(filename,'w')
+	
+	else:
+		f=open(filename,'a')
+	
+	
 
 	if iter_no==0:
 		f.write('Iteration No,')
-		for param in values_iter[1]:
+		for param in values_iter[0]:
 			f.write(str(param)+',')
-			for categ in values_iter[1][param]:
+			for categ in values_iter[0][param]:
 				f.write(str(categ)+',')
 		f.write('\n')
 	

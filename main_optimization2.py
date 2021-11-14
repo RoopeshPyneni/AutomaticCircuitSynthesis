@@ -233,7 +233,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Iterations
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=5
+	optimization_input_parameters['optimization'][1]['max_iteration']=200
 	#optimization_input_parameters['optimization'][2]={}
 	#optimization_input_parameters['optimization'][2]['max_iteration']=100
 
@@ -422,7 +422,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'TSMC_with_new-HC_with_W_update'						# SET THE FILENAME HERE
+	filename=f_directory+'TSMC_65_f_delta_50'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
