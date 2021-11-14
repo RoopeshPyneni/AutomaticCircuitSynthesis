@@ -1,0 +1,160 @@
+Vdd
+1.0
+
+Lmin
+60e-9
+
+u0
+212.0608
+
+tox
+2e-9
+
+vth0
+0.31703
+
+tt_file
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_mim
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_dnw
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_18
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip_npn
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfrtmom
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_mos_cap_25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_18
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_disres
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_res
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_hvt
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmvar
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_18
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_lvt
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfres_sa
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_esd
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmim
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25od33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_25od33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_mos_cap
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25ud18
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_25ud18
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na25od33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfjvar
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rtmom
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na25od33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfres_rpo
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_hvt
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfind
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmvar_25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_lvt
+
+ff_file
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_bip
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_dio
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_dio_33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_mim
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_dio_dnw
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_dio_18
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_bip_npn
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_rfrtmom
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_mos_cap_25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_18
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_disres
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_res
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_dio_na
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_rfmos_33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_dio_hvt
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_rfmvar
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_rfmos_18
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_na
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_dio_na33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_dio_lvt
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_rfres_sa
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_na33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_dio_esd
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_rfmim
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_dio_25od33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_25od33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_mos_cap
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_dio_25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_dio_25ud18
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_rfmos
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_25ud18
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_dio_na25od33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_rfjvar
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_rfmos_25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_rtmom
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_na25od33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_dio_na25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_rfres_rpo
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_hvt
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_rfind
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_rfmvar_25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_na25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ff_lvt
+
+ss_file
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_bip
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_dio
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_dio_33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_mim
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_dio_dnw
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_dio_18
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_bip_npn
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_rfrtmom
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_mos_cap_25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_18
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_disres
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_res
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_dio_na
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_rfmos_33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_dio_hvt
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_rfmvar
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_rfmos_18
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_na
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_dio_na33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_dio_lvt
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_rfres_sa
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_na33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_dio_esd
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_rfmim
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_dio_25od33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_25od33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_mos_cap
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_dio_25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_dio_25ud18
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_rfmos
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_25ud18
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_dio_na25od33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_rfjvar
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_rfmos_25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_rtmom
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_na25od33
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_dio_na25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_rfres_rpo
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_hvt
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_rfind
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_rfmvar_25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_na25
+include "/cad/library/TSMC/65/gp/oa_pdk/models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_lvt
+
+

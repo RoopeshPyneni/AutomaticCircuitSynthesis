@@ -112,7 +112,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 
 	# Operating frequency points
 	circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=fo
-	circuit_initialization_parameters['simulation']['standard_parameters']['f_range']=50e6
+	circuit_initialization_parameters['simulation']['standard_parameters']['f_range']=100e6
 
 	# Other Values
 	circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']=27
@@ -410,8 +410,7 @@ optimization_name='LOSS'
 
 # ---------- MOSFET Parameters ----------
 #get_mos_parameters(circuit_initialization_parameters,'TSMC180')
-#get_mos_parameters(circuit_initialization_parameters,'TSMC65')
-get_mos_parameters(circuit_initialization_parameters,'TSMC65_2')
+get_mos_parameters(circuit_initialization_parameters,'TSMC65')
 #get_mos_parameters(circuit_initialization_parameters,'IBM130')
 
 # ---------- Output Conditions ----------
@@ -449,7 +448,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Test_Optimization'						# SET THE FILENAME HERE
+	filename=f_directory+'TSMC_65_f_delat_100'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
