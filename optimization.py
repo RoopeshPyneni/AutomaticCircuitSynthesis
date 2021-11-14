@@ -83,8 +83,9 @@ def save_input_results_optimization(optimization_input_parameters,run_number):
 		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['optimization'][run_number]['loss_weights'][name],3))
 
 	f.write('\n\n---------------------- Alpha Parameters -----------------------')
-	for name in optimization_input_parameters['optimization'][run_number]['alpha']['values']:
-		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['optimization'][run_number]['alpha']['values'][name],3))
+	#for name in optimization_input_parameters['optimization'][run_number]['alpha']['values']:
+	#	f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['optimization'][run_number]['alpha']['values'][name],3))
+	f.write('\nAlpha Value :'+str(optimization_input_parameters['optimization'][run_number]['alpha']['value']))
 	f.write('\nAlpha Type  :'+str(optimization_input_parameters['optimization'][run_number]['alpha']['type']))
 	f.write('\nAlpha Start :'+str(optimization_input_parameters['optimization'][run_number]['alpha']['start']))
 	f.write('\nAlpha End   :'+str(optimization_input_parameters['optimization'][run_number]['alpha']['end']))
@@ -728,7 +729,7 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	
 
 	# Calculating slope and sensitivity
-	circuit_parameters_slope,circuit_parameters_sensitivity=calc_loss_slope(cir,output_conditions,loss_iter[i-1],optimization_input_parameters)
+	circuit_parameters_slope,circuit_parameters_sensitivity=calc_loss_slope(cir,output_conditions,loss_iter[i-1],optimization_input_parameters,run_number)
 	loss_slope_iter[i-1]=circuit_parameters_slope.copy()
 	sensitivity_iter[i-1]=circuit_parameters_sensitivity.copy()
 
