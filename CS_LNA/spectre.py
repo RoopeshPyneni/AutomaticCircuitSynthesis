@@ -3,40 +3,9 @@
 Name				: Pyneni Roopesh
 Roll Number			: EE18B028
 File Name			: spectre.py
-File Description 	: This file will contain the functions to write, run, and read from the spectre files
-
-Functions structure in this file:
-	--> valueName_to_value
-	--> valueE_to_value
-	--> extract_file
-	--> extract_basic_parameters
-		--> extract_dc_param
-		--> extract_ac_param
-		--> extract_sp_param
-		--> extract_noise_param
-	--> calculate_iip3_single_point
-	--> calculate_iip3_multiple_points
-		--> calculate_slope
-		--> calculate_best_iip3_point
-		--> check_freq
-		--> extract_vout_magnitude
-		--> extract_vout
-
-	--> print_param
-	--> dict_convert
-	--> write_circuit_parameters
-	--> write_MOS_parameters
-	--> write_simulation_parameters
-	--> write_tcsh_file
-
-	--> write_extract
-		--> write_extract_basic
-		--> write_extract_iip3
-		--> run_file
-
-
-	
+File Description 	: This file will contain the functions to write, run, and read from the spectre files	
 """
+
 #===========================================================================================================================
 import numpy as np
 import fileinput
@@ -58,18 +27,18 @@ class Circuit():
 		self.extracted_parameters={}
 		self.simulation_parameters={}
 		self.circuit_initialization_parameters=circuit_initialization_parameters
-		#write_MOS_parameters(self.circuit_initialization_parameters)
 		self.mos_parameters=calculate_mos_parameters(self.circuit_initialization_parameters)
+
+		# Getting the circuit name
+		if self.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_resistor':
+			self.circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_r'
+			self.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_r'
 	
 	def run_circuit(self):
-		#if self.circuit_parameters['W']>900e-6:
-		#	self.circuit_parameters['W']=850e-6
 		self.extracted_parameters=write_extract(self.circuit_parameters,self.circuit_initialization_parameters)
 
 	def update_circuit(self,circuit_parameters):
 		self.circuit_parameters=circuit_parameters
-		#if self.circuit_parameters['W']>900e-6:
-		#	self.circuit_parameters['W']=850e-6
 		self.extracted_parameters=write_extract(circuit_parameters,self.circuit_initialization_parameters)
 	
 	def update_circuit_parameters(self,circuit_parameters):
@@ -650,7 +619,7 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 	write_dict={}
 	
 	# param_names in write_dict will contain the name of the parameters as it is written in the .scs file
-	cir_writing_dict={
+	cir_writing_dict={	
 		'wid':'W',
 		'cur0':'Io',
 		'res_b':'Rb',
@@ -671,7 +640,23 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 	n_finger=int(circuit_parameters['W']/circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max'])+1
 	write_dict['n_finger']=n_finger
 
+	# Getting the width and length of Rbias
+	write_dict['res_b_L'],write_dict['res_b_W']=get_TSMC_resistor(circuit_parameters['Rb'])
+
 	return write_dict
+
+#-----------------------------------------------------------------      
+# Function that converts resistance to length and width
+# Inputs  : resistance
+# Outputs : length, width
+def get_TSMC_resistor(resistance):
+	sheet_resistance=124.45
+	W_min=0.4e-6
+	dW=0.0691e-6
+	width=W_min-dW
+	length=width*resistance/sheet_resistance
+	
+	return length,W_min
             
 #-----------------------------------------------------------------
 # Function that modifies the .scs file
