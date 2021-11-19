@@ -1039,7 +1039,7 @@ def get_final_extracted_parameters(extracted_parameters_combined):
 		's22_db':'max',
 		'k':'min',
 		'nf_db':'max',
-		'iip3_dbm':'max'
+		'iip3_dbm':'min'
 	}
 
 	for param in extracted_parameters_combined[0]:
