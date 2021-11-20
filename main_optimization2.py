@@ -156,8 +156,6 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['pre_optimization']['simulation']={}
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']={}
 
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['iip3_type']='basic'
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['std_temp']=27
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['pin_fixed']=-65
@@ -234,8 +232,6 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	# Optimization Simulation Parameters
 	optimization_input_parameters['optimization']['simulation'][1]={}
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']={}
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['basic_circuit']='basic_parameters'
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['iip3_circuit']='iip3_hb'
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['iip3_type']='basic'
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['std_temp']=27
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['pin_fixed']=-65
@@ -295,8 +291,6 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	# Optimization Simulation Parameters
 	optimization_input_parameters['optimization']['simulation'][2]={}
 	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']={}
-	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['basic_circuit']='basic_parameters'
-	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['iip3_circuit']='iip3_hb'
 	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['iip3_type']='basic'
 	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['std_temp']=27
 	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['pin_fixed']=-65
@@ -348,8 +342,6 @@ def get_temperature_analysis_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['temperature_analysis']['simulation']={}
 	optimization_input_parameters['temperature_analysis']['simulation']['standard_parameters']={}
 
-	optimization_input_parameters['temperature_analysis']['simulation']['standard_parameters']['basic_circuit']='basic_parameters_tsmc_65_rcm'
-	optimization_input_parameters['temperature_analysis']['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_tsmc_65_rcm'
 	optimization_input_parameters['temperature_analysis']['simulation']['standard_parameters']['iip3_type']='basic'
 	optimization_input_parameters['temperature_analysis']['simulation']['standard_parameters']['std_temp']=27
 	optimization_input_parameters['temperature_analysis']['simulation']['standard_parameters']['pin_fixed']=-65
@@ -380,8 +372,6 @@ def get_process_analysis_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['process_analysis']['simulation']={}
 	optimization_input_parameters['process_analysis']['simulation']['standard_parameters']={}
 
-	optimization_input_parameters['process_analysis']['simulation']['standard_parameters']['basic_circuit']='basic_parameters_tsmc_65_rcm'
-	optimization_input_parameters['process_analysis']['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_tsmc_65_rcm'
 	optimization_input_parameters['process_analysis']['simulation']['standard_parameters']['iip3_type']='basic'
 	optimization_input_parameters['process_analysis']['simulation']['standard_parameters']['std_temp']=27
 	optimization_input_parameters['process_analysis']['simulation']['standard_parameters']['pin_fixed']=-65
