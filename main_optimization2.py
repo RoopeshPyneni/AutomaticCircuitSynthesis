@@ -99,7 +99,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	# Filenames
 	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/lna2/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/'
-	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='ideal' # 'ideal', 'mos_resistor'
+	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='mos_resistor' # 'ideal', 'mos_resistor'
 	circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
 	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
 	
@@ -113,7 +113,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 
 	# Operating frequency points
 	circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=fo
-	circuit_initialization_parameters['simulation']['standard_parameters']['f_range']=100e6
+	circuit_initialization_parameters['simulation']['standard_parameters']['f_range']=50e6
 
 	# Other Values
 	circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']=27
@@ -449,7 +449,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'TSMC_65_Delat_50'						# SET THE FILENAME HERE
+	filename=f_directory+'TSMC_65_MOS_R_Delta_50'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
