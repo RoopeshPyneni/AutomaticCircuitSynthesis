@@ -1042,18 +1042,33 @@ def get_final_extracted_parameters(extracted_parameters_combined):
 	final_extracted_parameters={}
 
 	extracted_parameters_select={
+		'v_source':'mid',
+		'i_source':'mid',
+		'p_source':'mid',
+		
 		'vg1':'mid',
 		'vd1':'mid',
-		'i_source':'mid',
-		'v_source':'mid',
-		'p_source':'mid',
+		'vg2':'mid',
+
 		'Io':'mid',
 		'gm1':'mid',
 		'gds1':'mid',
 		'vth1':'mid',
+		'vds1':'mid',
 		'vdsat1':'mid',
 		'cgs1':'mid',
 		'cgd1':'mid',
+		'region1':'mid',
+		'check_vd1':'mid',
+
+		'vth2':'mid',
+		'vds2':'mid',
+		'vdsat2':'mid',
+		'cgs2':'mid',
+		'cgd2':'mid',
+		'region2':'mid',
+		'check_vd2':'mid',
+
 		'freq':'mid',
 		's12_db':'max',
 		's21_db':'max',
