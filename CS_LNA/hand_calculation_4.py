@@ -101,9 +101,11 @@ def calculate_Zim_max(s11):
 # Calculating R1 and R2
 # Outputs : R1, R2
 def calculate_R1_R2(gm,Io,vth,vdd):
-	vg=(4*Io/gm)+vth
-	R2=1e4*vg/vdd
-	R1=1e4-R2
+	#vg=(4*Io/gm)+vth
+	#R2=1e4*vg/vdd
+	#R1=1e4-R2
+	R1=1e3
+	R2=9e3
 	return R1,R2
 
 #-----------------------------------------------------------------------------------------------
