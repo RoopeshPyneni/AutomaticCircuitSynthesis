@@ -195,21 +195,38 @@ def extract_dc_param(circuit_initialization_parameters):
 	lines=lines[0].split()
 
 	# Extracting the values from the required line
-	extracted_parameters['vg1']=valueE_to_value(lines[2])
-	extracted_parameters['vd1']=valueE_to_value(lines[4])
-	
-	extracted_parameters['i_source']=np.absolute(valueE_to_value(lines[5]))
 	extracted_parameters['v_source']=np.absolute(valueE_to_value(lines[1]))
+	extracted_parameters['i_source']=np.absolute(valueE_to_value(lines[2]))
 	extracted_parameters['p_source']=extracted_parameters['i_source']*extracted_parameters['v_source']
 
+	extracted_parameters['vg1']=valueE_to_value(lines[3])
+	extracted_parameters['vd1']=valueE_to_value(lines[4])
+	extracted_parameters['vg2']=valueE_to_value(lines[5])
+	
 	extracted_parameters['Io']=valueE_to_value(lines[6])
 	extracted_parameters['gm1']=valueE_to_value(lines[7])
 	extracted_parameters['gds1']=valueE_to_value(lines[8])
 	extracted_parameters['vth1']=valueE_to_value(lines[9])
-	extracted_parameters['vdsat1']=valueE_to_value(lines[10])
+	extracted_parameters['vds1']=valueE_to_value(lines[10])
+	extracted_parameters['vdsat1']=valueE_to_value(lines[11])
+	extracted_parameters['cgs1']=np.absolute(valueE_to_value(lines[12]))
+	extracted_parameters['cgd1']=np.absolute(valueE_to_value(lines[13]))
+	extracted_parameters['region1']=valueE_to_value(lines[14])
+	if extracted_parameters['vds1']-extracted_parameters['vdsat1']>0.1:
+		extracted_parameters['check_vd1']=1
+	else:
+		extracted_parameters['check_vd1']=0
 
-	extracted_parameters['cgs1']=np.absolute(valueE_to_value(lines[11]))
-	extracted_parameters['cgd1']=np.absolute(valueE_to_value(lines[12]))
+	extracted_parameters['vth2']=valueE_to_value(lines[15])
+	extracted_parameters['vds2']=valueE_to_value(lines[16])
+	extracted_parameters['vdsat2']=valueE_to_value(lines[17])
+	extracted_parameters['cgs2']=np.absolute(valueE_to_value(lines[18]))
+	extracted_parameters['cgd2']=np.absolute(valueE_to_value(lines[19]))
+	extracted_parameters['region2']=valueE_to_value(lines[20])
+	if extracted_parameters['vds2']-extracted_parameters['vdsat2']>0.1:
+		extracted_parameters['check_vd2']=1
+	else:
+		extracted_parameters['check_vd2']=0
 
 	return extracted_parameters
 
@@ -627,6 +644,10 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 		'ind_g':'Lg',
 		'ind_s':'Ls',
 		'cap_s':'Cs',
+		'cap_g':'Cg',
+		'cap_d':'Cd',
+		'res_1':'R1',
+		'res_2':'R2'
 	}
 	for param_name in cir_writing_dict:
 		write_dict[param_name]=circuit_parameters[cir_writing_dict[param_name]]

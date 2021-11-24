@@ -85,7 +85,7 @@ def get_output_conditions(optimization_input_parameters,fo):
 		'wo':2.0*np.pi*fo,
 		'delta_v':0.1,
 		'Rs':50,
-		'Cload':2e-12
+		'Cload':400e-15
 	}
 
 #---------------------------------------------------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	# Filenames
 	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/lna2/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/'
-	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='mos_resistor' # 'ideal', 'mos_resistor'
+	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='ideal' # 'ideal', 'mos_resistor'
 	circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
 	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
 	
@@ -135,7 +135,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']=3 #'manual'
+	optimization_input_parameters['pre_optimization']['type']=4 #'manual'
 	
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -195,7 +195,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=200
+	optimization_input_parameters['optimization'][1]['max_iteration']=5
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
@@ -203,7 +203,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization'][1]['loss_type']=0
 	optimization_input_parameters['optimization'][1]['update_check']=0
 	optimization_input_parameters['optimization'][1]['optimization_type']=0
-	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Ld']
+	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Ld','Cd','R1','R2-']
 	optimization_input_parameters['optimization'][1]['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
 
 	optimization_input_parameters['optimization'][1]['loss_weights']={
@@ -439,7 +439,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'TSMC_65_MOS_R_Delta_50'						# SET THE FILENAME HERE
+	filename=f_directory+'TSMC_65_New_Circuit'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
