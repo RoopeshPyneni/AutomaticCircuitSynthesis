@@ -197,7 +197,7 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		print('----- Iteration ',i,' -----')
 
 		# Updating R1 and R2
-		cir.circuit_parameters['R1'],cir.circuit_parameters['R2']=updating_R1_R2(cir.extracted_parameters['vdsat1'],cir.extracted_parameters['vdsat2'],cir.extracted_parameters['vth2'],vdd)
+		#cir.circuit_parameters['R1'],cir.circuit_parameters['R2']=updating_R1_R2(cir.extracted_parameters['vdsat1'],cir.extracted_parameters['vdsat2'],cir.extracted_parameters['vth2'],vdd)
 
 		# Updating Ld
 		cir.circuit_parameters['Ld']=updating_Ld(cir.extracted_parameters['cgd2'],Cload,cir.circuit_parameters['Cd'],fo)
