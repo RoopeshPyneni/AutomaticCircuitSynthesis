@@ -10,6 +10,7 @@ File Description 	: This file will run spectre and extract the parameters for a 
 #import CG_LNA.spectre as sp
 import CS_LNA.spectre as sp
 import numpy as np
+import os
 from matplotlib import pylab
 from pylab import *
 
@@ -145,6 +146,10 @@ def get_simulation_conditions_CS_LNA(circuit_initialization_parameters,fo):
 """
 def frequency_sweep(cir,circuit_parameters,sweep_type,f_start,f_end,n_points,file_location):
 	
+	# Creating a folder for the output
+	if not os.path.exists(file_location):
+		os.makedirs(file_location)
+		
 	# Getting the values of frequency array for the sweep
 	if sweep_type=='linear':
 		freq_array=np.linspace(f_start,f_end,n_points)
@@ -161,16 +166,18 @@ def frequency_sweep(cir,circuit_parameters,sweep_type,f_start,f_end,n_points,fil
 
 	# Starting the sweep
 	for freq in freq_array:
+		cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=freq
 		cir.circuit_initialization_parameters['simulation']['netlist_parameters']['fund_1']=freq
-		cir.circuit_initialization_parameters['simulation']['netlist_parameters']['fund_1']=freq+1e6
+		cir.circuit_initialization_parameters['simulation']['netlist_parameters']['fund_2']=freq+1e6
 		cir.update_circuit(circuit_parameters)
+		
+		
 		s11_array.append(cir.extracted_parameters['s11_db'])
 		gain_array.append(cir.extracted_parameters['gain_db'])
 		nf_array.append(cir.extracted_parameters['nf_db'])
 		iip3_array.append(cir.extracted_parameters['iip3_dbm'])
 		Zin_R_array.append(cir.extracted_parameters['Zin_R'])
-		Zin_I_array.append(cir.extracted_parameters['Zin_I'])
-	
+		Zin_I_array.append(cir.extracted_parameters['Zin_I'])	
 
 	combined_outputs={
 		's11':s11_array,
@@ -194,7 +201,7 @@ def frequency_sweep(cir,circuit_parameters,sweep_type,f_start,f_end,n_points,fil
 		
 		figure()
 		for name in combined_outputs:
-			plot(freq_array,combined_outputs[name])
+			plot(freq_array,combined_outputs[name],label=name)
 		grid()
 		xlabel('Frequency')
 		ylabel('Outputs')
@@ -215,7 +222,7 @@ def frequency_sweep(cir,circuit_parameters,sweep_type,f_start,f_end,n_points,fil
 		
 		figure()
 		for name in combined_outputs:
-			semilogx(freq_array,combined_outputs[name])
+			semilogx(freq_array,combined_outputs[name],label=name)
 		grid()
 		xlabel('Frequency')
 		ylabel('Outputs')
@@ -233,22 +240,26 @@ circuit_initialization_parameters={}
 
 # ---------- MOSFET Parameters ----------
 #get_mos_parameters(circuit_initialization_parameters,'TSMC180')
-#get_mos_parameters(circuit_initialization_parameters,'TSMC65')
-#get_mos_parameters(circuit_initialization_parameters,'TSMC65_2')
-get_mos_parameters(circuit_initialization_parameters,'IBM130')
+get_mos_parameters(circuit_initialization_parameters,'TSMC65')
+#get_mos_parameters(circuit_initialization_parameters,'IBM130')
 
 # ---------- Simulation Conditions ----------
 fo=1e9
 get_simulation_conditions_CS_LNA(circuit_initialization_parameters,fo)
 
 circuit_parameters={
+	'Cd':243e-15,
+	'Ld':14.2e-9,
+	'W':2330e-6,
+	'Cg':4.66e-12,
+	'Io':303e-6,
+	'R1':491,
+	'R2':5550,
+	'Ls':2.36e-9,
+	'Lg':13.1e-9,
 	'Rb':5000,
-	'Lg':29e-9,
-	'Ls':1.59e-9,
-	'Ld':12.66e-9,
-	'Cs':318.3e-12,
-	'W':682e-6,
-	'Io':171e-6
+	'Cs':318e-12,
+	
 }
 
 f_directory='/home/ee18b028/Optimization/Simulation_Results/CS_LNA/Frequency_Sweep/'
@@ -256,9 +267,9 @@ f_name='Test/'
 file_location=f_directory+f_name
 
 sweep_type='linear'
-f_start=800e6
-f_end=1200e6
-n_points=101
+f_start=600e6
+f_end=2000e6
+n_points=1001
 
 cir=sp.Circuit(circuit_initialization_parameters)
 frequency_sweep(cir,circuit_parameters,sweep_type,f_start,f_end,n_points,file_location)
