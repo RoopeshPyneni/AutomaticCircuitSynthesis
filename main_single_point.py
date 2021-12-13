@@ -101,23 +101,35 @@ def get_simulation_conditions_CG_LNA(circuit_initialization_parameters,fo):
 def get_simulation_conditions_CS_LNA(circuit_initialization_parameters,fo):
 	
 	circuit_initialization_parameters['simulation']={}
-	circuit_initialization_parameters['simulation']['directory']='/home/ee18b028/cadence_project/lna2/'
-	circuit_initialization_parameters['simulation']['basic_circuit']='basic_parameters'
-	circuit_initialization_parameters['simulation']['iip3_circuit']='iip3_hb'
-	circuit_initialization_parameters['simulation']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh'
-	circuit_initialization_parameters['simulation']['iip3_type']='basic'		# 'basic' or 'advanced' 
 
-	circuit_initialization_parameters['simulation']['std_temp']=27
-	circuit_initialization_parameters['simulation']['pin_fixed']=-65
-	circuit_initialization_parameters['simulation']['pin_start']=-70
-	circuit_initialization_parameters['simulation']['pin_stop']=-40
-	circuit_initialization_parameters['simulation']['pin_points']=6
-	circuit_initialization_parameters['simulation']['iip3_calc_points']=3
-	circuit_initialization_parameters['simulation']['process_corner']='tt'
-	circuit_initialization_parameters['simulation']['conservative']='NO'
-	circuit_initialization_parameters['simulation']['w_finger_max']=2e-6
+	circuit_initialization_parameters['simulation']['standard_parameters']={}
 
-	circuit_initialization_parameters['simulation']['parameters_list']={
+	# Filenames
+	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/lna2/'
+	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/'
+	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='ideal' # 'ideal', 'series','mos_resistor'
+	circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
+	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
+	
+	# IIP3 Points
+	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']='basic'		# 'basic' or 'advanced' 
+	circuit_initialization_parameters['simulation']['standard_parameters']['pin_fixed']=-65
+	circuit_initialization_parameters['simulation']['standard_parameters']['pin_start']=-70
+	circuit_initialization_parameters['simulation']['standard_parameters']['pin_stop']=-40
+	circuit_initialization_parameters['simulation']['standard_parameters']['pin_points']=6
+	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_calc_points']=3
+
+	# Operating frequency points
+	circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=fo
+	circuit_initialization_parameters['simulation']['standard_parameters']['f_range']=50e6
+
+	# Other Values
+	circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']=27
+	circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']='tt'
+	circuit_initialization_parameters['simulation']['standard_parameters']['conservative']='NO'
+	circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max']=2e-6
+
+	circuit_initialization_parameters['simulation']['netlist_parameters']={
 		'pin':-65,
 		'fund_2':fo+1e6,
 		'fund_1':fo,

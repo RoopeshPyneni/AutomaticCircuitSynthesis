@@ -33,6 +33,10 @@ class Circuit():
 		if self.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_resistor':
 			self.circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_r'
 			self.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_r'
+		
+		if self.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='series':
+			self.circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_series'
+			self.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_series'
 	
 	def run_circuit(self):
 		self.extracted_parameters=write_extract(self.circuit_parameters,self.circuit_initialization_parameters)
@@ -656,6 +660,10 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 	write_dict['res_g']=circuit_parameters['Lg']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi*50
 	write_dict['res_d']=circuit_parameters['Ld']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi*15
 	write_dict['res_ls']=circuit_parameters['Ls']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi*15
+
+	if circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='series':
+		write_dict['res_g']=circuit_parameters['Lg']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi/50
+		write_dict['res_ls']=circuit_parameters['Ls']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi/15
 
 	# Calculating the number of fingers
 	n_finger=int(circuit_parameters['W']/circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max'])+1
