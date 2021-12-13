@@ -251,25 +251,25 @@ circuit_parameters={
 	'Cd':243e-15,
 	'Ld':14.2e-9,
 	'W':2330e-6,
-	'Cg':4.66e-12,
+	'Cg':46.6e-12,
 	'Io':303e-6,
 	'R1':491,
 	'R2':5550,
 	'Ls':2.36e-9,
 	'Lg':13.1e-9,
 	'Rb':5000,
-	'Cs':318e-12,
+	'Cs':3180e-12,
 	
 }
 
 f_directory='/home/ee18b028/Optimization/Simulation_Results/CS_LNA/Frequency_Sweep/'
-f_name='Test/'
+f_name='Test_High_CS_4/'
 file_location=f_directory+f_name
 
 sweep_type='linear'
 f_start=600e6
 f_end=2000e6
-n_points=1001
+n_points=101
 
 cir=sp.Circuit(circuit_initialization_parameters)
 frequency_sweep(cir,circuit_parameters,sweep_type,f_start,f_end,n_points,file_location)
