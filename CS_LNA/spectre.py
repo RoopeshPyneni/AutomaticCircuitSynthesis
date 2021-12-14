@@ -256,6 +256,7 @@ def extract_ac_param(circuit_initialization_parameters):
 	vout_im=valueE_to_value(lines[2])
 	vin_re=valueE_to_value(lines[3])
 	vin_im=valueE_to_value(lines[4])
+	extracted_parameters['vgs_ac']=valueE_to_value(lines[5])
 	extracted_parameters['gain_db'],extracted_parameters['gain_phase']=calculate_gain_phase(vout_re,vout_im,vin_re,vin_im)
 
 	return extracted_parameters
@@ -1078,6 +1079,7 @@ def get_final_extracted_parameters(extracted_parameters_combined):
 		'check_vd2':'mid',
 
 		'freq':'mid',
+		'vgs_ac':'mid',
 		's12_db':'max',
 		's21_db':'max',
 		's22_db':'max',

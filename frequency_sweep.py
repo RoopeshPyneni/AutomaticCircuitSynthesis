@@ -163,6 +163,7 @@ def frequency_sweep(cir,circuit_parameters,sweep_type,f_start,f_end,n_points,fil
 	iip3_array=[]
 	Zin_R_array=[]
 	Zin_I_array=[]
+	vgs_array=[]
 
 	# Starting the sweep
 	for freq in freq_array:
@@ -177,7 +178,8 @@ def frequency_sweep(cir,circuit_parameters,sweep_type,f_start,f_end,n_points,fil
 		nf_array.append(cir.extracted_parameters['nf_db'])
 		iip3_array.append(cir.extracted_parameters['iip3_dbm'])
 		Zin_R_array.append(cir.extracted_parameters['Zin_R'])
-		Zin_I_array.append(cir.extracted_parameters['Zin_I'])	
+		Zin_I_array.append(cir.extracted_parameters['Zin_I'])
+		vgs_array.append(cir.extracted_parameters['vgs_ac'])
 
 	combined_outputs={
 		's11':s11_array,
@@ -185,7 +187,8 @@ def frequency_sweep(cir,circuit_parameters,sweep_type,f_start,f_end,n_points,fil
 		'NF':nf_array,
 		'IIP3':iip3_array,
 		'Zin Real':Zin_R_array,
-		'Zin Img':Zin_I_array
+		'Zin Img':Zin_I_array,
+		'Vgs':vgs_array
 	}
 
 	# Plotting the values for linear sweep
