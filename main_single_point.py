@@ -112,7 +112,7 @@ def get_simulation_conditions_CS_LNA(circuit_initialization_parameters,fo):
 	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
 	
 	# IIP3 Points
-	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']='basic'		# 'basic' or 'advanced' 
+	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']='advanced'		# 'basic' or 'advanced' 
 	circuit_initialization_parameters['simulation']['standard_parameters']['pin_fixed']=-65
 	circuit_initialization_parameters['simulation']['standard_parameters']['pin_start']=-70
 	circuit_initialization_parameters['simulation']['standard_parameters']['pin_stop']=-40
@@ -145,9 +145,9 @@ circuit_initialization_parameters={}
 
 # ---------- MOSFET Parameters ----------
 #get_mos_parameters(circuit_initialization_parameters,'TSMC180')
-#get_mos_parameters(circuit_initialization_parameters,'TSMC65')
+get_mos_parameters(circuit_initialization_parameters,'TSMC65')
 #get_mos_parameters(circuit_initialization_parameters,'TSMC65_2')
-get_mos_parameters(circuit_initialization_parameters,'IBM130')
+#get_mos_parameters(circuit_initialization_parameters,'IBM130')
 
 # ---------- Simulation Conditions ----------
 fo=1e9
@@ -176,25 +176,24 @@ circuit_parameters={
 	'Rbias':1000
 }
 """
-circuit_parameters={
-	'Rb':5000,
-	'Lg':76.7e-9,
-	'Ls':8.81e-9,
-	'Ld':12.66e-9,
-	'Cs':318.3e-12,
-	'W':316e-6,
-	'Io':1.24e-6
-}
+
 
 circuit_parameters={
-	'Rb':5000,
-	'Lg':29e-9,
-	'Ls':1.59e-9,
-	'Ld':12.66e-9,
-	'Cs':318.3e-12,
-	'W':682e-6,
-	'Io':171e-6
+	'Cd': 306e-15,
+	'Ld': 16.5e-9,
+	'W': 1.73e-3,
+	'Cg': 4.66e-12,
+	'Io': 240e-6,
+	'R1': 601,
+	'R2': 6940,
+	'Ls': 2.11e-9,
+	'Lg': 18.6e-9,
+	'Rb': 5000,
+	'Cs': 318e-12
 }
+
+
+
 
 
 

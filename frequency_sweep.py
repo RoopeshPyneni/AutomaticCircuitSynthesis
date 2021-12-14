@@ -109,7 +109,7 @@ def get_simulation_conditions_CS_LNA(circuit_initialization_parameters,fo):
 	# Filenames
 	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/lna2/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/'
-	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='ideal' # 'ideal', 'series','mos_resistor'
+	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='series' # 'ideal', 'series','mos_resistor'
 	circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
 	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
 	
@@ -263,7 +263,7 @@ circuit_parameters={
 }
 
 f_directory='/home/ee18b028/Optimization/Simulation_Results/CS_LNA/Frequency_Sweep/'
-f_name='Test_High_CS_4/'
+f_name='Test_High_CS_Series_1/'
 file_location=f_directory+f_name
 
 sweep_type='linear'
