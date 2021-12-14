@@ -135,7 +135,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']=4 #'manual'
+	optimization_input_parameters['pre_optimization']['type']=1 #'manual'
 	
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
