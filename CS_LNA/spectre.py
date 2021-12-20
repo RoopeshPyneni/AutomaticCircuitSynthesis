@@ -1132,6 +1132,12 @@ def get_final_extracted_parameters(extracted_parameters_combined):
 	final_extracted_parameters['Zin_R']=extracted_parameters_combined[s11_index]['Zin_R']
 	final_extracted_parameters['Zin_I']=extracted_parameters_combined[s11_index]['Zin_I']
 
+	# Getting the iip3 values
+	iip3_array_list=['iip3_im3_intercept','iip3_im3_slope','iip3_fund_intercept','iip3_fund_slope','iip3_fund','iip3_im3','iip3_pin']
+	for param in iip3_array_list:
+		if param in extracted_parameters_combined[1]:
+			final_extracted_parameters[param]=extracted_parameters_combined[1][param]
+
 	return final_extracted_parameters
 
 
