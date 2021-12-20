@@ -108,21 +108,20 @@ def iip3_analysis(cir,optimization_input_parameters,timing_results):
 	print('************************************************************************************************************')
 	print('****************************************** IIP3 Analysis ***************************************************')
 	
-	cir.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']='basic'
+	# Storing the initial values
+	initial_freq=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']
 	initial_pin=cir.circuit_initialization_parameters['simulation']['standard_parameters']['pin_fixed']
+	cir.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']='basic'
 	cir.update_simulation_parameters(optimization_input_parameters['iip3_analysis']['simulation'])
 	
 	# Pin values and frequency array
-	pin_start=np.log10(optimization_input_parameters['iip3_analysis']['pin_start'])
-	pin_stop=np.log10(optimization_input_parameters['iip3_analysis']['pin_stop'])
+	pin_start=optimization_input_parameters['iip3_analysis']['pin_start']
+	pin_stop=optimization_input_parameters['iip3_analysis']['pin_stop']
 	n_pin=optimization_input_parameters['iip3_analysis']['n_pin']
 	n_points=optimization_input_parameters['iip3_analysis']['n_points']
 	freq_array=optimization_input_parameters['iip3_analysis']['freq_array']
 
 	pin_array=np.linspace(pin_start,pin_stop,n_pin)
-
-	# Creating Dictionaries to Store Values
-	extracted_parameters_iter={}
 	
 	# Writing the values to output files
 	write_circuit_parameters(cir.circuit_parameters,optimization_input_parameters)
@@ -152,6 +151,7 @@ def iip3_analysis(cir,optimization_input_parameters,timing_results):
 		
 	# Restoring the value of initial extracted and circuit parameters
 	cir.circuit_initialization_parameters['simulation']['standard_parameters']['pin_fixed']=initial_pin
+	cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=initial_freq
 	cir.run_circuit()
 
 	# Storing the starting time
