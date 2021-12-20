@@ -320,7 +320,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 def get_sensitivity_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['sensitivity_analysis']={}
-	optimization_input_parameters['sensitivity_analysis']['run']='NO'
+	optimization_input_parameters['sensitivity_analysis']['run']='YES'
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Temperature Analysis Simulation Parameters
@@ -420,7 +420,7 @@ def get_process_analysis_parameters(optimization_input_parameters,fo):
 def get_iip3_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['iip3_analysis']={}
-	optimization_input_parameters['iip3_analysis']['run']='YES'
+	optimization_input_parameters['iip3_analysis']['run']='NO'
 
 	optimization_input_parameters['iip3_analysis']['pin_start']=-70
 	optimization_input_parameters['iip3_analysis']['pin_stop']=-40
