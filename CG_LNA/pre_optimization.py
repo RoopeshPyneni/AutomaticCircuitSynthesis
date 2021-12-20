@@ -1,19 +1,9 @@
 #===========================================================================================================================
 """
-Name				: Pyneni Roopesh
+Name				: Roopesh Pyneni
 Roll Number			: EE18B028
-File Name			: pre_optimization.py
 File Description 	: This file will perform pre optimization and calculate an initial point to be used 
 					  at the start of the gradient descent algorithm
-
-Functions structure in this file:
-	--> pre_optimization
-		--> save_input_results_pre_optimization
-		--> save_mos_results
-		--> manual_circuit_parameters
-		--> calculate_mos_parameters
-		--> save_output_results_pre_optimization
-
 """
 
 #===========================================================================================================================

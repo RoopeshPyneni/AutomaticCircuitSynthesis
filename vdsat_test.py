@@ -1,12 +1,10 @@
 #===========================================================================================================================
 """
-Name: Pyneni Roopesh
-Roll Number: EE18B028
-
-Vdsat File:
+Name				: Roopesh Pyneni
+Roll Number			: EE18B028
+File Description	: This file will calculate gm1 and gm3 as a function of vdsat
 """
 #===========================================================================================================================
-from typing import no_type_check
 import numpy as np
 import fileinput
 import os

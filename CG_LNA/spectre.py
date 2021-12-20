@@ -1,41 +1,8 @@
 #===========================================================================================================================
 """
-Name				: Pyneni Roopesh
+Name				: Roopesh Pyneni
 Roll Number			: EE18B028
-File Name			: spectre.py
-File Description 	: This file will contain the functions to write, run, and read from the spectre files
-
-Functions structure in this file:
-	--> valueName_to_value
-	--> valueE_to_value
-	--> extract_file
-	--> extract_basic_parameters
-		--> extract_dc_param
-		--> extract_ac_param
-		--> extract_sp_param
-		--> extract_noise_param
-	--> calculate_iip3_single_point
-	--> calculate_iip3_multiple_points
-		--> calculate_slope
-		--> calculate_best_iip3_point
-		--> check_freq
-		--> extract_vout_magnitude
-		--> extract_vout
-
-	--> print_param
-	--> dict_convert
-	--> write_circuit_parameters
-	--> write_MOS_parameters
-	--> write_simulation_parameters
-	--> write_tcsh_file
-
-	--> write_extract
-		--> write_extract_basic
-		--> write_extract_iip3
-		--> run_file
-
-
-	
+File Description 	: This file will contain the functions to write, run, and read from the spectre files for CG LNA
 """
 #===========================================================================================================================
 import numpy as np

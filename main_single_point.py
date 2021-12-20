@@ -1,14 +1,8 @@
 #===========================================================================================================================
 """
-Name				: Pyneni Roopesh
+Name				: Roopesh Pyneni
 Roll Number			: EE18B028
-File Name			: main_single_point.py
 File Description 	: This file will run spectre and extract the parameters for a single point
-
-Functions structure in this file:
-	--> get_mos_parameters
-	--> get_simulation_conditions
-	
 """
 
 #===========================================================================================================================

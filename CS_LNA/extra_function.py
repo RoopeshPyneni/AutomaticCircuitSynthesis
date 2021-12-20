@@ -2,28 +2,7 @@
 """
 Name				: Pyneni Roopesh
 Roll Number			: EE18B028
-File Name			: common_functions.py
-File Description 	: This file contains many commonly used functions
-
-Functions structure in this file:
-	--> db_to_normal
-	--> dbm_to_normal
-	--> normal_to_db
-	--> normal_to_dbm
-	
-	--> num_trunc
-	
-	--> write_simulation_parameters
-	--> update_MOS_parameters
-	
-	--> wait_key
-	--> print_MOS_parameters
-	--> print_circuit_parameters
-	--> print_DC_outputs
-	--> print_extracted_outputs
-	--> print_extracted_outputs_optimization
-
-COMPLETE
+File Description 	: This file contains many commonly used functions	
 """
 
 #===========================================================================================================================

@@ -1,17 +1,8 @@
 #===========================================================================================================================
 """
-Name				: Pyneni Roopesh
+Name				: Roopesh Pyneni
 Roll Number			: EE18B028
-File Name			: optimization_functions_loss.py
 File Description 	: This file will contain the functions for Loss Optimization
-
-Functions structure in this file:
-	--> ramp_func
-	--> calc_fom_1
-	--> update_circuit_parameters
-	--> calc_check_loss
-	--> check_best_solution
-	
 """
 #===========================================================================================================================
 

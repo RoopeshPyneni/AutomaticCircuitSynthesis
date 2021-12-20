@@ -1,21 +1,8 @@
 #===========================================================================================================================
 """
-Name				: Pyneni Roopesh
+Name				: Roopesh Pyneni
 Roll Number			: EE18B028
-File Name			: temperature_analysis.py
 File Description 	: This file will perform the temperature analysis by sweeping Temperature and Io
-
-Functions structure in this file:
-	--> temperature analysis
-		--> write_circuit_parameters
-		--> write_extracted_parameters_initial
-		--> update_extracted_parameters
-		--> plot_temp_analysis
-			--> extract_temp_analysis
-			--> plot_param_vs_current
-			--> plot_param_vs_temperature
-
-COMPLETE
 """
 
 #===========================================================================================================================

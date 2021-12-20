@@ -1,19 +1,8 @@
 #===========================================================================================================================
 """
-Name				: Pyneni Roopesh
+Name				: Roopesh Pyneni
 Roll Number			: EE18B028
-File Name			: process_analysis.py
 File Description 	: This file will perform the process analysis by changing the process and measuring the values
-
-Functions structure in this file:
-	--> process_analysis
-		--> write_circuit_parameters
-		--> write_extracted_parameters_initial
-		--> update_extracted_parameters
-		
-		--> plot_process_analysis
-			--> extract_process_analysis
-
 """
 
 #===========================================================================================================================

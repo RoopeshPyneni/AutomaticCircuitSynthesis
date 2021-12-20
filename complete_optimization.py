@@ -1,16 +1,8 @@
 #===========================================================================================================================
 """
-Name				: Pyneni Roopesh
+Name				: Roopesh Pyneni
 Roll Number			: EE18B028
-File Name			: complete_optimization.py
 File Description 	: This file will perform all the optimization steps by calling functions in different files
-
-Functions structure in this file:
-	--> save_input_results_initial
-	--> save_output_results_initial
-	--> save_time_results
-	--> complete_optimization
-
 """
 
 #===========================================================================================================================

@@ -1,14 +1,8 @@
 #===========================================================================================================================
 """
-Name				: Pyneni Roopesh
+Name				: Roopesh Pyneni
 Roll Number			: EE18B028
-File Name			: CS_LNA/hand_calculation_3.py
 File Description 	: This file will initialize the optimization_input_parameters and run the complete_optimization file
-
-Functions structure in this file:
-	--> TBD
-
-
 """
 
 #===========================================================================================================================

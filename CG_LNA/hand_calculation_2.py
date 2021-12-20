@@ -1,25 +1,9 @@
 #===========================================================================================================================
 """
-Name				: Pyneni Roopesh
+Name				: Roopesh Pyneni
 Roll Number			: EE18B028
-File Name			: hand_calculations_2.py
 File Description 	: This file will perform hand calculations using method 2
 					  This method involves choosing the points such that gm is low and Rb is 50
-
-Functions structure in this file:
-	--> automatic_initial_parameters
-		--> calculate_initial_parameters
-			--> calc_C1
-			--> calc_W
-			--> calc_Rd
-			--> calc_C2
-			--> calc_dc_opt
-
-		--> update_initial_parameters
-			--> calc_C2_updated
-			--> calc_dc_opt
-
-COMPLETE
 """
 
 #===========================================================================================================================

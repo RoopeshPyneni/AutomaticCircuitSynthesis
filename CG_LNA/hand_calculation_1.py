@@ -1,31 +1,9 @@
 #===========================================================================================================================
 """
-Name				: Pyneni Roopesh
+Name				: Roopesh Pyneni
 Roll Number			: EE18B028
-File Name			: hand_calculations_1.py
 File Description 	: This file will perform hand calculations using method 1
 					  This method involves choosing the points such that gm=20mS and Rb is high
-
-Functions structure in this file:
-	--> automatic_initial_parameters
-		--> calculate_initial_parameters
-			--> calc_Io_W
-			--> calc_Rd
-			--> calc_C1
-			--> calc_Rb
-			--> calc_C2
-			--> calc_dc_opt
-
-		--> update_initial_parameters
-			--> calc_Rb
-			--> calc_C2_updated
-			--> calc_dc_opt
-
-		--> dc_optimize_gm_vdsat
-			--> update_W_Io_gm_vdsat
-			--> calc_Rb
-
-COMPLETE
 """
 
 #===========================================================================================================================

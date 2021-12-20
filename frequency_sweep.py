@@ -1,8 +1,7 @@
 #===========================================================================================================================
 """
-Name				: Pyneni Roopesh
+Name				: Roopesh Pyneni
 Roll Number			: EE18B028
-File Name			: frequency_sweep.py
 File Description 	: This file will run spectre and extract the parameters for a range of frequencies
 """
 

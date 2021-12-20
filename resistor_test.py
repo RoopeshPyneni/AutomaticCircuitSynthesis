@@ -1,9 +1,8 @@
 #===========================================================================================================================
 """
-Name: Pyneni Roopesh
-Roll Number: EE18B028
-
-Resistor Test:
+Name				: Roopesh Pyneni
+Roll Number			: EE18B028
+File Description 	: This file will contain different analysis that is performed to characterize the resistors in TSMC 65nm model file
 """
 #===========================================================================================================================
 import numpy as np
