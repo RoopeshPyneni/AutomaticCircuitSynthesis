@@ -130,6 +130,7 @@ def iip3_analysis(cir,optimization_input_parameters,timing_results):
 	
 	# Performing the analysis
 	for freq in freq_array:
+		cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=freq
 		im3_array=[]
 		fund_array=[]
 		for pin in pin_array:

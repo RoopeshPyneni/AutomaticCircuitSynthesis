@@ -913,7 +913,8 @@ def write_tcsh_file(circuit_initialization_parameters,optimiztion_type):
 	else:
 		s=s+'cd '+circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']+'\n'
 	
-	s=s+'spectre circ.scs =log circ_log.txt\n'
+	#s=s+'spectre circ.scs =log circ_log.txt\n'
+	s=s+'spectre circ.scs \n'
 	s=s+'exit'
 	
 	f.truncate(0)
