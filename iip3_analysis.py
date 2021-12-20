@@ -108,8 +108,8 @@ def iip3_analysis(cir,optimization_input_parameters,timing_results):
 	print('************************************************************************************************************')
 	print('****************************************** IIP3 Analysis ***************************************************')
 	
-	optimization_input_parameters['iip3_analysis']['simulation']['standard_parameters']['iip3_type']='basic'
-	initial_pin=optimization_input_parameters['simulation']['standard_parameters']['pin_fixed']
+	cir.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']='basic'
+	initial_pin=cir.circuit_initialization_parameters['simulation']['standard_parameters']['pin_fixed']
 	cir.update_simulation_parameters(optimization_input_parameters['iip3_analysis']['simulation'])
 	
 	# Pin values and frequency array
@@ -126,14 +126,14 @@ def iip3_analysis(cir,optimization_input_parameters,timing_results):
 	
 	# Writing the values to output files
 	write_circuit_parameters(cir.circuit_parameters,optimization_input_parameters)
-	write_extracted_parameters_initial(cir.extracted_parameters,optimization_input_parameters)
+	write_extracted_parameters_initial(optimization_input_parameters)
 	
 	# Performing the analysis
 	for freq in freq_array:
 		im3_array=[]
 		fund_array=[]
 		for pin in pin_array:
-			optimization_input_parameters['iip3_analysis']['simulation']['standard_parameters']['pin_fixed']=pin
+			cir.circuit_initialization_parameters['simulation']['standard_parameters']['pin_fixed']=pin
 			cir.run_circuit()
 			fund_array.append(cir.extracted_parameters['iip3_fund'])
 			im3_array.append(cir.extracted_parameters['iip3_im3'])
@@ -150,7 +150,7 @@ def iip3_analysis(cir,optimization_input_parameters,timing_results):
 		plot_iip3_analysis(freq,pin_array,im3_array,fund_array,file_directory)
 		
 	# Restoring the value of initial extracted and circuit parameters
-	optimization_input_parameters['iip3_analysis']['simulation']['standard_parameters']['pin_fixed']=initial_pin
+	cir.circuit_initialization_parameters['simulation']['standard_parameters']['pin_fixed']=initial_pin
 	cir.run_circuit()
 
 	# Storing the starting time
