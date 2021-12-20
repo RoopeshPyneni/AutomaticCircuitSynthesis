@@ -115,7 +115,7 @@ def sensitivity_analysis(cir,optimization_input_parameters,timing_results):
 			if initial_extracted_parameters[ext_param]==0:
 				extracted_parameters_sensitivity[ext_param]=0
 			else:
-				extracted_parameters_sensitivity[ext_param]=(cir.extracted_parameters[ext_param]-initial_extracted_parameters[ext_param])/(initial_extracted_parameters[ext_param])
+				extracted_parameters_sensitivity[ext_param]=100*(cir.extracted_parameters[ext_param]-initial_extracted_parameters[ext_param])/(initial_extracted_parameters[ext_param])
 		update_extracted_parameters(param,extracted_parameters_sensitivity,optimization_input_parameters)		# Writing the values to the output file
 		
 	# Restoring the value of initial extracted and circuit parameters
