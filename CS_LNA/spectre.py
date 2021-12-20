@@ -1,9 +1,9 @@
 #===========================================================================================================================
 """
-Name				: Pyneni Roopesh
+Name				: Roopesh Pyneni
 Roll Number			: EE18B028
 File Name			: spectre.py
-File Description 	: This file will contain the functions to write, run, and read from the spectre files	
+File Description 	: This file will contain the functions to write, run, and read from the spectre files for CS LNA
 """
 
 #===========================================================================================================================
@@ -463,7 +463,7 @@ def calculate_iip3_single_point(vout_fund_mag,vout_im3_mag,pin):
 	# Calculating iip3
 	iip3=pin+(0.5*(vout_fund_log-vout_im3_log))
 
-	return iip3
+	return iip3,vout_fund_log,vout_im3_log,pin
 
 #---------------------------------------------------------------------------------------------------------------------------	
 # Calculating the IIP3 after extraction of Vout data
@@ -495,7 +495,7 @@ def calculate_iip3_multiple_points(circuit_initialization_parameters,vout_fund_m
 	# Calculating the iip3 given the slope and y-intercept of fundamental and im3
 	iip3=(im3_intercept[best_point]-fund_intercept[best_point])/(fund_slope[best_point]-im3_slope[best_point])
 
-	return iip3
+	return iip3,im3_intercept[best_point],im3_slope[best_point],fund_intercept[best_point],fund_slope[best_point]
 
 #---------------------------------------------------------------------------------------------------------------------------	
 # Calculating the slope and y-intercept
@@ -984,7 +984,8 @@ def write_extract_iip3(circuit_initialization_parameters):
 		vout_fund_mag,vout_im3_mag=extract_vout_magnitude(file_name,circuit_initialization_parameters)
 
 		# Calculating the iip3
-		iip3=calculate_iip3_single_point(vout_fund_mag,vout_im3_mag,pin)
+		iip3_extracted_parameters={}
+		iip3_extracted_parameters['iip3_dbm'],iip3_extracted_parameters['iip3_fund'],iip3_extracted_parameters['iip3_im3'],iip3_extracted_parameters['iip3_pin']=calculate_iip3_single_point(vout_fund_mag,vout_im3_mag,pin)
 
 	else:
 
@@ -1014,9 +1015,9 @@ def write_extract_iip3(circuit_initialization_parameters):
 			file_name=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']+'/circ.raw/hb_test.fd.qpss_hb'
 			vout_fund_mag[i],vout_im3_mag[i]=extract_vout_magnitude(file_name,circuit_initialization_parameters)
 
-		iip3=calculate_iip3_multiple_points(circuit_initialization_parameters,vout_fund_mag,vout_im3_mag,pin)
-
-	iip3_extracted_parameters={'iip3_dbm':iip3}
+		iip3_extracted_parameters={}
+		iip3_extracted_parameters['iip3_dbm'],iip3_extracted_parameters['iip3_im3_intercept'],iip3_extracted_parameters['iip3_im3_slope'],iip3_extracted_parameters['iip3_fund_intercept'],
+		iip3_extracted_parameters['iip3_fund_slope']=calculate_iip3_multiple_points(circuit_initialization_parameters,vout_fund_mag,vout_im3_mag,pin)
 	
 	return iip3_extracted_parameters
 
