@@ -25,11 +25,11 @@ def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 	
 	filename=optimization_input_parameters['filename']['output']	# Getting the filename
 	
-	newpath =filename+'/Sensitivity_Analysis/Results'	# Creating the folder if it is not present
+	newpath =filename+'/IIP3_Analysis/Results'	# Creating the folder if it is not present
 	if not os.path.exists(newpath):
 		os.makedirs(newpath)
 
-	filename=filename+'/Sensitivity_Analysis/Results/circuit_parameters.txt'
+	filename=filename+'/IIP3_Analysis/Results/circuit_parameters.txt'
 	
 	f=open(filename,'w')
 	for param_name in circuit_parameters:
@@ -42,7 +42,7 @@ def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 # Output: NONE
 def write_extracted_parameters_initial(optimization_input_parameters):
 	
-	filename=optimization_input_parameters['filename']['output']+'/Sensitivity_Analysis/Results/iip3.csv'	# Getting the filename
+	filename=optimization_input_parameters['filename']['output']+'/IIP3_Analysis/Results/iip3.csv'	# Getting the filename
 
 	f=open(filename,'w')
 	f.write('Frequency,Pin,Vout_Fund,Vout_IM3,IIP3,Fund_Slope,IM3_Slope\n')
@@ -54,7 +54,7 @@ def write_extracted_parameters_initial(optimization_input_parameters):
 # Output: NONE
 def update_extracted_parameters(freq,extracted_parameters,optimization_input_parameters):
 	
-	filename=optimization_input_parameters['filename']['output']+'/Sensitivity_Analysis/Results/iip3.csv'	# Getting the filename
+	filename=optimization_input_parameters['filename']['output']+'/IIP3_Analysis/Results/iip3.csv'	# Getting the filename
 	
 	f=open(filename,'a')
 	f.write(str(freq))
@@ -71,7 +71,7 @@ def update_extracted_parameters(freq,extracted_parameters,optimization_input_par
 # Output: NONE
 def update_iip3(freq,iip3,fund_slope,im3_slope,optimization_input_parameters):
 	
-	filename=optimization_input_parameters['filename']['output']+'/Sensitivity_Analysis/Results/iip3.csv'	# Getting the filename
+	filename=optimization_input_parameters['filename']['output']+'/IIP3_Analysis/Results/iip3.csv'	# Getting the filename
 	
 	f=open(filename,'a')
 	f.write(str(freq))
@@ -142,7 +142,7 @@ def iip3_analysis(cir,optimization_input_parameters,timing_results):
 		# Updating the calculated iip3 slope
 		fund_array=np.array(fund_array)
 		im3_array=np.array(im3_array)
-		iip3,_,im3_slope,_,fund_slope=cir.calculate_iip3(n_pin,n_points,cf.dbm_to_normal(fund_array),cf.dbm_to_normal(im3_array),pin_array)
+		iip3,_,im3_slope,_,fund_slope=cir.calculate_iip3(n_pin,n_points,cf.db_to_normal(0.5*fund_array),cf.db_to_normal(0.5*im3_array),pin_array)
 		update_iip3(freq,iip3,fund_slope,im3_slope,optimization_input_parameters)
 
 		# Plotting the graphs

@@ -124,7 +124,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']='manual' #'manual'
+	optimization_input_parameters['pre_optimization']['type']=1 #'manual'
 	
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -175,7 +175,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 
 	# Getting the number of optimization runs
 	optimization_input_parameters['optimization']={}
-	optimization_input_parameters['optimization']['run']='NO'
+	optimization_input_parameters['optimization']['run']='YES'
 	optimization_input_parameters['optimization']['n_runs']=1
 
 	# Getting the type of optimization
@@ -190,7 +190,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=600
+	optimization_input_parameters['optimization'][1]['max_iteration']=1200
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
@@ -420,7 +420,7 @@ def get_process_analysis_parameters(optimization_input_parameters,fo):
 def get_iip3_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['iip3_analysis']={}
-	optimization_input_parameters['iip3_analysis']['run']='NO'
+	optimization_input_parameters['iip3_analysis']['run']='YES'
 
 	optimization_input_parameters['iip3_analysis']['pin_start']=-70
 	optimization_input_parameters['iip3_analysis']['pin_stop']=-40
