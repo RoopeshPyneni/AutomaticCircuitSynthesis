@@ -11,6 +11,7 @@ import optimization as op
 import common_functions as cf
 import CG_LNA.pre_optimization as pr1
 import CS_LNA.pre_optimization as pr2
+import sensitivity_analysis as sa
 import temperature_analysis as ta
 import process_analysis as pa
 import CG_LNA.spectre as sp1
@@ -194,6 +195,10 @@ def complete_optimization(circuit_initialization_parameters,optimization_input_p
 	#======================================================== OPTIMIZATION =======================================================================================================
 
 	op.main_opt(cir,optimization_input_parameters,timing_results)
+
+	#======================================================== SENSITIVITY ANALYSIS ===============================================================================================
+
+	sa.sensitivity_analysis(cir,optimization_input_parameters,timing_results)
 
 	#======================================================== TEMPERATURE ANALYSIS ===============================================================================================
 
