@@ -65,6 +65,8 @@ class Circuit():
 	def reset_temp(self):
 		self.circuit_initialization_parameters['simulation']['netlist_parameters']['cir_temp']=self.circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']	
 
+	def calculate_iip3(self,n_pin,n_points,vout_fund_mag,vout_im3_mag,pin):
+		return calculate_iip3_multiple_points(n_pin,n_points,vout_fund_mag,vout_im3_mag,pin)
 
 
 #===========================================================================================================================
@@ -468,14 +470,11 @@ def calculate_iip3_single_point(vout_fund_mag,vout_im3_mag,pin):
 # Calculating the IIP3 after extraction of Vout data
 # Inputs: circuit_initialization_parameters, Vout_fund, Vout_im3, pin
 # Output: IIP3
-def calculate_iip3_multiple_points(circuit_initialization_parameters,vout_fund_mag,vout_im3_mag,pin):
+def calculate_iip3_multiple_points(n_pin,n_points,vout_fund_mag,vout_im3_mag,pin):
 
 	# Calculating values in log scale
 	vout_fund_log=20*np.log10(vout_fund_mag)
 	vout_im3_log=20*np.log10(vout_im3_mag)
-
-	n_pin=circuit_initialization_parameters['simulation']['standard_parameters']['pin_points']
-	n_points=circuit_initialization_parameters['simulation']['standard_parameters']['iip3_calc_points']
 	
 	# Creating arrays for slopes and y-intercepts of fundamental and im3 components
 	fund_slope=np.zeros(n_pin+1-n_points,dtype=float)
@@ -1015,8 +1014,10 @@ def write_extract_iip3(circuit_initialization_parameters):
 			vout_fund_mag[i],vout_im3_mag[i]=extract_vout_magnitude(file_name,circuit_initialization_parameters)
 
 		iip3_extracted_parameters={}
+		n_pin=circuit_initialization_parameters['simulation']['standard_parameters']['pin_points']
+		n_points=circuit_initialization_parameters['simulation']['standard_parameters']['iip3_calc_points']
 		iip3_extracted_parameters['iip3_dbm'],iip3_extracted_parameters['iip3_im3_intercept'],iip3_extracted_parameters['iip3_im3_slope'],iip3_extracted_parameters['iip3_fund_intercept'],
-		iip3_extracted_parameters['iip3_fund_slope']=calculate_iip3_multiple_points(circuit_initialization_parameters,vout_fund_mag,vout_im3_mag,pin)
+		iip3_extracted_parameters['iip3_fund_slope']=calculate_iip3_multiple_points(n_pin,n_points,vout_fund_mag,vout_im3_mag,pin)
 	
 	return iip3_extracted_parameters
 
