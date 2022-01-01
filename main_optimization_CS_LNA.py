@@ -124,7 +124,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']=1 #'manual'
+	optimization_input_parameters['pre_optimization']['type']=2 #'manual'
 	
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -175,7 +175,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 
 	# Getting the number of optimization runs
 	optimization_input_parameters['optimization']={}
-	optimization_input_parameters['optimization']['run']='YES'
+	optimization_input_parameters['optimization']['run']='NO'
 	optimization_input_parameters['optimization']['n_runs']=1
 
 	# Getting the type of optimization
@@ -320,7 +320,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 def get_sensitivity_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['sensitivity_analysis']={}
-	optimization_input_parameters['sensitivity_analysis']['run']='YES'
+	optimization_input_parameters['sensitivity_analysis']['run']='NO'
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Temperature Analysis Simulation Parameters
@@ -420,7 +420,7 @@ def get_process_analysis_parameters(optimization_input_parameters,fo):
 def get_iip3_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['iip3_analysis']={}
-	optimization_input_parameters['iip3_analysis']['run']='YES'
+	optimization_input_parameters['iip3_analysis']['run']='NO'
 
 	optimization_input_parameters['iip3_analysis']['pin_start']=-70
 	optimization_input_parameters['iip3_analysis']['pin_stop']=-40
@@ -506,7 +506,18 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'TSMC_65_600_iter_50deltaf_series'						# SET THE FILENAME HERE
+	filename=f_directory+'TSMC_65_Test_HC_2'						# SET THE FILENAME HERE
+	# ------- Set Any Additional Parameters Here --------
+	
+
+	# ------- DON'T CHANGE THESE LINES -------------
+	optimization_input_parameters['filename']['output']=filename
+	co.complete_optimization(circuit_initialization_parameters,optimization_input_parameters,'CS_LNA')			
+	# ------- DON'T CHANGE THESE LINES -------------
+
+	# ------- Set Any Additional Parameters Here --------
+	filename=f_directory+'TSMC_65_Test_HC_1'						# SET THE FILENAME HERE
+	optimization_input_parameters['pre_optimization']['type']=1
 	# ------- Set Any Additional Parameters Here --------
 	
 

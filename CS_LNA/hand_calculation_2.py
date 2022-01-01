@@ -6,6 +6,7 @@ File Description 	: This file will perform hand calculations for CS LNA
 """
 
 #===========================================================================================================================
+from _typeshed import ReadableBuffer
 import numpy as np
 import CS_LNA.extra_function as cff # type: ignore
 
@@ -55,6 +56,18 @@ def calculate_cgs(Rs,fo,Qin):
     wo=2*np.pi*fo
     cgs=1/(2*Rs*Qin*wo)
     return cgs
+
+#-----------------------------------------------------------------------------------------------
+# Calculating gm
+# Outputs : gm
+def calculate_gm(Ld,fo,cgs,nf):
+	wo=2*np.pi*fo
+	Rd=wo*Ld*15
+	A=200*((wo*cgs)**2)/Rd
+	B=100*((wo*cgs)**2)
+	C=1-10*(0.1*nf)
+	return 2*A/(np.sqrt(B*B-4*A*C)-B)
+
 
 #-----------------------------------------------------------------------------------------------
 # Calculating W
@@ -141,6 +154,7 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	f_range=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_range']
 	Rs=output_conditions['Rs']
 	s11=output_conditions['s11_db']
+	nf=output_conditions['nf_db']
 	vdd=cir.mos_parameters['vdd']
 	Lmin=cir.mos_parameters['Lmin']
 	Cox=cir.mos_parameters['cox']
@@ -154,7 +168,7 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	Qin=calculate_Qin(s11,fo,f_range)
 	cgs=calculate_cgs(Rs,fo,Qin)
 	circuit_parameters['W']=calculate_W(cgs,Lmin,Cox)
-	gm=20e-3
+	gm=calculate_gm(circuit_parameters['Ld'],fo,cgs,nf)
 	circuit_parameters['Cg']=100*cgs
 	circuit_parameters['Io']=calculate_Io(gm,un,Cox,circuit_parameters['W'],Lmin)
 	circuit_parameters['R1'],circuit_parameters['R2']=calculate_R1_R2(gm,circuit_parameters['Io'],vth,vdd,fo,circuit_parameters['Cg'])
