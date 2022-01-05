@@ -6,7 +6,6 @@ File Description 	: This file will perform hand calculations for CS LNA
 """
 
 #===========================================================================================================================
-from _typeshed import ReadableBuffer
 import numpy as np
 import CS_LNA.extra_function as cff # type: ignore
 
@@ -66,7 +65,7 @@ def calculate_gm(Ld,fo,cgs,nf):
 	A=200*((wo*cgs)**2)/Rd
 	B=100*((wo*cgs)**2)
 	C=1-10*(0.1*nf)
-	return 2*A/(np.sqrt(B*B-4*A*C)-B)
+	return 10*A/(np.sqrt(B*B-4*A*C)-B)
 
 
 #-----------------------------------------------------------------------------------------------
@@ -168,6 +167,7 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	Qin=calculate_Qin(s11,fo,f_range)
 	cgs=calculate_cgs(Rs,fo,Qin)
 	circuit_parameters['W']=calculate_W(cgs,Lmin,Cox)
+	global gm
 	gm=calculate_gm(circuit_parameters['Ld'],fo,cgs,nf)
 	circuit_parameters['Cg']=100*cgs
 	circuit_parameters['Io']=calculate_Io(gm,un,Cox,circuit_parameters['W'],Lmin)
@@ -196,6 +196,7 @@ def update_initial_parameters(cir,optimization_input_parameters):
     # Getting the output conditions
 	Cload=optimization_input_parameters['output_conditions']['Cload']
 	fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
+	nf=optimization_input_parameters['output_conditions']['nf_db']
 
 	while i<5 and cir.extracted_parameters['s11_db']>optimization_input_parameters['output_conditions']['s11_db']:
 
@@ -210,7 +211,8 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		Z_max=calculate_Zim_max(optimization_input_parameters['output_conditions']['s11_db'])
 		Z_diff=np.abs(cir.extracted_parameters['0_Zin_I']-cir.extracted_parameters['2_Zin_I'])
 		cir.circuit_parameters['W']=cir.circuit_parameters['W']*Z_diff/Z_max*1.2
-		gm=20e-3
+		#gm=20e-3
+		#gm=calculate_gm(cir.circuit_parameters['Ld'],fo,cir.extracted_parameters['cgs1'],nf)
 		cir.circuit_parameters['Io']=calculate_Io(gm,un,Cox,cir.circuit_parameters['W'],Lmin)
 
 		# Running the circuit
@@ -238,9 +240,6 @@ def update_initial_parameters(cir,optimization_input_parameters):
 # Outputs : circuit_parameters, extracted_parameters
 def automatic_initial_parameters(cir,optimization_input_parameters,optimization_results):
 		
-	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-
-
 	#======================================================== Step 1 =======================================================
 	print('\n\n--------------------------------- Operating Point Calculations ------------------------------------')
 

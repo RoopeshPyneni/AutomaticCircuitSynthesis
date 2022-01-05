@@ -224,9 +224,6 @@ def update_initial_parameters(cir,optimization_input_parameters):
 # Outputs : circuit_parameters, extracted_parameters
 def automatic_initial_parameters(cir,optimization_input_parameters,optimization_results):
 		
-	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-
-
 	#======================================================== Step 1 =======================================================
 	print('\n\n--------------------------------- Operating Point Calculations ------------------------------------')
 

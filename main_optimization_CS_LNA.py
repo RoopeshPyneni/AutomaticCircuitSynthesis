@@ -88,7 +88,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	# Filenames
 	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/lna2/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/'
-	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='series' # 'ideal', 'series','mos_resistor'
+	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='ideal' # 'ideal', 'series','mos_resistor'
 	circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
 	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
 	
@@ -102,7 +102,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 
 	# Operating frequency points
 	circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=fo
-	circuit_initialization_parameters['simulation']['standard_parameters']['f_range']=50e6
+	circuit_initialization_parameters['simulation']['standard_parameters']['f_range']=100e6
 
 	# Other Values
 	circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']=27
@@ -175,7 +175,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 
 	# Getting the number of optimization runs
 	optimization_input_parameters['optimization']={}
-	optimization_input_parameters['optimization']['run']='NO'
+	optimization_input_parameters['optimization']['run']='YES'
 	optimization_input_parameters['optimization']['n_runs']=1
 
 	# Getting the type of optimization
@@ -506,25 +506,14 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'TSMC_65_Test_HC_2'						# SET THE FILENAME HERE
+	filename=f_directory+'TSMC_65_New_HC_Optimization_Parallel_100MHz'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
 	# ------- DON'T CHANGE THESE LINES -------------
 	optimization_input_parameters['filename']['output']=filename
 	co.complete_optimization(circuit_initialization_parameters,optimization_input_parameters,'CS_LNA')			
-	# ------- DON'T CHANGE THESE LINES -------------
-
-	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'TSMC_65_Test_HC_1'						# SET THE FILENAME HERE
-	optimization_input_parameters['pre_optimization']['type']=1
-	# ------- Set Any Additional Parameters Here --------
-	
-
-	# ------- DON'T CHANGE THESE LINES -------------
-	optimization_input_parameters['filename']['output']=filename
-	co.complete_optimization(circuit_initialization_parameters,optimization_input_parameters,'CS_LNA')			
-	# ------- DON'T CHANGE THESE LINES -------------		
+	# ------- DON'T CHANGE THESE LINES -------------	
 
 
 if file_choose=='M':
