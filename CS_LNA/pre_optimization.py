@@ -11,6 +11,7 @@ import datetime
 import CS_LNA.extra_function as cff		# type: ignore
 import CS_LNA.hand_calculation_1 as hc1 # type: ignore
 import CS_LNA.hand_calculation_2 as hc2 # type: ignore
+import CS_LNA.hand_calculation_3 as hc3 # type: ignore
 
 
 """
@@ -168,6 +169,14 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 
 		# Extracting the MOSFET Parameters from the MOS file
 		hc2.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
+	
+	if optimization_input_parameters['pre_optimization']['type']==3:
+		
+		print('************************************************************************************************************')
+		print('***********************************  Automatic Operating Point Selection 3 *********************************')
+
+		# Extracting the MOSFET Parameters from the MOS file
+		hc3.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
 
 	# Printing the values
 	cff.print_circuit_parameters(cir.circuit_parameters)
