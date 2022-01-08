@@ -134,11 +134,12 @@ def updating_Ld(Cgd,Cload,Cd,fo):
 # Updating gm
 # Outputs : gm
 def update_gm(extracted_nf,target_nf,gm):
-	extracted_f=10**(0.1*extracted_nf)
-	target_f=10**(0.1*target_nf)
-	gm*=(extracted_f-1)/(target_f-1)
-	return gm
-	
+	if extracted_nf<(target_nf-0.3):
+		return gm/1.2
+	elif extracted_nf>target_nf:
+		return gm*1.2
+	else:
+		return gm
 
 """
 ===========================================================================================================================
@@ -205,7 +206,7 @@ def update_initial_parameters(cir,optimization_input_parameters):
 	fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
 	nf=optimization_input_parameters['output_conditions']['nf_db']
 
-	while i<5 and cir.extracted_parameters['s11_db']>optimization_input_parameters['output_conditions']['s11_db']:
+	while i<10: #and cir.extracted_parameters['s11_db']>optimization_input_parameters['output_conditions']['s11_db']:
 
 		# Printing the iteration number
 		i+=1
@@ -218,6 +219,7 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		Z_max=calculate_Zim_max(optimization_input_parameters['output_conditions']['s11_db'])
 		Z_diff=np.abs(cir.extracted_parameters['0_Zin_I']-cir.extracted_parameters['2_Zin_I'])
 		cir.circuit_parameters['W']=cir.circuit_parameters['W']*Z_diff/Z_max*1.2
+		global gm
 		gm=update_gm(cir.extracted_parameters['nf_db'],nf,gm)
 		cir.circuit_parameters['Io']=calculate_Io(gm,un,Cox,cir.circuit_parameters['W'],Lmin)
 
@@ -231,6 +233,11 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		
 		# Running the circuit
 		cir.run_circuit()
+		
+		print(i)
+		print(cir.extracted_parameters['0_nf_db'])
+		print(cir.extracted_parameters['1_nf_db'])
+		print(cir.extracted_parameters['2_nf_db'])
 	
 
 
