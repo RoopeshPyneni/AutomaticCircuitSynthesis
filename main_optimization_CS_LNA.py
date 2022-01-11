@@ -175,7 +175,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 
 	# Getting the number of optimization runs
 	optimization_input_parameters['optimization']={}
-	optimization_input_parameters['optimization']['run']='YES'
+	optimization_input_parameters['optimization']['run']='NO'
 	optimization_input_parameters['optimization']['n_runs']=1
 
 	# Getting the type of optimization

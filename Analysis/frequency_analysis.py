@@ -158,6 +158,9 @@ def plot_frequency_analysis(extracted_parameters_iter,file_directory,sweep_type)
 	
 	# Getting the file directory
 	file_sub_directory=file_directory+'/Frequency_Analysis/Plots/'
+	if not os.path.exists(file_sub_directory):
+		os.makedirs(file_sub_directory)
+
 
 	# Getting the data
 	freq_array=[key for key in extracted_parameters_iter]
