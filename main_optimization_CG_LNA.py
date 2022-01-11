@@ -84,8 +84,8 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	circuit_initialization_parameters['simulation']['standard_parameters']={}
 
 	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/lna1/'
-	circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_tsmc_65_rcm'
-	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_tsmc_65_rcm'
+	circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
+	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh'
 	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']='basic'		# 'basic' or 'advanced' 
 
@@ -184,7 +184,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=600
+	optimization_input_parameters['optimization'][1]['max_iteration']=6
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
@@ -318,7 +318,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 def get_sensitivity_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['sensitivity_analysis']={}
-	optimization_input_parameters['sensitivity_analysis']['run']='YES'
+	optimization_input_parameters['sensitivity_analysis']['run']='NO'
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Temperature Analysis Simulation Parameters
@@ -351,7 +351,7 @@ def get_temperature_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['temperature_analysis']={}
 
-	optimization_input_parameters['temperature_analysis']['run']='YES'
+	optimization_input_parameters['temperature_analysis']['run']='NO'
 
 	optimization_input_parameters['temperature_analysis']['start_temp']=-40
 	optimization_input_parameters['temperature_analysis']['stop_temp']=120
@@ -392,7 +392,7 @@ def get_temperature_analysis_parameters(optimization_input_parameters,fo):
 def get_process_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['process_analysis']={}
-	optimization_input_parameters['process_analysis']['run']='YES'
+	optimization_input_parameters['process_analysis']['run']='NO'
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Temperature Analysis Simulation Parameters
