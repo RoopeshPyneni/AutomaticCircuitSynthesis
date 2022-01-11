@@ -457,7 +457,7 @@ def get_frequency_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['frequency_analysis']={}
 
-	optimization_input_parameters['frequency_analysis']['run']='YES'
+	optimization_input_parameters['frequency_analysis']['run']='NO'
 
 	optimization_input_parameters['frequency_analysis']['start_freq']=0.8e9
 	optimization_input_parameters['frequency_analysis']['stop_freq']=1.2e9

@@ -9,6 +9,7 @@ import numpy as np
 import fileinput
 import os
 import CG_LNA.extra_function as cff # type: ignore
+import CG_LNA.pre_optimization as pr # type: ignore
 
 """
 ====================================================================================================================================================================================
@@ -174,6 +175,11 @@ class Circuit():
 		
 		return opt_dict
 
+	#---------------------------------------------------------------------------------------------------------------------------
+	# Function to perform pre optimization
+	def pre_optimization(self,optimization_input_parameters,timing_results):
+		pr.pre_optimization(self,optimization_input_parameters,timing_results)
+	
 
 """
 ===========================================================================================================================

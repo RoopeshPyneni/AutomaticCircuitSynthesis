@@ -11,9 +11,10 @@ import os
 #===========================================================================================================================
 
 
-
-#===========================================================================================================================
-#---------------------------------------- Calculation Functions ------------------------------------------------------------
+"""
+===========================================================================================================================
+---------------------------------------- Calculation Functions ------------------------------------------------------------
+"""
 
 #-----------------------------------------------------------------------------------------------
 # These functions change the parameters from normal scale to dB and dBm scale and vice versa
@@ -36,14 +37,9 @@ def normal_to_dbm(x_normal):
 	x_db=10.0*np.log10(x_normal)
 	x_dbm=x_db+30.0
 	return x_dbm
-	
-#===========================================================================================================================
-#---------------------------------------- Number Conversion Functions ------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------
 # This function truncates a number to a few significant numbers and returns a string
-# Inputs  : Number, Number of Significant Values
-# Outputs : Output Character
 def num_trunc(num,pts):
 	
 	# Initializing Length of number
@@ -119,13 +115,13 @@ def num_trunc(num,pts):
 	return char_val
 
 
-#===========================================================================================================================
-#------------------------------------ Dictionary Modification Functions ----------------------------------------------------
+"""
+===========================================================================================================================
+------------------------------------ Dictionary Modification Functions ----------------------------------------------------
+"""
 
 #-----------------------------------------------------------------------------------------------
 # This function that is used to modify the simulation parameters
-# Inputs  : optimization_input_parameters, optimization_name, iteration_number
-# Outputs : NONE
 def write_simulation_parameters(optimization_input_parameters,optimization_name,iteration_number):
 	if iteration_number==0:
 		if 'parameters_list' in optimization_input_parameters[optimization_name]['simulation']:
@@ -147,8 +143,6 @@ def write_simulation_parameters(optimization_input_parameters,optimization_name,
 
 #-----------------------------------------------------------------------------------------------
 # This function is used to update the MOS Parameters
-# Inputs  : mos_parameters, un, cox, vt, Lmin, Vdd
-# Outputs : mos_parameters
 def update_MOS_parameters(mos,un,cox,vt,Lmin,vdd):
 	mos['un']=un
 	mos['cox']=cox
@@ -157,9 +151,11 @@ def update_MOS_parameters(mos,un,cox,vt,Lmin,vdd):
 	mos['un']=vdd
 	return mos
 
-	
-#===========================================================================================================================
-#--------------------------------------- Output Printing Functions ---------------------------------------------------------
+
+"""
+===========================================================================================================================
+--------------------------------------- Output Printing Functions ---------------------------------------------------------
+"""
 
 trunc_val=3
 
@@ -171,16 +167,12 @@ def print_output_parameters(f,parameters):
 
 #-----------------------------------------------------------------------------------------------
 # This function is used to wait for key press
-# Inputs  : NONE
-# Outputs : NONE
 def wait_key():
 	input('\n\nPress Enter to continue')
 	os.system("clear")
 	
 #-----------------------------------------------------------------------------------------------
 # Printing the MOSFET Parameters
-# Inputs  : mos_parameters
-# Outputs : NONE
 def print_MOS_parameters(mos_parameters):
 	print ('\n____________________________________________________________________')
 	print ('-------------------------MOSFET Parameters--------------------------\n')
@@ -193,30 +185,14 @@ def print_MOS_parameters(mos_parameters):
 	
 #-----------------------------------------------------------------------------------------------
 # Printing the circuit parameters
-# Inputs  : circuit_parameters
-# Outputs : NONE
 def print_circuit_parameters(circuit_parameters):
 	print ('\n____________________________________________________________________')
 	print ('-------------------------Circuit Parameters-------------------------\n')
 	for param_name in circuit_parameters:
 		print(param_name,' = ',num_trunc(circuit_parameters[param_name],trunc_val))
-	
-#-----------------------------------------------------------------------------------------------
-# Printing the DC outputs
-# Inputs  : dc_outputs, mos_parameters
-# Outputs : NONE
-def print_DC_outputs(dc_outputs,mos_parameters):
-	print ('\n____________________________________________________________________')
-	print ('-------------------Hand Calculation DC Outputs----------------------\n')
-	print ('vg     = ',num_trunc(dc_outputs['vg'],trunc_val))
-	print ('vs     = ',num_trunc(dc_outputs['vs'],trunc_val))
-	print ('vd     = ',num_trunc(dc_outputs['vd'],trunc_val))
-	print ('vgs-vt = ',num_trunc(dc_outputs['vg']-dc_outputs['vs']-mos_parameters['vt'],trunc_val))
 		
 #-----------------------------------------------------------------------------------------------
 # Printing the extracted parameters
-# Inputs  : extracted_parameters
-# Outputs : NONE
 def print_extracted_parameters(extracted_parameters):
 	print ('\n____________________________________________________________________')
 	print ('-------------------------Extracted Parameters-----------------------\n')
@@ -225,8 +201,6 @@ def print_extracted_parameters(extracted_parameters):
 	
 #-----------------------------------------------------------------------------------------------
 # Printing the loss parameters
-# Inputs  : loss_parameters
-# Outputs : NONE
 def print_loss_parameters(loss_parameters):
 	for param_name in loss_parameters:
 		print(param_name,' = ',num_trunc(loss_parameters[param_name],trunc_val))

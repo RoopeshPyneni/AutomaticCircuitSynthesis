@@ -9,8 +9,8 @@ File Description 	: This file will perform all the optimization steps by calling
 import datetime
 import optimization as op
 import common_functions as cf
-import CG_LNA.pre_optimization as pr1
-import CS_LNA.pre_optimization as pr2
+#import CG_LNA.pre_optimization as pr1
+#import CS_LNA.pre_optimization as pr2
 import CG_LNA.spectre as sp1
 import CS_LNA.spectre as sp2
 import os
@@ -22,13 +22,14 @@ import Analysis.process_analysis as pa
 import Analysis.iip3_analysis as ia
 import Analysis.frequency_analysis as fa
 
-#===========================================================================================================================
-#------------------------------------ File Writing Functions ---------------------------------------------------------------
+
+"""
+===========================================================================================================================
+------------------------------------ File Writing Functions ---------------------------------------------------------------
+"""
 
 #-----------------------------------------------------------------
 # Function that stores input data of the simulation ( output conditions, MOS Parameters, Filenames, Simulation Conditions )
-# Inputs  : optimization_input_parameters
-# Outputs : NONE
 def save_input_results_initial(optimization_input_parameters):
 
 	# Creating the folder path
@@ -46,48 +47,15 @@ def save_input_results_initial(optimization_input_parameters):
 	f.write('\nOutput     : '+str(optimization_input_parameters['filename']['output']))
 	f.write('\nRun Status : '+str(optimization_input_parameters['filename']['run_status']))
 
-	"""
-	# Saving MOS Parameters
-	f.write('\n\n---------------------- MOS Parameters -----------------------')
-	f.write('\nProcess Name	:'+str(optimization_input_parameters['MOS']['Process']))
-	f.write('\nVdd      	:'+str(optimization_input_parameters['MOS']['Vdd']))
-	f.write('\nLmin     	:'+str(optimization_input_parameters['MOS']['Lmin']))
-	f.write('\nun	    	:'+str(optimization_input_parameters['MOS']['un']))
-	f.write('\ntox  	   	:'+str(optimization_input_parameters['MOS']['tox']))
-	f.write('\ncox	     	:'+str(optimization_input_parameters['MOS']['cox']))
-	f.write('\nvth0	     	:'+str(optimization_input_parameters['MOS']['vt']))
-	"""
-
 	# Saving Output Conditions
 	f.write('\n\n---------------------- Output Conditions -----------------------')
 	for name in optimization_input_parameters['output_conditions']:
 		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['output_conditions'][name],3))
 
-	"""
-	# Saving Simulation Results
-	f.write('\n\n---------------------- Simulation Conditions -----------------------')
-	f.write('\nDirectory      :'+str(optimization_input_parameters['simulation']['directory']))
-	f.write('\nBasic Filename :'+str(optimization_input_parameters['simulation']['basic_circuit']))
-	f.write('\nIIP3 Filename  :'+str(optimization_input_parameters['simulation']['iip3_circuit']))
-	f.write('\nTCSH Filename  :'+str(optimization_input_parameters['simulation']['tcsh']))
-	f.write('\nStandard Temp  :'+str(optimization_input_parameters['simulation']['std_temp']))
-	f.write('\nPin Fixed      :'+str(optimization_input_parameters['simulation']['pin_fixed']))
-	f.write('\nPin Start      :'+str(optimization_input_parameters['simulation']['pin_start']))
-	f.write('\nPin Stop       :'+str(optimization_input_parameters['simulation']['pin_stop']))
-	f.write('\nPin Points     :'+str(optimization_input_parameters['simulation']['pin_points']))
-	f.write('\nIIP3 Calculation Points :'+str(optimization_input_parameters['simulation']['iip3_calc_points']))
-	
-	# Parameter List for simulation
-	for name in optimization_input_parameters['simulation']['parameters_list']:
-		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['simulation']['parameters_list'][name],3))
-	"""
-	
 	f.close()
 
 #-----------------------------------------------------------------
 # Function that creates a file that stores output data of the simulation
-# Inputs  : optimization_input_parameters
-# Outputs : NONE
 def save_output_results_initial(optimization_input_parameters):
 	
 	# Creating the folder path
@@ -110,8 +78,6 @@ def save_output_results_initial(optimization_input_parameters):
 
 #-----------------------------------------------------------------
 # Function that stores the time results
-# Inputs  : timing_results, optimization_input_parameters
-# Outputs : NONE
 def save_time_results(timing_results,optimization_input_parameters):
 	
 	filename=optimization_input_parameters['filename']['output']	
@@ -140,8 +106,6 @@ def save_time_results(timing_results,optimization_input_parameters):
 
 #-----------------------------------------------------------------
 # Function that stores output data of the MOS File Calculations
-# Inputs  : mos_parameters, circuit_initialization_parameters
-# Outputs : NONE
 def save_mos_results(mos_parameters,optimization_input_parameters):
 	
 	# Opening the file
@@ -157,13 +121,14 @@ def save_mos_results(mos_parameters,optimization_input_parameters):
 	
 	f.close()
 
-#===========================================================================================================================
-#------------------------------------Main Program Code----------------------------------------------------------------------
+
+"""
+===========================================================================================================================
+------------------------------------Main Program Code----------------------------------------------------------------------
+"""
 
 #-----------------------------------------------------------------
 # Function that performs the complete optimization process
-# Inputs  : Optimization Input Parameters
-# Outputs : NONE
 def complete_optimization(circuit_initialization_parameters,optimization_input_parameters,name):
 
 	# Calculating Starting Time
@@ -191,10 +156,13 @@ def complete_optimization(circuit_initialization_parameters,optimization_input_p
 
 	#=============================== PRE OPTIMIZATION ==============================================
 
+	"""
 	if name=='CG_LNA':
 		pr1.pre_optimization(cir,optimization_input_parameters,timing_results)
 	else:
 		pr2.pre_optimization(cir,optimization_input_parameters,timing_results)
+	"""
+	cir.pre_optimization(optimization_input_parameters,timing_results)
 
 	#=============================== OPTIMIZATION ==================================================
 
@@ -227,5 +195,6 @@ def complete_optimization(circuit_initialization_parameters,optimization_input_p
 	
 	# Saving the timing results
 	save_time_results(timing_results,optimization_input_parameters)
-	
+
+
 #=================================================================================================================================================================================

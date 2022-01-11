@@ -11,6 +11,7 @@ import fileinput
 import os
 import multiprocessing as mp
 import CS_LNA.extra_function as cff # type: ignore
+import CG_LNA.pre_optimization as pr # type: ignore
 import copy
 
 """
@@ -185,6 +186,11 @@ class Circuit():
 		opt_dict['Io_loss']=loss_Io_min
 		
 		return opt_dict
+
+	#---------------------------------------------------------------------------------------------------------------------------
+	# Function to perform pre optimization
+	def pre_optimization(self,optimization_input_parameters,timing_results):
+		pr.pre_optimization(self,optimization_input_parameters,timing_results)
 
 """
 ===========================================================================================================================
