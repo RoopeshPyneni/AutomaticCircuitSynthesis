@@ -8,7 +8,7 @@ File Description 	: This file will perform pre optimization and calculate an ini
 
 #===========================================================================================================================
 import datetime
-import CS_LNA.extra_function as cff		# type: ignore
+import common_functions as cf		# type: ignore
 import CS_LNA.hand_calculation_1 as hc1 # type: ignore
 import CS_LNA.hand_calculation_2 as hc2 # type: ignore
 import CS_LNA.hand_calculation_3 as hc3 # type: ignore
@@ -55,29 +55,29 @@ def save_output_results_pre_optimization(optimization_results,optimization_input
 	if 'manual_hc' in optimization_results:
 		f.write('\n\n--------------------- Manual Hand Calculations ---------------------------------')
 		f.write('\n\n---------------- Circuit Parameters Complete ---------------')
-		cff.print_output_parameters_complete(f,optimization_results['manual_hc']['circuit_parameters'])
+		cf.print_output_parameters_complete(f,optimization_results['manual_hc']['circuit_parameters'])
 		f.write('\n\n---------------- Circuit Parameters ------------------------')
-		cff.print_output_parameters(f,optimization_results['manual_hc']['circuit_parameters'])
+		cf.print_output_parameters(f,optimization_results['manual_hc']['circuit_parameters'])
 		f.write('\n\n---------------- Extracted Parameters ------------------------')
-		cff.print_output_parameters(f,optimization_results['manual_hc']['extracted_parameters'])
+		cf.print_output_parameters(f,optimization_results['manual_hc']['extracted_parameters'])
 
 	if 'auto_hc' in optimization_results:
 		f.write('\n\n--------------------- Automatic Hand Calculations ---------------------------------')
 		f.write('\n\n---------------- Circuit Parameters Complete ---------------')
-		cff.print_output_parameters_complete(f,optimization_results['auto_hc']['circuit_parameters'])
+		cf.print_output_parameters_complete(f,optimization_results['auto_hc']['circuit_parameters'])
 		f.write('\n\n---------------- Circuit Parameters ------------------------')
-		cff.print_output_parameters(f,optimization_results['auto_hc']['circuit_parameters'])
+		cf.print_output_parameters(f,optimization_results['auto_hc']['circuit_parameters'])
 		f.write('\n\n---------------- Extracted Parameters ------------------------')
-		cff.print_output_parameters(f,optimization_results['auto_hc']['extracted_parameters'])
+		cf.print_output_parameters(f,optimization_results['auto_hc']['extracted_parameters'])
 
 	if 'hc_update' in optimization_results:
 		f.write('\n\n--------------------- Hand Calculations Update ---------------------------------')
 		f.write('\n\n---------------- Circuit Parameters Complete ---------------')
-		cff.print_output_parameters_complete(f,optimization_results['hc_update']['circuit_parameters'])
+		cf.print_output_parameters_complete(f,optimization_results['hc_update']['circuit_parameters'])
 		f.write('\n\n---------------- Circuit Parameters ------------------------')
-		cff.print_output_parameters(f,optimization_results['hc_update']['circuit_parameters'])
+		cf.print_output_parameters(f,optimization_results['hc_update']['circuit_parameters'])
 		f.write('\n\n---------------- Extracted Parameters ------------------------')
-		cff.print_output_parameters(f,optimization_results['hc_update']['extracted_parameters'])
+		cf.print_output_parameters(f,optimization_results['hc_update']['extracted_parameters'])
 	
 	f.close()
 
@@ -145,10 +145,10 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 		optimization_results['manual_hc']['extracted_parameters']=cir.extracted_parameters.copy()
 
 		# Printing the values
-		cff.print_circuit_parameters(cir.circuit_parameters)
-		cff.print_extracted_outputs(cir.extracted_parameters)
+		cf.print_circuit_parameters(cir.circuit_parameters)
+		cf.print_extracted_outputs(cir.extracted_parameters)
 
-		#cff.wait_key()
+		#cf.wait_key()
 
 	
 	#======================================================== Automatic Initial Points =============================================================================================================
@@ -179,8 +179,8 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 		hc3.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
 
 	# Printing the values
-	cff.print_circuit_parameters(cir.circuit_parameters)
-	cff.print_extracted_outputs(cir.extracted_parameters)
+	cf.print_circuit_parameters(cir.circuit_parameters)
+	cf.print_extracted_outputs(cir.extracted_parameters)
 
 	# Storing the results
 	save_output_results_pre_optimization(optimization_results,optimization_input_parameters)

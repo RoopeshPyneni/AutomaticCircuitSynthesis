@@ -10,7 +10,6 @@ import numpy as np
 import fileinput
 import os
 import multiprocessing as mp
-import CS_LNA.extra_function as cff # type: ignore
 import CS_LNA.pre_optimization as pr # type: ignore
 import spectre_common as sp # type: ignore
 import copy

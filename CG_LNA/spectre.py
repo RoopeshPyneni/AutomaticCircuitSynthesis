@@ -7,8 +7,6 @@ File Description 	: This file will contain the functions to write, run, and read
 #===========================================================================================================================
 import numpy as np
 import fileinput
-import os
-import CG_LNA.extra_function as cff # type: ignore
 import CG_LNA.pre_optimization as pr # type: ignore
 import spectre_common as sp # type: ignore
 

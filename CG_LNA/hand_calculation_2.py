@@ -8,7 +8,7 @@ File Description 	: This file will perform hand calculations using method 2
 
 #===========================================================================================================================
 import numpy as np
-import CG_LNA.extra_function as cff # type: ignore
+import common_functions as cf # type: ignore
 
 #===========================================================================================================================
 #------------------------------------Defining the functions for simple calculations-----------------------------------------
@@ -55,7 +55,7 @@ def calc_W(circuit_parameters,mos_parameters):
 def calc_Rd(opt_conditions):
 
 	# Calculating the required gain
-	gain=np.sqrt(cff.db_to_normal(opt_conditions['gain_db']))
+	gain=np.sqrt(cf.db_to_normal(opt_conditions['gain_db']))
 	gm=2e-3
 
 	# Calculating Rd
@@ -223,9 +223,8 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	optimization_results['auto_hc']['extracted_parameters']=cir.extracted_parameters.copy()
 
 	# Printing the values
-	cff.print_circuit_parameters(cir.circuit_parameters)
-	cff.print_DC_outputs(dc_initial_outputs,cir.mos_parameters)
-	cff.print_extracted_outputs(cir.extracted_parameters)
+	cf.print_circuit_parameters(cir.circuit_parameters)
+	cf.print_extracted_outputs(cir.extracted_parameters)
 
 
 
@@ -241,8 +240,7 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	optimization_results['hc_update']['extracted_parameters']=cir.extracted_parameters.copy()
 
 	# Printing the values
-	cff.print_circuit_parameters(cir.circuit_parameters)
-	cff.print_DC_outputs(dc_initial_outputs,cir.mos_parameters)
-	cff.print_extracted_outputs(cir.extracted_parameters)
+	cf.print_circuit_parameters(cir.circuit_parameters)
+	cf.print_extracted_outputs(cir.extracted_parameters)
 	
 #===========================================================================================================================

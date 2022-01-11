@@ -7,7 +7,7 @@ File Description 	: This file will perform hand calculations for CS LNA
 
 #===========================================================================================================================
 import numpy as np
-import CS_LNA.extra_function as cff # type: ignore
+import common_functions as cf # type: ignore
 
 
 """
@@ -265,8 +265,8 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	optimization_results['auto_hc']['extracted_parameters']=cir.extracted_parameters.copy()
 
 	# Printing the values
-	cff.print_circuit_parameters(cir.circuit_parameters)
-	cff.print_extracted_outputs(cir.extracted_parameters)
+	cf.print_circuit_parameters(cir.circuit_parameters)
+	cf.print_extracted_outputs(cir.extracted_parameters)
 
 	
 
@@ -282,7 +282,7 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	optimization_results['hc_update']['extracted_parameters']=cir.extracted_parameters.copy()
 
 	# Printing the values
-	cff.print_circuit_parameters(cir.circuit_parameters)
-	cff.print_extracted_outputs(cir.extracted_parameters)
+	cf.print_circuit_parameters(cir.circuit_parameters)
+	cf.print_extracted_outputs(cir.extracted_parameters)
 
 #===========================================================================================================================

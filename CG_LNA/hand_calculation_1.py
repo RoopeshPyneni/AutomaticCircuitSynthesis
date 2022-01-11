@@ -8,7 +8,7 @@ File Description 	: This file will perform hand calculations using method 1
 
 #===========================================================================================================================
 import numpy as np
-import CG_LNA.extra_function as cff # type: ignore
+import common_functions as cf # type: ignore
 
 #===========================================================================================================================
 #------------------------------------Defining the functions for simple calculations-----------------------------------------
@@ -83,7 +83,7 @@ def calc_Io_min(opt_conditions,mos_parameters):
 	un=mos_parameters['un']
 	
 	# Calculating Y
-	s11_normal=cff.db_to_normal(s11_db)
+	s11_normal=cf.db_to_normal(s11_db)
 	Y=(2/Rs)*np.sqrt(s11_normal)
 	
 	# Calculating Wmax and gm
@@ -122,14 +122,14 @@ def calc_Io_W(opt_conditions,mos_parameters,vdsat_reqd):
 def calc_Rd(opt_conditions):
 
 	# Calculating the required gain
-	gain=np.sqrt(cff.db_to_normal(opt_conditions['gain_db']))
+	gain=np.sqrt(cf.db_to_normal(opt_conditions['gain_db']))
 
 	# Assigning the values
 	Rs=opt_conditions['Rs']
 	nf_db=opt_conditions['nf_db']
 	
 	# Calculating f from nf
-	f=cff.db_to_normal(nf_db)
+	f=cf.db_to_normal(nf_db)
 	
 	# Assigning value for gamma
 	gamma=2
@@ -180,7 +180,7 @@ def calc_Rb(opt_conditions,mos_parameters,circuit_parameters):
 	p1_db=iip3_dbm-39.6
 	
 	# Calculating the input swing
-	vi_swing=np.sqrt(8*Rs*cff.db_to_normal(p1_db))
+	vi_swing=np.sqrt(8*Rs*cf.db_to_normal(p1_db))
 	
 	# Calculating the output swing
 	vo_swing_min=vi_swing*gain
@@ -456,9 +456,8 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	optimization_results['auto_hc']['extracted_parameters']=cir.extracted_parameters.copy()
 
 	# Printing the values
-	cff.print_circuit_parameters(cir.circuit_parameters)
-	cff.print_DC_outputs(dc_initial_outputs,cir.mos_parameters)
-	cff.print_extracted_outputs(cir.extracted_parameters)
+	cf.print_circuit_parameters(cir.circuit_parameters)
+	cf.print_extracted_outputs(cir.extracted_parameters)
 
 	
 
@@ -474,9 +473,8 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	optimization_results['hc_update']['extracted_parameters']=cir.extracted_parameters.copy()
 
 	# Printing the values
-	cff.print_circuit_parameters(cir.circuit_parameters)
-	cff.print_DC_outputs(dc_initial_outputs,cir.mos_parameters)
-	cff.print_extracted_outputs(cir.extracted_parameters)
+	cf.print_circuit_parameters(cir.circuit_parameters)
+	cf.print_extracted_outputs(cir.extracted_parameters)
 
 
 
@@ -492,7 +490,7 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	optimization_results['gmvd_update']['extracted_parameters']=cir.extracted_parameters.copy()
 
 	# Printing the values
-	cff.print_circuit_parameters(cir.circuit_parameters)
-	cff.print_extracted_outputs(cir.extracted_parameters)
+	cf.print_circuit_parameters(cir.circuit_parameters)
+	cf.print_extracted_outputs(cir.extracted_parameters)
 
 #===========================================================================================================================
