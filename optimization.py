@@ -2,36 +2,11 @@
 """
 Name				: Pyneni Roopesh
 Roll Number			: EE18B028
-File Name			: optimization.py
-File Description 	: This file will perform the optimization for different circuit parameters
-
-Functions structure in this file:
-	--> save_input_results_optimization
-	--> save_output_results_optimization
-	--> save_info_single_array_iter
-	--> save_info_double_array_iter
-	--> save_info
-	--> extract_double_array
-	--> plot_double_array
-	--> extract_single_array
-	--> plot_single_array
-	--> calc_loss_slope
-	--> update_alpha
-	--> check_circuit_parameters
-	--> update_C2_Rbias
-	--> check_stop_alpha
-	--> check_stop_loss
-	--> moving_avg
-	--> opt_single_run
-	--> main_opt
-
-	
+File Description 	: This file will perform the optimization for different circuit parameters	
 """
 #===========================================================================================================================
 import numpy as np
 import common_functions as cf
-import optimization_functions_loss as ofl
-import optimization_functions_fom as off
 import os
 from matplotlib import pylab
 from pylab import *
@@ -382,7 +357,7 @@ def plot_single_array(optimization_results,list_name,file_directory):
 	
 	filename=file_directory+'/plots/'+list_name+'/'
 	if not os.path.exists(filename):
-    		os.makedirs(filename)
+		os.makedirs(filename)
 	
 	# Creating the new arrays
 	arrX=np.zeros((n_iter,1),dtype=float)
@@ -478,12 +453,7 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 		
 		# Extracting Loss
 		cir.update_circuit(circuit_parameters1)
-		extracted_parameters1=cir.extracted_parameters.copy()
-		
-		if optimization_input_parameters['optimization']['optimization_name']=='loss1':
-			loss_dict1=ofl.calc_loss_1(extracted_parameters1,output_conditions,loss_weights)
-		elif optimization_input_parameters['optimization']['optimization_name']=='fom1':
-			loss_dict1=off.calc_fom_1(extracted_parameters1,output_conditions,loss_weights)
+		loss_dict1=cir.calc_loss(output_conditions,loss_weights)
 		
 		# Calculating Slope	
 		circuit_parameters_slope[param_name]={}
@@ -610,9 +580,6 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	loss_type         = optimization_input_parameters['optimization'][run_number]['loss_type']
 	optimization_type = optimization_input_parameters['optimization'][run_number]['optimization_type']
 	
-	#alpha_parameters         = optimization_input_parameters['optimization'][run_number]['alpha']['values']
-	#alpha_parameters_initial = optimization_input_parameters['optimization'][run_number]['alpha']['values'].copy()
-
 	alpha         = optimization_input_parameters['optimization'][run_number]['alpha']['value']
 	alpha_initial = optimization_input_parameters['optimization'][run_number]['alpha']['value']
 	
@@ -637,10 +604,7 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	optimization_results['optimization_start']['extracted_parameters']=cir.extracted_parameters.copy()
 
 	# Calculating loss
-	if optimization_input_parameters['optimization']['optimization_name']=='loss1':
-		loss_iter[-1]=ofl.calc_loss_1(cir.extracted_parameters,output_conditions,loss_weights)
-	elif optimization_input_parameters['optimization']['optimization_name']=='fom1':
-		loss_iter[-1]=off.calc_fom_1(cir.extracted_parameters,output_conditions,loss_weights)
+	loss_iter[-1]=cir.calc_loss(output_conditions,loss_weights)
 	
 	# Printing the values of loss before optimization
 	print('-----------------------------Before Iteration---------------------------------')
@@ -660,33 +624,21 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	while i<max_iteration:
 	
 		# Checking if there is extra loss from output conditions
-		if optimization_input_parameters['optimization']['optimization_name']=='loss1':
-			check_loss=ofl.calc_check_loss(loss_iter,i,loss_type)
-		elif optimization_input_parameters['optimization']['optimization_name']=='fom1':
-			check_loss=off.calc_check_loss(loss_iter,i,loss_type)
-		
+		check_loss=cir.calc_check_loss(loss_iter,i,loss_type)
 		
 		# Calculating the slope of loss and output sensitivity and updating the circuit parameters
 		circuit_parameters_slope,circuit_parameters_sensitivity=calc_loss_slope(cir,output_conditions,loss_iter[i-1],optimization_input_parameters,run_number)
-		if optimization_input_parameters['optimization']['optimization_name']=='loss1':
-			ofl.update_circuit_parameters(cir,circuit_parameters_slope,check_loss,optimization_input_parameters,run_number)
-		elif optimization_input_parameters['optimization']['optimization_name']=='fom1':
-			off.update_circuit_parameters(cir,circuit_parameters_slope,check_loss,optimization_input_parameters,run_number)
+		cir.update_circuit_parameters(circuit_parameters_slope,check_loss,optimization_input_parameters,run_number)
 		
-
 		# Extracting output parameters for new circuit parameters
 		cir.run_circuit()
 
 
 		# Updating different dictionaries
-		if optimization_input_parameters['optimization']['optimization_name']=='loss1':
-			loss_iter[i]=ofl.calc_loss_1(cir.extracted_parameters,output_conditions,loss_weights)
-		elif optimization_input_parameters['optimization']['optimization_name']=='fom1':
-			loss_iter[i]=off.calc_fom_1(cir.extracted_parameters,output_conditions,loss_weights)
+		loss_iter[i]=cir.calc_loss(output_conditions,loss_weights)
 			
 
 		# Storing some parameters
-		#alpha_parameters_iter[i]	= alpha_parameters.copy()
 		alpha_parameters_iter[i]	= {'alpha':alpha}
 		loss_slope_iter[i-1]		= circuit_parameters_slope.copy()
 		sensitivity_iter[i-1]		= circuit_parameters_sensitivity.copy()
@@ -709,7 +661,6 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		
 
 		# Updating the value of alpha	
-		#alpha_parameters['common']=update_alpha(loss_iter,alpha_parameters['common'],i,alpha_mult,optimization_type,optimization_input_parameters,run_number)
 		alpha=update_alpha(loss_iter,alpha,i,alpha_mult,optimization_type,optimization_input_parameters,run_number)
 		
 
@@ -740,17 +691,11 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	
 
 	# Resetting the value of alpha
-	#optimization_input_parameters['optimization'][run_number]['alpha']['values']=alpha_parameters_initial.copy()
 	optimization_input_parameters['optimization'][run_number]['alpha']['value']=alpha_initial
 
-
 	# Finding the best optimization results
-	if optimization_input_parameters['optimization']['optimization_name']=='loss1':
-		optimization_results['optimized_results']=ofl.check_best_solution(optimization_results,0)
-	elif optimization_input_parameters['optimization']['optimization_name']=='fom1':
-		optimization_results['optimized_results']=off.check_best_solution(optimization_results,0)
-		optimization_results['acceptable_solution']=off.check_acceptable_solutions(optimization_results,optimization_input_parameters)
-
+	optimization_results['optimized_results']=cir.check_best_solution(optimization_results,0)
+	
 
 	# Assigning circuit_parameters and extracted_parameters with the best result
 	print_dict=optimization_results['optimized_results']

@@ -1,11 +1,11 @@
-#===========================================================================================================================
+#==========================================================================================================================
 """
 Name				: Roopesh Pyneni
 Roll Number			: EE18B028
 File Description 	: This file will contain the functions to write, run, and read from the spectre files for CS LNA
 """
 
-#===========================================================================================================================
+#==========================================================================================================================
 import numpy as np
 import fileinput
 import os
@@ -14,11 +14,11 @@ import CS_LNA.extra_function as cff # type: ignore
 import copy
 
 """
-====================================================================================================================================================================================
------------------------------------------------------------- CIRCUIT CLASS ---------------------------------------------------------------------------------------------------------
+===========================================================================================================================
+------------------------------------- CIRCUIT CLASS -----------------------------------------------------------------------
 """
 
-#---------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------
 # Creating a class for the circuit 
 class Circuit():
 	def __init__(self,circuit_initialization_parameters):
@@ -68,9 +68,149 @@ class Circuit():
 	def calculate_iip3(self,n_pin,n_points,vout_fund_mag,vout_im3_mag,pin):
 		return calculate_iip3_multiple_points(n_pin,n_points,vout_fund_mag,vout_im3_mag,pin)
 
+	
+	#-----------------------------------------------------------------------------------------------
+	# Optimization Functions
+
+	#-----------------------------------------------------------------------------------------------
+	# This function calculates the loss for Io Optimization
+	def calc_loss(self,output_conditions,loss_weights):
+		
+		# Extracted Values
+		gain=self.extracted_parameters['gain_db']
+		iip3=self.extracted_parameters['iip3_dbm']
+		s11=self.extracted_parameters['s11_db']
+		nf=self.extracted_parameters['nf_db']
+		Io=self.extracted_parameters['Io']
+		
+		# Reference Values
+		gain_ref=output_conditions['gain_db']
+		iip3_ref=output_conditions['iip3_dbm']
+		s11_ref=output_conditions['s11_db']
+		nf_ref=output_conditions['nf_db']
+		
+		#Defining the weights to calculate Loss
+		A1=loss_weights['gain_db']	# Weight for gain
+		A2=loss_weights['iip3_dbm']	# Weight for iip3
+		A3=loss_weights['s11_db']	# Weight for s11
+		A4=loss_weights['nf_db']	# Weight for nf
+		A5=loss_weights['Io']	# Weight for Io
+		
+		# Calculating Loss
+		loss_gain=A1*ramp_func(gain_ref-gain)
+		loss_iip3=A2*ramp_func(iip3_ref-iip3)
+		loss_s11=A3*ramp_func(s11-s11_ref)
+		loss_nf=A4*ramp_func(nf-nf_ref)
+		loss_Io=A5*Io
+		loss=loss_gain+loss_iip3+loss_s11+loss_nf+loss_Io
+		loss_dict={'loss':loss,'loss_gain':loss_gain,'loss_iip3':loss_iip3,'loss_s11':loss_s11,'loss_nf':loss_nf,'loss_Io':loss_Io}
+		
+		return loss_dict
+	
+	#-----------------------------------------------------------------------------------------------
+	# This function updates the values of circuit parameters by trying to minimize loss
+	def update_circuit_parameters(self,circuit_parameters_slope,check_loss,optimization_input_parameters,run_number):
+		
+		alpha=optimization_input_parameters['optimization'][run_number]['alpha']['value']
+
+		# Calculating the value to update each parameter with
+		for param_name in circuit_parameters_slope:
+			
+			# Calculating the Increment Value
+			if check_loss==-1:
+				change=circuit_parameters_slope[param_name]['loss']*(self.circuit_parameters[param_name]**2)*alpha
+			elif check_loss==1:
+				change=circuit_parameters_slope[param_name]['loss_Io']*(self.circuit_parameters[param_name]**2)*alpha
+			else:
+				change=(circuit_parameters_slope[param_name]['loss']-circuit_parameters_slope[param_name]['loss_Io'])
+				change=change*(self.circuit_parameters[param_name]**2)*alpha
+		
+		
+			# Checking if the parameter is updated by a large value
+			change_limit=0.25 # If the incremented value is more than +- change_limit*parameter_name, then we will limit the change
+			if change>change_limit*self.circuit_parameters[param_name]:
+				change=change_limit*self.circuit_parameters[param_name]
+			if change<-1*change_limit*self.circuit_parameters[param_name]:
+				change=-1*change_limit*self.circuit_parameters[param_name]
+			
+			# Updating circuit_parameters
+			self.circuit_parameters[param_name]=self.circuit_parameters[param_name]-change
+			
+	#-----------------------------------------------------------------------------------------------
+	# This function will check the loss of gain, iip3, nf, and s11
+	def calc_check_loss(self,loss_iter,i,loss_type):
+
+		if loss_type==0:
+			if loss_iter[i-1]['loss']==loss_iter[i-1]['loss_Io']:
+				check_loss=1
+			else:
+				check_loss=0
+					
+		elif loss_type==1:
+			check_loss=-1
+			
+		return check_loss
+
+	#---------------------------------------------------------------------------------------------------------------------------
+	# Function to check the best solution
+	def check_best_solution(self,optimization_results,loss_max):
+
+		# Defining some values
+		n_iter=optimization_results['n_iter']
+		iter_min=0
+		loss_Io_min=optimization_results['loss_iter'][0]['loss_Io']
+
+		if (optimization_results['loss_iter'][0]['loss']-optimization_results['loss_iter'][0]['loss_Io'])>loss_max:
+			flag=0
+		else:
+			flag=1
+		
+		for i in range(1,n_iter):
+			if (optimization_results['loss_iter'][i]['loss']-optimization_results['loss_iter'][i]['loss_Io'])>loss_max:
+				continue
+
+			if flag==0 or (flag==1 and optimization_results['loss_iter'][i]['loss_Io']<loss_Io_min):
+				iter_min=i
+				loss_Io_min=optimization_results['loss_iter'][i]['loss_Io']
+				flag=1
+
+		# Creating output dictionary
+		opt_dict={}
+		opt_dict['loss_max']=loss_max
+		if flag==1:
+			opt_dict['perfect_point']='Yes'
+		else:
+			opt_dict['perfect_point']='No'
+		opt_dict['iter_number']=iter_min+1
+		opt_dict['Io_loss']=loss_Io_min
+		
+		return opt_dict
+
+"""
+===========================================================================================================================
+------------------------------------- OPTIMIZATION FUNCTIONS --------------------------------------------------------------
+"""
+
+#-----------------------------------------------------------------------------------------------
+# This is the ramp function
+# Inputs  : x
+# Outputs : r(x)
+def ramp_func(x):
+	if x>0:
+		return x
+	else:
+		return 0
+	
+
+
+
 
 #===========================================================================================================================
-#------------------------------------ MOSFET EXTRACTION --------------------------------------------------------------------
+
+"""
+===========================================================================================================================
+------------------------------------ MOSFET EXTRACTION --------------------------------------------------------------------
+"""
 
 #-----------------------------------------------------------------
 # Function that extracts the MOSFET File Parameeters
@@ -95,14 +235,14 @@ def calculate_mos_parameters(circuit_initialization_parameters):
 
 
 """
-====================================================================================================================================================================================
------------------------------------------------------------- EXTRACTION FUNCTION ---------------------------------------------------------------------------------------------------
+===========================================================================================================================
+------------------------------------- EXTRACTION FUNCTION -----------------------------------------------------------------
 """
 
-#===========================================================================================================================================================
-#------------------------------------------------------ Character to Real Number Functions -----------------------------------------------------------------
+#==========================================================================================================================
+#------------------------------------ Character to Real Number Functions --------------------------------------------------
 
-#---------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------
 # Changing the values extracted as a string to a floating point value 
 # Input: Value of the number in string format 	
 # Output: Value of the number in float
@@ -144,7 +284,7 @@ def valueName_to_value(value_name):
 	val=val*mult
 	return val
 	
-#---------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------
 # Changing the values extracted as 10e1, 1.5e-2 to a floating point value 
 # Input: Value of the number in string format 	
 # Output: Value of the number in float
@@ -166,10 +306,10 @@ def valueE_to_value(value_name):
 
 
 
-#===========================================================================================================================================================
-#--------------------------------------------------------- Other File Extraction Functions -----------------------------------------------------------------
+#==========================================================================================================================
+#------------------------------------ Other File Extraction Functions -----------------------------------------------------
 
-#---------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------
 # Extracting the files as an array of lines
 # Inputs: file name
 # Output: array of lines
@@ -180,10 +320,10 @@ def extract_file(file_name):
 	return lines
 
 
-#===========================================================================================================================================================
-#------------------------------------------------------ Basic File Extraction Functions --------------------------------------------------------------------
+#==========================================================================================================================
+#------------------------------------ Basic File Extraction Functions -----------------------------------------------------
 
-#---------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------	
 # Extracting the DC from the file
 # Inputs: circuit_initialization_parameters
 # Output: Dictionary with all the parameters
@@ -235,7 +375,7 @@ def extract_dc_param(circuit_initialization_parameters):
 
 	return extracted_parameters
 
-#---------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------	
 # Extracting the AC from the file
 # Inputs: circuit_initialization_parameters
 # Output: Dictionary with all the parameters
@@ -262,7 +402,7 @@ def extract_ac_param(circuit_initialization_parameters):
 
 	return extracted_parameters
 
-#---------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------	
 # Calculating the gain and angle from the vout and vin values
 # Inputs: vout and vin
 # Output: gain_db and phase
@@ -292,7 +432,7 @@ def calculate_gain_phase(vout_re,vout_im,vin_re,vin_im):
 	return gain_db,phase
 
 
-#---------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------	
 # Extracting the SP from the file
 # Inputs: circuit_initialization_parameters
 # Output: Dictionary with all the parameters
@@ -341,7 +481,7 @@ def extract_sp_param(circuit_initialization_parameters):
 
 	return extracted_parameters
 
-#---------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------	
 # Calculating the value of K from the SP 
 # Inputs: s parameters and their phase in radians
 # Output: k
@@ -378,7 +518,7 @@ def calculate_k(s11_db,s12_db,s21_db,s22_db,s11_ph,s12_ph,s21_ph,s22_ph):
 
 	return k
 
-#---------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------	
 # Calculating the value of K from the SP 
 # Inputs: s parameters and their phase in radians
 # Output: k
@@ -400,7 +540,7 @@ def calculate_Z(s11_db,s11_ph):
 
 
 
-#---------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------	
 # Extracting the Noise from the file
 # Inputs: circuit_initialization_parameters
 # Output: Dictionary with all the parameters
@@ -421,7 +561,7 @@ def extract_noise_param(circuit_initialization_parameters):
 
 	return extracted_parameters
 
-#---------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------
 # Extracting all the output parameters from chi file
 # Inputs: optimization_input parameters
 # Outputs: output parameters dictionary 
@@ -448,10 +588,10 @@ def extract_basic_parameters(circuit_initialization_parameters):
 	return extracted_parameters
 
 
-#===========================================================================================================================================================
-#------------------------------------------------------------ IIP3 Extraction Functions --------------------------------------------------------------------
+#==========================================================================================================================
+#------------------------------------ IIP3 Extraction Functions -----------------------------------------------------------
 
-#---------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------	
 # Calculating the IIP3 from a single point
 # Inputs: Vout_fund, Vout_im3, pin
 # Output: IIP3
@@ -466,7 +606,7 @@ def calculate_iip3_single_point(vout_fund_mag,vout_im3_mag,pin):
 
 	return iip3,vout_fund_log,vout_im3_log,pin
 
-#---------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------	
 # Calculating the IIP3 after extraction of Vout data
 # Inputs: circuit_initialization_parameters, Vout_fund, Vout_im3, pin
 # Output: IIP3
@@ -495,7 +635,7 @@ def calculate_iip3_multiple_points(n_pin,n_points,vout_fund_mag,vout_im3_mag,pin
 
 	return iip3,im3_intercept[best_point],im3_slope[best_point],fund_intercept[best_point],fund_slope[best_point]
 
-#---------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------	
 # Calculating the slope and y-intercept
 # Inputs: x and y coordinates of the points
 # Output: slope, y-intercept
@@ -504,7 +644,7 @@ def calculate_slope(x,y):
 	m, c = np.linalg.lstsq(A, y, rcond=None)[0]
 	return m,c
 
-#---------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------	
 # Calculating the point with slope closest to 1dB/dB for fund and 3dB/dB for im3
 # Inputs: Slope of fundamental and im3
 # Output: Location of the best point
@@ -524,7 +664,7 @@ def calculate_best_iip3_point(fund_slope,im3_slope):
 			best_error=error
 	return best_point
 
-#---------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------	
 # Checks if the frequency is within range ( within (target-error,target+error) )
 # Inputs: Test Frequency, Target Frequency, Error
 # Output: 1 if Yes and 0 if No
@@ -534,7 +674,7 @@ def check_freq(f_test,f_target,f_error):
 	else:
 		return 0
 
-#---------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------	
 # Extracting Vout magnitude of fundamental and im3 from file ( for hb_sweep )
 # Inputs: Filename, Optimization Input Parameters
 # Output: Magnitude of Vout at fundamental and im3
@@ -595,7 +735,7 @@ def extract_vout_magnitude(file_name,circuit_initialization_parameters):
 
 	return vout_fund,vout_im3
 
-#---------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------	
 # Extracts Vout_magnitude from hb,pss file line
 # Inputs: Line
 # Output: Vout_Magnitude
@@ -616,12 +756,12 @@ def extract_vout(lines):
 	return vout_mag
 
 
-#===========================================================================================================================
+#==========================================================================================================================
 
 
 """
-====================================================================================================================================================================================
------------------------------------------------------------- FILE WRITE FUNCTIONS --------------------------------------------------------------------------------------------------
+===========================================================================================================================
+------------------------------------- FILE WRITE FUNCTIONS ----------------------------------------------------------------
 """
 
 #-----------------------------------------------------------------
@@ -921,12 +1061,12 @@ def write_tcsh_file(circuit_initialization_parameters,optimiztion_type):
 	f.write(s)
 	f.close()
 
-#===========================================================================================================================
+#==========================================================================================================================
 
 
 """
-====================================================================================================================================================================================
------------------------------------------------------------- SPECTRE RUNNING FUNCTIONS ---------------------------------------------------------------------------------------------
+===========================================================================================================================
+------------------------------------- SPECTRE RUNNING FUNCTIONS -----------------------------------------------------------
 """
 
 #-----------------------------------------------------------------------------------------------	
@@ -1204,4 +1344,4 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 
 
 
-#===========================================================================================================================
+#==========================================================================================================================
