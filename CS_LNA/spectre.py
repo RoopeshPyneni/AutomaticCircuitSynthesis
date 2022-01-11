@@ -11,7 +11,7 @@ import fileinput
 import os
 import multiprocessing as mp
 import CS_LNA.extra_function as cff # type: ignore
-import CG_LNA.pre_optimization as pr # type: ignore
+import CS_LNA.pre_optimization as pr # type: ignore
 import copy
 
 """
