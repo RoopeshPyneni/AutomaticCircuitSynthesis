@@ -11,13 +11,16 @@ import optimization as op
 import common_functions as cf
 import CG_LNA.pre_optimization as pr1
 import CS_LNA.pre_optimization as pr2
-import sensitivity_analysis as sa
-import temperature_analysis as ta
-import process_analysis as pa
-import iip3_analysis as ia
 import CG_LNA.spectre as sp1
 import CS_LNA.spectre as sp2
 import os
+
+# Analysis Files
+import Analysis.sensitivity_analysis as sa
+import Analysis.temperature_analysis as ta
+import Analysis.process_analysis as pa
+import Analysis.iip3_analysis as ia
+import Analysis.frequency_analysis as fa
 
 #===========================================================================================================================
 #------------------------------------ File Writing Functions ---------------------------------------------------------------
@@ -177,7 +180,7 @@ def complete_optimization(circuit_initialization_parameters,optimization_input_p
 	f.write('Filename : '+optimization_input_parameters['filename']['output']+'\n\n')
 	f.close()
 
-	#======================================================== MOSFET PARAMETERS ==================================================================================================
+	#=============================== MOSFET PARAMETERS =============================================
 
 	# Writing the MOSFET File Location to .scs file
 	if name=='CG_LNA':
@@ -186,34 +189,38 @@ def complete_optimization(circuit_initialization_parameters,optimization_input_p
 		cir=sp2.Circuit(circuit_initialization_parameters)
 	save_mos_results(cir.mos_parameters,optimization_input_parameters)
 
-	#======================================================== PRE OPTIMIZATION ===================================================================================================
+	#=============================== PRE OPTIMIZATION ==============================================
 
 	if name=='CG_LNA':
 		pr1.pre_optimization(cir,optimization_input_parameters,timing_results)
 	else:
 		pr2.pre_optimization(cir,optimization_input_parameters,timing_results)
 
-	#======================================================== OPTIMIZATION =======================================================================================================
+	#=============================== OPTIMIZATION ==================================================
 
 	op.main_opt(cir,optimization_input_parameters,timing_results)
 
-	#======================================================== SENSITIVITY ANALYSIS ===============================================================================================
+	#=============================== SENSITIVITY ANALYSIS ==========================================
 
 	sa.sensitivity_analysis(cir,optimization_input_parameters,timing_results)
 
-	#======================================================== TEMPERATURE ANALYSIS ===============================================================================================
+	#=============================== TEMPERATURE ANALYSIS ==========================================
 
 	ta.temperature_analysis(cir,optimization_input_parameters,timing_results)
 
-	#========================================================== PROCESS ANALYSIS =================================================================================================
+	#=============================== PROCESS ANALYSIS ==============================================
 
 	pa.process_analysis(cir,optimization_input_parameters,timing_results)
 
-	#========================================================== PROCESS ANALYSIS =================================================================================================
+	#=============================== IIP3 ANALYSIS =================================================
 
 	ia.iip3_analysis(cir,optimization_input_parameters,timing_results)
+
+	#=============================== IIP3 ANALYSIS =================================================
+
+	fa.frequency_analysis(cir,optimization_input_parameters,timing_results)
 	
-	#======================================================== AFTER OPTIMIZATION =================================================================================================
+	#=============================== AFTER OPTIMIZATION ============================================
 	
 	# Calculating Ending Time
 	timing_results['complete_analysis']['stop']=datetime.datetime.now()

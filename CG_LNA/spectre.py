@@ -1145,6 +1145,11 @@ def write_extract_iip3(circuit_initialization_parameters):
 # Inputs  : Circuit_Parameters, circuit_initialization_parameters
 # Outputs : Extracted_Parameters
 def write_extract(circuit_parameters,circuit_initialization_parameters):
+
+	# Getting the operating frequency
+	f_operating=circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']
+	circuit_initialization_parameters['simulation']['netlist_parameters']['fund_1']=f_operating
+	circuit_initialization_parameters['simulation']['netlist_parameters']['fund_2']=f_operating+1e6
 	
 	# Writing to netlist file
 	write_circuit_parameters(circuit_parameters,circuit_initialization_parameters)

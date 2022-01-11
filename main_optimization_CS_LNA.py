@@ -451,6 +451,43 @@ def get_iip3_analysis_parameters(optimization_input_parameters,fo):
 		'n_harm':15
 	}
 
+#---------------------------------------------------------------------------------------------------------------------------
+# Function that sets the frequency analysis parameters to the optimization_input_parameters dictionary
+def get_frequency_analysis_parameters(optimization_input_parameters,fo):
+
+	optimization_input_parameters['frequency_analysis']={}
+
+	optimization_input_parameters['frequency_analysis']['run']='YES'
+
+	optimization_input_parameters['frequency_analysis']['start_freq']=0.8e9
+	optimization_input_parameters['frequency_analysis']['stop_freq']=1.2e9
+	optimization_input_parameters['frequency_analysis']['n_freq']=11
+	optimization_input_parameters['frequency_analysis']['sweep_type']='linear' # 'log'
+
+
+	#~~~~~~~~~~~~~~~~~~~~~~~~~
+	# Frequency Analysis Simulation Parameters
+	optimization_input_parameters['frequency_analysis']['simulation']={}
+	optimization_input_parameters['frequency_analysis']['simulation']['standard_parameters']={}
+
+	optimization_input_parameters['frequency_analysis']['simulation']['standard_parameters']['iip3_type']='basic'
+	optimization_input_parameters['frequency_analysis']['simulation']['standard_parameters']['std_temp']=27
+	optimization_input_parameters['frequency_analysis']['simulation']['standard_parameters']['pin_fixed']=-65
+	optimization_input_parameters['frequency_analysis']['simulation']['standard_parameters']['pin_start']=-70
+	optimization_input_parameters['frequency_analysis']['simulation']['standard_parameters']['pin_stop']=-40
+	optimization_input_parameters['frequency_analysis']['simulation']['standard_parameters']['pin_points']=16
+	optimization_input_parameters['frequency_analysis']['simulation']['standard_parameters']['iip3_calc_points']=5
+	optimization_input_parameters['frequency_analysis']['simulation']['standard_parameters']['process_corner']='tt'
+	optimization_input_parameters['frequency_analysis']['simulation']['standard_parameters']['conservative']='YES'
+
+	optimization_input_parameters['frequency_analysis']['simulation']['netlist_parameters']={
+		'pin':-65,
+		'fund_2':fo+1e6,
+		'fund_1':fo,
+		'cir_temp':27,
+		'n_harm':15
+	}
+
 
 #===========================================================================================================================
 #------------------------------------Main Program Code----------------------------------------------------------------------
@@ -490,6 +527,9 @@ get_process_analysis_parameters(optimization_input_parameters,fo)
 # ---------- IIP3 Analysis Parameters ----------
 get_iip3_analysis_parameters(optimization_input_parameters,fo)
 
+# ---------- IIP3 Analysis Parameters ----------
+get_frequency_analysis_parameters(optimization_input_parameters,fo)
+
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #----------------------------------------- FILE NAMES ------------------------------------------
@@ -506,7 +546,7 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Test_Optimization'						# SET THE FILENAME HERE
+	filename=f_directory+'Test_Frequency_Analysis'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
