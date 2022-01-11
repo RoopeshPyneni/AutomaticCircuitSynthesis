@@ -160,6 +160,12 @@ def update_MOS_parameters(mos,un,cox,vt,Lmin,vdd):
 trunc_val=3
 
 #-----------------------------------------------------------------
+# Function that prints parameters completely without truncation
+def print_output_parameters_complete(f,parameters):
+	for param_name in parameters:
+		f.write('\n'+str(param_name)+': '+str(parameters[param_name]))
+		
+#-----------------------------------------------------------------
 # Function that prints parameters
 def print_output_parameters(f,parameters):
 	for param_name in parameters:

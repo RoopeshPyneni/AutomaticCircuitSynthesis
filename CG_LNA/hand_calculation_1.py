@@ -457,7 +457,7 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 
 	# Printing the values
 	cf.print_circuit_parameters(cir.circuit_parameters)
-	cf.print_extracted_outputs(cir.extracted_parameters)
+	cf.print_extracted_parameters(cir.extracted_parameters)
 
 	
 
@@ -474,7 +474,7 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 
 	# Printing the values
 	cf.print_circuit_parameters(cir.circuit_parameters)
-	cf.print_extracted_outputs(cir.extracted_parameters)
+	cf.print_extracted_parameters(cir.extracted_parameters)
 
 
 
@@ -491,6 +491,6 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 
 	# Printing the values
 	cf.print_circuit_parameters(cir.circuit_parameters)
-	cf.print_extracted_outputs(cir.extracted_parameters)
+	cf.print_extracted_parameters(cir.extracted_parameters)
 
 #===========================================================================================================================
