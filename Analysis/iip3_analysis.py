@@ -8,19 +8,19 @@ File Description 	: This file will perform the iip3 analysis by varying pin and 
 #===========================================================================================================================
 import numpy as np
 import os
-import common_functions as cf
+import common_functions as cf # type: ignore
 from matplotlib import pylab
 from pylab import *
 #===========================================================================================================================
 
 
-#===========================================================================================================================
-#------------------------------------Defining the functions -----------------------------------------
+"""
+============================================================================================================================
+------------------------------------- Defining the functions ---------------------------------------------------------------
+"""
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the values of circuit_parameters to a txt file
-# Input: circuit_parameters, optimization_input_parameters
-# Output: NONE
 def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 	
 	filename=optimization_input_parameters['filename']['output']	# Getting the filename
@@ -38,8 +38,6 @@ def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the header row for extracted parameters to a csv file
-# Input: extracted_parameters, optimization_input_parameters
-# Output: NONE
 def write_extracted_parameters_initial(optimization_input_parameters):
 	
 	filename=optimization_input_parameters['filename']['output']+'/IIP3_Analysis/Results/iip3.csv'	# Getting the filename
@@ -50,8 +48,6 @@ def write_extracted_parameters_initial(optimization_input_parameters):
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the values of extracted_parameters from each temperature iteration to a csv file
-# Input: circuit_parameters, optimization_input_parameters
-# Output: NONE
 def update_extracted_parameters(freq,extracted_parameters,optimization_input_parameters):
 	
 	filename=optimization_input_parameters['filename']['output']+'/IIP3_Analysis/Results/iip3.csv'	# Getting the filename
@@ -67,8 +63,6 @@ def update_extracted_parameters(freq,extracted_parameters,optimization_input_par
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the values of extracted_parameters from each temperature iteration to a csv file
-# Input: circuit_parameters, optimization_input_parameters
-# Output: NONE
 def update_iip3(freq,iip3,fund_slope,im3_slope,optimization_input_parameters):
 	
 	filename=optimization_input_parameters['filename']['output']+'/IIP3_Analysis/Results/iip3.csv'	# Getting the filename
@@ -83,10 +77,9 @@ def update_iip3(freq,iip3,fund_slope,im3_slope,optimization_input_parameters):
 	f.close()
 	
 
-
-"""
-===========================================================================================================================
---------------------------------------------Output Functions---------------------------------------------------------------
+"""	
+============================================================================================================================
+------------------------------------- Output Functions ---------------------------------------------------------------------
 """
 
 #---------------------------------------------------------------------------------------------------------------------------
@@ -161,19 +154,15 @@ def iip3_analysis(cir,optimization_input_parameters,timing_results):
 	f=open(optimization_input_parameters['filename']['run_status'],'a')
 	f.write('Sensitivity Analysis End\n Time : '+str(datetime.datetime.now())+'\n\n')
 	f.close()
-	
-	
-#===========================================================================================================================
 
 
 """
-====================================================================================================================================================================
+============================================================================================================================
+------------------------------------- Plotting Functions -------------------------------------------------------------------
 """
 
 #-----------------------------------------------------------------------------------------------
 # Plotting results ( Parameters vs Io at different temperatures )
-# Inputs  : extracted_parameters_iter
-# Outputs : extracted_matrix, temp_array, current_array, param_array
 def plot_iip3_analysis(freq,pin_array,im3_array,fund_array,file_directory):
 
 	# Creating a directory

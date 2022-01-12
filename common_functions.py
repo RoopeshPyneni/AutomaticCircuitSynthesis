@@ -171,6 +171,15 @@ def print_output_parameters(f,parameters):
 	for param_name in parameters:
 		f.write('\n'+str(param_name)+': '+num_trunc(parameters[param_name],3))
 
+#-----------------------------------------------------------------
+# Function that prints simulation parameters
+def print_simulation_parameters(f,cir):
+
+	f.write('\n\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Simulation Parameters ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n')
+	for param_name in cir.circuit_initialization_parameters['simulation']['standard_parameters']:
+		f.write('\n'+str(param_name)+': '+num_trunc(cir.circuit_initialization_parameters['simulation']['standard_parameters'][param_name],3))
+
 #-----------------------------------------------------------------------------------------------
 # This function is used to wait for key press
 def wait_key():

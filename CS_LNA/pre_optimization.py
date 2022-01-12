@@ -19,29 +19,27 @@ import CS_LNA.hand_calculation_3 as hc3 # type: ignore
 ----------------------------------- File Writing Functions ----------------------------------------------------------------
 """
 
-
 #-----------------------------------------------------------------
 # Function that stores input data of the simulation
-# Inputs  : optimization_input_parameters
-# Outputs : NONE
-def save_input_results_pre_optimization(optimization_input_parameters):
+def save_input_results_pre_optimization(cir,optimization_input_parameters):
 
 	# Opening the file
 	filename=optimization_input_parameters['filename']['output']+str('/input_data.txt')
 	f=open(filename,'a')
 
 	# Storing the results
-	f.write('\n\n********************************************************************************\n')
-	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Pre Optimization ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+	f.write('\n\n')
+	f.write('********************************************************************************\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Pre Optimization Parameters ~~~~~~~~~~~~~~~~~~~~~~~~\n')
 	
 	f.write('\nPre_Opt_Type	   :'+str(optimization_input_parameters['pre_optimization']['type']))
+
+	cf.print_simulation_parameters(f,cir)
 	
 	f.close()
 
 #-----------------------------------------------------------------
 # Function that stores output data of the pre optimization
-# Inputs  : optimization_results, optimization_input_parameters
-# Outputs : NONE
 def save_output_results_pre_optimization(optimization_results,optimization_input_parameters):
 	
 	# Opening the file
@@ -89,13 +87,10 @@ def save_output_results_pre_optimization(optimization_results,optimization_input
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to manually choose the Initial Circuit Parameters
-# Inputs  : optimization_input_parameters
-# Outputs :	circuit_parameters, extracted_parameters
 def manual_initial_parameters(cir,optimization_input_parameters):
 
 	# Running Eldo
 	cir.update_circuit(optimization_input_parameters['pre_optimization']['manual_circuit_parameters'].copy())
-
 
 
 """
@@ -105,8 +100,6 @@ def manual_initial_parameters(cir,optimization_input_parameters):
 
 #--------------------------------------------------------------------------------------------------------------------------
 # Function to perform pre-optimization
-# Inputs  : mos_parameters, optimization_input_parameters, timing_results
-# Outputs :	circuit_parameters, extracted_parameters
 def pre_optimization(cir,optimization_input_parameters,timing_results):
 
 	# Opening the Run_Status File
@@ -120,18 +113,19 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 
 	print('************************************************************************************************************')
 	print('*********************************** Pre Optimization *******************************************************')
-
-	save_input_results_pre_optimization(optimization_input_parameters)
-
+	print('\n\n')
+	
 	cir.update_simulation_parameters(optimization_input_parameters['pre_optimization']['simulation'])
+	save_input_results_pre_optimization(optimization_input_parameters)
 
 	optimization_results={}
 	
-	#======================================================== Manual Initial Points =============================================================================================================
+	#=============================== Manual Initial Points ================================================================
 
 	if optimization_input_parameters['pre_optimization']['type']=='manual':
 		
 		print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Manual Operating Point Selection ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+		print('\n\n')
 
 		#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#--------------------Initial Point Calculations-------------------------
@@ -151,29 +145,29 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 		#cf.wait_key()
 
 	
-	#======================================================== Automatic Initial Points =============================================================================================================
+	#=============================== Automatic Initial Points =============================================================
 
 	
 	if optimization_input_parameters['pre_optimization']['type']==1:
 		
-		print('************************************************************************************************************')
-		print('***********************************  Automatic Operating Point Selection 1 *********************************')
+		print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+		print('\n\n')
 
 		# Extracting the MOSFET Parameters from the MOS file
 		hc1.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
 	
 	if optimization_input_parameters['pre_optimization']['type']==2:
 		
-		print('************************************************************************************************************')
-		print('***********************************  Automatic Operating Point Selection 2 *********************************')
+		print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+		print('\n\n')
 
 		# Extracting the MOSFET Parameters from the MOS file
 		hc2.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
 	
 	if optimization_input_parameters['pre_optimization']['type']==3:
 		
-		print('************************************************************************************************************')
-		print('***********************************  Automatic Operating Point Selection 3 *********************************')
+		print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 3 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+		print('\n\n')
 
 		# Extracting the MOSFET Parameters from the MOS file
 		hc3.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)

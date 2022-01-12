@@ -8,19 +8,19 @@ File Description 	: This file will perform the temperature analysis by sweeping 
 #===========================================================================================================================
 import numpy as np
 import os
-import common_functions as cf
+import common_functions as cf # type: ignore
 from matplotlib import pylab
 from pylab import *
 #===========================================================================================================================
 
 
-#===========================================================================================================================
-#------------------------------------Defining the functions -----------------------------------------
+"""
+============================================================================================================================
+------------------------------------- Defining the functions ---------------------------------------------------------------
+"""
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the values of circuit_parameters to a txt file
-# Input: circuit_parameters, optimization_input_parameters
-# Output: NONE
 def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 	
 	filename=optimization_input_parameters['filename']['output']	# Getting the filename
@@ -38,8 +38,6 @@ def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the header row for extracted parameters to a csv file
-# Input: extracted_parameters, optimization_input_parameters
-# Output: NONE
 def write_extracted_parameters_initial(extracted_parameters,optimization_input_parameters,temp):
 	
 	filename=optimization_input_parameters['filename']['output']+'/Temperature_Analysis/Results/extracted_parameters_'+str(temp)+'.csv'	# Getting the filename
@@ -53,8 +51,6 @@ def write_extracted_parameters_initial(extracted_parameters,optimization_input_p
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the values of extracted_parameters from each temperature iteration to a csv file
-# Input: circuit_parameters, optimization_input_parameters
-# Output: NONE
 def update_extracted_parameters(extracted_parameters,optimization_input_parameters,temp,current):
 	filename=optimization_input_parameters['filename']['output']+'/Temperature_Analysis/Results/extracted_parameters_'+str(temp)+'.csv'	# Getting the filename
 	
@@ -66,15 +62,13 @@ def update_extracted_parameters(extracted_parameters,optimization_input_paramete
 	f.close()
 	
 
+"""
+============================================================================================================================
+------------------------------------- Output Functions ---------------------------------------------------------------------
+"""
 
-		
-#===========================================================================================================================
-#--------------------------------------------Output Functions---------------------------------------------------------------
-	
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that will perform the temperature analysis
-# Input: circuit_parameters, extracted_parameters, optimization_input_parameters
-# Output: circuit_parameters, extracted_parameters
 def temperature_analysis(cir,optimization_input_parameters,timing_results):
 	
 	if optimization_input_parameters['temperature_analysis']['run']=='NO':
@@ -150,18 +144,14 @@ def temperature_analysis(cir,optimization_input_parameters,timing_results):
 	f.write('Temperature Analysis End\n Time : '+str(datetime.datetime.now())+'\n\n')
 	f.close()
 	
-	
-#===========================================================================================================================
-
 
 """
-====================================================================================================================================================================
+============================================================================================================================
+------------------------------------- Plotting Functions -------------------------------------------------------------------
 """
 
 #-----------------------------------------------------------------------------------------------
 # Plotting results ( Parameters vs Io at different temperatures )
-# Inputs  : extracted_parameters_iter
-# Outputs : extracted_matrix, temp_array, current_array, param_array
 def plot_temp_analysis(extracted_parameters_iter,file_directory,spec_current):
 	
 	file_sub_directory=file_directory+'/Temperature_Analysis/Plots/'
@@ -175,8 +165,6 @@ def plot_temp_analysis(extracted_parameters_iter,file_directory,spec_current):
 
 #-----------------------------------------------------------------------------------------------
 # Function to extract the data from extracted_parameters_iter dictionary and store it in the form of a matrix
-# Inputs  : extracted_parameters_iter
-# Outputs : extracted_matrix, temp_array, current_array, param_array
 def extract_temp_analysis(extracted_parameters_iter):
 	
 	# Assigning the array to store the loss variables
@@ -221,11 +209,8 @@ def extract_temp_analysis(extracted_parameters_iter):
 	
 	return extracted_matrix,temp_array,current_array,param_array
 
-
 #-----------------------------------------------------------------------------------------------
 # Plotting results ( Parameters vs current at different temperatures )
-# Inputs  : extracted_matrix, temp_array, current_array, param_array, file_sub_directory, output_conditions, colour_dict, spec_current
-# Outputs : NONE
 def plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,file_sub_directory,output_conditions,colour_dict,spec_current):
 	
 	# Finding the length of each array
@@ -378,11 +363,8 @@ def plot_param_vs_current(extracted_matrix,temp_array,current_array,param_array,
 		savefig(pathname+str(param_array[k])+'.pdf')
 		close()
 	
-	
 #-----------------------------------------------------------------------------------------------
 # Plotting results ( Parameters vs Temperature at different current )
-# Inputs  : extracted_matrix, temp_array, current_array, param_array, file_sub_directory, output_conditions, colour_dict, spec_current
-# Outputs : NONE
 def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_array,file_sub_directory,output_conditions,colour_dict,spec_current):
 	
 	# Finding the length of each array
@@ -534,5 +516,6 @@ def plot_param_vs_temperature(extracted_matrix,temp_array,current_array,param_ar
 		grid(b=True,which='minor',color='#999999')
 		savefig(pathname+str(param_array[k])+'.pdf')
 		close()
+
 
 #===========================================================================================================================

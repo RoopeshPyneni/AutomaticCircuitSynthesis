@@ -8,9 +8,7 @@ File Description 	: This file will perform all the optimization steps by calling
 #===========================================================================================================================
 import datetime
 import optimization as op
-import common_functions as cf
-#import CG_LNA.pre_optimization as pr1
-#import CS_LNA.pre_optimization as pr2
+import common_functions as cf # type: ignore
 import CG_LNA.spectre as sp1
 import CS_LNA.spectre as sp2
 import os
@@ -29,7 +27,7 @@ import Analysis.frequency_analysis as fa
 """
 
 #-----------------------------------------------------------------
-# Function that stores input data of the simulation ( output conditions, MOS Parameters, Filenames, Simulation Conditions )
+# Function that stores input data of the simulation ( Filenames, Output Conditions )
 def save_input_results_initial(optimization_input_parameters):
 
 	# Creating the folder path
@@ -43,12 +41,14 @@ def save_input_results_initial(optimization_input_parameters):
 	f=open(filename,'w')
 
 	# Saving Filenames
-	f.write('\n\n---------------------- Filenames -----------------------')
+	f.write('\n\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Filenames ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n')
 	f.write('\nOutput     : '+str(optimization_input_parameters['filename']['output']))
 	f.write('\nRun Status : '+str(optimization_input_parameters['filename']['run_status']))
 
 	# Saving Output Conditions
-	f.write('\n\n---------------------- Output Conditions -----------------------')
+	f.write('\n\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Output Conditions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n')
 	for name in optimization_input_parameters['output_conditions']:
 		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['output_conditions'][name],3))
 
@@ -69,7 +69,8 @@ def save_output_results_initial(optimization_input_parameters):
 	f=open(filename,'w')
 
 	# Storing the Filenames
-	f.write('\n\n---------------------- Filenames -----------------------')
+	f.write('\n\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Filenames ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n')
 	f.write('\nOutput     : '+str(optimization_input_parameters['filename']['output']))
 	f.write('\nRun Status : '+str(optimization_input_parameters['filename']['run_status']))
 	f.write('\n\n\n')
@@ -77,15 +78,34 @@ def save_output_results_initial(optimization_input_parameters):
 	f.close()
 
 #-----------------------------------------------------------------
+# Function that stores output data of the MOS File Calculations
+def save_mos_results(mos_parameters,optimization_input_parameters):
+	
+	# Opening the file
+	filename=optimization_input_parameters['filename']['output']+'/output_data.txt'
+	f=open(filename,'a')
+
+	# Storing the results
+	f.write('\n\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ MOS Parameters ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n')
+
+	for param_name in mos_parameters:
+		f.write('\n'+str(param_name)+': '+cf.num_trunc(mos_parameters[param_name],3))
+	
+	f.close()
+
+#-----------------------------------------------------------------
 # Function that stores the time results
 def save_time_results(timing_results,optimization_input_parameters):
 	
+	# Opening the filename
 	filename=optimization_input_parameters['filename']['output']	
 	filename=filename+str('/output_data.txt')
 	f=open(filename,'a')
 
-	f.write('\n\n********************************************************************************\n')
-	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Timing Results ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+	# Storing the timing results
+	f.write('\n\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Timing Results ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n')
 	
 	for optimization_name in timing_results:
 		f.write('\n\n---------- '+str(optimization_name)+' ----------')
@@ -104,27 +124,10 @@ def save_time_results(timing_results,optimization_input_parameters):
 	
 	f.close()
 
-#-----------------------------------------------------------------
-# Function that stores output data of the MOS File Calculations
-def save_mos_results(mos_parameters,optimization_input_parameters):
-	
-	# Opening the file
-	filename=optimization_input_parameters['filename']['output']+str('/output_data.txt')
-	f=open(filename,'a')
-
-	# Storing the results
-	f.write('\n\n********************************************************************************\n')
-	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ MOS Parameters ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-
-	for param_name in mos_parameters:
-		f.write('\n'+str(param_name)+': '+cf.num_trunc(mos_parameters[param_name],3))
-	
-	f.close()
-
 
 """
 ===========================================================================================================================
-------------------------------------Main Program Code----------------------------------------------------------------------
+------------------------------------ Main Program Code --------------------------------------------------------------------
 """
 
 #-----------------------------------------------------------------
@@ -156,12 +159,6 @@ def complete_optimization(circuit_initialization_parameters,optimization_input_p
 
 	#=============================== PRE OPTIMIZATION ==============================================
 
-	"""
-	if name=='CG_LNA':
-		pr1.pre_optimization(cir,optimization_input_parameters,timing_results)
-	else:
-		pr2.pre_optimization(cir,optimization_input_parameters,timing_results)
-	"""
 	cir.pre_optimization(optimization_input_parameters,timing_results)
 
 	#=============================== OPTIMIZATION ==================================================
@@ -184,7 +181,7 @@ def complete_optimization(circuit_initialization_parameters,optimization_input_p
 
 	ia.iip3_analysis(cir,optimization_input_parameters,timing_results)
 
-	#=============================== IIP3 ANALYSIS =================================================
+	#=============================== FREQUENCY ANALYSIS ============================================
 
 	fa.frequency_analysis(cir,optimization_input_parameters,timing_results)
 	

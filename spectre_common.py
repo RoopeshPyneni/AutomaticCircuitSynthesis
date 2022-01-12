@@ -8,7 +8,7 @@ File Description 	: This file will contain the functions to write, run, and read
 #==========================================================================================================================
 import numpy as np
 import os
-import common_functions as cf
+import common_functions as cf # type: ignore
 
 
 """

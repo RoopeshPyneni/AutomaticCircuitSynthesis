@@ -2,7 +2,7 @@
 """
 Name				: Roopesh Pyneni
 Roll Number			: EE18B028
-File Description 	: This file will initialize the optimization_input_parameters and run the complete_optimization file
+File Description 	: This file will initialize the optimization_input_parameters and run the complete_optimization file for CS LNA
 """
 
 #===========================================================================================================================
@@ -88,9 +88,9 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	# Filenames
 	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/lna2/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/'
-	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='ideal' # 'ideal', 'series','mos_resistor'
 	circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
 	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
+	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='ideal' # 'ideal', 'series','mos_resistor'
 	
 	# IIP3 Points
 	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']='basic'		# 'basic' or 'advanced' 
@@ -143,8 +143,6 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	'Cs': 318e-12
 	}	
 
-	
-	
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Pre Optimization Simulation Parameters
@@ -210,14 +208,6 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	}
 
 	optimization_input_parameters['optimization'][1]['alpha']={}
-	#optimization_input_parameters['optimization'][1]['alpha']['values']={
-	#	'common':0.05,
-	#	'Ld':1,
-	#	'Lg':1,
-	#	'Ls':1,
-	#	'W':1,
-	#	'Io':1
-	#}
 	optimization_input_parameters['optimization'][1]['alpha']['value']=0.05
 	optimization_input_parameters['optimization'][1]['alpha']['type']='Normal'
 	optimization_input_parameters['optimization'][1]['alpha']['start']=0.8
@@ -270,14 +260,6 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	}
 
 	optimization_input_parameters['optimization'][2]['alpha']={}
-	optimization_input_parameters['optimization'][2]['alpha']['values']={
-		'common':0.05,
-		'Ld':1,
-		'Lg':1,
-		'Ls':1,
-		'W':1,
-		'Io':1
-	}
 	optimization_input_parameters['optimization'][2]['alpha']['type']='Normal'
 	optimization_input_parameters['optimization'][2]['alpha']['start']=0.8
 	optimization_input_parameters['optimization'][2]['alpha']['end']=0.05
@@ -305,6 +287,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	}
 	"""
 	
+	"""
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Conditions for acceptable solution
 	if optimization_name=='FOM':
@@ -314,6 +297,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 		optimization_input_parameters['acceptable_solution']['iip3_dbm']=-15
 		optimization_input_parameters['acceptable_solution']['nf_db']=10
 		optimization_input_parameters['acceptable_solution']['p_source']=10e-3
+	"""
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the temperature analysis parameters to the optimization_input_parameters dictionary
@@ -392,6 +376,10 @@ def get_process_analysis_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['process_analysis']={}
 	optimization_input_parameters['process_analysis']['run']='NO'
 
+	optimization_input_parameters['process_analysis']['start_temp']=-40
+	optimization_input_parameters['process_analysis']['stop_temp']=120
+	optimization_input_parameters['process_analysis']['n_temp']=5
+
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Temperature Analysis Simulation Parameters
 	optimization_input_parameters['process_analysis']['simulation']={}
@@ -464,7 +452,6 @@ def get_frequency_analysis_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['frequency_analysis']['n_freq']=11
 	optimization_input_parameters['frequency_analysis']['sweep_type']='linear' # 'log'
 
-
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Frequency Analysis Simulation Parameters
 	optimization_input_parameters['frequency_analysis']['simulation']={}
@@ -489,8 +476,10 @@ def get_frequency_analysis_parameters(optimization_input_parameters,fo):
 	}
 
 
-#===========================================================================================================================
-#------------------------------------Main Program Code----------------------------------------------------------------------
+"""
+===========================================================================================================================
+------------------------------------Main Program Code----------------------------------------------------------------------
+"""
 
 # Creating a dictionary with the optimization parameters
 circuit_initialization_parameters={}
@@ -542,11 +531,17 @@ f_directory='/home/ee18b028/Optimization/Simulation_Results/CS_LNA/'+str(optimiz
 
 file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 
+optimization_input_parameters['optimization']['run']='NO'
+optimization_input_parameters['temperature_analysis']['run']='NO'
+optimization_input_parameters['sensitivity_analysis']['run']='NO'
+optimization_input_parameters['process_analysis']['run']='NO'
+optimization_input_parameters['iip3_analysis']['run']='NO'
+optimization_input_parameters['frequency_analysis']['run']='NO'
 
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Test_Common_Functions_Change'						# SET THE FILENAME HERE
+	filename=f_directory+'Test_Pre_Optimization_Results_Storage'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

@@ -7,21 +7,20 @@ File Description 	: This file will perform the process analysis by changing the 
 
 #===========================================================================================================================
 import numpy as np
-import CG_LNA.spectre as sp
 import os
-import common_functions as cf
+import common_functions as cf # type: ignore
 from matplotlib import pylab
 from pylab import *
 #===========================================================================================================================
 
 
-#===========================================================================================================================
-#------------------------------------Defining the functions -----------------------------------------
+"""
+============================================================================================================================
+------------------------------------- Defining the functions ---------------------------------------------------------------
+"""
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the values of circuit_parameters to a txt file
-# Input: circuit_parameters, optimization_input_parameters
-# Output: NONE
 def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 	
 	filename=optimization_input_parameters['filename']['output']	# Getting the filename
@@ -39,8 +38,6 @@ def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the header row for extracted parameters to a csv file
-# Input: extracted_parameters, optimization_input_parameters
-# Output: NONE
 def write_extracted_parameters_initial(extracted_parameters,optimization_input_parameters,process_corner):
 	
 	newpath=optimization_input_parameters['filename']['output']+'/Process_Analysis/Results/'+str(process_corner)+'/'	# Creating the folder if it is not present
@@ -58,8 +55,6 @@ def write_extracted_parameters_initial(extracted_parameters,optimization_input_p
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the values of extracted_parameters from each process iteration to a csv file
-# Input: circuit_parameters, optimization_input_parameters
-# Output: NONE
 def update_extracted_parameters(extracted_parameters,optimization_input_parameters,process_corner,temp):
 	filename=optimization_input_parameters['filename']['output']+'/Process_Analysis/Results/'+str(process_corner)+'/extracted_parameters.csv'	# Getting the filename
 	
@@ -71,15 +66,13 @@ def update_extracted_parameters(extracted_parameters,optimization_input_paramete
 	f.close()
 	
 
+"""	
+============================================================================================================================
+------------------------------------- Output Functions ---------------------------------------------------------------------
+"""
 
-		
-#===========================================================================================================================
-#--------------------------------------------Output Functions---------------------------------------------------------------
-	
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that will perform the temperature analysis
-# Input: circuit_parameters, extracted_parameters, optimization_input_parameters
-# Output: circuit_parameters, extracted_parameters
 def process_analysis(cir,optimization_input_parameters,timing_results):
 	
 	if optimization_input_parameters['process_analysis']['run']=='NO':
@@ -112,9 +105,9 @@ def process_analysis(cir,optimization_input_parameters,timing_results):
 	process_corner_list=['tt','ff','ss']
 
 	# Creating an array for temperature analysis
-	start_temp=optimization_input_parameters['temperature_analysis']['start_temp']
-	stop_temp=optimization_input_parameters['temperature_analysis']['stop_temp']
-	n_temp=optimization_input_parameters['temperature_analysis']['n_temp']
+	start_temp=optimization_input_parameters['process_analysis']['start_temp']
+	stop_temp=optimization_input_parameters['process_analysis']['stop_temp']
+	n_temp=optimization_input_parameters['process_analysis']['n_temp']
 	if n_temp==1:
 		temp_array=np.array(['27'])
 	else:
@@ -148,18 +141,14 @@ def process_analysis(cir,optimization_input_parameters,timing_results):
 	f.write('Process Analysis End\n Time : '+str(datetime.datetime.now())+'\n\n')
 	f.close()
 	
-	
-#===========================================================================================================================
-
 
 """
-====================================================================================================================================================================
+============================================================================================================================
+------------------------------------- Plotting Functions -------------------------------------------------------------------
 """
 
 #-----------------------------------------------------------------------------------------------
 # Plotting results ( Parameters vs Io at different temperatures )
-# Inputs  : extracted_parameters_iter
-# Outputs : extracted_matrix, temp_array, current_array, param_array
 def plot_process_analysis(extracted_parameters_iter,file_directory):
 	
 	# Creating a folder to store the results
@@ -192,8 +181,6 @@ def plot_process_analysis(extracted_parameters_iter,file_directory):
 
 #-----------------------------------------------------------------------------------------------
 # Function to extract the data from extracted_parameters_iter dictionary and store it in the form of a matrix
-# Inputs  : extracted_parameters_iter
-# Outputs : extracted_matrix, temp_array, current_array, param_array
 def extract_process_analysis(extracted_parameters_iter):
 	
 	# Assigning the array to store the loss variables

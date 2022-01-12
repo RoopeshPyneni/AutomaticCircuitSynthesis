@@ -8,19 +8,19 @@ File Description 	: This file will perform the frequency analysis by sweeping fr
 #===========================================================================================================================
 import numpy as np
 import os
-import common_functions as cf
+import common_functions as cf # type: ignore
 from matplotlib import pylab
 from pylab import *
 #===========================================================================================================================
 
 
-#===========================================================================================================================
-#------------------------------------Defining the functions -----------------------------------------
+"""
+============================================================================================================================
+------------------------------------- Defining the functions ---------------------------------------------------------------
+"""
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the values of circuit_parameters to a txt file
-# Input: circuit_parameters, optimization_input_parameters
-# Output: NONE
 def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 	
 	filename=optimization_input_parameters['filename']['output']	# Getting the filename
@@ -38,8 +38,6 @@ def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the header row for extracted parameters to a csv file
-# Input: extracted_parameters, optimization_input_parameters
-# Output: NONE
 def write_extracted_parameters_initial(extracted_parameters,optimization_input_parameters):
 	
 	filename=optimization_input_parameters['filename']['output']+'/Frequency_Analysis/Results/extracted_parameters.csv'	# Getting the filename
@@ -53,8 +51,6 @@ def write_extracted_parameters_initial(extracted_parameters,optimization_input_p
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the values of extracted_parameters from each frequency iteration to a csv file
-# Input: circuit_parameters, optimization_input_parameters
-# Output: NONE
 def update_extracted_parameters(extracted_parameters,optimization_input_parameters,freq):
 	filename=optimization_input_parameters['filename']['output']+'/Frequency_Analysis/Results/extracted_parameters.csv'	# Getting the filename
 	
@@ -64,17 +60,15 @@ def update_extracted_parameters(extracted_parameters,optimization_input_paramete
 		f.write(','+str(extracted_parameters[param_name]))	# Writing the values to the file
 	f.write('\n')
 	f.close()
-	
 
 
-		
-#===========================================================================================================================
-#--------------------------------------------Output Functions---------------------------------------------------------------
-	
+"""	
+============================================================================================================================
+------------------------------------- Output Functions ---------------------------------------------------------------------
+"""
+
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that will perform the frequency analysis
-# Input: circuit_parameters, extracted_parameters, optimization_input_parameters
-# Output: circuit_parameters, extracted_parameters
 def frequency_analysis(cir,optimization_input_parameters,timing_results):
 	
 	if optimization_input_parameters['frequency_analysis']['run']=='NO':
@@ -144,12 +138,10 @@ def frequency_analysis(cir,optimization_input_parameters,timing_results):
 	f.write('Frequency Analysis End\n Time : '+str(datetime.datetime.now())+'\n\n')
 	f.close()
 
-	
-#===========================================================================================================================
-
 
 """
-====================================================================================================================================================================
+============================================================================================================================
+------------------------------------- Plotting Functions -------------------------------------------------------------------
 """
 
 #-----------------------------------------------------------------------------------------------

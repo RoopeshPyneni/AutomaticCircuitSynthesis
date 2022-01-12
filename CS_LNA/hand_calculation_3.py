@@ -7,6 +7,7 @@ File Description 	: This file will perform hand calculations for CS LNA
 
 #===========================================================================================================================
 import numpy as np
+import os
 import common_functions as cf # type: ignore
 
 
@@ -105,7 +106,6 @@ def calculate_Zim_max(s11):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating R1 and R2
-# Outputs : R1, R2
 def calculate_R1_R2(gm,Io,vth,vdd,fo,Cg):
 	Reff=10/(2*np.pi*fo*Cg)
 	vg=0.9*vdd
@@ -115,7 +115,6 @@ def calculate_R1_R2(gm,Io,vth,vdd,fo,Cg):
 
 #-----------------------------------------------------------------------------------------------
 # Updating R1 and R2
-# Outputs : R1, R2
 def updating_R1_R2(vdsat1,vdsat2,vth,vdd):
 	vg=vdsat1+vdsat2+vth
 	R2=1e4*vg/vdd
@@ -124,7 +123,6 @@ def updating_R1_R2(vdsat1,vdsat2,vth,vdd):
 
 #-----------------------------------------------------------------------------------------------
 # Updating Ld
-# Outputs : Ld
 def updating_Ld(Cgd,Cload,Cd,fo):
 	wo=2*np.pi*fo
 	Ld=1/(wo*wo*(Cload+Cd+Cgd))
@@ -132,7 +130,6 @@ def updating_Ld(Cgd,Cload,Cd,fo):
 
 #-----------------------------------------------------------------------------------------------
 # Updating gm
-# Outputs : gm
 def update_gm(extracted_nf,target_nf,gm):
 	if extracted_nf<(target_nf-0.3):
 		return gm/1.2
@@ -141,16 +138,73 @@ def update_gm(extracted_nf,target_nf,gm):
 	else:
 		return gm
 
+
+"""
+===========================================================================================================================
+-------------------------------------------- Storing Results --------------------------------------------------------------
+"""
+
+#---------------------------------------------------------------------------------------------------------------------------
+# Writing the header row for circuit parameters and extracted parameters to a csv file
+def write_parameters_initial(cir,optimization_input_parameters):
+	
+	# Creating a file path
+	filepath=optimization_input_parameters['filename']['output']+'/Pre_Optimization/HC_Update/Results/'
+	if not os.path.exists(filepath):
+		os.makedirs(filepath)
+
+	# Storing results for circuit parameters
+	filename=optimization_input_parameters['filename']['output']+'/Pre_Optimization/HC_Update/Results/circuit_parameters.csv'
+
+	f=open(filename,'w')
+	f.write('Iter_Number,Iter_Type')
+	for param_name in cir.circuit_parameters:
+		f.write(','+param_name)
+	f.write('\n')
+	f.close()
+
+	# Storing results for extracted parameters
+	filename=optimization_input_parameters['filename']['output']+'/Pre_Optimization/HC_Update/Results/extracted_parameters.csv'
+
+	f=open(filename,'w')
+	f.write('Iter_Number,Iter_Type')
+	for param_name in cir.extracted_parameters:
+		f.write(','+param_name)
+	f.write('\n')
+	f.close()
+
+#---------------------------------------------------------------------------------------------------------------------------
+# Writing the values of circuit parameters and extracted parameters from each iteration to a csv file
+def update_parameters(cir,optimization_input_parameters,iter_no,iter_type):
+	
+	# Storing results for circuit parameters
+	filename=optimization_input_parameters['filename']['output']+'/Pre_Optimization/HC_Update/Results/circuit_parameters.csv'
+	
+	f=open(filename,'a')
+	f.write(str(iter_no)+','+str(iter_type))
+	for param_name in cir.circuit_parameters:
+		f.write(','+str(cir.circuit_parameters[param_name]))
+	f.write('\n')
+	f.close()
+
+	# Storing results for extracted parameters
+	filename=optimization_input_parameters['filename']['output']+'/Pre_Optimization/HC_Update/Results/extracted_parameters.csv'
+	
+	f=open(filename,'a')
+	f.write(str(iter_no)+','+str(iter_type))
+	for param_name in cir.extracted_parameters:
+		f.write(','+str(cir.extracted_parameters[param_name]))
+	f.write('\n')
+	f.close()
+
+
 """
 ===========================================================================================================================
 -------------------------------------------- Main Functions ---------------------------------------------------------------
 """
 
-	
 #---------------------------------------------------------------------------------------------------------------------------
-# Function to calculate the Initial Circuit Parameters	
-# Inputs  : mos_parameters, optimization_input_parameters
-# Outputs : circuit_parameters, dc_outputs, extracted_parameters
+# Function to calculate the Initial Circuit Parameters
 def calculate_initial_parameters(cir,optimization_input_parameters):
 
 	output_conditions=optimization_input_parameters['output_conditions']
@@ -191,8 +245,6 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to update the Initial Circuit Parameters	after calculating the new value of vt
-# Inputs  : circuit_parameters, mos_parameters, extracted_parameters, optimization_input_parameters
-# Outputs : circuit_parameters, dc_outputs, mos_parameters, extracted_parameters
 def update_initial_parameters(cir,optimization_input_parameters):
 
 	i=0
@@ -205,6 +257,8 @@ def update_initial_parameters(cir,optimization_input_parameters):
 	Cload=optimization_input_parameters['output_conditions']['Cload']
 	fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
 	nf=optimization_input_parameters['output_conditions']['nf_db']
+
+	write_parameters_initial(cir,optimization_input_parameters)
 
 	while i<10: #and cir.extracted_parameters['s11_db']>optimization_input_parameters['output_conditions']['s11_db']:
 
@@ -225,6 +279,8 @@ def update_initial_parameters(cir,optimization_input_parameters):
 
 		# Running the circuit
 		cir.run_circuit()
+
+		update_parameters(cir,optimization_input_parameters,i,'Ld_W_Io')
 		
 		# Updating the values
 		fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
@@ -233,13 +289,9 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		
 		# Running the circuit
 		cir.run_circuit()
-		
-		print(i)
-		print(cir.extracted_parameters['0_nf_db'])
-		print(cir.extracted_parameters['1_nf_db'])
-		print(cir.extracted_parameters['2_nf_db'])
-	
 
+		update_parameters(cir,optimization_input_parameters,i,'Ls_Lg')
+	
 
 """
 ===========================================================================================================================
@@ -249,8 +301,6 @@ def update_initial_parameters(cir,optimization_input_parameters):
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to calculate the initial parameters by completing all the sub steps of pre optimization
-# Inputs  : mos_parameters, optimization_input_parameters, optimization_results
-# Outputs : circuit_parameters, extracted_parameters
 def automatic_initial_parameters(cir,optimization_input_parameters,optimization_results):
 		
 	#======================================================== Step 1 =======================================================
