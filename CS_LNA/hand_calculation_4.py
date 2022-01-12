@@ -9,6 +9,7 @@ File Description 	: This file will perform hand calculations for CS LNA
 import numpy as np
 import os
 import common_functions as cf # type: ignore
+import spectre_common as sc # type: ignore
 
 
 """
@@ -150,7 +151,37 @@ def update_gm(extracted_nf,target_nf,gm):
 		return gm*1.2
 	else:
 		return gm
+
+#---------------------------------------------------------------------------------------------------------------------------
+# Getting the best point
+def get_best_point(circuit_parameters_iter,extracted_parameters_iter,output_conditions):
 	
+	# Getting the best results for the final pre-optimized point
+	j_array=[key for key in circuit_parameters_iter]
+	loss_array=[]
+	loss_zero=0
+	Io_array=[]
+	
+	# Getting the value of Io and loss
+	for j in j_array:
+		Io_array.append(extracted_parameters_iter[j]['1_Io'])
+		loss_gain=sc.ramp_func(output_conditions['gain_db']-extracted_parameters_iter[j]['gain_db'])
+		loss_iip3=sc.ramp_func(output_conditions['iip3_dbm']-extracted_parameters_iter[j]['iip3_dbm'])
+		loss_s11=sc.ramp_func(extracted_parameters_iter[j]['s11_db']-output_conditions['s11_db'])
+		loss_nf=sc.ramp_func(extracted_parameters_iter[j]['nf_db']-output_conditions['nf_db'])
+		loss_array.append(loss_gain+loss_iip3+loss_nf+loss_s11)
+		if loss_array[-1]==0:
+			loss_zero=1
+	
+	# Checking for iter number if loss=0
+	if loss_zero==1:
+		Io_array=[Io_array[j] for j in j_array if loss_array[j]==0]
+		j_array=[j for j in j_array if loss_array[j]==0]
+		return j_array[Io_array.index(min(Io_array))]
+	else:
+		return j_array[Io_array.index(min(Io_array))]
+	
+
 
 """
 ===========================================================================================================================
@@ -255,7 +286,6 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	# Running the circuit
 	cir.update_circuit(circuit_parameters)
 
-
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to update the Initial Circuit Parameters	after calculating the new value of vt
 def update_initial_parameters(cir,optimization_input_parameters):
@@ -272,6 +302,10 @@ def update_initial_parameters(cir,optimization_input_parameters):
 	nf=optimization_input_parameters['output_conditions']['nf_db']
 
 	write_parameters_initial(cir,optimization_input_parameters)
+
+	circuit_parameters_iter={}
+	extracted_parameters_iter={}
+	j=0
 
 	while i<10: #and cir.extracted_parameters['s11_db']>optimization_input_parameters['output_conditions']['s11_db']:
 
@@ -296,6 +330,11 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		cir.run_circuit()
 		update_parameters(cir,optimization_input_parameters,i,'Ld_W_Io')
 		
+		# Storing the results
+		circuit_parameters_iter[j]=cir.circuit_parameters.copy()
+		extracted_parameters_iter[j]=cir.extracted_parameters.copy()
+		j+=1
+		
 		# Updating the values
 		fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
 		cir.circuit_parameters['Ls']=cir.circuit_parameters['Ls']*50*4/(2*cir.extracted_parameters['1_Zin_R']+cir.extracted_parameters['0_Zin_R']+cir.extracted_parameters['2_Zin_R'])
@@ -304,6 +343,16 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		# Running the circuit and updating the results
 		cir.run_circuit()
 		update_parameters(cir,optimization_input_parameters,i,'Ls_Lg')
+
+		# Storing the results
+		circuit_parameters_iter[j]=cir.circuit_parameters.copy()
+		extracted_parameters_iter[j]=cir.extracted_parameters.copy()
+		j+=1
+	
+	i=get_best_point(circuit_parameters_iter,extracted_parameters_iter,optimization_input_parameters['output_conditions'])
+	
+	cir.circuit_parameters=circuit_parameters_iter[i].copy()
+	cir.extracted_parameters=extracted_parameters_iter[i].copy()
 	
 
 """
