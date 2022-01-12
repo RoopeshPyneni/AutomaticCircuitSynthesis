@@ -178,7 +178,7 @@ def print_simulation_parameters(f,cir):
 	f.write('\n\n')
 	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Simulation Parameters ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n')
 	for param_name in cir.circuit_initialization_parameters['simulation']['standard_parameters']:
-		f.write('\n'+str(param_name)+': '+num_trunc(cir.circuit_initialization_parameters['simulation']['standard_parameters'][param_name],3))
+		f.write('\n'+str(param_name)+': '+str(cir.circuit_initialization_parameters['simulation']['standard_parameters'][param_name]))
 
 #-----------------------------------------------------------------------------------------------
 # This function is used to wait for key press

@@ -116,7 +116,7 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 	print('\n\n')
 	
 	cir.update_simulation_parameters(optimization_input_parameters['pre_optimization']['simulation'])
-	save_input_results_pre_optimization(optimization_input_parameters)
+	save_input_results_pre_optimization(cir,optimization_input_parameters)
 
 	optimization_results={}
 	
