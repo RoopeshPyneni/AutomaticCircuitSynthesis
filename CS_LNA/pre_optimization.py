@@ -12,6 +12,7 @@ import common_functions as cf		# type: ignore
 import CS_LNA.hand_calculation_1 as hc1 # type: ignore
 import CS_LNA.hand_calculation_2 as hc2 # type: ignore
 import CS_LNA.hand_calculation_3 as hc3 # type: ignore
+import CS_LNA.hand_calculation_4 as hc4 # type: ignore
 
 
 """
@@ -47,8 +48,9 @@ def save_output_results_pre_optimization(optimization_results,optimization_input
 	f=open(filename,'a')
 
 	# Storing the results
-	f.write('\n\n********************************************************************************\n')
-	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Pre Optimization ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+	f.write('\n\n')
+	f.write('********************************************************************************\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Pre Optimization Parameters ~~~~~~~~~~~~~~~~~~~~~~~~\n')
 	
 	if 'manual_hc' in optimization_results:
 		f.write('\n\n--------------------- Manual Hand Calculations ---------------------------------')
@@ -171,6 +173,14 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 
 		# Extracting the MOSFET Parameters from the MOS file
 		hc3.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
+	
+	if optimization_input_parameters['pre_optimization']['type']==4:
+		
+		print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 4 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+		print('\n\n')
+
+		# Extracting the MOSFET Parameters from the MOS file
+		hc4.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
 
 	# Printing the values
 	cf.print_circuit_parameters(cir.circuit_parameters)

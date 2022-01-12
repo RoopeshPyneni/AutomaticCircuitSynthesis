@@ -124,7 +124,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']=3 #'manual'
+	optimization_input_parameters['pre_optimization']['type']=4 #'manual'
 	
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -541,7 +541,7 @@ optimization_input_parameters['frequency_analysis']['run']='NO'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Test_Pre_Optimization_Results_Storage'						# SET THE FILENAME HERE
+	filename=f_directory+'Test_Pre_Optimization_4'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

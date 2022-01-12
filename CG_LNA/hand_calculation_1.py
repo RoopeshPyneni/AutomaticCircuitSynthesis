@@ -8,15 +8,16 @@ File Description 	: This file will perform hand calculations using method 1
 
 #===========================================================================================================================
 import numpy as np
+import os
 import common_functions as cf # type: ignore
 
-#===========================================================================================================================
-#------------------------------------Defining the functions for simple calculations-----------------------------------------
-	
+"""
+===========================================================================================================================
+--------------------------------------------- Defining the functions for simple calculations ------------------------------
+"""
+
 #-----------------------------------------------------------------------------------------------
 # This function will update the value of W and Io so that gm improves
-# Inputs  : circuit_parameters, gm*Rs
-# Outputs : circuit_parameters 
 def update_W_Io_gm(circuit_parameters,gmRs):
 	
 	# Calculating the value by which we should change W and Io
@@ -45,8 +46,6 @@ def update_W_Io_gm(circuit_parameters,gmRs):
 
 #-----------------------------------------------------------------------------------------------
 # This function will update the value of W and Io so that gm and vdsat improves
-# Inputs  : circuit_parameters, gm, Rs, vdsat, target vdsat
-# Outputs : circuit_parameters
 def update_W_Io_gm_vdsat(circuit_parameters,gm,Rs,vdsat,vdsat_reqd):
 	
 	# Calculating the value by which we should change W and Io
@@ -70,8 +69,6 @@ def update_W_Io_gm_vdsat(circuit_parameters,gm,Rs,vdsat,vdsat_reqd):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Io min and W max by considering the s11 parameter
-# Inputs  : output_conditions, mos_parameters
-# Outputs : Min_Io, Max_W
 def calc_Io_min(opt_conditions,mos_parameters):
 
 	# Assigning the values
@@ -97,8 +94,6 @@ def calc_Io_min(opt_conditions,mos_parameters):
 	
 #-----------------------------------------------------------------------------------------------
 # Calculating Io and W max by considering vd sat
-# Inputs  : output_conditions, mos_parameters, target_vdsat
-# Outputs : Io, W
 def calc_Io_W(opt_conditions,mos_parameters,vdsat_reqd):
 
 	# Assigning the values
@@ -117,8 +112,6 @@ def calc_Io_W(opt_conditions,mos_parameters,vdsat_reqd):
 
 #-----------------------------------------------------------------------------------------------	
 # Calculating Rd by assuming gain=Rd/2*Rs
-# Inputs  : output_conditions
-# Outputs : Rd
 def calc_Rd(opt_conditions):
 
 	# Calculating the required gain
@@ -143,8 +136,6 @@ def calc_Rd(opt_conditions):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating C1
-# Inputs  : output_conditions, optimization_input_parameters
-# Outputs : C1
 def calc_C1(opt_conditions,optimization_input_parameters):
 	
 	threshold1=optimization_input_parameters['pre_optimization']['C1_threshold']
@@ -160,8 +151,6 @@ def calc_C1(opt_conditions,optimization_input_parameters):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Rb
-# Inputs  : output_conditions, mos_parameters, circuit_parameters
-# Outputs : Rb
 def calc_Rb(opt_conditions,mos_parameters,circuit_parameters):
 
 	# Assigning the values
@@ -204,8 +193,6 @@ def calc_Rb(opt_conditions,mos_parameters,circuit_parameters):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating C2 from W and Rbias 
-# Inputs  : mos_parameters, output_conditions, circuit_parameters, optimization_input_parameters
-# Outputs : C2, Rbias
 def calc_C2(mos_parameters,opt_conditions,circuit_parameters,optimization_input_parameters):
 	
 	threshold2=optimization_input_parameters['pre_optimization']['C2_threshold']
@@ -229,8 +216,6 @@ def calc_C2(mos_parameters,opt_conditions,circuit_parameters,optimization_input_
 	
 #-----------------------------------------------------------------------------------------------
 # Calculating C2 from Cgs & Cgd and Rbias
-# Inputs  : extracted_parameters, output_conditions, circuit_parameters, optimization_input_parameters
-# Outputs : C2, Rbias
 def calc_C2_updated(extracted_parameters,opt_conditions,circuit_parameters,optimization_input_parameters):
 	
 	threshold2=optimization_input_parameters['pre_optimization']['C2_threshold']
@@ -256,8 +241,6 @@ def calc_C2_updated(extracted_parameters,opt_conditions,circuit_parameters,optim
 	
 #-----------------------------------------------------------------------------------------------
 # Calculating DC Output Values from Initial Circuit Parameters
-# Inputs  : circuit_parameters, output_conditions
-# Outputs : dc_outputs
 def calc_dc_opt(circuit_parameters,mos_parameters,opt_conditions):
 	vs=circuit_parameters['Io']*circuit_parameters['Rb']
 	vgs=mos_parameters['vt']+ 2*opt_conditions['Rs']*circuit_parameters['Io']
@@ -269,16 +252,72 @@ def calc_dc_opt(circuit_parameters,mos_parameters,opt_conditions):
 	return dc_outputs
 	
 
-	
+"""
+===========================================================================================================================
+-------------------------------------------- Storing Results --------------------------------------------------------------
+"""
 
+#---------------------------------------------------------------------------------------------------------------------------
+# Writing the header row for circuit parameters and extracted parameters to a csv file
+def write_parameters_initial(cir,optimization_input_parameters):
 	
-#===========================================================================================================================
-#-------------------------------------------- Main Functions ---------------------------------------------------------------
+	# Creating a file path
+	filepath=optimization_input_parameters['filename']['output']+'/Pre_Optimization/HC_Update/Results/'
+	if not os.path.exists(filepath):
+		os.makedirs(filepath)
+
+	# Storing results for circuit parameters
+	filename=optimization_input_parameters['filename']['output']+'/Pre_Optimization/HC_Update/Results/circuit_parameters.csv'
+
+	f=open(filename,'w')
+	f.write('Iter_Number,Iter_Type')
+	for param_name in cir.circuit_parameters:
+		f.write(','+param_name)
+	f.write('\n')
+	f.close()
+
+	# Storing results for extracted parameters
+	filename=optimization_input_parameters['filename']['output']+'/Pre_Optimization/HC_Update/Results/extracted_parameters.csv'
+
+	f=open(filename,'w')
+	f.write('Iter_Number,Iter_Type')
+	for param_name in cir.extracted_parameters:
+		f.write(','+param_name)
+	f.write('\n')
+	f.close()
+
+#---------------------------------------------------------------------------------------------------------------------------
+# Writing the values of circuit parameters and extracted parameters from each iteration to a csv file
+def update_parameters(cir,optimization_input_parameters,iter_no,iter_type):
 	
+	# Storing results for circuit parameters
+	filename=optimization_input_parameters['filename']['output']+'/Pre_Optimization/HC_Update/Results/circuit_parameters.csv'
+	
+	f=open(filename,'a')
+	f.write(str(iter_no)+','+str(iter_type))
+	for param_name in cir.circuit_parameters:
+		f.write(','+str(cir.circuit_parameters[param_name]))
+	f.write('\n')
+	f.close()
+
+	# Storing results for extracted parameters
+	filename=optimization_input_parameters['filename']['output']+'/Pre_Optimization/HC_Update/Results/extracted_parameters.csv'
+	
+	f=open(filename,'a')
+	f.write(str(iter_no)+','+str(iter_type))
+	for param_name in cir.extracted_parameters:
+		f.write(','+str(cir.extracted_parameters[param_name]))
+	f.write('\n')
+	f.close()
+
+
+"""
+===========================================================================================================================
+-------------------------------------------- Main Functions ---------------------------------------------------------------
+"""
+
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to calculate the Initial Circuit Parameters	
-# Inputs  : mos_parameters, optimization_input_parameters
-# Outputs : circuit_parameters, dc_outputs, extracted_parameters
 def calculate_initial_parameters(cir,optimization_input_parameters):
 
 	mos_parameters=cir.mos_parameters
@@ -318,8 +357,6 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to update the Initial Circuit Parameters	after calculating the new value of vt
-# Inputs  : circuit_parameters, mos_parameters, extracted_parameters, optimization_input_parameters
-# Outputs : circuit_parameters, dc_outputs, mos_parameters, extracted_parameters
 def update_initial_parameters(cir,optimization_input_parameters):
 
 	opt_conditions=optimization_input_parameters['output_conditions']
@@ -339,6 +376,8 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		
 		# Running Eldo
 		cir.run_circuit()
+
+
 		
 		# Updating the value of vt
 		cir.mos_parameters['vt']=cir.extracted_parameters['vt']
@@ -352,8 +391,6 @@ def update_initial_parameters(cir,optimization_input_parameters):
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to change circuit parameters to get better gm
-# Inputs  : mos_parameters, circuit_parameters, extracted_parameters, optimization_input_parameters
-# Outputs : circuit_parameters, extracted_parameters
 def dc_optimize_gm(cir,optimization_input_parameters):
 	
 	# Getting the output conditions
@@ -387,11 +424,8 @@ def dc_optimize_gm(cir,optimization_input_parameters):
 		
 		i+=1
 	
-
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to optimize gm and vdsat
-# Inputs  : mos_parameters, circuit_parameters, extracted_parameters, optimization_input_parameters
-# Outputs : circuit_parameters, extracted_parameters
 def dc_optimize_gm_vdsat(cir,optimization_input_parameters):
 	
 	# Getting the output conditions
@@ -431,20 +465,19 @@ def dc_optimize_gm_vdsat(cir,optimization_input_parameters):
 		i+=1
 
 
-
-#===========================================================================================================================
-#-------------------------------------------- Output Functions -------------------------------------------------------------
+"""
+===========================================================================================================================
+-------------------------------------------- Output Functions -------------------------------------------------------------
+"""
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to calculate the initial parameters by completing all the sub steps of pre optimization
-# Inputs  : mos_parameters, optimization_input_parameters, optimization_results
-# Outputs : circuit_parameters, extracted_parameters
 def automatic_initial_parameters(cir,optimization_input_parameters,optimization_results):
 		
 	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
 
-	#======================================================== Step 1 =============================================================================================================
+	#======================================================== Step 1 ========================================================
 	print('\n\n--------------------------------- Operating Point Calculations ------------------------------------')
 
 	# Calculating the Values of Circuit Parameters
@@ -461,7 +494,7 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 
 	
 
-	#======================================================== Step 1 b ============================================================================================================
+	#======================================================== Step 1 b ======================================================
 	print('\n\n--------------------------------- Operating Point Updations ------------------------------------')
 
 	# Calculating the Values of Circuit Parameters
@@ -478,7 +511,7 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 
 
 
-	#======================================================== Step 2 =============================================================================================================
+	#======================================================== Step 2 ========================================================
 	print('\n\n--------------------------------- gm and vdsat Updation ------------------------------------')
 	
 	# Calculating the Values of Circuit Parameters

@@ -4,13 +4,15 @@ Name				: Pyneni Roopesh
 Roll Number			: EE18B028
 File Description 	: This file will perform the optimization for different circuit parameters	
 """
+
 #===========================================================================================================================
 import numpy as np
-import common_functions as cf
+import common_functions as cf # type: ignore
 import os
 from matplotlib import pylab
 from pylab import *
 #===========================================================================================================================
+
 
 """
 ===========================================================================================================================
@@ -19,9 +21,7 @@ from pylab import *
 
 #-----------------------------------------------------------------
 # Function that stores input data of the simulation
-# Inputs  : optimization_input_parameters
-# Outputs : NONE
-def save_input_results_optimization(optimization_input_parameters,run_number):
+def save_input_results_optimization(cir,optimization_input_parameters,run_number):
 
 	# Opening the file
 	filename=optimization_input_parameters['filename']['output']+str('/input_data.txt')
@@ -32,10 +32,12 @@ def save_input_results_optimization(optimization_input_parameters,run_number):
 		f.write('\n\n---------------------- Optimization Parameters -----------------------')
 		f.write('\nOptimization Name :'+str(optimization_input_parameters['optimization']['optimization_name']))
 
+		"""
 		if 'acceptable_solution' in optimization_input_parameters:
 			f.write('\n\n---------------------- Acceptable Solution Parameters -----------------------')
 			for name in optimization_input_parameters['acceptable_solution']:
 				f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['acceptable_solution'][name],3))
+		"""
 	
 
 	f.write('\n\n---------------------- Run Number '+str(run_number)+' -----------------------')
@@ -58,26 +60,17 @@ def save_input_results_optimization(optimization_input_parameters,run_number):
 		f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['optimization'][run_number]['loss_weights'][name],3))
 
 	f.write('\n\n---------------------- Alpha Parameters -----------------------')
-	#for name in optimization_input_parameters['optimization'][run_number]['alpha']['values']:
-	#	f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['optimization'][run_number]['alpha']['values'][name],3))
 	f.write('\nAlpha Value :'+str(optimization_input_parameters['optimization'][run_number]['alpha']['value']))
 	f.write('\nAlpha Type  :'+str(optimization_input_parameters['optimization'][run_number]['alpha']['type']))
 	f.write('\nAlpha Start :'+str(optimization_input_parameters['optimization'][run_number]['alpha']['start']))
 	f.write('\nAlpha End   :'+str(optimization_input_parameters['optimization'][run_number]['alpha']['end']))
 
-	f.write('\n\n---------------------- Simulation Parameters -----------------------')
-	for param_name in optimization_input_parameters['optimization']['simulation'][run_number]['standard_parameters']:
-		f.write('\n'+param_name+' : '+str(optimization_input_parameters['optimization']['simulation'][run_number]['standard_parameters'][param_name]))
-	for param_name in optimization_input_parameters['optimization']['simulation'][run_number]['netlist_parameters']:
-		f.write('\n'+param_name+' : '+str(optimization_input_parameters['optimization']['simulation'][run_number]['netlist_parameters'][param_name]))
+	cf.print_simulation_parameters(f,cir)
 	
 	f.close()
 
-
 #-----------------------------------------------------------------
 # Function that stores output data of the optimization
-# Inputs  : optimization_results, optimization_input_parameters
-# Outputs : NONE
 def save_output_results_optimization(optimization_results,optimization_input_parameters):
 	
 	# Opening the file
@@ -135,8 +128,6 @@ def save_output_results_optimization(optimization_results,optimization_input_par
 
 #-----------------------------------------------------------------
 # Function that stores the data of parameters vs iterations in a csv file
-# Inputs  : filename_root,filename_name,values_iter,niter
-# Outputs : NONE
 def save_info_single_array_iter(filename_root,filename_name,values_iter,iter_no):
 	
 	filename=filename_root+filename_name
@@ -162,8 +153,6 @@ def save_info_single_array_iter(filename_root,filename_name,values_iter,iter_no)
 	
 #-----------------------------------------------------------------
 # Function that stores the data of loss slopes vs iterations in a csv file
-# Inputs  : filename_root,filename_name,values_iter,niter
-# Outputs : NONE
 def save_info_double_array_iter(filename_root,filename_name,values_iter,iter_no):
 	
 	if iter_no==0:
@@ -199,8 +188,6 @@ def save_info_double_array_iter(filename_root,filename_name,values_iter,iter_no)
 
 #-----------------------------------------------------------------
 # Function that stores the all the simulation data in different csv files
-# Inputs  : optimization_input_parameters,optimization_results
-# Outputs : NONE
 def save_info(optimization_input_parameters,optimization_results,iter_no,flag):
 	
 	# Creating the folder to store the results
@@ -273,7 +260,6 @@ def extract_double_array(optimization_results,list_name):
 		
 	return parameter_matrix,param_name_list,variable_name_list
 
-	
 #-----------------------------------------------------------------------------------------------
 # Plotting 2D array dictionary vs iterations
 def plot_double_array(optimization_results,list_name,file_directory):
@@ -314,7 +300,6 @@ def plot_double_array(optimization_results,list_name,file_directory):
 		close()
 	
 	print('Plotting Over '+list_name)
-
 	
 #-----------------------------------------------------------------------------------------------
 # Function to extract the data from 1D dictionary
@@ -344,7 +329,6 @@ def extract_single_array(optimization_results,list_name):
 			j+=1
 		
 	return parameter_matrix,param_name_list
-	
 	
 #-----------------------------------------------------------------------------------------------
 # Plotting parameters vs iterations
@@ -399,7 +383,6 @@ def plot_single_array(optimization_results,list_name,file_directory):
 		close()
 	
 	print('Plotting Over '+list_name)
-
 
 #-----------------------------------------------------------------------------------------------
 # Plotting various plots for optimization process
@@ -476,8 +459,6 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 	
 #-----------------------------------------------------------------------------------------------
 # This function updates the value of alpha after each iteration
-# Inputs  : loss_iter,alpha,i,alpha_mult,optimization_type,optimization_input_parameters
-# Outputs : alpha
 def update_alpha(loss_iter,alpha,i,alpha_mult,optimization_type,optimization_input_parameters,run_number):
 
 	n_iter=optimization_input_parameters['optimization'][run_number]['max_iteration']-1
@@ -506,8 +487,6 @@ def update_alpha(loss_iter,alpha,i,alpha_mult,optimization_type,optimization_inp
 
 #-----------------------------------------------------------------------------------------------
 # This function updates circuit parameters to previous circuit parameters if loss increases
-# Inputs  : old_circuit_parameters,circuit_parameters,loss_iter,update_check,i,optimization_type
-# Outputs : circuit_parameters, old_circuit_parameters
 def check_circuit_parameters(old_circuit_parameters,cir,loss_iter,update_check,i,optimization_type):
 
 	# Checking criteria for reducing threshold
@@ -521,8 +500,6 @@ def check_circuit_parameters(old_circuit_parameters,cir,loss_iter,update_check,i
 
 #-----------------------------------------------------------------------------------------------
 # Checking stopping condition ( if alpha<alpha_min )
-# Inputs  : loss_iter,alpha,i,alpha_min
-# Outputs : 1 if we need to stop iterations
 def check_stop_alpha(loss_iter,alpha,i,alpha_min):
 
 	if alpha_min<0:
@@ -534,8 +511,6 @@ def check_stop_alpha(loss_iter,alpha,i,alpha_min):
 
 #-----------------------------------------------------------------------------------------------
 # Checking stopping condition ( if loss increases for n_iter number of iterations )
-# Inputs  : loss_iter,i,n_iter,optimization_type
-# Outputs : 1 if we need to stop iterations
 def check_stop_loss(loss_iter,i,n_iter,optimization_type):
 
 	flag=0
@@ -556,11 +531,8 @@ def check_stop_loss(loss_iter,i,n_iter,optimization_type):
 ------------------------------------------- Output Functions --------------------------------------------------------------
 """
 		
-	
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to do optimization for a single run 
-# Inputs  : circuit_parameters,extracted_parameters,optimization_input_parameters,run_number
-# Outputs : circuit_parameters,extracted_parameters
 def opt_single_run(cir,optimization_input_parameters,run_number):
 
 	optimization_results={}
@@ -713,13 +685,8 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	# Plotting the results of optimization
 	plot_optimization(optimization_input_parameters,optimization_results,run_number)
 	
-
-	
-
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to do optimization for multiple runs
-# Inputs  : circuit_parameters,extracted_parameters,optimization_input_parameters,timing_results
-# Outputs : circuit_parameters,extracted_parameters
 def main_opt(cir,optimization_input_parameters,timing_results):
 	
 	if optimization_input_parameters['optimization']['run']=='NO':
@@ -737,8 +704,6 @@ def main_opt(cir,optimization_input_parameters,timing_results):
 
 	for i in range(1,1+n_runs):
 
-		save_input_results_optimization(optimization_input_parameters,i)
-		
 		# Opening the Run_Status File
 		f=open(optimization_input_parameters['filename']['run_status'],'a')
 		f.write('Optimization '+str(i)+' Start\n Time : '+str(datetime.datetime.now())+'\n\n')
@@ -749,6 +714,8 @@ def main_opt(cir,optimization_input_parameters,timing_results):
 		timing_results['optimization'][i]['start']=datetime.datetime.now()
 
 		cir.update_simulation_parameters(optimization_input_parameters['optimization']['simulation'][i])
+		save_input_results_optimization(optimization_input_parameters,i)
+		
 		opt_single_run(cir,optimization_input_parameters,i)
 
 		# Storing the optimization completion time

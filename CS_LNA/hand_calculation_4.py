@@ -131,13 +131,17 @@ def updating_Ld(Cgd,Cload,Cd,fo):
 #-----------------------------------------------------------------------------------------------
 # Updating gm
 def update_gm(extracted_nf,target_nf,gm):
-	if extracted_nf<(target_nf-0.3):
-		return gm/1.2
-	elif extracted_nf>target_nf:
-		return gm*1.2
-	else:
-		return gm
 
+	# Getting the value of f
+	extracted_f=cf.db_to_normal(extracted_nf)
+	target_f=cf.db_to_normal(target_nf)
+	k=(extracted_f-1)/(target_f-1)
+
+	if extracted_nf<(target_nf):
+		return gm*np.sqrt(k)
+	else:
+		return gm*k
+	
 
 """
 ===========================================================================================================================

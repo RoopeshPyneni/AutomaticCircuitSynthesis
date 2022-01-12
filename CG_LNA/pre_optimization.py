@@ -13,22 +13,25 @@ import CG_LNA.hand_calculation_1 as hc1 # type: ignore
 import CG_LNA.hand_calculation_2 as hc2 # type: ignore
 
 
-#===========================================================================================================================
-#----------------------------------- File Writing Functions ----------------------------------------------------------------
+"""
+===========================================================================================================================
+----------------------------------- File Writing Functions ----------------------------------------------------------------
+"""
 
 #-----------------------------------------------------------------
 # Function that stores input data of the simulation
 # Inputs  : optimization_input_parameters
 # Outputs : NONE
-def save_input_results_pre_optimization(optimization_input_parameters):
+def save_input_results_pre_optimization(cir,optimization_input_parameters):
 
 	# Opening the file
 	filename=optimization_input_parameters['filename']['output']+str('/input_data.txt')
 	f=open(filename,'a')
 
 	# Storing the results
-	f.write('\n\n********************************************************************************\n')
-	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Pre Optimization ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+	f.write('\n\n')
+	f.write('********************************************************************************\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Pre Optimization Parameters ~~~~~~~~~~~~~~~~~~~~~~~~\n')
 	
 	f.write('\nStep1b_Limit :'+str(optimization_input_parameters['pre_optimization']['Step1b_Limit']))
 	f.write('\nStep2_Limit  :'+str(optimization_input_parameters['pre_optimization']['Step2_Limit']))
@@ -41,6 +44,8 @@ def save_input_results_pre_optimization(optimization_input_parameters):
 	f.write('\nC1_threshold    :'+str(optimization_input_parameters['pre_optimization']['C1_threshold']))
 	f.write('\nC1_threshold    :'+str(optimization_input_parameters['pre_optimization']['C2_threshold']))
 	f.write('\nRbias_threshold :'+str(optimization_input_parameters['pre_optimization']['Rbias_threshold']))
+
+	cf.print_simulation_parameters(f,cir)
 
 	f.close()
 
@@ -55,8 +60,9 @@ def save_output_results_pre_optimization(optimization_results,optimization_input
 	f=open(filename,'a')
 
 	# Storing the results
-	f.write('\n\n********************************************************************************\n')
-	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Pre Optimization ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+	f.write('\n\n')
+	f.write('********************************************************************************\n')
+	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Pre Optimization Parameters ~~~~~~~~~~~~~~~~~~~~~~~~\n')
 	
 	if 'manual_hc' in optimization_results:
 		f.write('\n\n--------------------- Manual Hand Calculations ---------------------------------')
@@ -97,8 +103,10 @@ def save_output_results_pre_optimization(optimization_results,optimization_input
 
 
 
-#===========================================================================================================================
-#----------------------------------- Defining the functions for simple calculations ----------------------------------------
+"""
+===========================================================================================================================
+----------------------------------- Manual Hand Calculations --------------------------------------------------------------
+"""
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to manually choose the Initial Circuit Parameters
@@ -110,9 +118,10 @@ def manual_initial_parameters(cir,optimization_input_parameters):
 	cir.update_circuit(optimization_input_parameters['pre_optimization']['manual_circuit_parameters'].copy())
 
 
-
-#===========================================================================================================================
-#------------------------------------------- Output Functions --------------------------------------------------------------
+"""
+===========================================================================================================================
+------------------------------------------- Output Functions --------------------------------------------------------------
+"""
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to perform pre-optimization
@@ -132,14 +141,12 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 	print('************************************************************************************************************')
 	print('*********************************** Pre Optimization *******************************************************')
 
-	save_input_results_pre_optimization(optimization_input_parameters)
-
 	cir.update_simulation_parameters(optimization_input_parameters['pre_optimization']['simulation'])
-	#cir.optimization_input_parameters=optimization_input_parameters
+	save_input_results_pre_optimization(cir,optimization_input_parameters)
 
 	optimization_results={}
 	
-	#======================================================== Manual Initial Points =============================================================================================================
+	#======================================================== Manual Initial Points =========================================
 
 	if optimization_input_parameters['pre_optimization']['type']=='manual':
 		
@@ -160,10 +167,7 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 		cf.print_circuit_parameters(cir.circuit_parameters)
 		cf.print_extracted_parameters(cir.extracted_parameters)
 
-		#cf.wait_key()
-
-	
-	#======================================================== Automatic Initial Points =============================================================================================================
+	#======================================================== Automatic Initial Points ======================================
 
 	if optimization_input_parameters['pre_optimization']['type']==1:
 		
