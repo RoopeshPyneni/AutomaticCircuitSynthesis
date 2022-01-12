@@ -132,6 +132,7 @@ def updating_Ld(Cgd,Cload,Cd,fo):
 # Updating gm
 def update_gm(extracted_nf,target_nf,gm):
 
+	"""
 	# Getting the value of f
 	extracted_f=cf.db_to_normal(extracted_nf)
 	target_f=cf.db_to_normal(target_nf)
@@ -141,6 +142,14 @@ def update_gm(extracted_nf,target_nf,gm):
 		return gm*np.sqrt(k)
 	else:
 		return gm*k
+	"""
+	
+	if extracted_nf<(target_nf-0.3):
+		return gm/1.2
+	elif extracted_nf>target_nf:
+		return gm*1.2
+	else:
+		return gm
 	
 
 """
@@ -275,8 +284,8 @@ def update_initial_parameters(cir,optimization_input_parameters):
 
 		# Updating W to improve the Qin
 		Z_max=calculate_Zim_max(optimization_input_parameters['output_conditions']['s11_db'])
-		Z_diff=0.5*np.abs(cir.extracted_parameters['0_Zin_I']-cir.extracted_parameters['2_Zin_I'])
-		cir.circuit_parameters['W']=cir.circuit_parameters['W']*Z_diff/Z_max
+		Z_diff=np.abs(cir.extracted_parameters['0_Zin_I']-cir.extracted_parameters['2_Zin_I'])
+		cir.circuit_parameters['W']=cir.circuit_parameters['W']*Z_diff/Z_max*1.2
 		
 		# Calculating Io from W and gm based on NF Calculation
 		global gm
