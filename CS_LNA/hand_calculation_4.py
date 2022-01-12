@@ -275,8 +275,10 @@ def update_initial_parameters(cir,optimization_input_parameters):
 
 		# Updating W to improve the Qin
 		Z_max=calculate_Zim_max(optimization_input_parameters['output_conditions']['s11_db'])
-		Z_diff=np.abs(cir.extracted_parameters['0_Zin_I']-cir.extracted_parameters['2_Zin_I'])
-		cir.circuit_parameters['W']=cir.circuit_parameters['W']*Z_diff/Z_max*1.2
+		Z_diff=0.5*np.abs(cir.extracted_parameters['0_Zin_I']-cir.extracted_parameters['2_Zin_I'])
+		cir.circuit_parameters['W']=cir.circuit_parameters['W']*Z_diff/Z_max
+		
+		# Calculating Io from W and gm based on NF Calculation
 		global gm
 		gm=update_gm(cir.extracted_parameters['nf_db'],nf,gm)
 		cir.circuit_parameters['Io']=calculate_Io(gm,un,Cox,cir.circuit_parameters['W'],Lmin)
@@ -287,8 +289,8 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		
 		# Updating the values
 		fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
-		cir.circuit_parameters['Ls']=cir.circuit_parameters['Ls']*50/cir.extracted_parameters['1_Zin_R']
-		cir.circuit_parameters['Lg']=cir.circuit_parameters['Lg']-cir.extracted_parameters['1_Zin_I']/(2*np.pi*fo)
+		cir.circuit_parameters['Ls']=cir.circuit_parameters['Ls']*50*4/(2*cir.extracted_parameters['1_Zin_R']+cir.extracted_parameters['0_Zin_R']+cir.extracted_parameters['2_Zin_R'])
+		cir.circuit_parameters['Lg']=cir.circuit_parameters['Lg']-(2*cir.extracted_parameters['1_Zin_I']+cir.extracted_parameters['0_Zin_I']+cir.extracted_parameters['2_Zin_I'])/(4*2*np.pi*fo)
 		
 		# Running the circuit and updating the results
 		cir.run_circuit()

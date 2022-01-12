@@ -526,7 +526,7 @@ get_frequency_analysis_parameters(optimization_input_parameters,fo)
 optimization_input_parameters['filename']={}
 optimization_input_parameters['filename']['run_status']='/home/ee18b028/Optimization/Simulation_Results/run_status.txt'
 
-f_directory='/home/ee18b028/Optimization/Simulation_Results/CS_LNA/'+str(optimization_name)+'/'
+f_directory='/home/ee18b028/Optimization/Simulation_Results/CS_LNA/'
 
 
 file_choose='S' # 'S' to run a single time; 'M' to run multiple times
