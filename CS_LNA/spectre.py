@@ -34,9 +34,20 @@ class Circuit():
 			self.circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_r'
 			self.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_r'
 		
-		if self.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='series':
+		elif self.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='series':
 			self.circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_series'
 			self.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_series'
+
+		elif self.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_capacitor':
+			self.circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_rc'
+			self.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_rc'
+
+		elif self.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='ideal':
+			self.circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
+			self.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
+		
+		else:
+			sys.exit()
 	
 	def run_circuit(self):
 		self.extracted_parameters=write_extract(self.circuit_parameters,self.circuit_initialization_parameters)
@@ -496,13 +507,17 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 	n_finger=int(circuit_parameters['W']/circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max'])+1
 	write_dict['n_finger']=n_finger
 
-	# Getting the width and length of Rbias
-	if circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_resistor':
-		write_dict['res_b_len'],write_dict['res_b_wid']=get_TSMC_resistor(circuit_parameters['Rb'])
-		R1=circuit_parameters['Rsum']*(1-circuit_parameters['Rk'])
-		R2=circuit_parameters['Rsum']*circuit_parameters['Rk']
-		write_dict['res_1_len'],write_dict['res_1_wid']=get_TSMC_resistor(R1)
-		write_dict['res_2_len'],write_dict['res_2_wid']=get_TSMC_resistor(R2)
+	# Getting the width and length for TSMC Resistors
+	write_dict['res_b_len'],write_dict['res_b_wid']=get_TSMC_resistor(circuit_parameters['Rb'])
+	R1=circuit_parameters['Rsum']*(1-circuit_parameters['Rk'])
+	R2=circuit_parameters['Rsum']*circuit_parameters['Rk']
+	write_dict['res_1_len'],write_dict['res_1_wid']=get_TSMC_resistor(R1)
+	write_dict['res_2_len'],write_dict['res_2_wid']=get_TSMC_resistor(R2)
+
+	# Getting the width, length, mf for Capacitors
+	write_dict['wid_cap_d'],write_dict['len_cap_d']=calculate_MOS_capacitor(circuit_parameters['Cd'])
+	write_dict['wid_cap_g'],write_dict['len_cap_g']=calculate_MOS_capacitor(circuit_parameters['Cg'])
+	write_dict['mf_cap_s']=1+int(circuit_parameters['Cs']*1e11)
 
 	return write_dict
 
@@ -516,7 +531,22 @@ def get_TSMC_resistor(resistance):
 	length=width*resistance/sheet_resistance
 	
 	return length,W_min
-            
+
+#-----------------------------------------------------------------      
+# Function that converts capacitance to length and width for MOS capacitor
+def calculate_MOS_capacitor(cap):
+	cox=17.25*1e-3
+	w_check=np.sqrt(cap/cox)
+	if w_check>2e-5:
+		length=2e-5
+		width=cap/(cox*length)
+		return width,length
+	if w_check<1.2e-7:
+		width=1.2e-7
+		length=cap/(cox*width)
+		return width,length
+	return w_check,w_check
+
 #-----------------------------------------------------------------
 # Function that modifies the .scs file
 def write_circuit_parameters(circuit_parameters,circuit_initialization_parameters):

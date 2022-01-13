@@ -88,8 +88,8 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	# Filenames
 	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/CS_LNA/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/'
-	circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
-	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
+	#circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
+	#circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
 	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='ideal' # 'ideal', 'series','mos_resistor'
 	
 	# IIP3 Points
