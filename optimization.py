@@ -11,6 +11,7 @@ import common_functions as cf # type: ignore
 import os
 from matplotlib import pylab
 from pylab import *
+from datetime import datetime
 #===========================================================================================================================
 
 
@@ -623,7 +624,7 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 
 		# Opening the Run_Status File
 		f=open(optimization_input_parameters['filename']['run_status'],'a')
-		f.write('Iteration Number:'+str(i+1)+'\n')
+		f.write('Iteration Number:'+str(i+1)+'   Time : '+str(datetime.now())+'\n')
 		f.close()
 
 
