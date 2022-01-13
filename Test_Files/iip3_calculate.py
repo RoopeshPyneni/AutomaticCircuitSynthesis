@@ -214,11 +214,12 @@ def extract_iip3(file_name,fund_1,fund_2,pin):
 ------------------------------------- MAIN PROGRAM ------------------------------------------------------------------------
 """
 
-file_name='/home/ee18b028/Optimization/Simulation_Results/CS_LNA_Io/'+'iip3_hb'+'/circ.raw/hb_test.fd.qpss_hb'
+file_name='/home/ee18b028/cadence_project/CS_LNA_Io/T1/'+'iip3_hb'+'/circ.raw/hb_test.fd.qpss_hb'
 fund_1=1000e6
 fund_2=1001e6
 pin=-65
 
 iip3_parameters=extract_iip3(file_name,fund_1,fund_2,pin)
+print(iip3_parameters)
 
 #==========================================================================================================================
