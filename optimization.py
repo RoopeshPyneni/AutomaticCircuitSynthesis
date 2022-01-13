@@ -714,7 +714,7 @@ def main_opt(cir,optimization_input_parameters,timing_results):
 		timing_results['optimization'][i]['start']=datetime.datetime.now()
 
 		cir.update_simulation_parameters(optimization_input_parameters['optimization']['simulation'][i])
-		save_input_results_optimization(optimization_input_parameters,i)
+		save_input_results_optimization(cir,optimization_input_parameters,i)
 		
 		opt_single_run(cir,optimization_input_parameters,i)
 
