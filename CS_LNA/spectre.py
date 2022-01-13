@@ -8,7 +8,6 @@ File Description 	: This file will contain the functions to write, run, and read
 #==========================================================================================================================
 import numpy as np
 import fileinput
-import os
 import multiprocessing as mp
 import CS_LNA.pre_optimization as pr # type: ignore
 import spectre_common as sp # type: ignore
@@ -498,7 +497,12 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 	write_dict['n_finger']=n_finger
 
 	# Getting the width and length of Rbias
-	write_dict['res_b_L'],write_dict['res_b_W']=get_TSMC_resistor(circuit_parameters['Rb'])
+	if circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_resistor':
+		write_dict['res_b_len'],write_dict['res_b_wid']=get_TSMC_resistor(circuit_parameters['Rb'])
+		R1=circuit_parameters['Rsum']*(1-circuit_parameters['Rk'])
+		R2=circuit_parameters['Rsum']*circuit_parameters['Rk']
+		write_dict['res_1_len'],write_dict['res_1_wid']=get_TSMC_resistor(R1)
+		write_dict['res_2_len'],write_dict['res_2_wid']=get_TSMC_resistor(R2)
 
 	return write_dict
 
