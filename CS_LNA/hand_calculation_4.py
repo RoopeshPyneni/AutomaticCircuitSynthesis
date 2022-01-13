@@ -107,19 +107,36 @@ def calculate_Zim_max(s11):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating R1 and R2
-def calculate_R1_R2(gm,Io,vth,vdd,fo,Cg):
+def calculate_Rsum_Rk(vdd,fo,Cg,Imax):
+
+	# Getting the value of k
+	Rk=0.9 # This is set arbitrarily
+
+	# Getting the value of Rsum from Reff
 	Reff=10/(2*np.pi*fo*Cg)
-	vg=0.9*vdd
-	R1=Reff*vdd/vg
-	R2=R1*vg/(vdd-vg)
-	return R1,R2
+	Rsum=Reff/(Rk*(1-Rk))
+	
+	# Multiplying R1 and R2 to get a higher value
+	Rmin=vdd/Imax
+	if Rsum<Rmin:
+		Rsum=Rmin
+
+	return Rsum,Rk
 
 #-----------------------------------------------------------------------------------------------
 # Updating R1 and R2
-def updating_R1_R2(vdsat1,vdsat2,vth,vdd):
+def updating_R1_R2(vdsat1,vdsat2,vth,vdd,Imax):
 	vg=vdsat1+vdsat2+vth
 	R2=1e4*vg/vdd
 	R1=1e4-R2
+
+	# Multiplying R1 and R2 to get a higher value
+	Rmin=vdd/Imax
+	if R1+R2<Rmin:
+		k=Rmin/(R1+R2)
+		R1*=k
+		R2*=k
+
 	return R1,R2
 
 #-----------------------------------------------------------------------------------------------
@@ -277,7 +294,7 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	gm=calculate_gm(circuit_parameters['Ld'],fo,cgs,nf)
 	circuit_parameters['Cg']=100*cgs
 	circuit_parameters['Io']=calculate_Io(gm,un,Cox,circuit_parameters['W'],Lmin)
-	circuit_parameters['R1'],circuit_parameters['R2']=calculate_R1_R2(gm,circuit_parameters['Io'],vth,vdd,fo,circuit_parameters['Cg'])
+	circuit_parameters['Rsum'],circuit_parameters['Rk']=calculate_Rsum_Rk(vdd,fo,circuit_parameters['Cg'],optimization_input_parameters['pre_optimization']['I_Rdivider_max'])
 	circuit_parameters['Ls']=calculate_Ls(Rs,cgs,gm,fo)
 	circuit_parameters['Lg']=calculate_Lg(circuit_parameters['Ls'],cgs,fo)
 	circuit_parameters['Rb']=5000

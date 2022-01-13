@@ -13,6 +13,7 @@ import multiprocessing as mp
 import CS_LNA.pre_optimization as pr # type: ignore
 import spectre_common as sp # type: ignore
 import copy
+import sys
 
 """
 ===========================================================================================================================
@@ -472,9 +473,14 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 		'cap_s':'Cs',
 		'cap_g':'Cg',
 		'cap_d':'Cd',
-		'res_1':'R1',
-		'res_2':'R2'
+		'res_sum':'Rsum',
+		'res_k':'Rk'
 	}
+
+	# Checking for wrong values
+	if circuit_parameters['Rk']>=1.0 or circuit_parameters['Rk']<=0.0:
+		sys.exit()
+
 	for param_name in cir_writing_dict:
 		write_dict[param_name]=circuit_parameters[cir_writing_dict[param_name]]
 	

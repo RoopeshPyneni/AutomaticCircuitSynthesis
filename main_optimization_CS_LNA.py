@@ -125,6 +125,8 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['pre_optimization']={}
 
 	optimization_input_parameters['pre_optimization']['type']=4 #'manual'
+
+	optimization_input_parameters['pre_optimization']['I_Rdivider_max']=100e-6
 	
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -135,8 +137,8 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	'W': 1.08e-3,
 	'Cg': 46.6e-12,
 	'Io': 150e-6,
-	'R1': 39.6,
-	'R2': 390,
+	'Rsum': 39.6,
+	'Rk': 390,
 	'Ls': 1.64e-9,
 	'Lg': 30.4e-9,
 	'Rb': 5000,
@@ -188,7 +190,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=300
+	optimization_input_parameters['optimization'][1]['max_iteration']=600
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
@@ -196,7 +198,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization'][1]['loss_type']=0
 	optimization_input_parameters['optimization'][1]['update_check']=0
 	optimization_input_parameters['optimization'][1]['optimization_type']=0
-	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Ld','Cd','R1','R2']
+	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Ld','Cd','Rk']
 	optimization_input_parameters['optimization'][1]['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
 
 	optimization_input_parameters['optimization'][1]['loss_weights']={
@@ -541,7 +543,7 @@ optimization_input_parameters['frequency_analysis']['run']='NO'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Optimization_with_HC_4'						# SET THE FILENAME HERE
+	filename=f_directory+'Optimization_with_HC_4_version_2'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
