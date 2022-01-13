@@ -85,7 +85,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	circuit_initialization_parameters['simulation']['standard_parameters']={}
 
 	# Filenames
-	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/lna1/'
+	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/CG_LNA/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh'
 	circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
 	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
