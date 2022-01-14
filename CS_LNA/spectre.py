@@ -865,32 +865,32 @@ def get_final_extracted_parameters(extracted_parameters_combined):
 	final_extracted_parameters={}
 
 	extracted_parameters_select={
-		'v_source':'mid',
-		'i_source':'mid',
-		'p_source':'mid',
+		'v_source':'dc',
+		'i_source':'dc',
+		'p_source':'dc',
 		
-		'vg1':'mid',
-		'vd1':'mid',
-		'vg2':'mid',
+		'vg1':'dc',
+		'vd1':'dc',
+		'vg2':'dc',
 
-		'Io':'mid',
-		'gm1':'mid',
-		'gds1':'mid',
-		'vth1':'mid',
-		'vds1':'mid',
-		'vdsat1':'mid',
-		'cgs1':'mid',
-		'cgd1':'mid',
-		'region1':'mid',
-		'check_vd1':'mid',
+		'Io':'dc',
+		'gm1':'dc',
+		'gds1':'dc',
+		'vth1':'dc',
+		'vds1':'dc',
+		'vdsat1':'dc',
+		'cgs1':'dc',
+		'cgd1':'dc',
+		'region1':'dc',
+		'check_vd1':'dc',
 
-		'vth2':'mid',
-		'vds2':'mid',
-		'vdsat2':'mid',
-		'cgs2':'mid',
-		'cgd2':'mid',
-		'region2':'mid',
-		'check_vd2':'mid',
+		'vth2':'midcd',
+		'vds2':'dc',
+		'vdsat2':'dc',
+		'cgs2':'dc',
+		'cgd2':'dc',
+		'region2':'dc',
+		'check_vd2':'dc',
 
 		'freq':'mid',
 		'vgs_ac':'mid',
@@ -902,12 +902,16 @@ def get_final_extracted_parameters(extracted_parameters_combined):
 		'iip3_dbm':'min'
 	}
 
+	# Getting the values for all three frequencies
 	for param in extracted_parameters_combined[0]:
+		if extracted_parameters_select[param]=='dc':
+			continue
 		for i in range(3):
 			final_extracted_parameters[str(i)+'_'+param]=extracted_parameters_combined[i][param]
 	
+	# Getting the min or mid or max parameter values for the best values
 	for param in extracted_parameters_select:
-		if extracted_parameters_select[param]=='mid':
+		if extracted_parameters_select[param]=='mid' or extracted_parameters_select[param]=='dc':
 			final_extracted_parameters[param]=extracted_parameters_combined[1][param]
 		elif extracted_parameters_select[param]=='min':
 			param_array=[]
