@@ -456,7 +456,7 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 	cir.extracted_parameters=extracted_parameters_initial.copy()
 		
 	return circuit_parameters_slope,circuit_parameters_sensitivity
-	
+
 #-----------------------------------------------------------------------------------------------
 # This function updates the value of alpha after each iteration
 def update_alpha(loss_iter,alpha,i,alpha_mult,optimization_type,optimization_input_parameters,run_number):
@@ -537,6 +537,9 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 
 	optimization_results={}
 	optimization_results['run_number']=run_number
+
+	# Getting the previous time for calculation of optimization_finish_time
+	previous_time=datetime.datetime.now()
 
 	# Defining some values
 	i=0
@@ -622,9 +625,11 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		
 
 		# Opening the Run_Status File
+		current_time=datetime.datetime.now()
 		f=open(optimization_input_parameters['filename']['run_status'],'a')
-		f.write('Iteration Number:'+str(i+1)+'   Time : '+str(datetime.datetime.now())+'\n')
+		f.write('Iteration Number:'+str(i+1)+'   Time : '+str(current_time)+'   Expected Finish Time : '+str(current_time+(current_time-previous_time)*(max_iteration-i))+'\n')
 		f.close()
+		previous_time=current_time
 
 
 		# Printing the values of loss for given iteration
