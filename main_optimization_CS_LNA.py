@@ -90,7 +90,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/'
 	#circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
 	#circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
-	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='ideal' # 'ideal', 'series','mos_resistor'
+	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='mos_resistor' # 'ideal', 'series','mos_resistor'
 	
 	# IIP3 Points
 	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']='basic'		# 'basic' or 'advanced' 
@@ -543,7 +543,7 @@ optimization_input_parameters['frequency_analysis']['run']='NO'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Optimization_with_HC_4_version_2'						# SET THE FILENAME HERE
+	filename=f_directory+'Optimization_with_MOS_Resistor'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
