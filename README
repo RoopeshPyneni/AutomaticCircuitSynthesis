@@ -1,61 +1,76 @@
 Files in this folder:
 
----> main_loss1.py
-This file contains the program that will call the complete optimization function
+---> main_optimization_CS_LNA.py ; main_optimization_CG_LNA.py 
+These files contain programs that will call the complete optimization function
 You can specify very different parameters in this program that are input to the optimization function
-This is used for loss optimization
-
----> main_fom1.py
-This file contains the program that will call the complete optimization function
-You can specify very different parameters in this program that are input to the optimization function
-This is used for FOM optimization
 
 ---> main_single_point.py
-This file is used to extract the outputs for a single input point
-This will call the functions in spectre and run the calculation
+This file is used to extract the output for a single input point
+This code will run spectre and display the outputs
 
 ---> complete_optimization.py
 This file is used to run the complete otpimization
 It will perform optimization in the following steps:
 	1. Pre Optimization
 	2. Optimization Function
-	3. Temperature Analysis
-		
----> pre_optimization.py
-This file will run the pre optimization steps ( hand calculations and some parameter corrections )
-It will store the results after each step in this process
-	
-	---> hand_calculation_1.py
-	This file will do hand calculations with Method 1 ( Normal Operating Point with gm=20mS and high Rb )
+	3. Other analysis post optimization
 
-	---> hand_calculation_2.py
-	This file will do hand calculations with Method 2 ( To get high IIP3 and Low Power by choosing Rb=50 )
+---> CS_LNA ; CG_LNA
+These folders contain the following files:
+		
+	---> pre_optimization.py
+	This file will run the pre optimization steps ( hand calculations and some parameter corrections )
+	It will store the results after each step in this process
+	
+		---> hand_calculation.py
+		This file will do hand calculations by choosing an initial point and making some changes
+		There might be more than one hand calculation files which set the initial point in different ways
+
+	---> spectre.py
+	This file contains the class Circuit
+	This class contains functions that will initialize the circuit parameters, run spectre and store the extracted parameters
+	It will also contain the loss function that is used for optimization. 
 
 ---> optimization.py
 This file will run the optimization
 It will store the results of each optimization step
 This file will also plot thr results
-	
-	---> optimization_functions_loss.py
-	This file contains functions related to loss
-		
-	---> optimization_functions_fom.py
-	This file contains functions related to FOM	
 
----> spectre.py
-This file will extract different parameters from .chi files. It is used to extract the circuit parameters
+---> spectre_common.py
+This file will contain common functions used by the spectre file in CS_LNA, CG_LNA.
+It will contain functions such as iip3 calculation, Zin calculation from s11 which is common to different circuits.
 
 ---> spectre_run.tcsh
 This file is the list of shell commands to run the spectre file
 
----> file_write.py
-This file will write information of the optimization input parameters
-It will also store the results of pre_optimization, optimization, and temperature_analysis
-
 ---> common_functions.py
-This file contains many functions that are used commonly
+This file contains many functions that are used commonly such as print statements for circuit and extracted parameters, conversion from db to linear scale, etc.
 
----> temperature_analysis.py
-This file is used to perform the temperature analysis to the final optimized point
+---> Analysis
+This folder contains different analysis files that are used post optimization
+
+	---> temperature_analysis.py
+	This file is used to perform the temperature analysis by varying temperature over a chosen range and calculating the extracted parameters
+
+	---> process_analysis.py
+	This file is used to perform the process analysis by calculating the extracted parameters at FF, SS, TT corners. We can also vary temperature in this analysis.
+
+	---> frequency_analysis.py
+	This file is used to perform the frenquency analysis by varying the frequency over a chosen range and calculating the extracted parameters.
+
+	---> iip3_analysis.py
+	This file is used to perform the iip3 analysis by sweeping the pin and plotting the value of Pfund and Pim3. This is done to verify if the slope of Pfund and Pim3 are 1 and 3. 
+
+	---> sensitivity_analysis.py
+	This file is used to perform the sensitivity analysis by varying the circuit parameters by 1% and finding the sensitivity of the output. 
+
+---> MOS_Files
+This folder contains the files for different mosfets which contains values such as Vdd, Lmin, un, cox, MOSFET file location in system, etc.
+
+---> Spectre_Run
+This folder contains spectre_run.tcsh files that are used for CS_LNA to run three circuits in parallel.
+Since we are running in paralle, we do not want to call the same spectre_run.tcsh.
+
+
 
 
