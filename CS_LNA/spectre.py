@@ -521,9 +521,9 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 	write_dict['res_2_len'],write_dict['res_2_wid']=get_TSMC_resistor(R2)
 
 	# Getting the width, length, mf for Capacitors
-	write_dict['wid_cap_d'],write_dict['len_cap_d']=calculate_MOS_capacitor(circuit_parameters['Cd'])
 	write_dict['wid_cap_g'],write_dict['len_cap_g']=calculate_MOS_capacitor(circuit_parameters['Cg'])
 	write_dict['mf_cap_s']=1+int(circuit_parameters['Cs']*1e11)
+	write_dict['mf_cap_d']=1+int(circuit_parameters['Cd']/5.63e-15)
 
 	return write_dict
 
