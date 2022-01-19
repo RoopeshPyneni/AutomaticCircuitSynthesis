@@ -94,6 +94,9 @@ class Circuit():
 		s11=self.extracted_parameters['s11_db']
 		nf=self.extracted_parameters['nf_db']
 		Io=self.extracted_parameters['Io']
+
+		gain_0=self.extracted_parameters['0_gain_db']
+		gain_2=self.extracted_parameters['2_gain_db']
 		
 		# Reference Values
 		gain_ref=output_conditions['gain_db']
@@ -108,14 +111,17 @@ class Circuit():
 		A4=loss_weights['nf_db']	# Weight for nf
 		A5=loss_weights['Io']	# Weight for Io
 		
+		A6=loss_weights['gain_delta']
+		
 		# Calculating Loss
 		loss_gain=A1*sp.ramp_func(gain_ref-gain)
 		loss_iip3=A2*sp.ramp_func(iip3_ref-iip3)
 		loss_s11=A3*sp.ramp_func(s11-s11_ref)
 		loss_nf=A4*sp.ramp_func(nf-nf_ref)
 		loss_Io=A5*Io
-		loss=loss_gain+loss_iip3+loss_s11+loss_nf+loss_Io
-		loss_dict={'loss':loss,'loss_gain':loss_gain,'loss_iip3':loss_iip3,'loss_s11':loss_s11,'loss_nf':loss_nf,'loss_Io':loss_Io}
+		loss_gain_delta=A6*abs(gain_0-gain_2)
+		loss=loss_gain+loss_iip3+loss_s11+loss_nf+loss_Io+loss_gain_delta
+		loss_dict={'loss':loss,'loss_gain':loss_gain,'loss_iip3':loss_iip3,'loss_s11':loss_s11,'loss_nf':loss_nf,'loss_Io':loss_Io,'loss_gain_delta':loss_gain_delta}
 		
 		return loss_dict
 	
