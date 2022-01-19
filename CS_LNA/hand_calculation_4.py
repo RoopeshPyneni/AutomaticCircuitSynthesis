@@ -181,7 +181,7 @@ def get_best_point(circuit_parameters_iter,extracted_parameters_iter,output_cond
 	
 	# Getting the value of Io and loss
 	for j in j_array:
-		Io_array.append(extracted_parameters_iter[j]['1_Io'])
+		Io_array.append(extracted_parameters_iter[j]['Io'])
 		loss_gain=sc.ramp_func(output_conditions['gain_db']-extracted_parameters_iter[j]['gain_db'])
 		loss_iip3=sc.ramp_func(output_conditions['iip3_dbm']-extracted_parameters_iter[j]['iip3_dbm'])
 		loss_s11=sc.ramp_func(extracted_parameters_iter[j]['s11_db']-output_conditions['s11_db'])

@@ -910,8 +910,9 @@ def get_final_extracted_parameters(extracted_parameters_combined):
 
 	# Getting the values for all three frequencies
 	for param in extracted_parameters_combined[0]:
-		if extracted_parameters_select[param]=='dc':
-			continue
+		if param in extracted_parameters_select:
+			if extracted_parameters_select[param]=='dc':
+				continue
 		for i in range(3):
 			final_extracted_parameters[str(i)+'_'+param]=extracted_parameters_combined[i][param]
 	
