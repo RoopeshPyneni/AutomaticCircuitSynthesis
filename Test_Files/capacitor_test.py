@@ -107,6 +107,8 @@ def extract_hb_param(filename,freq,i_cur):
 				continue
 		
 		if 'freq' in line:
+			if 'sweep' in line:
+				continue
 			frequency=float(line.split()[1])
 			if check_freq(frequency,freq,freq*0.001)==1:
 				flag=1
@@ -247,8 +249,8 @@ def MOS_Capacitor_1(file_directory_netlist,file_directory_output):
 
 	# Storing the variable names
 	circuit_parameters={
-		'len':0,
-		'wid':0,
+		'len':2e-6,
+		'wid':2e-6,
 		'i_sin':1e-6,
 		'm_factor':1.0,
 		'fund_1':1e9
