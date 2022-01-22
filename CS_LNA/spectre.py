@@ -54,10 +54,14 @@ class Circuit():
 
 	def update_circuit(self,circuit_parameters):
 		self.circuit_parameters=circuit_parameters
+		if self.circuit_parameters['Rk']>=1.00:
+			self.circuit_parameters['Rk']=0.90
 		self.extracted_parameters=write_extract(circuit_parameters,self.circuit_initialization_parameters)
 	
 	def update_circuit_parameters(self,circuit_parameters):
 		self.circuit_parameters=circuit_parameters
+		if self.circuit_parameters['Rk']>=1.00:
+			self.circuit_parameters['Rk']=0.90
 
 	def update_simulation_parameters(self,simulation_parameters):
 		if 'netlist_parameters' in simulation_parameters:
@@ -494,8 +498,10 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 	}
 
 	# Checking for wrong values
-	if circuit_parameters['Rk']>=1.0 or circuit_parameters['Rk']<=0.0:
-		sys.exit()
+	if circuit_parameters['Rk']>=1.0:
+		circuit_parameters['Rk']=0.95
+	if circuit_parameters['Rk']<=0.0:
+		circuit_parameters['Rk']=0.05
 
 	for param_name in cir_writing_dict:
 		write_dict[param_name]=circuit_parameters[cir_writing_dict[param_name]]

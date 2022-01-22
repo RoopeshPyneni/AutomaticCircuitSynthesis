@@ -206,8 +206,8 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 		'iip3_dbm':1/10.0,
 		's11_db':3/15.0,
 		'nf_db':1/2.0,
-		'Io':1000,
-		'gain_delta':1/100.0
+		'Io':100,
+		'gain_delta':1e-4
 	}
 
 	optimization_input_parameters['optimization'][1]['alpha']={}
@@ -544,7 +544,7 @@ optimization_input_parameters['frequency_analysis']['run']='NO'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Optimization_with_MOS_Resistor_Gain_Delta'						# SET THE FILENAME HERE
+	filename=f_directory+'Optimization_with_MOS_Resistor_Gain_Delta_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

@@ -599,17 +599,21 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	while i<max_iteration:
 	
 		# Checking if there is extra loss from output conditions
+		print('Check extra loss')
 		check_loss=cir.calc_check_loss(loss_iter,i,loss_type)
 		
 		# Calculating the slope of loss and output sensitivity and updating the circuit parameters
+		print('Calculate slope')
 		circuit_parameters_slope,circuit_parameters_sensitivity=calc_loss_slope(cir,output_conditions,loss_iter[i-1],optimization_input_parameters,run_number)
 		cir.update_circuit_parameters(circuit_parameters_slope,check_loss,optimization_input_parameters,run_number)
 		
 		# Extracting output parameters for new circuit parameters
+		print('Run circuit')
 		cir.run_circuit()
 
 
 		# Updating different dictionaries
+		print('Update dictionary')
 		loss_iter[i]=cir.calc_loss(output_conditions,loss_weights)
 			
 
@@ -621,10 +625,12 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		extracted_parameters_iter[i]= cir.extracted_parameters.copy()
 
 		# Saving Results of Each Iteration
+		print('Save info')
 		save_info(optimization_input_parameters,optimization_results,i,1)
 		
 
 		# Opening the Run_Status File
+		print('Run Status ',str(i+1))
 		current_time=datetime.datetime.now()
 		f=open(optimization_input_parameters['filename']['run_status'],'a')
 		f.write('Iteration Number:'+str(i+1)+'   Time : '+str(current_time)+'   Expected Finish Time : '+str(current_time+(current_time-previous_time)*(max_iteration-i))+'\n')
@@ -638,14 +644,17 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		
 
 		# Updating the value of alpha	
+		print('Update alpha')
 		alpha=update_alpha(loss_iter,alpha,i,alpha_mult,optimization_type,optimization_input_parameters,run_number)
 		
 
 		# Updating the value of circuit_parameters based on loss increase
+		print('Update circuit parameters')
 		old_circuit_parameters=check_circuit_parameters(old_circuit_parameters,cir,loss_iter,optimization_input_parameters['optimization'][run_number]['update_check'],i,optimization_type)
 
 
 		# Checking for stopping condition
+		print('Check stopping condition')
 		flag_alpha=check_stop_alpha(loss_iter,alpha,i,alpha_min)
 		flag_loss=check_stop_loss(loss_iter,i,consec_iter,optimization_type)
 		
