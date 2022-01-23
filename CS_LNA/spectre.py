@@ -180,20 +180,24 @@ class Circuit():
 		# Defining some values
 		n_iter=optimization_results['n_iter']
 		iter_min=0
-		loss_Io_min=optimization_results['loss_iter'][0]['loss_Io']
+		
+		zero_loss_array=['loss_s11','loss_gain','loss_iip3','loss_nf']
+		minimize_loss_array=['loss_Io','loss_gain_delta']
 
-		if (optimization_results['loss_iter'][0]['loss']-optimization_results['loss_iter'][0]['loss_Io'])>loss_max:
+		loss_Io_min=sum([optimization_results['loss_iter'][0][key] for key in minimize_loss_array])
+
+		if sum([optimization_results['loss_iter'][0][key] for key in zero_loss_array])>loss_max:
 			flag=0
 		else:
 			flag=1
 		
 		for i in range(1,n_iter):
-			if (optimization_results['loss_iter'][i]['loss']-optimization_results['loss_iter'][i]['loss_Io'])>loss_max:
+			if sum([optimization_results['loss_iter'][i][key] for key in zero_loss_array])>loss_max:
 				continue
 
-			if flag==0 or (flag==1 and optimization_results['loss_iter'][i]['loss_Io']<loss_Io_min):
+			if flag==0 or (flag==1 and sum([optimization_results['loss_iter'][i][key] for key in minimize_loss_array])<loss_Io_min):
 				iter_min=i
-				loss_Io_min=optimization_results['loss_iter'][i]['loss_Io']
+				loss_Io_min=sum([optimization_results['loss_iter'][i][key] for key in minimize_loss_array])
 				flag=1
 
 		# Creating output dictionary
