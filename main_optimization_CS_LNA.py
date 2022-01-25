@@ -8,6 +8,7 @@ File Description 	: This file will initialize the optimization_input_parameters 
 #===========================================================================================================================
 import numpy as np
 import complete_optimization as co
+import copy
 
 #===========================================================================================================================
 #------------------------------------ Other Functions ----------------------------------------------------------------------
@@ -176,7 +177,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	# Getting the number of optimization runs
 	optimization_input_parameters['optimization']={}
 	optimization_input_parameters['optimization']['run']='NO'
-	optimization_input_parameters['optimization']['n_runs']=1
+	optimization_input_parameters['optimization']['n_runs']=7
 
 	# Getting the type of optimization
 	if optimization_name=='LOSS':
@@ -237,6 +238,48 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 		'cir_temp':27,
 		'n_harm':5
 	}
+	
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# Optimization Run 2
+	optimization_input_parameters['optimization'][2]=copy.deepcopy(optimization_input_parameters['optimization'][1])
+	optimization_input_parameters['optimization']['simulation'][2]=copy.deepcopy(optimization_input_parameters['optimization']['simulation'][1])
+	optimization_input_parameters['optimization'][2]['max_iteration']=100
+	optimization_input_parameters['optimization'][2]['loss_weights']['gain_delta']=2e-4
+	
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# Optimization Run 3
+	optimization_input_parameters['optimization'][3]=copy.deepcopy(optimization_input_parameters['optimization'][1])
+	optimization_input_parameters['optimization']['simulation'][3]=copy.deepcopy(optimization_input_parameters['optimization']['simulation'][1])
+	optimization_input_parameters['optimization'][3]['max_iteration']=100
+	optimization_input_parameters['optimization'][3]['loss_weights']['gain_delta']=3e-4
+	
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# Optimization Run 4
+	optimization_input_parameters['optimization'][4]=copy.deepcopy(optimization_input_parameters['optimization'][1])
+	optimization_input_parameters['optimization']['simulation'][4]=copy.deepcopy(optimization_input_parameters['optimization']['simulation'][1])
+	optimization_input_parameters['optimization'][4]['max_iteration']=100
+	optimization_input_parameters['optimization'][4]['loss_weights']['gain_delta']=4e-4
+	
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# Optimization Run 5
+	optimization_input_parameters['optimization'][5]=copy.deepcopy(optimization_input_parameters['optimization'][1])
+	optimization_input_parameters['optimization']['simulation'][5]=copy.deepcopy(optimization_input_parameters['optimization']['simulation'][1])
+	optimization_input_parameters['optimization'][5]['max_iteration']=100
+	optimization_input_parameters['optimization'][5]['loss_weights']['gain_delta']=6e-4
+	
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# Optimization Run 6
+	optimization_input_parameters['optimization'][6]=copy.deepcopy(optimization_input_parameters['optimization'][1])
+	optimization_input_parameters['optimization']['simulation'][6]=copy.deepcopy(optimization_input_parameters['optimization']['simulation'][1])
+	optimization_input_parameters['optimization'][6]['max_iteration']=100
+	optimization_input_parameters['optimization'][6]['loss_weights']['gain_delta']=8e-4
+	
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# Optimization Run 7
+	optimization_input_parameters['optimization'][7]=copy.deepcopy(optimization_input_parameters['optimization'][1])
+	optimization_input_parameters['optimization']['simulation'][7]=copy.deepcopy(optimization_input_parameters['optimization']['simulation'][1])
+	optimization_input_parameters['optimization'][7]['max_iteration']=100
+	optimization_input_parameters['optimization'][7]['loss_weights']['gain_delta']=10e-4
 
 	"""
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -544,7 +587,7 @@ optimization_input_parameters['frequency_analysis']['run']='NO'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Optimization_with_MOS_Resistor_Gain_Delta_1'						# SET THE FILENAME HERE
+	filename=f_directory+'Optimization_with_MOS_Resistor_Gain_Delta_3'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
