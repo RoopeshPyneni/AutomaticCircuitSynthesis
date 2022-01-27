@@ -70,7 +70,8 @@ def get_output_conditions(optimization_input_parameters,fo):
 	optimization_input_parameters['output_conditions']={
 		's11_db':-10.0,
 		'iip3_dbm':-10.0,
-		'gain_db':20.0,
+		'gain_db':15.0,
+		'gain_delta':1.5,
 		'nf_db':1.5,
 		'wo':2.0*np.pi*fo,
 		'delta_v':0.1,
@@ -177,7 +178,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	# Getting the number of optimization runs
 	optimization_input_parameters['optimization']={}
 	optimization_input_parameters['optimization']['run']='NO'
-	optimization_input_parameters['optimization']['n_runs']=7
+	optimization_input_parameters['optimization']['n_runs']=1
 
 	# Getting the type of optimization
 	if optimization_name=='LOSS':
@@ -191,7 +192,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=600
+	optimization_input_parameters['optimization'][1]['max_iteration']=6
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
@@ -208,7 +209,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 		's11_db':3/15.0,
 		'nf_db':1/2.0,
 		'Io':100,
-		'gain_delta':1e-4
+		'gain_delta':1/100.0
 	}
 
 	optimization_input_parameters['optimization'][1]['alpha']={}
@@ -239,6 +240,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 		'n_harm':5
 	}
 	
+	"""
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 2
 	optimization_input_parameters['optimization'][2]=copy.deepcopy(optimization_input_parameters['optimization'][1])
@@ -280,6 +282,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization']['simulation'][7]=copy.deepcopy(optimization_input_parameters['optimization']['simulation'][1])
 	optimization_input_parameters['optimization'][7]['max_iteration']=100
 	optimization_input_parameters['optimization'][7]['loss_weights']['gain_delta']=10e-4
+	"""
 
 	"""
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -491,7 +494,7 @@ def get_frequency_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['frequency_analysis']={}
 
-	optimization_input_parameters['frequency_analysis']['run']='NO'
+	optimization_input_parameters['frequency_analysis']['run']='YES'
 
 	optimization_input_parameters['frequency_analysis']['start_freq']=0.8e9
 	optimization_input_parameters['frequency_analysis']['stop_freq']=1.2e9
@@ -582,7 +585,7 @@ optimization_input_parameters['temperature_analysis']['run']='NO'
 optimization_input_parameters['sensitivity_analysis']['run']='NO'
 optimization_input_parameters['process_analysis']['run']='NO'
 optimization_input_parameters['iip3_analysis']['run']='NO'
-optimization_input_parameters['frequency_analysis']['run']='NO'
+optimization_input_parameters['frequency_analysis']['run']='YES'
 
 if file_choose=='S':
 
