@@ -126,7 +126,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']=4 #'manual'
+	optimization_input_parameters['pre_optimization']['type']='manual'
 
 	optimization_input_parameters['pre_optimization']['I_Rdivider_max']=100e-6
 	
@@ -134,15 +134,15 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Manual Hand Calculations
 	optimization_input_parameters['pre_optimization']['manual_circuit_parameters']={
-	'Cd': 455e-15,
-	'Ld': 16.7e-9,
-	'W': 1.08e-3,
-	'Cg': 46.6e-12,
-	'Io': 150e-6,
-	'Rsum': 39.6,
-	'Rk': 390,
-	'Ls': 1.64e-9,
-	'Lg': 30.4e-9,
+	'Cd': 342e-15,
+	'Ld': 17.5e-9,
+	'W': 1.27e-3,
+	'Cg': 153e-12,
+	'Io': 418e-6,
+	'Rsum': 10000,
+	'Rk': 0.47,
+	'Ls': 1.05e-9,
+	'Lg': 29.7e-9,
 	'Rb': 5000,
 	'Cs': 318e-12
 	}	
@@ -192,7 +192,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=6
+	optimization_input_parameters['optimization'][1]['max_iteration']=600
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
@@ -580,9 +580,9 @@ f_directory='/home/ee18b028/Optimization/Simulation_Results/CS_LNA/'
 
 file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 
-optimization_input_parameters['optimization']['run']='YES'
+optimization_input_parameters['optimization']['run']='NO'
 optimization_input_parameters['temperature_analysis']['run']='NO'
-optimization_input_parameters['sensitivity_analysis']['run']='NO'
+optimization_input_parameters['sensitivity_analysis']['run']='YES'
 optimization_input_parameters['process_analysis']['run']='NO'
 optimization_input_parameters['iip3_analysis']['run']='NO'
 optimization_input_parameters['frequency_analysis']['run']='YES'
@@ -590,7 +590,7 @@ optimization_input_parameters['frequency_analysis']['run']='YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Optimization_with_MOS_Resistor_Gain_Delta_3'						# SET THE FILENAME HERE
+	filename=f_directory+'Optimization_Test_3'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
