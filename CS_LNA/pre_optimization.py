@@ -13,6 +13,7 @@ import CS_LNA.hand_calculation_1 as hc1 # type: ignore
 import CS_LNA.hand_calculation_2 as hc2 # type: ignore
 import CS_LNA.hand_calculation_3 as hc3 # type: ignore
 import CS_LNA.hand_calculation_4 as hc4 # type: ignore
+import CS_LNA.hand_calculation_5 as hc5 # type: ignore
 
 
 """
@@ -181,6 +182,14 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 
 		# Extracting the MOSFET Parameters from the MOS file
 		hc4.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
+	
+	if optimization_input_parameters['pre_optimization']['type']==5:
+		
+		print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 5 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+		print('\n\n')
+
+		# Extracting the MOSFET Parameters from the MOS file
+		hc5.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
 
 	# Printing the values
 	cf.print_circuit_parameters(cir.circuit_parameters)

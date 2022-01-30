@@ -62,7 +62,10 @@ This folder contains different analysis files that are used post optimization
 	This file is used to perform the iip3 analysis by sweeping the pin and plotting the value of Pfund and Pim3. This is done to verify if the slope of Pfund and Pim3 are 1 and 3. 
 
 	---> sensitivity_analysis.py
-	This file is used to perform the sensitivity analysis by varying the circuit parameters by 1% and finding the sensitivity of the output. 
+	This file is used to perform the sensitivity analysis by varying the circuit parameters by 1% and finding the sensitivity of the output.
+
+	---> circuit_parameter_analysis.py
+	This file varies a single circuit parameter and plots how the outputs vary with it. 
 
 ---> MOS_Files
 This folder contains the files for different mosfets which contains values such as Vdd, Lmin, un, cox, MOSFET file location in system, etc.

@@ -500,7 +500,8 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 		'cap_g':'Cg',
 		'cap_d':'Cd',
 		'res_sum':'Rsum',
-		'res_k':'Rk'
+		'res_k':'Rk',
+		'res_l':'Rl'
 	}
 
 	# Checking for wrong values
@@ -531,6 +532,7 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 	R2=circuit_parameters['Rsum']*circuit_parameters['Rk']
 	write_dict['res_1_len'],write_dict['res_1_wid']=get_TSMC_resistor(R1)
 	write_dict['res_2_len'],write_dict['res_2_wid']=get_TSMC_resistor(R2)
+	write_dict['res_l_len'],write_dict['res_l_wid']=get_TSMC_resistor(circuit_parameters['Rl'])
 
 	# Getting the width, length, mf for Capacitors
 	write_dict['wid_cap_g'],write_dict['len_cap_g']=calculate_MOS_capacitor(circuit_parameters['Cg'])

@@ -126,7 +126,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']='manual'
+	optimization_input_parameters['pre_optimization']['type']=5 #'manual'
 
 	optimization_input_parameters['pre_optimization']['I_Rdivider_max']=100e-6
 	
@@ -144,7 +144,8 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	'Ls': 1.05e-9,
 	'Lg': 29.7e-9,
 	'Rb': 5000,
-	'Cs': 318e-12
+	'Cs': 318e-12,
+	'Rl': 1e4
 	}	
 
 
@@ -634,7 +635,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Circuit_Parameter_Analysis_Test_3'						# SET THE FILENAME HERE
+	filename=f_directory+'Circuit_Parameter_Analysis_Test_4'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
