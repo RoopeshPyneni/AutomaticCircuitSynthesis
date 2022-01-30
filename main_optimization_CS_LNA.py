@@ -209,7 +209,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 		's11_db':3/15.0,
 		'nf_db':1/2.0,
 		'Io':100,
-		'gain_delta':1/100.0
+		'gain_delta':2.0/10.0
 	}
 
 	optimization_input_parameters['optimization'][1]['alpha']={}
@@ -531,9 +531,9 @@ def get_circuit_parameter_analysis_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['circuit_parameter_analysis']={}
 
 	optimization_input_parameters['circuit_parameter_analysis']['run']='YES'
-
 	optimization_input_parameters['circuit_parameter_analysis']['n_runs']=1
-
+	
+	optimization_input_parameters['circuit_parameter_analysis'][0]={}
 	optimization_input_parameters['circuit_parameter_analysis'][0]['parameter_name']='Ld'
 	optimization_input_parameters['circuit_parameter_analysis'][0]['parameter_select_type']='relative'
 	optimization_input_parameters['circuit_parameter_analysis'][0]['start']=0.8
@@ -623,7 +623,7 @@ f_directory='/home/ee18b028/Optimization/Simulation_Results/CS_LNA/'
 
 file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 
-optimization_input_parameters['optimization']['run']='NO'
+optimization_input_parameters['optimization']['run']='YES'
 optimization_input_parameters['temperature_analysis']['run']='NO'
 optimization_input_parameters['sensitivity_analysis']['run']='NO'
 optimization_input_parameters['process_analysis']['run']='NO'
@@ -634,7 +634,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Circuit_Parameter_Analysis_Test_1'						# SET THE FILENAME HERE
+	filename=f_directory+'Circuit_Parameter_Analysis_Test_2'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

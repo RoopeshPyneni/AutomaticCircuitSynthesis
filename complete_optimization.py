@@ -19,6 +19,7 @@ import Analysis.temperature_analysis as ta
 import Analysis.process_analysis as pa
 import Analysis.iip3_analysis as ia
 import Analysis.frequency_analysis as fa
+import Analysis.circuit_parameter_analysis as cpa
 
 
 """
@@ -184,6 +185,10 @@ def complete_optimization(circuit_initialization_parameters,optimization_input_p
 	#=============================== FREQUENCY ANALYSIS ============================================
 
 	fa.frequency_analysis(cir,optimization_input_parameters,timing_results)
+	
+	#=============================== CIRCUIT PARAMETER ANALYSIS ============================================
+
+	cpa.circuit_parameter_analysis(cir,optimization_input_parameters,timing_results)
 	
 	#=============================== AFTER OPTIMIZATION ============================================
 	
