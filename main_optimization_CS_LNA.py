@@ -628,13 +628,13 @@ optimization_input_parameters['temperature_analysis']['run']='NO'
 optimization_input_parameters['sensitivity_analysis']['run']='NO'
 optimization_input_parameters['process_analysis']['run']='NO'
 optimization_input_parameters['iip3_analysis']['run']='NO'
-optimization_input_parameters['frequency_analysis']['run']='NO'
+optimization_input_parameters['frequency_analysis']['run']='YES'
 optimization_input_parameters['circuit_parameter_analysis']['run']='YES'
 
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Circuit_Parameter_Analysis_Test_2'						# SET THE FILENAME HERE
+	filename=f_directory+'Circuit_Parameter_Analysis_Test_3'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

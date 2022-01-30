@@ -125,7 +125,7 @@ class Circuit():
 		loss_s11=A3*sp.ramp_func(s11-s11_ref)
 		loss_nf=A4*sp.ramp_func(nf-nf_ref)
 		loss_Io=A5*Io
-		loss_gain_delta=A6*sp.ramp_func(gain_delta_ref+gain_0-gain)+A6*sp.ramp_func(gain_delta_ref+gain_2-gain)
+		loss_gain_delta=A6*sp.ramp_func(gain_0-gain)+A6*sp.ramp_func(gain-gain_delta_ref-gain_0)+A6*sp.ramp_func(gain_2-gain)+A6*sp.ramp_func(gain-gain_delta_ref-gain_2)
 		loss=loss_gain+loss_iip3+loss_s11+loss_nf+loss_Io+loss_gain_delta
 		loss_dict={'loss':loss,'loss_gain':loss_gain,'loss_iip3':loss_iip3,'loss_s11':loss_s11,'loss_nf':loss_nf,'loss_Io':loss_Io,'loss_gain_delta':loss_gain_delta}
 		
@@ -183,8 +183,8 @@ class Circuit():
 		n_iter=optimization_results['n_iter']
 		iter_min=0
 		
-		zero_loss_array=['loss_s11','loss_gain','loss_iip3','loss_nf']
-		minimize_loss_array=['loss_Io','loss_gain_delta']
+		zero_loss_array=['loss_s11','loss_gain','loss_iip3','loss_nf','loss_gain_delta']
+		minimize_loss_array=['loss_Io']
 
 		loss_Io_min=sum([optimization_results['loss_iter'][0][key] for key in minimize_loss_array])
 
