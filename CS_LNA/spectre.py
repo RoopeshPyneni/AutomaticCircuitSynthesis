@@ -118,6 +118,7 @@ class Circuit():
 		A5=loss_weights['Io']	# Weight for Io
 		
 		A6=loss_weights['gain_delta']
+		A7=loss_weights['gain_flatness']
 		
 		# Calculating Loss
 		loss_gain=A1*sp.ramp_func(gain_ref-gain)
@@ -125,9 +126,20 @@ class Circuit():
 		loss_s11=A3*sp.ramp_func(s11-s11_ref)
 		loss_nf=A4*sp.ramp_func(nf-nf_ref)
 		loss_Io=A5*Io
-		loss_gain_delta=A6*sp.ramp_func(gain_0-gain)+A6*sp.ramp_func(gain-gain_delta_ref-gain_0)+A6*sp.ramp_func(gain_2-gain)+A6*sp.ramp_func(gain-gain_delta_ref-gain_2)
-		loss=loss_gain+loss_iip3+loss_s11+loss_nf+loss_Io+loss_gain_delta
-		loss_dict={'loss':loss,'loss_gain':loss_gain,'loss_iip3':loss_iip3,'loss_s11':loss_s11,'loss_nf':loss_nf,'loss_Io':loss_Io,'loss_gain_delta':loss_gain_delta}
+		loss_gain_delta=A6*sp.ramp_func(gain_0-gain)+A6*sp.ramp_func(gain_2-gain)
+		loss_gain_flatness=A7*sp.ramp_func(gain-gain_delta_ref-gain_0)+A7*sp.ramp_func(gain-gain_delta_ref-gain_2)
+		
+		loss=loss_gain+loss_iip3+loss_s11+loss_nf+loss_Io+loss_gain_delta+loss_gain_flatness
+		loss_dict={
+			'loss':loss,
+			'loss_gain':loss_gain,
+			'loss_iip3':loss_iip3,
+			'loss_s11':loss_s11,
+			'loss_nf':loss_nf,
+			'loss_Io':loss_Io,
+			'loss_gain_delta':loss_gain_delta,
+			'loss_gain_flatness':loss_gain_flatness
+		}
 		
 		return loss_dict
 	
@@ -183,8 +195,8 @@ class Circuit():
 		n_iter=optimization_results['n_iter']
 		iter_min=0
 		
-		zero_loss_array=['loss_s11','loss_gain','loss_iip3','loss_nf','loss_gain_delta']
-		minimize_loss_array=['loss_Io']
+		zero_loss_array=['loss_s11','loss_gain','loss_iip3','loss_nf']
+		minimize_loss_array=['loss_Io','loss_gain_delta','loss_gain_flatness']
 
 		loss_Io_min=sum([optimization_results['loss_iter'][0][key] for key in minimize_loss_array])
 
@@ -875,6 +887,8 @@ def write_extract_single(i,circuit_parameters,circuit_initialization_parameters)
 	extracted_parameters=basic_extracted_parameters.copy()
 	for param_name in iip3_extracted_parameters:
 		extracted_parameters[param_name]=iip3_extracted_parameters[param_name]
+	
+	print(i,extracted_parameters)
 
 	return (i,extracted_parameters)
 
@@ -904,7 +918,7 @@ def get_final_extracted_parameters(extracted_parameters_combined):
 		'region1':'dc',
 		'check_vd1':'dc',
 
-		'vth2':'midcd',
+		'vth2':'dc',
 		'vds2':'dc',
 		'vdsat2':'dc',
 		'cgs2':'dc',

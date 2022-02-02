@@ -88,10 +88,8 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	circuit_initialization_parameters['simulation']['standard_parameters']={}
 
 	# Filenames
-	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/CS_LNA/'
+	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/CS_LNA_2/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/'
-	#circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
-	#circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
 	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='mos_resistor' # 'ideal', 'series','mos_resistor'
 	
 	# IIP3 Points
@@ -126,7 +124,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']=5 #'manual'
+	optimization_input_parameters['pre_optimization']['type']='manual'
 
 	optimization_input_parameters['pre_optimization']['I_Rdivider_max']=100e-6
 	
@@ -201,7 +199,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization'][1]['loss_type']=0
 	optimization_input_parameters['optimization'][1]['update_check']=0
 	optimization_input_parameters['optimization'][1]['optimization_type']=0
-	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Ld','Cd','Rk']
+	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Ld','Cd','Rk','Rl']
 	optimization_input_parameters['optimization'][1]['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
 
 	optimization_input_parameters['optimization'][1]['loss_weights']={
@@ -210,7 +208,8 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 		's11_db':3/15.0,
 		'nf_db':1/2.0,
 		'Io':100,
-		'gain_delta':2.0/10.0
+		'gain_delta':2.0/10.0,
+		'gain_flatness':0.0
 	}
 
 	optimization_input_parameters['optimization'][1]['alpha']={}
@@ -635,7 +634,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Circuit_Parameter_Analysis_Test_4'						# SET THE FILENAME HERE
+	filename=f_directory+'Gain_Flatness_Test_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
