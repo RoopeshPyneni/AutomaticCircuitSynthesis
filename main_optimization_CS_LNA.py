@@ -203,17 +203,17 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization'][1]['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
 
 	optimization_input_parameters['optimization'][1]['loss_weights']={
-		'gain_db':1/10.0,
-		'iip3_dbm':1/10.0,
-		's11_db':3/15.0,
-		'nf_db':1/2.0,
+		'gain_db':10.0/10.0,
+		'iip3_dbm':10.0/10.0,
+		's11_db':30.0/15.0,
+		'nf_db':10.0/2.0,
 		'Io':100,
-		'gain_delta':2.0/10.0,
+		'gain_delta':1.0/10.0,
 		'gain_flatness':0.0
 	}
 
 	optimization_input_parameters['optimization'][1]['alpha']={}
-	optimization_input_parameters['optimization'][1]['alpha']['value']=0.05
+	optimization_input_parameters['optimization'][1]['alpha']['value']=0.005
 	optimization_input_parameters['optimization'][1]['alpha']['type']='Normal'
 	optimization_input_parameters['optimization'][1]['alpha']['start']=0.8
 	optimization_input_parameters['optimization'][1]['alpha']['end']=0.05
