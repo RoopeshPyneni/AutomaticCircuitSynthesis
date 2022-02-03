@@ -191,16 +191,22 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=600
+	optimization_input_parameters['optimization'][1]['max_iteration']=6
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
 	optimization_input_parameters['optimization'][1]['alpha_mult']=1
-	optimization_input_parameters['optimization'][1]['loss_type']=0
+	optimization_input_parameters['optimization'][1]['loss_type']=2
 	optimization_input_parameters['optimization'][1]['update_check']=0
 	optimization_input_parameters['optimization'][1]['optimization_type']=0
 	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Ld','Cd','Rk','Rl']
 	optimization_input_parameters['optimization'][1]['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
+
+	# NOTES :
+	# loss_type will tell how to update the circuit parameters
+	#	0 - Consider loss slope of Io if other loss is 0 ; Consider loss slope of others only if other loss of others is not zero
+	#	1 - Normal Update
+	#	2 - Consider the loss slope of those components whose loss is non-zero
 
 	optimization_input_parameters['optimization'][1]['loss_weights']={
 		'gain_db':10.0/10.0,
@@ -634,7 +640,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Gain_Flatness_Test_1'						# SET THE FILENAME HERE
+	filename=f_directory+'Test_New_Optimization_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

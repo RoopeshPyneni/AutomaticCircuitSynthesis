@@ -145,7 +145,31 @@ class Circuit():
 	
 	#-----------------------------------------------------------------------------------------------
 	# This function updates the values of circuit parameters by trying to minimize loss
-	def update_circuit_parameters(self,circuit_parameters_slope,check_loss,optimization_input_parameters,run_number):
+	def update_circuit_parameters(self,circuit_parameters_slope,optimization_input_parameters,run_number,loss_iter,loss_type):
+		
+		# Getting the names of loss parameters that should be considered for circuit parameter updation
+		change_loss_parameters=[]
+
+		# Loss Type = 0
+		if loss_type==0:
+			if loss_iter['loss']==loss_iter['loss_Io']:
+				change_loss_parameters=['loss_Io']
+			else:
+				change_loss_parameters=['loss_s11','loss_gain','loss_iip3','loss_nf','loss_gain_delta','loss_gain_flatness']
+		
+		# Loss Type = 1
+		elif loss_type==1:
+			change_loss_parameters=['loss']
+
+		# Loss Type = 2
+		elif loss_type==2:
+			for param in loss_iter:
+				if param=='loss':
+					continue
+				if loss_iter[param]==0:
+					continue
+				change_loss_parameters.append(param)
+
 		
 		alpha=optimization_input_parameters['optimization'][run_number]['alpha']['value']
 
@@ -153,13 +177,10 @@ class Circuit():
 		for param_name in circuit_parameters_slope:
 			
 			# Calculating the Increment Value
-			if check_loss==-1:
-				change=circuit_parameters_slope[param_name]['loss']*(self.circuit_parameters[param_name]**2)*alpha
-			elif check_loss==1:
-				change=circuit_parameters_slope[param_name]['loss_Io']*(self.circuit_parameters[param_name]**2)*alpha
-			else:
-				change=(circuit_parameters_slope[param_name]['loss']-circuit_parameters_slope[param_name]['loss_Io'])
-				change=change*(self.circuit_parameters[param_name]**2)*alpha
+			change=0
+			for loss_name in change_loss_parameters:
+				change+=circuit_parameters_slope[param_name][loss_name]
+			change=change*(self.circuit_parameters[param_name]**2)*alpha
 		
 		
 			# Checking if the parameter is updated by a large value
@@ -172,21 +193,6 @@ class Circuit():
 			# Updating circuit_parameters
 			self.circuit_parameters[param_name]=self.circuit_parameters[param_name]-change
 			
-	#-----------------------------------------------------------------------------------------------
-	# This function will check the loss of gain, iip3, nf, and s11
-	def calc_check_loss(self,loss_iter,i,loss_type):
-
-		if loss_type==0:
-			if loss_iter[i-1]['loss']==loss_iter[i-1]['loss_Io']:
-				check_loss=1
-			else:
-				check_loss=0
-					
-		elif loss_type==1:
-			check_loss=-1
-			
-		return check_loss
-
 	#---------------------------------------------------------------------------------------------------------------------------
 	# Function to check the best solution
 	def check_best_solution(self,optimization_results,loss_max):

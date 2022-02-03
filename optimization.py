@@ -2,7 +2,7 @@
 """
 Name				: Pyneni Roopesh
 Roll Number			: EE18B028
-File Description 	: This file will perform the optimization for different circuit parameters	
+File Description 	: This file will perform the optimization by varying circuit parameters	to get correct output parameters
 """
 
 #===========================================================================================================================
@@ -16,7 +16,7 @@ from pylab import *
 
 """
 ===========================================================================================================================
--------------------------------------------- Storing Optimization Results -------------------------------------------------
+-------------------------------------------- STORING OPTIMIZATION RESULTS -------------------------------------------------
 """
 
 #-----------------------------------------------------------------
@@ -123,7 +123,7 @@ def save_output_results_optimization(optimization_results,optimization_input_par
 
 """
 ===========================================================================================================================
--------------------------------------------- Storing Iteration Results ----------------------------------------------------
+-------------------------------------------- STORING ITERATION RESULTS ----------------------------------------------------
 """
 
 #-----------------------------------------------------------------
@@ -216,7 +216,7 @@ def save_info(optimization_input_parameters,optimization_results,iter_no,flag):
 
 """
 ===========================================================================================================================
--------------------------------------------- Plotting the Results ---------------------------------------------------------
+-------------------------------------------- PLOTTING THE RESULTS ---------------------------------------------------------
 """
 	
 #-----------------------------------------------------------------------------------------------
@@ -399,7 +399,7 @@ def plot_optimization(optimization_input_parameters,optimization_results,run_num
 
 """
 ===========================================================================================================================
-------------------------------------Defining the functions ----------------------------------------------------------------
+-------------------------------------------- EXTRA FUNCTIONS --------------------------------------------------------------
 """
 	
 #-----------------------------------------------------------------------------------------------
@@ -528,9 +528,9 @@ def check_stop_loss(loss_iter,i,n_iter,optimization_type):
 
 """
 ===========================================================================================================================
-------------------------------------------- Output Functions --------------------------------------------------------------
+-------------------------------------------- OUTPUT FUNCTIONS -------------------------------------------------------------
 """
-		
+
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to do optimization for a single run 
 def opt_single_run(cir,optimization_input_parameters,run_number):
@@ -599,13 +599,13 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	while i<max_iteration:
 	
 		# Checking if there is extra loss from output conditions
-		print('Check extra loss')
-		check_loss=cir.calc_check_loss(loss_iter,i,loss_type)
+		#print('Check extra loss')
+		#check_loss=cir.calc_check_loss(loss_iter,i,loss_type)
 		
 		# Calculating the slope of loss and output sensitivity and updating the circuit parameters
 		print('Calculate slope')
 		circuit_parameters_slope,circuit_parameters_sensitivity=calc_loss_slope(cir,output_conditions,loss_iter[i-1],optimization_input_parameters,run_number)
-		cir.update_circuit_parameters(circuit_parameters_slope,check_loss,optimization_input_parameters,run_number)
+		cir.update_circuit_parameters(circuit_parameters_slope,optimization_input_parameters,run_number,loss_iter[i-1],loss_type)
 		
 		# Extracting output parameters for new circuit parameters
 		print('Run circuit')
