@@ -76,7 +76,8 @@ def get_output_conditions(optimization_input_parameters,fo):
 		'wo':2.0*np.pi*fo,
 		'delta_v':0.1,
 		'Rs':50,
-		'Cload':400e-15
+		'Cload':400e-15,
+		's11_db_middle':-20.0
 	}
 
 #---------------------------------------------------------------------------------------------------------------------------
@@ -88,9 +89,9 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	circuit_initialization_parameters['simulation']['standard_parameters']={}
 
 	# Filenames
-	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/CS_LNA_2/'
+	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/CS_LNA/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/'
-	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='mos_resistor' # 'ideal', 'series','mos_resistor'
+	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='mos_capacitor' # 'ideal', 'series','mos_resistor','mos_capacitor'
 	
 	# IIP3 Points
 	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']='basic'		# 'basic' or 'advanced' 
@@ -132,18 +133,17 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Manual Hand Calculations
 	optimization_input_parameters['pre_optimization']['manual_circuit_parameters']={
-	'Cd': 342e-15,
-	'Ld': 17.5e-9,
-	'W': 1.27e-3,
+	'Cd': 395e-15,
+	'Ld': 11.5e-9,
+	'W': 1.96e-3,
 	'Cg': 153e-12,
-	'Io': 418e-6,
+	'Io': 417e-6,
 	'Rsum': 10000,
-	'Rk': 0.47,
-	'Ls': 1.05e-9,
-	'Lg': 29.7e-9,
+	'Rk': 0.89,
+	'Ls': 2.88e-9,
+	'Lg': 19.1e-9,
 	'Rb': 5000,
-	'Cs': 318e-12,
-	'Rl': 1e4
+	'Cs': 31.4e-12
 	}	
 
 
@@ -177,7 +177,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	# Getting the number of optimization runs
 	optimization_input_parameters['optimization']={}
 	optimization_input_parameters['optimization']['run']='NO'
-	optimization_input_parameters['optimization']['n_runs']=1
+	optimization_input_parameters['optimization']['n_runs']=2
 
 	# Getting the type of optimization
 	if optimization_name=='LOSS':
@@ -191,7 +191,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=6
+	optimization_input_parameters['optimization'][1]['max_iteration']=100
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
@@ -199,7 +199,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization'][1]['loss_type']=2
 	optimization_input_parameters['optimization'][1]['update_check']=0
 	optimization_input_parameters['optimization'][1]['optimization_type']=0
-	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Ld','Cd','Rk','Rl']
+	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Ld','Cd','Rk','Cs']
 	optimization_input_parameters['optimization'][1]['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
 
 	# NOTES :
@@ -209,17 +209,18 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#	2 - Consider the loss slope of those components whose loss is non-zero
 
 	optimization_input_parameters['optimization'][1]['loss_weights']={
-		'gain_db':10.0/10.0,
-		'iip3_dbm':10.0/10.0,
-		's11_db':30.0/15.0,
-		'nf_db':10.0/2.0,
-		'Io':100,
+		'gain_db':1.0/10.0,
+		'iip3_dbm':1.0/10.0,
+		's11_db':3.0/15.0,
+		'nf_db':1.0/2.0,
+		'Io':0.0,
 		'gain_delta':1.0/10.0,
-		'gain_flatness':0.0
+		'gain_flatness':0.0,
+		's11_db_middle':3.0/15.0
 	}
 
 	optimization_input_parameters['optimization'][1]['alpha']={}
-	optimization_input_parameters['optimization'][1]['alpha']['value']=0.005
+	optimization_input_parameters['optimization'][1]['alpha']['value']=0.05
 	optimization_input_parameters['optimization'][1]['alpha']['type']='Normal'
 	optimization_input_parameters['optimization'][1]['alpha']['start']=0.8
 	optimization_input_parameters['optimization'][1]['alpha']['end']=0.05
@@ -246,49 +247,27 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 		'n_harm':5
 	}
 	
-	"""
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 2
 	optimization_input_parameters['optimization'][2]=copy.deepcopy(optimization_input_parameters['optimization'][1])
 	optimization_input_parameters['optimization']['simulation'][2]=copy.deepcopy(optimization_input_parameters['optimization']['simulation'][1])
-	optimization_input_parameters['optimization'][2]['max_iteration']=100
-	optimization_input_parameters['optimization'][2]['loss_weights']['gain_delta']=2e-4
+	optimization_input_parameters['optimization'][2]['max_iteration']=500
 	
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Optimization Run 3
-	optimization_input_parameters['optimization'][3]=copy.deepcopy(optimization_input_parameters['optimization'][1])
-	optimization_input_parameters['optimization']['simulation'][3]=copy.deepcopy(optimization_input_parameters['optimization']['simulation'][1])
-	optimization_input_parameters['optimization'][3]['max_iteration']=100
-	optimization_input_parameters['optimization'][3]['loss_weights']['gain_delta']=3e-4
+	optimization_input_parameters['optimization'][2]['alpha']['value']=0.005
 	
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Optimization Run 4
-	optimization_input_parameters['optimization'][4]=copy.deepcopy(optimization_input_parameters['optimization'][1])
-	optimization_input_parameters['optimization']['simulation'][4]=copy.deepcopy(optimization_input_parameters['optimization']['simulation'][1])
-	optimization_input_parameters['optimization'][4]['max_iteration']=100
-	optimization_input_parameters['optimization'][4]['loss_weights']['gain_delta']=4e-4
+	optimization_input_parameters['optimization'][2]['loss_weights']={
+		'gain_db':1.0/10.0,
+		'iip3_dbm':1.0/10.0,
+		's11_db':3.0/15.0,
+		'nf_db':1.0/2.0,
+		'Io':100.0,
+		'gain_delta':1.0/10.0,
+		'gain_flatness':0.0,
+		's11_db_middle':3.0/15.0
+	}
 	
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Optimization Run 5
-	optimization_input_parameters['optimization'][5]=copy.deepcopy(optimization_input_parameters['optimization'][1])
-	optimization_input_parameters['optimization']['simulation'][5]=copy.deepcopy(optimization_input_parameters['optimization']['simulation'][1])
-	optimization_input_parameters['optimization'][5]['max_iteration']=100
-	optimization_input_parameters['optimization'][5]['loss_weights']['gain_delta']=6e-4
 	
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Optimization Run 6
-	optimization_input_parameters['optimization'][6]=copy.deepcopy(optimization_input_parameters['optimization'][1])
-	optimization_input_parameters['optimization']['simulation'][6]=copy.deepcopy(optimization_input_parameters['optimization']['simulation'][1])
-	optimization_input_parameters['optimization'][6]['max_iteration']=100
-	optimization_input_parameters['optimization'][6]['loss_weights']['gain_delta']=8e-4
-	
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Optimization Run 7
-	optimization_input_parameters['optimization'][7]=copy.deepcopy(optimization_input_parameters['optimization'][1])
-	optimization_input_parameters['optimization']['simulation'][7]=copy.deepcopy(optimization_input_parameters['optimization']['simulation'][1])
-	optimization_input_parameters['optimization'][7]['max_iteration']=100
-	optimization_input_parameters['optimization'][7]['loss_weights']['gain_delta']=10e-4
-	"""
+
 
 	"""
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -629,18 +608,18 @@ f_directory='/home/ee18b028/Optimization/Simulation_Results/CS_LNA/'
 
 file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 
-optimization_input_parameters['optimization']['run']='YES'
+optimization_input_parameters['optimization']['run']='YES' #'YES'
 optimization_input_parameters['temperature_analysis']['run']='NO'
 optimization_input_parameters['sensitivity_analysis']['run']='NO'
 optimization_input_parameters['process_analysis']['run']='NO'
 optimization_input_parameters['iip3_analysis']['run']='NO'
-optimization_input_parameters['frequency_analysis']['run']='YES'
-optimization_input_parameters['circuit_parameter_analysis']['run']='YES'
+optimization_input_parameters['frequency_analysis']['run']='YES' #'YES'
+optimization_input_parameters['circuit_parameter_analysis']['run']='YES' #'YES'
 
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Test_New_Optimization_1'						# SET THE FILENAME HERE
+	filename=f_directory+'Optimization_with_Capacitor_4'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

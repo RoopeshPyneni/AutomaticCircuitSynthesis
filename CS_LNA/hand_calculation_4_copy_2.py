@@ -270,7 +270,7 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 
 	output_conditions=optimization_input_parameters['output_conditions']
     
-	# Getting the output conditions
+    # Getting the output conditions
 	Cload=output_conditions['Cload']
 	fo=output_conditions['wo']/(2*np.pi)
 	f_range=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_range']
@@ -283,7 +283,7 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	un=cir.mos_parameters['un']
 	vth=cir.mos_parameters['vt']
 
-	# Calculating the circuit parameters
+    # Calculating the circuit parameters
 	circuit_parameters={}
 	circuit_parameters['Cd']=Cload
 	circuit_parameters['Ld']=calculate_Ld(Cload,circuit_parameters['Cd'],fo)
@@ -299,8 +299,6 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	circuit_parameters['Lg']=calculate_Lg(circuit_parameters['Ls'],cgs,fo)
 	circuit_parameters['Rb']=5000
 	circuit_parameters['Cs']=100/(2*np.pi*50*fo)
-	if cir.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_capacitor':
-		circuit_parameters['Cs']=10/(2*np.pi*50*fo)
 
 	# Running the circuit
 	cir.update_circuit(circuit_parameters)
@@ -388,20 +386,28 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		return
 	
 	while flag!=2:
+		print('In while loop')
+		print(cir.extracted_parameters['0_gain_db'])
+		print(cir.extracted_parameters['2_gain_db'])
+		
 		if cir.extracted_parameters['0_gain_db']>(cir.extracted_parameters['2_gain_db']+0.5):
+			print('Condition 1')
 			if flag==1:
 				multiplicative_factor/=1.01
 			cir.circuit_parameters['Ld']/=multiplicative_factor
 			cir.run_circuit()
 			flag=0
 		elif cir.extracted_parameters['2_gain_db']>(cir.extracted_parameters['0_gain_db']+0.5):
+			print('Condition 2')
 			if flag==0:
 				multiplicative_factor/1.01
 			cir.circuit_parameters['Ld']*=multiplicative_factor
 			cir.run_circuit()
 			flag=1
 		else:
+			print('Condition 3')
 			flag=2
+		print(flag)
 			
 	
 

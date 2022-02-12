@@ -101,6 +101,7 @@ class Circuit():
 
 		gain_0=self.extracted_parameters['0_gain_db']
 		gain_2=self.extracted_parameters['2_gain_db']
+		s11_middle=self.extracted_parameters['1_s11_db']
 		
 		# Reference Values
 		gain_ref=output_conditions['gain_db']
@@ -109,7 +110,8 @@ class Circuit():
 		nf_ref=output_conditions['nf_db']
 
 		gain_delta_ref=output_conditions['gain_delta']
-		
+		s11_ref_middle=output_conditions['s11_db_middle']
+				
 		#Defining the weights to calculate Loss
 		A1=loss_weights['gain_db']	# Weight for gain
 		A2=loss_weights['iip3_dbm']	# Weight for iip3
@@ -119,6 +121,7 @@ class Circuit():
 		
 		A6=loss_weights['gain_delta']
 		A7=loss_weights['gain_flatness']
+		A8=loss_weights['s11_db_middle']
 		
 		# Calculating Loss
 		loss_gain=A1*sp.ramp_func(gain_ref-gain)
@@ -128,6 +131,7 @@ class Circuit():
 		loss_Io=A5*Io
 		loss_gain_delta=A6*sp.ramp_func(gain_0-gain)+A6*sp.ramp_func(gain_2-gain)
 		loss_gain_flatness=A7*sp.ramp_func(gain-gain_delta_ref-gain_0)+A7*sp.ramp_func(gain-gain_delta_ref-gain_2)
+		loss_s11_middle=A8*sp.ramp_func(s11_middle-s11_ref_middle)
 		
 		loss=loss_gain+loss_iip3+loss_s11+loss_nf+loss_Io+loss_gain_delta+loss_gain_flatness
 		loss_dict={
@@ -138,7 +142,8 @@ class Circuit():
 			'loss_nf':loss_nf,
 			'loss_Io':loss_Io,
 			'loss_gain_delta':loss_gain_delta,
-			'loss_gain_flatness':loss_gain_flatness
+			'loss_gain_flatness':loss_gain_flatness,
+			'loss_s11_middle':loss_s11_middle
 		}
 		
 		return loss_dict
@@ -155,7 +160,7 @@ class Circuit():
 			if loss_iter['loss']==loss_iter['loss_Io']:
 				change_loss_parameters=['loss_Io']
 			else:
-				change_loss_parameters=['loss_s11','loss_gain','loss_iip3','loss_nf','loss_gain_delta','loss_gain_flatness']
+				change_loss_parameters=['loss_s11','loss_gain','loss_iip3','loss_nf','loss_gain_delta','loss_gain_flatness','loss_s11_middle']
 		
 		# Loss Type = 1
 		elif loss_type==1:
@@ -202,7 +207,7 @@ class Circuit():
 		iter_min=0
 		
 		zero_loss_array=['loss_s11','loss_gain','loss_iip3','loss_nf']
-		minimize_loss_array=['loss_Io','loss_gain_delta','loss_gain_flatness']
+		minimize_loss_array=['loss_Io','loss_gain_delta','loss_gain_flatness','loss_s11_middle']
 
 		loss_Io_min=sum([optimization_results['loss_iter'][0][key] for key in minimize_loss_array])
 
@@ -518,8 +523,7 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 		'cap_g':'Cg',
 		'cap_d':'Cd',
 		'res_sum':'Rsum',
-		'res_k':'Rk',
-		'res_l':'Rl'
+		'res_k':'Rk'
 	}
 
 	# Checking for wrong values
@@ -550,7 +554,8 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 	R2=circuit_parameters['Rsum']*circuit_parameters['Rk']
 	write_dict['res_1_len'],write_dict['res_1_wid']=get_TSMC_resistor(R1)
 	write_dict['res_2_len'],write_dict['res_2_wid']=get_TSMC_resistor(R2)
-	write_dict['res_l_len'],write_dict['res_l_wid']=get_TSMC_resistor(circuit_parameters['Rl'])
+	if 'Rl' in circuit_parameters:
+		write_dict['res_l_len'],write_dict['res_l_wid']=get_TSMC_resistor(circuit_parameters['Rl'])
 
 	# Getting the width, length, mf for Capacitors
 	write_dict['wid_cap_g'],write_dict['len_cap_g']=calculate_MOS_capacitor(circuit_parameters['Cg'])

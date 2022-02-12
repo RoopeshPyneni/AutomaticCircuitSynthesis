@@ -1,5 +1,5 @@
 #tcsh
 source ~/.cshrc
-cd /home/ee18b028/cadence_project/CS_LNA_2/T1/iip3_hb_r
+cd /home/ee18b028/cadence_project/CS_LNA/T1/iip3_hb_rc
 spectre circ.scs =log circ_log.txt
 exit

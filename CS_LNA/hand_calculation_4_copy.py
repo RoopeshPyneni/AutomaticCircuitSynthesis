@@ -270,7 +270,7 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 
 	output_conditions=optimization_input_parameters['output_conditions']
     
-	# Getting the output conditions
+    # Getting the output conditions
 	Cload=output_conditions['Cload']
 	fo=output_conditions['wo']/(2*np.pi)
 	f_range=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_range']
@@ -283,7 +283,7 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	un=cir.mos_parameters['un']
 	vth=cir.mos_parameters['vt']
 
-	# Calculating the circuit parameters
+    # Calculating the circuit parameters
 	circuit_parameters={}
 	circuit_parameters['Cd']=Cload
 	circuit_parameters['Ld']=calculate_Ld(Cload,circuit_parameters['Cd'],fo)
@@ -299,8 +299,6 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	circuit_parameters['Lg']=calculate_Lg(circuit_parameters['Ls'],cgs,fo)
 	circuit_parameters['Rb']=5000
 	circuit_parameters['Cs']=100/(2*np.pi*50*fo)
-	if cir.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_capacitor':
-		circuit_parameters['Cs']=10/(2*np.pi*50*fo)
 
 	# Running the circuit
 	cir.update_circuit(circuit_parameters)
@@ -315,7 +313,7 @@ def update_initial_parameters(cir,optimization_input_parameters):
 	un=cir.mos_parameters['un']
 	vdd=cir.mos_parameters['vdd']
   
-    	# Getting the output conditions
+    # Getting the output conditions
 	Cload=optimization_input_parameters['output_conditions']['Cload']
 	fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
 	nf=optimization_input_parameters['output_conditions']['nf_db']
@@ -334,7 +332,7 @@ def update_initial_parameters(cir,optimization_input_parameters):
 
 		# Updating Ld
 		cir.circuit_parameters['Ld']=updating_Ld(cir.extracted_parameters['cgd2'],Cload,cir.circuit_parameters['Cd'],fo)
-		
+
 		# Updating W to improve the Qin
 		Z_max=calculate_Zim_max(optimization_input_parameters['output_conditions']['s11_db'])
 		Z_diff=np.abs(cir.extracted_parameters['0_Zin_I']-cir.extracted_parameters['2_Zin_I'])
@@ -372,37 +370,6 @@ def update_initial_parameters(cir,optimization_input_parameters):
 	
 	cir.circuit_parameters=circuit_parameters_iter[i].copy()
 	cir.extracted_parameters=extracted_parameters_iter[i].copy()
-	
-	# Updating the value of Ld to get correct circuit parameters
-	multiplicative_factor=1.05
-	if cir.extracted_parameters['0_gain_db']>(cir.extracted_parameters['2_gain_db']+0.5):
-		cir.circuit_parameters['Ld']/=multiplicative_factor
-		cir.run_circuit()
-		flag=0
-	elif cir.extracted_parameters['2_gain_db']>(cir.extracted_parameters['0_gain_db']+0.5):
-		cir.circuit_parameters['Ld']*=multiplicative_factor
-		cir.run_circuit()
-		flag=1
-	
-	else:
-		return
-	
-	while flag!=2:
-		if cir.extracted_parameters['0_gain_db']>(cir.extracted_parameters['2_gain_db']+0.5):
-			if flag==1:
-				multiplicative_factor/=1.01
-			cir.circuit_parameters['Ld']/=multiplicative_factor
-			cir.run_circuit()
-			flag=0
-		elif cir.extracted_parameters['2_gain_db']>(cir.extracted_parameters['0_gain_db']+0.5):
-			if flag==0:
-				multiplicative_factor/1.01
-			cir.circuit_parameters['Ld']*=multiplicative_factor
-			cir.run_circuit()
-			flag=1
-		else:
-			flag=2
-			
 	
 
 """
