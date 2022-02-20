@@ -167,9 +167,9 @@ def Inductor_Circuit_Parameter_Sweep(file_directory_netlist,file_directory_outpu
 		'L_spc':3e-6
 	}
 
-	w_array=np.linspace(3e-6,30e-6,10)
-	rad_array=np.linspace(15e-6,90e-6,16)
-	turn_array=np.linspace(0.5,5.5,21)
+	w_array=np.linspace(3e-6,30e-6,28)
+	rad_array=np.linspace(15e-6,90e-6,51)
+	turn_array=np.linspace(0.5,5.5,6)
 	gdis_array=np.linspace(10e-6,50e-6,9)
 	spc_array=np.linspace(2e-6,4e-6,3)
 
@@ -196,7 +196,9 @@ def Inductor_Circuit_Parameter_Sweep(file_directory_netlist,file_directory_outpu
 							'L_gdis':gdis,
 							'L_spc':spc
 						}
-
+						
+						print(circuit_parameters)
+						
 						# Running spectre
 						Q,L=write_extract(file_directory_netlist,circuit_parameters)
 
@@ -232,6 +234,6 @@ Inductor_Single_Point(file_directory,circuit_parameters)
 
 
 # Code to do distortion analysis for multiple
-file_directory_output='/home/ee18b028/Optimization/Simulation_Results/Inductor/Sweep/'
+file_directory_output='/home/ee18b028/Optimization/Simulation_Results/Inductor/Sweep2/'
 Inductor_Circuit_Parameter_Sweep(file_directory,file_directory_output)
 

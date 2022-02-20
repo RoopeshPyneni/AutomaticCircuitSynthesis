@@ -9,10 +9,20 @@ File Description 	: This file is used to plot the values of Q and L from the csv
 import numpy as np
 import fileinput
 import os
-import pandas as pd
 from matplotlib import pylab
 from pylab import *
 
+"""
+============================================================================================================================
+---------------------------------------------- OTHER FUNCTIONS -------------------------------------------------------------
+"""
+
+def get_unique(arr):
+	arr1=[]
+	for a in arr:
+		if a not in arr1:
+			arr1.append(a)
+	return arr1
 
 """
 ============================================================================================================================
@@ -53,6 +63,15 @@ def extract_data(file_name):
 			output_dict[header_dict[i]].append(float(val))
 			i+=1
 	
+	# Printing the unique values of each field
+	print(len(output_dict['Width']))
+	print(n_rows)
+	print(get_unique(output_dict['Width']))
+	print(get_unique(output_dict['Radius']))
+	print(get_unique(output_dict['N_Turns']))
+	print(get_unique(output_dict['gdis']))
+	print(get_unique(output_dict['spc']))
+		
 	return output_dict,n_rows
 
 
@@ -61,7 +80,7 @@ def extract_data(file_name):
 ---------------------------------------------- PLOTS -----------------------------------------------------------------------
 """
 
-def plot_single_data(data,n_rows,circuit_parameters,param_name):
+def plot_single_data(data,n_rows,circuit_parameters,param_name,file_directory):
 	
 	Q_array=[]
 	L_array=[]
@@ -80,13 +99,18 @@ def plot_single_data(data,n_rows,circuit_parameters,param_name):
 		Q_array.append(data['Q'][i])
 		L_array.append(data['L'][i])
 		param_array.append(data[param_name][i])
+	
+	print(Q_array)
+	print(L_array)
+	print(param_array)
 
 	figure()
 	plot(param_array,L_array)
 	xlabel('Parameter Value')
 	ylabel('L')
 	grid()
-	show()
+	#show()
+	savefig(file_directory+'L.pdf')
 	close()
 
 	figure()
@@ -94,9 +118,28 @@ def plot_single_data(data,n_rows,circuit_parameters,param_name):
 	xlabel('Parameter Value')
 	ylabel('Q')
 	grid()
-	show()
+	#show()
+	savefig(file_directory+'Q.pdf')
 	close()
 
+def plot_scatter_Q_L(data,n_rows,file_directory):
+	
+	Q_array=[]
+	L_array=[]
+
+	for i in range(n_rows):
+		Q_array.append(data['Q'][i])
+		L_array.append(data['L'][i])
+		
+	figure()
+	scatter(Q_array,np.log10(L_array),s=2)
+	#plot(param_array,L_array)
+	xlabel('Q Value')
+	ylabel('L Value')
+	grid()
+	#show()
+	savefig(file_directory+'Q_L.pdf')
+	close()
 
 
 """
@@ -112,14 +155,20 @@ file_name=file_directory_output+'inductor_sweep.csv'
 data,n_rows=extract_data(file_name)
 
 circuit_parameters={
-	'Width':10e-6,
-	'Radius':30e-6,
-	'N_Turns':1.25,
-	'gdis':20e-6,
+	'Width':9e-6,
+	'Radius':40e-6,
+	'N_Turns':1.5,
+	'gdis':40e-6,
 	'spc':3e-6
 }
 # f.write('Width,Radius,N_Turns,gdis,spc,Q,L\n')
 
-plot_single_data(data,circuit_parameters,'Width')
+print('Minimum L :',min(data['L']))
+print('Maximum L :',max(data['L']))
+print('Minimum Q :',min(data['Q']))
+print('Maximum Q :',max(data['Q']))
+
+plot_single_data(data,n_rows,circuit_parameters,'spc',file_directory_output)
+#plot_scatter_Q_L(data,n_rows,file_directory_output)
 
 
