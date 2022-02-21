@@ -42,6 +42,10 @@ class Circuit():
 			self.circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_rc'
 			self.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_rc'
 
+		elif self.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_inductor':
+			self.circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_rcl'
+			self.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_rcl'
+
 		elif self.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='ideal':
 			self.circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
 			self.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
@@ -561,6 +565,11 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 	write_dict['wid_cap_g'],write_dict['len_cap_g']=calculate_MOS_capacitor(circuit_parameters['Cg'])
 	write_dict['mf_cap_s']=1+int(circuit_parameters['Cs']*1e11)
 	write_dict['mf_cap_d']=1+int(circuit_parameters['Cd']/5.63e-15)
+
+	# Getting inductor parameters
+	if circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='inductor':
+		_,write_dict['Ls_wid'],write_dict['Ls_rad'],write_dict['Ls_turn'],write_dict['Ls_gdis'],write_dict['Ls_spc']=sp.find_TSMC_Inductor(15,circuit_parameters['Ls'])
+		_,write_dict['Ld_wid'],write_dict['Ld_rad'],write_dict['Ld_turn'],write_dict['Ld_gdis'],write_dict['Ld_spc']=sp.find_TSMC_Inductor(15,circuit_parameters['Ld'])
 
 	return write_dict
 
