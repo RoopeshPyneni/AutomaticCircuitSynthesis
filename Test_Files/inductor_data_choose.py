@@ -36,8 +36,8 @@ def find_target_L(data,L,start,end):
 def find_best_points(Q,L):
 
 	# Reading the data
-	#file_directory='/home/ee18b028/Optimization/Simulation_Results/Inductor/Sweep2/'
-	file_directory='C:/Users/roope/Studies/IIT/Prof Projects/Circuit_Synthesis/Extra_Codes/'
+	file_directory='/home/ee18b028/Optimization/Simulation_Results/Inductor/Sweep2/'
+	#file_directory='C:/Users/roope/Studies/IIT/Prof Projects/Circuit_Synthesis/Extra_Codes/'
 	data=pd.read_csv(file_directory+'inductor_sweep_1.csv')
 	n_rows=data.shape[0]
 

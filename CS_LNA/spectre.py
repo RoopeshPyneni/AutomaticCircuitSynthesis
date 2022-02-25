@@ -567,9 +567,9 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 	write_dict['mf_cap_d']=1+int(circuit_parameters['Cd']/5.63e-15)
 
 	# Getting inductor parameters
-	if circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='inductor':
+	if circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_inductor':
 		_,write_dict['Ls_wid'],write_dict['Ls_rad'],write_dict['Ls_turn'],write_dict['Ls_gdis'],write_dict['Ls_spc']=sp.find_TSMC_Inductor(15,circuit_parameters['Ls'])
-		_,write_dict['Ld_wid'],write_dict['Ld_rad'],write_dict['Ld_turn'],write_dict['Ld_gdis'],write_dict['Ld_spc']=sp.find_TSMC_Inductor(15,circuit_parameters['Ld'])
+		#_,write_dict['Ld_wid'],write_dict['Ld_rad'],write_dict['Ld_turn'],write_dict['Ld_gdis'],write_dict['Ld_spc']=sp.find_TSMC_Inductor(15,circuit_parameters['Ld'])
 
 	return write_dict
 

@@ -91,7 +91,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	# Filenames
 	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/CS_LNA/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/'
-	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='mos_capacitor' # 'ideal', 'series','mos_resistor','mos_capacitor'
+	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='mos_inductor' # 'ideal', 'series','mos_resistor','mos_capacitor','mos_inductor'
 	
 	# IIP3 Points
 	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']='basic'		# 'basic' or 'advanced' 
@@ -125,7 +125,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']='manual'
+	optimization_input_parameters['pre_optimization']['type']=4 #'manual'
 
 	optimization_input_parameters['pre_optimization']['I_Rdivider_max']=100e-6
 	
@@ -133,17 +133,17 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Manual Hand Calculations
 	optimization_input_parameters['pre_optimization']['manual_circuit_parameters']={
-	'Cd': 395e-15,
-	'Ld': 11.5e-9,
-	'W': 1.96e-3,
-	'Cg': 153e-12,
-	'Io': 417e-6,
+	'Cd': 751e-15,
+	'Ld': 14.2e-9,
+	'W': 2.28e-3,
+	'Cg': 152e-12,
+	'Io': 505e-6,
 	'Rsum': 10000,
-	'Rk': 0.89,
-	'Ls': 2.88e-9,
-	'Lg': 19.1e-9,
+	'Rk': 0.828,
+	'Ls': 1.92e-9,
+	'Lg': 15.7e-9,
 	'Rb': 5000,
-	'Cs': 31.4e-12
+	'Cs': 28.7e-12
 	}	
 
 
@@ -619,7 +619,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='YES' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Optimization_with_Capacitor_4'						# SET THE FILENAME HERE
+	filename=f_directory+'Optimization_TSMC_Inductor_3'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

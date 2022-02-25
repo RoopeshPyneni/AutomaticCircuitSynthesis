@@ -358,6 +358,10 @@ def find_target_L(data,L,start,end):
 # Finding the best point
 def find_TSMC_Inductor(Q,L):
 
+	# Print Finding Q and L
+	print('Finding the following inductor:')
+	print('Q=',Q)
+	print('L=',L)
 	# Reading the data
 	file_directory='/home/ee18b028/Optimization/Simulation_Results/Inductor/Sweep2/'
 	#file_directory='C:/Users/roope/Studies/IIT/Prof Projects/Circuit_Synthesis/Extra_Codes/'
@@ -365,7 +369,6 @@ def find_TSMC_Inductor(Q,L):
 	n_rows=data.shape[0]
 
 	# Finding the location of 0.98L and 1.02L
-	print(n_rows-1)
 	n1=find_target_L(data,L*0.98,0,n_rows-1)
 	n2=find_target_L(data,L*1.02,0,n_rows-1)
 
