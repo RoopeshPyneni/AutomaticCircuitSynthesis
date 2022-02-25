@@ -22,6 +22,11 @@ import sys
 #--------------------------------------------------------------------------------------------------------------------------
 # Creating a class for the circuit 
 class Circuit():
+	
+	#-----------------------------------------------------------------------------------------------
+	#---------------------------- Initialization Functions -----------------------------------------
+
+	# Initialization of the object
 	def __init__(self,circuit_initialization_parameters):
 		self.circuit_parameters={}
 		self.extracted_parameters={}
@@ -53,46 +58,54 @@ class Circuit():
 		else:
 			sys.exit()
 	
+	#-----------------------------------------------------------------------------------------------
+	#---------------------------- Circuit Parameter Functions --------------------------------------
+
+	# Running the circuit
 	def run_circuit(self):
 		self.extracted_parameters=write_extract(self.circuit_parameters,self.circuit_initialization_parameters)
 
+	# Updating the circuit parameters and running the circuit
 	def update_circuit(self,circuit_parameters):
 		self.circuit_parameters=circuit_parameters
 		if self.circuit_parameters['Rk']>=1.00:
 			self.circuit_parameters['Rk']=0.90
 		self.extracted_parameters=write_extract(circuit_parameters,self.circuit_initialization_parameters)
 	
+	# Updating the circuit parameters and not running the circuit
 	def update_circuit_parameters(self,circuit_parameters):
 		self.circuit_parameters=circuit_parameters
 		if self.circuit_parameters['Rk']>=1.00:
 			self.circuit_parameters['Rk']=0.90
 
+	#-----------------------------------------------------------------------------------------------
+	#---------------------------- Simulation Parameter Functions -----------------------------------
+
+	# Updating the simulation parameters
 	def update_simulation_parameters(self,simulation_parameters):
-		if 'netlist_parameters' in simulation_parameters:
-			for param_name in simulation_parameters['netlist_parameters']:
-				self.circuit_initialization_parameters['simulation']['netlist_parameters'][param_name]=simulation_parameters['netlist_parameters'][param_name]
 		
 		if 'standard_parameters' in simulation_parameters:
 			for param_name in simulation_parameters['standard_parameters']:
 				self.circuit_initialization_parameters['simulation']['standard_parameters'][param_name]=simulation_parameters['standard_parameters'][param_name]
+		
+		self.circuit_initialization_parameters['simulation']['netlist_parameters']['n_harm']=self.circuit_initialization_parameters['simulation']['standard_parameters']['n_harm']
+		self.circuit_initialization_parameters['simulation']['netlist_parameters']['cir_temp']=self.circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']
 	
+	# Writing the simulation parameters
 	def write_simulation_parameters(self):
 		write_simulation_parameters(self.circuit_initialization_parameters)
 	
+	# Updating the circuit temperature
 	def update_temp(self,temp):
 		self.circuit_initialization_parameters['simulation']['netlist_parameters']['cir_temp']=temp
 	
+	# Resetting the circuit temperature
 	def reset_temp(self):
 		self.circuit_initialization_parameters['simulation']['netlist_parameters']['cir_temp']=self.circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']	
 
-	def calculate_iip3(self,n_pin,n_points,vout_fund_mag,vout_im3_mag,pin):
-		return sp.calculate_iip3_multiple_points(n_pin,n_points,vout_fund_mag,vout_im3_mag,pin)
-
-	
 	#-----------------------------------------------------------------------------------------------
-	# Optimization Functions
+	#---------------------------- Optimization Functions -------------------------------------------
 
-	#-----------------------------------------------------------------------------------------------
 	# This function calculates the loss for Io Optimization
 	def calc_loss(self,output_conditions,loss_weights):
 		
@@ -155,7 +168,6 @@ class Circuit():
 		
 		return loss_dict
 	
-	#-----------------------------------------------------------------------------------------------
 	# This function updates the values of circuit parameters by trying to minimize loss
 	def update_circuit_parameters(self,circuit_parameters_slope,optimization_input_parameters,run_number,loss_iter,loss_type):
 		
@@ -205,7 +217,6 @@ class Circuit():
 			# Updating circuit_parameters
 			self.circuit_parameters[param_name]=self.circuit_parameters[param_name]-change
 			
-	#---------------------------------------------------------------------------------------------------------------------------
 	# Function to check the best solution
 	def check_best_solution(self,optimization_results,loss_max):
 
@@ -244,10 +255,16 @@ class Circuit():
 		
 		return opt_dict
 
-	#---------------------------------------------------------------------------------------------------------------------------
 	# Function to perform pre optimization
 	def pre_optimization(self,optimization_input_parameters,timing_results):
 		pr.pre_optimization(self,optimization_input_parameters,timing_results)
+
+	#-----------------------------------------------------------------------------------------------
+	#---------------------------- Other Functions --------------------------------------------------
+
+	# Calculating the iip3
+	def calculate_iip3(self,n_pin,n_points,vout_fund_mag,vout_im3_mag,pin):
+		return sp.calculate_iip3_multiple_points(n_pin,n_points,vout_fund_mag,vout_im3_mag,pin)
 
 
 """

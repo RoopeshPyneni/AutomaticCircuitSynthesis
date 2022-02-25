@@ -10,9 +10,11 @@ import numpy as np
 import complete_optimization as co
 import copy
 
-#===========================================================================================================================
-#------------------------------------ Other Functions ----------------------------------------------------------------------
 
+"""
+===========================================================================================================================
+------------------------------------ OTHER FUNCTIONS ----------------------------------------------------------------------
+"""
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the MOSFET parameters to the circuit_initialization_parameters dictionary
@@ -100,6 +102,8 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	circuit_initialization_parameters['simulation']['standard_parameters']['pin_stop']=-40
 	circuit_initialization_parameters['simulation']['standard_parameters']['pin_points']=6
 	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_calc_points']=3
+	circuit_initialization_parameters['simulation']['standard_parameters']['n_harm']=5
+	circuit_initialization_parameters['simulation']['standard_parameters']['f_iip3']=1e6
 
 	# Operating frequency points
 	circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=fo
@@ -161,14 +165,6 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['iip3_calc_points']=3
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['process_corner']='tt'
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['conservative']='NO'
-
-	optimization_input_parameters['pre_optimization']['simulation']['netlist_parameters']={
-		'pin':-65,
-		'fund_2':fo+1e6,
-		'fund_1':fo,
-		'cir_temp':27,
-		'n_harm':5
-	}
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the optimization parameters to the optimization_input_parameters dictionary
@@ -240,14 +236,6 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['iip3_calc_points']=5
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['process_corner']='tt'
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['conservative']='NO'
-
-	optimization_input_parameters['optimization']['simulation'][1]['netlist_parameters']={
-		'pin':-65,
-		'fund_2':fo+1e6,
-		'fund_1':fo,
-		'cir_temp':27,
-		'n_harm':5
-	}
 	
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 2
@@ -316,13 +304,6 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['process_corner']='tt'
 	optimization_input_parameters['optimization']['simulation'][2]['standard_parameters']['conservative']='NO'
 
-	optimization_input_parameters['optimization']['simulation'][2]['netlist_parameters']={
-		'pin':-65,
-		'fund_2':fo+1e6,
-		'fund_1':fo,
-		'cir_temp':27,
-		'n_harm':5
-	}
 	"""
 	
 	"""
@@ -556,7 +537,7 @@ def get_circuit_parameter_analysis_parameters(optimization_input_parameters,fo):
 
 """
 ===========================================================================================================================
-------------------------------------Main Program Code----------------------------------------------------------------------
+------------------------------------ MAIN PROGRAM -------------------------------------------------------------------------
 """
 
 # Creating a dictionary with the optimization parameters
@@ -581,6 +562,8 @@ get_pre_optimization_parameters(optimization_input_parameters,fo)
 
 # ---------- Optimization Parameters ----------
 get_optimization_parameters(optimization_input_parameters,fo,optimization_name)
+
+# ~~~~~~~~~~ ANALYSIS PARAMETERS ~~~~~~~~~
 
 # ---------- Sensitivity Analysis Parameters ----------
 get_sensitivity_analysis_parameters(optimization_input_parameters,fo)
@@ -643,8 +626,8 @@ if file_choose=='M':
 		optimization_input_parameters['output_conditions']['wo']=wo
 		iip_mtd=['basic_hb','basic_pss','advanced_hb','advanced_pss','hb_sweep']
 		optimization_input_parameters['simulation']['iip3_method']=iip_mtd[i]
-		
 		# ------- Set Any Additional Parameters Here --------
+
 
 
 		# ------- DON'T CHANGE THESE LINES -------------

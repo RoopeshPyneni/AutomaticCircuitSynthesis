@@ -32,14 +32,6 @@ def save_input_results_optimization(cir,optimization_input_parameters,run_number
 		f.write('\n\n---------------------- Optimization Parameters -----------------------')
 		f.write('\nOptimization Name :'+str(optimization_input_parameters['optimization']['optimization_name']))
 
-		"""
-		if 'acceptable_solution' in optimization_input_parameters:
-			f.write('\n\n---------------------- Acceptable Solution Parameters -----------------------')
-			for name in optimization_input_parameters['acceptable_solution']:
-				f.write('\n'+str(name)+': '+cf.num_trunc(optimization_input_parameters['acceptable_solution'][name],3))
-		"""
-	
-
 	f.write('\n\n---------------------- Run Number '+str(run_number)+' -----------------------')
 	
 	f.write('\nMax Iterations :'+str(optimization_input_parameters['optimization'][run_number]['max_iteration']))
@@ -53,6 +45,10 @@ def save_input_results_optimization(cir,optimization_input_parameters,run_number
 
 	f.write('\nOptimization Parameters : ')
 	for name in optimization_input_parameters['optimization'][run_number]['optimizing_parameters']:
+		f.write(str(name)+' ,')
+
+	f.write('\nOutput Parameters List : ')
+	for name in optimization_input_parameters['optimization'][run_number]['output_parameters_list']:
 		f.write(str(name)+' ,')
 
 	f.write('\n\n---------------------- Loss Weights -----------------------')
@@ -89,6 +85,8 @@ def save_output_results_optimization(optimization_results,optimization_input_par
 	
 	if 'optimization_start' in optimization_results:
 		f.write('\n\n--------------------- Optimization Start ---------------------------------')
+		f.write('\n\n---------------- Circuit Parameters Complete ---------------')
+		cf.print_output_parameters_complete(f,optimization_results['optimization_start']['circuit_parameters'])
 		f.write('\n\n---------------- Circuit Parameters ------------------------')
 		cf.print_output_parameters(f,optimization_results['optimization_start']['circuit_parameters'])
 		f.write('\n\n---------------- Extracted Parameters ------------------------')
@@ -108,16 +106,13 @@ def save_output_results_optimization(optimization_results,optimization_input_par
 		f.write('\nOptimized FOM in dB='+cf.num_trunc(print_dict['FOM'],3))
 	
 	f.write('\n\n--------------------- Optimization End ---------------------------------')
+	f.write('\n\n---------------- Circuit Parameters Complete ---------------')
+	cf.print_output_parameters_complete(f,optimization_results['circuit_parameters_iter'][iter_number])
 	f.write('\n\n---------------- Circuit Parameters ------------------------')
 	cf.print_output_parameters(f,optimization_results['circuit_parameters_iter'][iter_number])
 	f.write('\n\n---------------- Extracted Parameters ------------------------')
 	cf.print_output_parameters(f,optimization_results['extracted_parameters_iter'][iter_number])
 
-	if 'acceptable_solution' in optimization_results:
-		f.write('Acceptable Solutions:\n')
-		for i in optimization_results['acceptable_solution']:
-			f.write(str(i)+' ; ')
-	
 	f.close()
 
 
@@ -404,8 +399,6 @@ def plot_optimization(optimization_input_parameters,optimization_results,run_num
 	
 #-----------------------------------------------------------------------------------------------
 # This function updates the values of circuit parameters by trying to minimize loss
-# Inputs  : output_conditions,circuit_parameters,loss_dict,extracted_parameters,optimization_input_parameters
-# Outputs : circuit_parameters_slope,circuit_parameters_sensitivity
 def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameters,run_number):
 
 	loss_weights=optimization_input_parameters['optimization'][run_number]['loss_weights']
@@ -598,10 +591,6 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	#--------------------------- Performing the iterations ---------------------------------
 	while i<max_iteration:
 	
-		# Checking if there is extra loss from output conditions
-		#print('Check extra loss')
-		#check_loss=cir.calc_check_loss(loss_iter,i,loss_type)
-		
 		# Calculating the slope of loss and output sensitivity and updating the circuit parameters
 		print('Calculate slope')
 		circuit_parameters_slope,circuit_parameters_sensitivity=calc_loss_slope(cir,output_conditions,loss_iter[i-1],optimization_input_parameters,run_number)
@@ -610,7 +599,6 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		# Extracting output parameters for new circuit parameters
 		print('Run circuit')
 		cir.run_circuit()
-
 
 		# Updating different dictionaries
 		print('Update dictionary')
@@ -703,6 +691,7 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 # Function to do optimization for multiple runs
 def main_opt(cir,optimization_input_parameters,timing_results):
 	
+	# Checking whether to run optimization
 	if optimization_input_parameters['optimization']['run']=='NO':
 		return
 
@@ -727,9 +716,11 @@ def main_opt(cir,optimization_input_parameters,timing_results):
 		timing_results['optimization'][i]={}
 		timing_results['optimization'][i]['start']=datetime.datetime.now()
 
+		# Updating the simulation parameters
 		cir.update_simulation_parameters(optimization_input_parameters['optimization']['simulation'][i])
 		save_input_results_optimization(cir,optimization_input_parameters,i)
 		
+		# Running optimization
 		opt_single_run(cir,optimization_input_parameters,i)
 
 		# Storing the optimization completion time

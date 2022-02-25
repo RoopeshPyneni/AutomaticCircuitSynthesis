@@ -10,15 +10,11 @@ File Description 	: This file will perform pre optimization and calculate an ini
 import datetime
 import common_functions as cf		# type: ignore
 import CS_LNA.hand_calculation_1 as hc1 # type: ignore
-import CS_LNA.hand_calculation_2 as hc2 # type: ignore
-import CS_LNA.hand_calculation_3 as hc3 # type: ignore
-import CS_LNA.hand_calculation_4 as hc4 # type: ignore
-import CS_LNA.hand_calculation_5 as hc5 # type: ignore
 
 
 """
 ===========================================================================================================================
------------------------------------ File Writing Functions ----------------------------------------------------------------
+----------------------------------- FILE WRITING FUNCTIONS ----------------------------------------------------------------
 """
 
 #-----------------------------------------------------------------
@@ -34,7 +30,8 @@ def save_input_results_pre_optimization(cir,optimization_input_parameters):
 	f.write('********************************************************************************\n')
 	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Pre Optimization Parameters ~~~~~~~~~~~~~~~~~~~~~~~~\n')
 	
-	f.write('\nPre_Opt_Type	   :'+str(optimization_input_parameters['pre_optimization']['type']))
+	f.write('\nPre_Opt_Type		:'+str(optimization_input_parameters['pre_optimization']['type']))
+	f.write('\nI_max R_divider	:'+str(optimization_input_parameters['pre_optimization']['I_Rdivider_max']))
 
 	cf.print_simulation_parameters(f,cir)
 	
@@ -53,6 +50,7 @@ def save_output_results_pre_optimization(optimization_results,optimization_input
 	f.write('********************************************************************************\n')
 	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Pre Optimization Parameters ~~~~~~~~~~~~~~~~~~~~~~~~\n')
 	
+	"""
 	if 'manual_hc' in optimization_results:
 		f.write('\n\n--------------------- Manual Hand Calculations ---------------------------------')
 		f.write('\n\n---------------- Circuit Parameters Complete ---------------')
@@ -79,13 +77,23 @@ def save_output_results_pre_optimization(optimization_results,optimization_input
 		cf.print_output_parameters(f,optimization_results['hc_update']['circuit_parameters'])
 		f.write('\n\n---------------- Extracted Parameters ------------------------')
 		cf.print_output_parameters(f,optimization_results['hc_update']['extracted_parameters'])
-	
+	"""
+
+	for name in optimization_results:
+		f.write('\n\n--------------------- '+str(name)+' ---------------------------------')
+		f.write('\n\n---------------- Circuit Parameters Complete ---------------')
+		cf.print_output_parameters_complete(f,optimization_results[name]['circuit_parameters'])
+		f.write('\n\n---------------- Circuit Parameters ------------------------')
+		cf.print_output_parameters(f,optimization_results[name]['circuit_parameters'])
+		f.write('\n\n---------------- Extracted Parameters ------------------------')
+		cf.print_output_parameters(f,optimization_results[name]['extracted_parameters'])
+
 	f.close()
 
 
 """
 ===========================================================================================================================
------------------------------------ Manual Hand Calculations --------------------------------------------------------------
+----------------------------------- MANUAL HAND CALCULATIONS --------------------------------------------------------------
 """
 
 #---------------------------------------------------------------------------------------------------------------------------
@@ -98,7 +106,7 @@ def manual_initial_parameters(cir,optimization_input_parameters):
 
 """
 ===========================================================================================================================
-------------------------------------------- Output Functions --------------------------------------------------------------
+----------------------------------- OUTPUT FUNCTIONS ----------------------------------------------------------------------
 """
 
 #--------------------------------------------------------------------------------------------------------------------------
@@ -141,15 +149,7 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 		optimization_results['manual_hc']['circuit_parameters']=cir.circuit_parameters.copy()
 		optimization_results['manual_hc']['extracted_parameters']=cir.extracted_parameters.copy()
 
-		# Printing the values
-		cf.print_circuit_parameters(cir.circuit_parameters)
-		cf.print_extracted_parameters(cir.extracted_parameters)
-
-		#cf.wait_key()
-
-	
 	#=============================== Automatic Initial Points =============================================================
-
 	
 	if optimization_input_parameters['pre_optimization']['type']==1:
 		
@@ -158,38 +158,6 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 
 		# Extracting the MOSFET Parameters from the MOS file
 		hc1.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
-	
-	if optimization_input_parameters['pre_optimization']['type']==2:
-		
-		print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-		print('\n\n')
-
-		# Extracting the MOSFET Parameters from the MOS file
-		hc2.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
-	
-	if optimization_input_parameters['pre_optimization']['type']==3:
-		
-		print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 3 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-		print('\n\n')
-
-		# Extracting the MOSFET Parameters from the MOS file
-		hc3.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
-	
-	if optimization_input_parameters['pre_optimization']['type']==4:
-		
-		print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 4 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-		print('\n\n')
-
-		# Extracting the MOSFET Parameters from the MOS file
-		hc4.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
-	
-	if optimization_input_parameters['pre_optimization']['type']==5:
-		
-		print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 5 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-		print('\n\n')
-
-		# Extracting the MOSFET Parameters from the MOS file
-		hc5.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
 
 	# Printing the values
 	cf.print_circuit_parameters(cir.circuit_parameters)
