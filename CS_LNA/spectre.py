@@ -126,6 +126,7 @@ class Circuit():
 		A6=loss_weights['gain_delta']
 		A7=loss_weights['gain_flatness']
 		A8=loss_weights['s11_db_middle']
+		A9=loss_weights['gain_delta2']
 		
 		# Calculating Loss
 		loss_gain=A1*sp.ramp_func(gain_ref-gain)
@@ -136,6 +137,7 @@ class Circuit():
 		loss_gain_delta=A6*sp.ramp_func(gain_0-gain)+A6*sp.ramp_func(gain_2-gain)
 		loss_gain_flatness=A7*sp.ramp_func(gain-gain_delta_ref-gain_0)+A7*sp.ramp_func(gain-gain_delta_ref-gain_2)
 		loss_s11_middle=A8*sp.ramp_func(s11_middle-s11_ref_middle)
+		loss_gain_delta2=A9*abs(gain_0-gain_2)
 		
 		loss=loss_gain+loss_iip3+loss_s11+loss_nf+loss_Io+loss_gain_delta+loss_gain_flatness
 		loss_dict={
@@ -147,7 +149,8 @@ class Circuit():
 			'loss_Io':loss_Io,
 			'loss_gain_delta':loss_gain_delta,
 			'loss_gain_flatness':loss_gain_flatness,
-			'loss_s11_middle':loss_s11_middle
+			'loss_s11_middle':loss_s11_middle,
+			'loss_gain_delta2':loss_gain_delta2
 		}
 		
 		return loss_dict

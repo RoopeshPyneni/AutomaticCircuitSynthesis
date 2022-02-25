@@ -125,7 +125,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']=4 #'manual'
+	optimization_input_parameters['pre_optimization']['type']='manual'
 
 	optimization_input_parameters['pre_optimization']['I_Rdivider_max']=100e-6
 	
@@ -214,9 +214,11 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 		's11_db':3.0/15.0,
 		'nf_db':1.0/2.0,
 		'Io':0.0,
-		'gain_delta':1.0/10.0,
+
+		'gain_delta':0.0/10.0,
 		'gain_flatness':0.0,
-		's11_db_middle':3.0/15.0
+		's11_db_middle':3.0/15.0,
+		'gain_delta2':1.0/10.0
 	}
 
 	optimization_input_parameters['optimization'][1]['alpha']={}
@@ -261,9 +263,11 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 		's11_db':3.0/15.0,
 		'nf_db':1.0/2.0,
 		'Io':100.0,
+
 		'gain_delta':1.0/10.0,
 		'gain_flatness':0.0,
-		's11_db_middle':3.0/15.0
+		's11_db_middle':3.0/15.0,
+		'gain_delta2':0.0/10.0
 	}
 	
 	
@@ -619,7 +623,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='YES' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Optimization_TSMC_Inductor_3'						# SET THE FILENAME HERE
+	filename=f_directory+'Optimization_TSMC_Inductor_4'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
