@@ -31,7 +31,6 @@ class Circuit():
 		self.initial_circuit_parameters={}
 		self.circuit_parameters={}
 		self.extracted_parameters={}
-		self.simulation_parameters={}
 		self.circuit_initialization_parameters=circuit_initialization_parameters
 		self.mos_parameters=sp.calculate_mos_parameters(self.circuit_initialization_parameters)
 
