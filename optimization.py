@@ -84,8 +84,8 @@ def save_output_results_optimization(optimization_results,optimization_input_par
 	
 	if 'optimization_start' in optimization_results:
 		f.write('\n\n--------------------- Optimization Start ---------------------------------')
-		f.write('\n\n---------------- Circuit Parameters Complete ---------------')
-		cf.print_output_parameters_complete(f,optimization_results['optimization_start']['circuit_parameters'])
+		f.write('\n\n---------------- Initial Circuit Parameters ---------------')
+		cf.print_output_parameters_complete(f,optimization_results['optimization_start']['initial_circuit_parameters'])
 		f.write('\n\n---------------- Circuit Parameters ------------------------')
 		cf.print_output_parameters(f,optimization_results['optimization_start']['circuit_parameters'])
 		f.write('\n\n---------------- Extracted Parameters ------------------------')
@@ -105,8 +105,8 @@ def save_output_results_optimization(optimization_results,optimization_input_par
 		f.write('\nOptimized FOM in dB='+cf.num_trunc(print_dict['FOM'],3))
 	
 	f.write('\n\n--------------------- Optimization End ---------------------------------')
-	f.write('\n\n---------------- Circuit Parameters Complete ---------------')
-	cf.print_output_parameters_complete(f,optimization_results['circuit_parameters_iter'][iter_number])
+	f.write('\n\n---------------- Initial Circuit Parameters ---------------')
+	cf.print_output_parameters_complete(f,optimization_results['initial_circuit_parameters_iter'][iter_number])
 	f.write('\n\n---------------- Circuit Parameters ------------------------')
 	cf.print_output_parameters(f,optimization_results['circuit_parameters_iter'][iter_number])
 	f.write('\n\n---------------- Extracted Parameters ------------------------')
@@ -195,6 +195,7 @@ def save_info(optimization_input_parameters,optimization_results,iter_no,flag):
 	loss_iter					= optimization_results['loss_iter']
 	alpha_parameters_iter		= optimization_results['alpha_parameters_iter']
 	extracted_parameters_iter	= optimization_results['extracted_parameters_iter']
+	initial_circuit_parameters_iter		= optimization_results['initial_circuit_parameters_iter']
 	circuit_parameters_iter		= optimization_results['circuit_parameters_iter']
 	
 	
@@ -205,6 +206,7 @@ def save_info(optimization_input_parameters,optimization_results,iter_no,flag):
 		save_info_single_array_iter(newpath,'loss.csv',loss_iter,iter_no)
 		save_info_single_array_iter(newpath,'alpha_parameters.csv',alpha_parameters_iter,iter_no)
 		save_info_single_array_iter(newpath,'output_parameters.csv',extracted_parameters_iter,iter_no)
+		save_info_single_array_iter(newpath,'initial_circuit_parameters.csv',initial_circuit_parameters_iter,iter_no)
 		save_info_single_array_iter(newpath,'circuit_parameters.csv',circuit_parameters_iter,iter_no)
 	
 
@@ -408,11 +410,14 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 	for param_name in optimization_input_parameters['optimization'][run_number]['optimizing_parameters']:
 		circuit_parameters_sensitivity[param_name]=0
 	
+	# Getting initial values
+	initial_circuit_parameters_initial=cir.get_initial_circuit_parameters()
+	circuit_parameters_initial=cir.get_circuit_parameters()
+	extracted_parameters_initial=cir.get_extracted_parameters()
+
 	# Creating new dictionaries
-	circuit_parameters_initial=cir.circuit_parameters.copy()
-	extracted_parameters_initial=cir.extracted_parameters.copy()
-	circuit_parameters1=cir.circuit_parameters.copy() # This dictionary will store the values of parameters after increment to calculate the slope
-	extracted_parameters1=cir.extracted_parameters.copy() # This dictionary will store the values of parameters after increment to calculate the slope
+	circuit_parameters1=cir.get_initial_circuit_parameters() # This dictionary will store the values of parameters after increment to calculate the slope
+	extracted_parameters1=cir.get_extracted_parameters() # This dictionary will store the values of parameters after increment to calculate the slope
 	circuit_parameters_slope={} # This dictionary will store the values of slope of different losses with change of all circuit parameters
 	
 	# Calculating the value to update each parameter with
@@ -420,10 +425,10 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 		
 		# Calculating the increment value
 		increment_factor=delta_threshold # The value by which parameter increases = increment_factor*parameter
-		increment=cir.circuit_parameters[param_name]*increment_factor
+		increment=cir.get_initial_circuit_parameters()[param_name]*increment_factor
 	
 		# Incrementing the circuit parameter
-		circuit_parameters1=cir.circuit_parameters.copy()
+		circuit_parameters1=cir.get_initial_circuit_parameters()
 		circuit_parameters1[param_name]=circuit_parameters1[param_name]+increment
 		
 		# Extracting Loss
@@ -444,8 +449,7 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 			percent_change=(final_param-initial_param)/(initial_param*increment_factor)
 			circuit_parameters_sensitivity[param_name][categ_name]=percent_change
 	
-	cir.circuit_parameters=circuit_parameters_initial.copy()
-	cir.extracted_parameters=extracted_parameters_initial.copy()
+	cir.update_circuit_state(initial_circuit_parameters_initial,circuit_parameters_initial,extracted_parameters_initial)
 		
 	return circuit_parameters_slope,circuit_parameters_sensitivity
 
@@ -540,6 +544,7 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	loss_slope_iter={} 			# This dictionary will store the value of slope of losses for all parameters for different iterations
 	alpha_parameters_iter={} 	# This dictionary will store the value of threshold for different iterations
 	extracted_parameters_iter={}# This dictionary will store the value of output parameters for different iterations
+	initial_circuit_parameters_iter={} 	# This dictionary will store the value of circuit parameters for different iterations
 	circuit_parameters_iter={} 	# This dictionary will store the value of circuit parameters for different iterations
 	sensitivity_iter={}			# This dictionary will store the value of output parameter sensitivty for different circuit parameters 
 	
@@ -548,8 +553,9 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	
 	# Storing the Circuit and Extracted Parameters
 	optimization_results['optimization_start']={}
-	optimization_results['optimization_start']['circuit_parameters']=cir.circuit_parameters.copy()
-	optimization_results['optimization_start']['extracted_parameters']=cir.extracted_parameters.copy()
+	optimization_results['optimization_start']['initial_circuit_parameters']=cir.get_initial_circuit_parameters()
+	optimization_results['optimization_start']['circuit_parameters']=cir.get_circuit_parameters()
+	optimization_results['optimization_start']['extracted_parameters']=cir.get_extracted_parameters()
 
 	# Calculating loss
 	loss_iter[-1]=cir.calc_loss(output_conditions,loss_weights)
@@ -564,6 +570,7 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	optimization_results['loss_slope_iter']				= loss_slope_iter
 	optimization_results['alpha_parameters_iter']		= alpha_parameters_iter
 	optimization_results['extracted_parameters_iter']	= extracted_parameters_iter
+	optimization_results['initial_circuit_parameters_iter']		= initial_circuit_parameters_iter
 	optimization_results['circuit_parameters_iter']		= circuit_parameters_iter
 	optimization_results['sensitivity_iter']			= sensitivity_iter
 
@@ -588,8 +595,9 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		alpha_parameters_iter[i]	= {'alpha':alpha}
 		loss_slope_iter[i-1]		= circuit_parameters_slope.copy()
 		sensitivity_iter[i-1]		= circuit_parameters_sensitivity.copy()
-		circuit_parameters_iter[i]	= cir.circuit_parameters.copy()
-		extracted_parameters_iter[i]= cir.extracted_parameters.copy()
+		initial_circuit_parameters_iter[i]= cir.get_initial_circuit_parameters()
+		circuit_parameters_iter[i]	= cir.get_circuit_parameters()
+		extracted_parameters_iter[i]= cir.get_extracted_parameters()
 
 		# Saving Results of Each Iteration
 		print('Save info')
@@ -641,11 +649,13 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	# Assigning circuit_parameters and extracted_parameters with the best result
 	print_dict=optimization_results['optimized_results']
 	iter_number=print_dict['iter_number']-1
-	cir.update_circuit(optimization_results['circuit_parameters_iter'][iter_number].copy())
+	
+	cir.update_circuit_state(optimization_results['initial_circuit_parameters_iter'][iter_number],optimization_results['circuit_parameters_iter'][iter_number],optimization_results['extracted_parameters_iter'][iter_number])
 	
 	# Printing the values
-	cf.print_circuit_parameters(cir.circuit_parameters)
-	cf.print_extracted_parameters(cir.extracted_parameters)
+	cf.print_initial_circuit_parameters(cir.get_initial_circuit_parameters())
+	cf.print_circuit_parameters(cir.get_circuit_parameters())
+	cf.print_extracted_parameters(cir.get_extracted_parameters())
 
 	# Storing the results of Optimization
 	save_output_results_optimization(optimization_results,optimization_input_parameters)

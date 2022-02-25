@@ -20,13 +20,11 @@ import spectre_common as sc # type: ignore
 
 #-----------------------------------------------------------------------------------------------
 # Converting from dB to normal
-# Outputs : normal values
 def db_to_normal(val_db):
     return 10**(val_db/10)
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Ld
-# Outputs : Ld
 def calculate_Ld(Cload,Cd,fo):
     wo=2*np.pi*fo
     Ld=1/(wo*wo*(Cload+Cd))
@@ -34,7 +32,6 @@ def calculate_Ld(Cload,Cd,fo):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Qin
-# Outputs : Qin
 def calculate_Qin(s11,fo,f_delta):
 	Ks=10**(-0.2*s11)-1
 	
@@ -52,7 +49,6 @@ def calculate_Qin(s11,fo,f_delta):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Cgs
-# Outputs : cgs
 def calculate_cgs(Rs,fo,Qin):
     wo=2*np.pi*fo
     cgs=1/(2*Rs*Qin*wo)
@@ -60,7 +56,6 @@ def calculate_cgs(Rs,fo,Qin):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating gm
-# Outputs : gm
 def calculate_gm(Ld,fo,cgs,nf):
 	wo=2*np.pi*fo
 	Rd=wo*Ld*15
@@ -72,25 +67,21 @@ def calculate_gm(Ld,fo,cgs,nf):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating W
-# Outputs : W
 def calculate_W(cgs,Lmin,Cox):
     return 3*cgs/(2*Lmin*Cox)
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Io
-# Outputs : Io
 def calculate_Io(gm,un,cox,W,Lmin):
     return (gm*gm)/(2*un*cox*W/Lmin)
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Ls
-# Outputs : Ls
 def calculate_Ls(rsource,cgs,gm,fo):
     return rsource*cgs/gm
     
 #-----------------------------------------------------------------------------------------------
 # Calculating Lg
-# Outputs : Lg
 def calculate_Lg(Ls,cgs,fo):
     w=2*np.pi*fo
     Lg=1/(w*w*cgs)-Ls
@@ -98,7 +89,6 @@ def calculate_Lg(Ls,cgs,fo):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Zim_max
-# Outputs : Zim_max
 def calculate_Zim_max(s11):
 	s11_mag_sq=10**(0.1*s11)
 	H_by_Zim_max_sq=(1/s11_mag_sq)-1
@@ -150,18 +140,6 @@ def updating_Ld(Cgd,Cload,Cd,fo):
 # Updating gm
 def update_gm(extracted_nf,target_nf,gm):
 
-	"""
-	# Getting the value of f
-	extracted_f=cf.db_to_normal(extracted_nf)
-	target_f=cf.db_to_normal(target_nf)
-	k=(extracted_f-1)/(target_f-1)
-
-	if extracted_nf<(target_nf):
-		return gm*np.sqrt(k)
-	else:
-		return gm*k
-	"""
-	
 	if extracted_nf<(target_nf-0.3):
 		return gm/1.2
 	elif extracted_nf>target_nf:
@@ -214,22 +192,35 @@ def write_parameters_initial(cir,optimization_input_parameters):
 	if not os.path.exists(filepath):
 		os.makedirs(filepath)
 
+
+	# Storing results for circuit parameters
+	filename=optimization_input_parameters['filename']['output']+'/Pre_Optimization/HC_Update/Results/initial_circuit_parameters.csv'
+
+	f=open(filename,'w')
+	f.write('Iter_Number,Iter_Type')
+	for param_name in cir.get_initial_circuit_parameters():
+		f.write(','+param_name)
+	f.write('\n')
+	f.close()
+
+
 	# Storing results for circuit parameters
 	filename=optimization_input_parameters['filename']['output']+'/Pre_Optimization/HC_Update/Results/circuit_parameters.csv'
 
 	f=open(filename,'w')
 	f.write('Iter_Number,Iter_Type')
-	for param_name in cir.circuit_parameters:
+	for param_name in cir.get_circuit_parameters():
 		f.write(','+param_name)
 	f.write('\n')
 	f.close()
+
 
 	# Storing results for extracted parameters
 	filename=optimization_input_parameters['filename']['output']+'/Pre_Optimization/HC_Update/Results/extracted_parameters.csv'
 
 	f=open(filename,'w')
 	f.write('Iter_Number,Iter_Type')
-	for param_name in cir.extracted_parameters:
+	for param_name in cir.get_extracted_parameters():
 		f.write(','+param_name)
 	f.write('\n')
 	f.close()
@@ -239,12 +230,22 @@ def write_parameters_initial(cir,optimization_input_parameters):
 def update_parameters(cir,optimization_input_parameters,iter_no,iter_type):
 	
 	# Storing results for circuit parameters
+	filename=optimization_input_parameters['filename']['output']+'/Pre_Optimization/HC_Update/Results/initial_circuit_parameters.csv'
+	
+	f=open(filename,'a')
+	f.write(str(iter_no)+','+str(iter_type))
+	for param_name in cir.get_initial_circuit_parameters():
+		f.write(','+str(cir.get_initial_circuit_parameters()[param_name]))
+	f.write('\n')
+	f.close()
+
+	# Storing results for circuit parameters
 	filename=optimization_input_parameters['filename']['output']+'/Pre_Optimization/HC_Update/Results/circuit_parameters.csv'
 	
 	f=open(filename,'a')
 	f.write(str(iter_no)+','+str(iter_type))
-	for param_name in cir.circuit_parameters:
-		f.write(','+str(cir.circuit_parameters[param_name]))
+	for param_name in cir.get_circuit_parameters():
+		f.write(','+str(cir.get_circuit_parameters()[param_name]))
 	f.write('\n')
 	f.close()
 
@@ -253,8 +254,8 @@ def update_parameters(cir,optimization_input_parameters,iter_no,iter_type):
 	
 	f=open(filename,'a')
 	f.write(str(iter_no)+','+str(iter_type))
-	for param_name in cir.extracted_parameters:
-		f.write(','+str(cir.extracted_parameters[param_name]))
+	for param_name in cir.get_extracted_parameters():
+		f.write(','+str(cir.get_extracted_parameters()[param_name]))
 	f.write('\n')
 	f.close()
 
@@ -284,26 +285,26 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	vth=cir.mos_parameters['vt']
 
 	# Calculating the circuit parameters
-	circuit_parameters={}
-	circuit_parameters['Cd']=Cload
-	circuit_parameters['Ld']=calculate_Ld(Cload,circuit_parameters['Cd'],fo)
+	initial_circuit_parameters={}
+	initial_circuit_parameters['Cd']=Cload
+	initial_circuit_parameters['Ld']=calculate_Ld(Cload,initial_circuit_parameters['Cd'],fo)
 	Qin=calculate_Qin(s11,fo,f_range)
 	cgs=calculate_cgs(Rs,fo,Qin)
-	circuit_parameters['W']=calculate_W(cgs,Lmin,Cox)
+	initial_circuit_parameters['W']=calculate_W(cgs,Lmin,Cox)
 	global gm
-	gm=calculate_gm(circuit_parameters['Ld'],fo,cgs,nf)
-	circuit_parameters['Cg']=100*cgs
-	circuit_parameters['Io']=calculate_Io(gm,un,Cox,circuit_parameters['W'],Lmin)
-	circuit_parameters['Rsum'],circuit_parameters['Rk']=calculate_Rsum_Rk(vdd,fo,circuit_parameters['Cg'],optimization_input_parameters['pre_optimization']['I_Rdivider_max'])
-	circuit_parameters['Ls']=calculate_Ls(Rs,cgs,gm,fo)
-	circuit_parameters['Lg']=calculate_Lg(circuit_parameters['Ls'],cgs,fo)
-	circuit_parameters['Rb']=5000
-	circuit_parameters['Cs']=100/(2*np.pi*50*fo)
-	if cir.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_capacitor':
-		circuit_parameters['Cs']=10/(2*np.pi*50*fo)
+	gm=calculate_gm(initial_circuit_parameters['Ld'],fo,cgs,nf)
+	initial_circuit_parameters['Cg']=100*cgs
+	initial_circuit_parameters['Io']=calculate_Io(gm,un,Cox,initial_circuit_parameters['W'],Lmin)
+	initial_circuit_parameters['Rsum'],initial_circuit_parameters['Rk']=calculate_Rsum_Rk(vdd,fo,initial_circuit_parameters['Cg'],optimization_input_parameters['pre_optimization']['I_Rdivider_max'])
+	initial_circuit_parameters['Ls']=calculate_Ls(Rs,cgs,gm,fo)
+	initial_circuit_parameters['Lg']=calculate_Lg(initial_circuit_parameters['Ls'],cgs,fo)
+	initial_circuit_parameters['Rb']=5000
+	initial_circuit_parameters['Cs']=100/(2*np.pi*50*fo)
+	if cir.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_capacitor' or cir.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_inductor':
+		initial_circuit_parameters['Cs']=10/(2*np.pi*50*fo)
 
 	# Running the circuit
-	cir.update_circuit(circuit_parameters)
+	cir.update_circuit(initial_circuit_parameters)
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function to update the Initial Circuit Parameters	after calculating the new value of vt
@@ -322,83 +323,93 @@ def update_initial_parameters(cir,optimization_input_parameters):
 
 	write_parameters_initial(cir,optimization_input_parameters)
 
+	initial_circuit_parameters_iter={}
 	circuit_parameters_iter={}
 	extracted_parameters_iter={}
 	j=0
 
-	while i<10: #and cir.extracted_parameters['s11_db']>optimization_input_parameters['output_conditions']['s11_db']:
+	while i<10:
 
 		# Printing the iteration number
 		i+=1
 		print('----- Iteration ',i,' -----')
 
+		initial_circuit_parameters=cir.get_initial_circuit_parameters()
+		extracted_parameters=cir.get_extracted_parameters()
+
 		# Updating Ld
-		cir.circuit_parameters['Ld']=updating_Ld(cir.extracted_parameters['cgd2'],Cload,cir.circuit_parameters['Cd'],fo)
+		initial_circuit_parameters['Ld']=updating_Ld(extracted_parameters['cgd2'],Cload,initial_circuit_parameters['Cd'],fo)
 		
 		# Updating W to improve the Qin
 		Z_max=calculate_Zim_max(optimization_input_parameters['output_conditions']['s11_db'])
-		Z_diff=np.abs(cir.extracted_parameters['0_Zin_I']-cir.extracted_parameters['2_Zin_I'])
-		cir.circuit_parameters['W']=cir.circuit_parameters['W']*Z_diff/Z_max*1.2
+		Z_diff=np.abs(extracted_parameters['0_Zin_I']-extracted_parameters['2_Zin_I'])
+		initial_circuit_parameters['W']=initial_circuit_parameters['W']*Z_diff/Z_max*1.2
 		
 		# Calculating Io from W and gm based on NF Calculation
 		global gm
-		gm=update_gm(cir.extracted_parameters['nf_db'],nf,gm)
-		cir.circuit_parameters['Io']=calculate_Io(gm,un,Cox,cir.circuit_parameters['W'],Lmin)
+		gm=update_gm(extracted_parameters['nf_db'],nf,gm)
+		initial_circuit_parameters['Io']=calculate_Io(gm,un,Cox,initial_circuit_parameters['W'],Lmin)
 
 		# Running the circuit and updating the results
-		cir.run_circuit()
+		cir.update_circuit(initial_circuit_parameters)
+		extracted_parameters=cir.get_extracted_parameters()
 		update_parameters(cir,optimization_input_parameters,i,'Ld_W_Io')
 		
 		# Storing the results
-		circuit_parameters_iter[j]=cir.circuit_parameters.copy()
-		extracted_parameters_iter[j]=cir.extracted_parameters.copy()
+		initial_circuit_parameters_iter[j]=initial_circuit_parameters
+		circuit_parameters_iter[j]=cir.get_circuit_parameters()
+		extracted_parameters_iter[j]=extracted_parameters
 		j+=1
 		
 		# Updating the values
 		fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
-		cir.circuit_parameters['Ls']=cir.circuit_parameters['Ls']*50*4/(2*cir.extracted_parameters['1_Zin_R']+cir.extracted_parameters['0_Zin_R']+cir.extracted_parameters['2_Zin_R'])
-		cir.circuit_parameters['Lg']=cir.circuit_parameters['Lg']-(2*cir.extracted_parameters['1_Zin_I']+cir.extracted_parameters['0_Zin_I']+cir.extracted_parameters['2_Zin_I'])/(4*2*np.pi*fo)
+		initial_circuit_parameters['Ls']=initial_circuit_parameters['Ls']*50*4/(2*extracted_parameters['1_Zin_R']+extracted_parameters['0_Zin_R']+extracted_parameters['2_Zin_R'])
+		initial_circuit_parameters['Lg']=initial_circuit_parameters['Lg']-(2*extracted_parameters['1_Zin_I']+extracted_parameters['0_Zin_I']+extracted_parameters['2_Zin_I'])/(4*2*np.pi*fo)
 		
 		# Running the circuit and updating the results
-		cir.run_circuit()
+		cir.update_circuit(initial_circuit_parameters)
 		update_parameters(cir,optimization_input_parameters,i,'Ls_Lg')
 
 		# Storing the results
-		circuit_parameters_iter[j]=cir.circuit_parameters.copy()
-		extracted_parameters_iter[j]=cir.extracted_parameters.copy()
+		initial_circuit_parameters_iter[j]=initial_circuit_parameters
+		circuit_parameters_iter[j]=cir.get_circuit_parameters()
+		extracted_parameters_iter[j]=cir.get_extracted_parameters()
 		j+=1
 	
 	i=get_best_point(circuit_parameters_iter,extracted_parameters_iter,optimization_input_parameters['output_conditions'])
 	
-	cir.circuit_parameters=circuit_parameters_iter[i].copy()
-	cir.extracted_parameters=extracted_parameters_iter[i].copy()
+	cir.update_circuit_state(initial_circuit_parameters_iter[i],circuit_parameters_iter[i],extracted_parameters_iter[i])
 	
 	# Updating the value of Ld to get correct circuit parameters
 	multiplicative_factor=1.05
-	if cir.extracted_parameters['0_gain_db']>(cir.extracted_parameters['2_gain_db']+0.5):
-		cir.circuit_parameters['Ld']/=multiplicative_factor
-		cir.run_circuit()
+	initial_circuit_parameters=cir.get_initial_circuit_parameters()
+	extracted_parameters=cir.get_extracted_parameters()
+	if extracted_parameters['0_gain_db']>(extracted_parameters['2_gain_db']+0.5):
+		initial_circuit_parameters['Ld']/=multiplicative_factor
+		cir.update_circuit(initial_circuit_parameters)
 		flag=0
-	elif cir.extracted_parameters['2_gain_db']>(cir.extracted_parameters['0_gain_db']+0.5):
-		cir.circuit_parameters['Ld']*=multiplicative_factor
-		cir.run_circuit()
+	elif extracted_parameters['2_gain_db']>(extracted_parameters['0_gain_db']+0.5):
+		initial_circuit_parameters['Ld']*=multiplicative_factor
+		cir.update_circuit(initial_circuit_parameters)
 		flag=1
 	
 	else:
 		return
 	
 	while flag!=2:
-		if cir.extracted_parameters['0_gain_db']>(cir.extracted_parameters['2_gain_db']+0.5):
+		initial_circuit_parameters=cir.get_initial_circuit_parameters()
+		extracted_parameters=cir.get_extracted_parameters()
+		if extracted_parameters['0_gain_db']>(extracted_parameters['2_gain_db']+0.5):
 			if flag==1:
 				multiplicative_factor/=1.01
-			cir.circuit_parameters['Ld']/=multiplicative_factor
-			cir.run_circuit()
+			initial_circuit_parameters['Ld']/=multiplicative_factor
+			cir.update_circuit(initial_circuit_parameters)
 			flag=0
-		elif cir.extracted_parameters['2_gain_db']>(cir.extracted_parameters['0_gain_db']+0.5):
+		elif extracted_parameters['2_gain_db']>(extracted_parameters['0_gain_db']+0.5):
 			if flag==0:
 				multiplicative_factor/1.01
-			cir.circuit_parameters['Ld']*=multiplicative_factor
-			cir.run_circuit()
+			initial_circuit_parameters['Ld']*=multiplicative_factor
+			cir.update_circuit(initial_circuit_parameters)
 			flag=1
 		else:
 			flag=2
@@ -423,12 +434,14 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 
 	# Storing the Circuit and Extracted Parameters
 	optimization_results['auto_hc']={}
-	optimization_results['auto_hc']['circuit_parameters']=cir.circuit_parameters.copy()
-	optimization_results['auto_hc']['extracted_parameters']=cir.extracted_parameters.copy()
+	optimization_results['auto_hc']['initial_circuit_parameters']=cir.get_initial_circuit_parameters()
+	optimization_results['auto_hc']['circuit_parameters']=cir.get_circuit_parameters()
+	optimization_results['auto_hc']['extracted_parameters']=cir.get_extracted_parameters()
 
 	# Printing the values
-	cf.print_circuit_parameters(cir.circuit_parameters)
-	cf.print_extracted_parameters(cir.extracted_parameters)
+	cf.print_initial_circuit_parameters(cir.get_initial_circuit_parameters())
+	cf.print_circuit_parameters(cir.get_circuit_parameters())
+	cf.print_extracted_parameters(cir.get_extracted_parameters())
 
 	
 
@@ -440,10 +453,12 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 
 	# Storing the Circuit and Extracted Parameters
 	optimization_results['hc_update']={}
-	optimization_results['hc_update']['circuit_parameters']=cir.circuit_parameters.copy()
-	optimization_results['hc_update']['extracted_parameters']=cir.extracted_parameters.copy()
+	optimization_results['hc_update']['initial_circuit_parameters']=cir.get_initial_circuit_parameters()
+	optimization_results['hc_update']['circuit_parameters']=cir.get_circuit_parameters()
+	optimization_results['hc_update']['extracted_parameters']=cir.get_extracted_parameters()
 
 	# Printing the values
+	cf.print_initial_circuit_parameters(cir.get_initial_circuit_parameters())
 	cf.print_circuit_parameters(cir.circuit_parameters)
 	cf.print_extracted_parameters(cir.extracted_parameters)
 

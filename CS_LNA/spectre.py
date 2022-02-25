@@ -28,6 +28,7 @@ class Circuit():
 
 	# Initialization of the object
 	def __init__(self,circuit_initialization_parameters):
+		self.initial_circuit_parameters={}
 		self.circuit_parameters={}
 		self.extracted_parameters={}
 		self.simulation_parameters={}
@@ -66,18 +67,34 @@ class Circuit():
 		self.extracted_parameters=write_extract(self.circuit_parameters,self.circuit_initialization_parameters)
 
 	# Updating the circuit parameters and running the circuit
-	def update_circuit(self,circuit_parameters):
-		self.circuit_parameters=circuit_parameters
-		if self.circuit_parameters['Rk']>=1.00:
-			self.circuit_parameters['Rk']=0.90
-		self.extracted_parameters=write_extract(circuit_parameters,self.circuit_initialization_parameters)
+	def update_circuit(self,initial_circuit_parameters):
+		self.initial_circuit_parameters=initial_circuit_parameters
+		self.circuit_parameters=get_final_circuit_parameters(self.initial_circuit_parameters)
+		self.extracted_parameters=write_extract(self.circuit_parameters,self.circuit_initialization_parameters)
 	
 	# Updating the circuit parameters and not running the circuit
-	def update_circuit_parameters(self,circuit_parameters):
-		self.circuit_parameters=circuit_parameters
-		if self.circuit_parameters['Rk']>=1.00:
-			self.circuit_parameters['Rk']=0.90
+	def update_circuit_parameters(self,initial_circuit_parameters):
+		self.initial_circuit_parameters=initial_circuit_parameters
+		self.circuit_parameters=get_final_circuit_parameters(self.initial_circuit_parameters)
+	
+	# Getting the initial circuit parameters
+	def get_initial_circuit_parameters(self):
+		return self.initial_circuit_parameters.copy()
 
+	# Getting the circuit parameters
+	def get_circuit_parameters(self):
+		return self.circuit_parameters.copy()
+	
+	# Getting the extracted parameters
+	def get_extracted_parameters(self):
+		return self.extracted_parameters.copy()
+	
+	# Update circuit
+	def update_circuit_state(self,initial_circuit_parameters,circuit_parameters,extracted_circuit_parameters):
+		self.initial_circuit_parameters=initial_circuit_parameters.copy()
+		self.circuit_parameters=circuit_parameters.copy()
+		self.extracted_circuit_parameters=extracted_circuit_parameters.copy()
+		
 	#-----------------------------------------------------------------------------------------------
 	#---------------------------- Simulation Parameter Functions -----------------------------------
 
@@ -215,7 +232,9 @@ class Circuit():
 				change=-1*change_limit*self.circuit_parameters[param_name]
 			
 			# Updating circuit_parameters
-			self.circuit_parameters[param_name]=self.circuit_parameters[param_name]-change
+			self.initial_circuit_parameters[param_name]=self.initial_circuit_parameters[param_name]-change
+		
+		self.update_circuit_parameters(self.initial_circuit_parameters)
 			
 	# Function to check the best solution
 	def check_best_solution(self,optimization_results,loss_max):
@@ -265,6 +284,35 @@ class Circuit():
 	# Calculating the iip3
 	def calculate_iip3(self,n_pin,n_points,vout_fund_mag,vout_im3_mag,pin):
 		return sp.calculate_iip3_multiple_points(n_pin,n_points,vout_fund_mag,vout_im3_mag,pin)
+
+
+"""
+===========================================================================================================================
+------------------------------------- CONSTRAINTS FUNCTION ----------------------------------------------------------------
+"""
+
+#--------------------------------------------------------------------------------------------------------------------------
+# Getting the final circuit parameters
+def get_final_circuit_parameters(initial_circuit_parameters):
+	
+	circuit_parameters=initial_circuit_parameters.copy()
+
+	# Constraints for Ld - can't be greater than 10nH
+	circuit_parameters['Ld']=initial_circuit_parameters['Ld']
+
+	# Constraints for Ls - can't be greater than 10nH
+	if initial_circuit_parameters['Ls']<10e-9:
+		circuit_parameters['Ls']=initial_circuit_parameters['Ls']
+	else:
+		circuit_parameters['Ls']=10e-9
+
+	# Constraints for Rk - can't be greater than 1
+	if initial_circuit_parameters['Rk']<1.00:
+		circuit_parameters['Rk']=initial_circuit_parameters['Rk']
+	else:
+		circuit_parameters['Rk']=0.95
+
+	return circuit_parameters
 
 
 """

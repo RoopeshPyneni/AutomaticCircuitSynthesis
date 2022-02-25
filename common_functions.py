@@ -197,7 +197,15 @@ def print_MOS_parameters(mos_parameters):
 	print ('vt    = ', num_trunc(mos_parameters['vt'],trunc_val))
 	print ('Lmin  = ', num_trunc(mos_parameters['Lmin'],trunc_val))
 	print ('vdd   = ', num_trunc(mos_parameters['vdd'],trunc_val))
-	
+
+#-----------------------------------------------------------------------------------------------
+# Printing the initial circuit parameters
+def print_initial_circuit_parameters(initial_circuit_parameters):
+	print ('\n____________________________________________________________________')
+	print ('-------------------------Initial Circuit Parameters-----------------\n')
+	for param_name in initial_circuit_parameters:
+		print(param_name,' = ',num_trunc(initial_circuit_parameters[param_name],trunc_val))
+
 #-----------------------------------------------------------------------------------------------
 # Printing the circuit parameters
 def print_circuit_parameters(circuit_parameters):

@@ -50,39 +50,10 @@ def save_output_results_pre_optimization(optimization_results,optimization_input
 	f.write('********************************************************************************\n')
 	f.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~ Pre Optimization Parameters ~~~~~~~~~~~~~~~~~~~~~~~~\n')
 	
-	"""
-	if 'manual_hc' in optimization_results:
-		f.write('\n\n--------------------- Manual Hand Calculations ---------------------------------')
-		f.write('\n\n---------------- Circuit Parameters Complete ---------------')
-		cf.print_output_parameters_complete(f,optimization_results['manual_hc']['circuit_parameters'])
-		f.write('\n\n---------------- Circuit Parameters ------------------------')
-		cf.print_output_parameters(f,optimization_results['manual_hc']['circuit_parameters'])
-		f.write('\n\n---------------- Extracted Parameters ------------------------')
-		cf.print_output_parameters(f,optimization_results['manual_hc']['extracted_parameters'])
-
-	if 'auto_hc' in optimization_results:
-		f.write('\n\n--------------------- Automatic Hand Calculations ---------------------------------')
-		f.write('\n\n---------------- Circuit Parameters Complete ---------------')
-		cf.print_output_parameters_complete(f,optimization_results['auto_hc']['circuit_parameters'])
-		f.write('\n\n---------------- Circuit Parameters ------------------------')
-		cf.print_output_parameters(f,optimization_results['auto_hc']['circuit_parameters'])
-		f.write('\n\n---------------- Extracted Parameters ------------------------')
-		cf.print_output_parameters(f,optimization_results['auto_hc']['extracted_parameters'])
-
-	if 'hc_update' in optimization_results:
-		f.write('\n\n--------------------- Hand Calculations Update ---------------------------------')
-		f.write('\n\n---------------- Circuit Parameters Complete ---------------')
-		cf.print_output_parameters_complete(f,optimization_results['hc_update']['circuit_parameters'])
-		f.write('\n\n---------------- Circuit Parameters ------------------------')
-		cf.print_output_parameters(f,optimization_results['hc_update']['circuit_parameters'])
-		f.write('\n\n---------------- Extracted Parameters ------------------------')
-		cf.print_output_parameters(f,optimization_results['hc_update']['extracted_parameters'])
-	"""
-
 	for name in optimization_results:
 		f.write('\n\n--------------------- '+str(name)+' ---------------------------------')
-		f.write('\n\n---------------- Circuit Parameters Complete ---------------')
-		cf.print_output_parameters_complete(f,optimization_results[name]['circuit_parameters'])
+		f.write('\n\n---------------- Initial Circuit Parameters ---------------')
+		cf.print_output_parameters_complete(f,optimization_results[name]['initial_circuit_parameters'])
 		f.write('\n\n---------------- Circuit Parameters ------------------------')
 		cf.print_output_parameters(f,optimization_results[name]['circuit_parameters'])
 		f.write('\n\n---------------- Extracted Parameters ------------------------')
@@ -146,8 +117,9 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 
 		# Storing the Circuit and Extracted Parameters
 		optimization_results['manual_hc']={}
-		optimization_results['manual_hc']['circuit_parameters']=cir.circuit_parameters.copy()
-		optimization_results['manual_hc']['extracted_parameters']=cir.extracted_parameters.copy()
+		optimization_results['manual_hc']['initial_circuit_parameters']=cir.get_initial_circuit_parameters()
+		optimization_results['manual_hc']['circuit_parameters']=cir.get_circuit_parameters()
+		optimization_results['manual_hc']['extracted_parameters']=cir.get_extracted_parameters()
 
 	#=============================== Automatic Initial Points =============================================================
 	
@@ -160,8 +132,9 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 		hc1.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
 
 	# Printing the values
-	cf.print_circuit_parameters(cir.circuit_parameters)
-	cf.print_extracted_parameters(cir.extracted_parameters)
+	cf.print_initial_circuit_parameters(cir.get_initial_circuit_parameters())
+	cf.print_circuit_parameters(cir.get_circuit_parameters())
+	cf.print_extracted_parameters(cir.get_extracted_parameters())
 
 	# Storing the results
 	save_output_results_pre_optimization(optimization_results,optimization_input_parameters)
