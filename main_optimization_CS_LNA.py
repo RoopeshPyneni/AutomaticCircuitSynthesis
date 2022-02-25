@@ -187,7 +187,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=100
+	optimization_input_parameters['optimization'][1]['max_iteration']=200
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
@@ -218,7 +218,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	}
 
 	optimization_input_parameters['optimization'][1]['alpha']={}
-	optimization_input_parameters['optimization'][1]['alpha']['value']=0.05
+	optimization_input_parameters['optimization'][1]['alpha']['value']=0.01
 	optimization_input_parameters['optimization'][1]['alpha']['type']='Normal'
 	optimization_input_parameters['optimization'][1]['alpha']['start']=0.8
 	optimization_input_parameters['optimization'][1]['alpha']['end']=0.05
