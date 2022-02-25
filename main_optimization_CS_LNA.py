@@ -193,7 +193,6 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
 	optimization_input_parameters['optimization'][1]['alpha_mult']=1
 	optimization_input_parameters['optimization'][1]['loss_type']=2
-	optimization_input_parameters['optimization'][1]['update_check']=0
 	optimization_input_parameters['optimization'][1]['optimization_type']=0
 	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Ld','Cd','Rk','Cs']
 	optimization_input_parameters['optimization'][1]['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
@@ -203,6 +202,10 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#	0 - Consider loss slope of Io if other loss is 0 ; Consider loss slope of others only if other loss of others is not zero
 	#	1 - Normal Update
 	#	2 - Consider the loss slope of those components whose loss is non-zero
+
+	# optimization_type will tell whether to increase or decrease loss
+	# 	0 - we want to reduce the loss
+	# 	1 - we want to increase the loss
 
 	optimization_input_parameters['optimization'][1]['loss_weights']={
 		'gain_db':1.0/10.0,
@@ -219,7 +222,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 
 	optimization_input_parameters['optimization'][1]['alpha']={}
 	optimization_input_parameters['optimization'][1]['alpha']['value']=0.01
-	optimization_input_parameters['optimization'][1]['alpha']['type']='Normal'
+	optimization_input_parameters['optimization'][1]['alpha']['type']='Normal' # 'Linear','Log'
 	optimization_input_parameters['optimization'][1]['alpha']['start']=0.8
 	optimization_input_parameters['optimization'][1]['alpha']['end']=0.05
 

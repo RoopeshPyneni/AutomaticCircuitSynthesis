@@ -40,7 +40,6 @@ def save_input_results_optimization(cir,optimization_input_parameters,run_number
 	f.write('\nAlpha Mult      :'+str(optimization_input_parameters['optimization'][run_number]['alpha_mult']))
 	f.write('\nDelta Threshold :'+str(optimization_input_parameters['optimization'][run_number]['delta_threshold']))
 	f.write('\nLoss Type       :'+str(optimization_input_parameters['optimization'][run_number]['loss_type']))
-	f.write('\nUpdate Check    :'+str(optimization_input_parameters['optimization'][run_number]['update_check']))
 	f.write('\nOptimization Type :'+str(optimization_input_parameters['optimization'][run_number]['optimization_type']))
 
 	f.write('\nOptimization Parameters : ')
@@ -460,7 +459,6 @@ def update_alpha(loss_iter,alpha,i,alpha_mult,optimization_type,optimization_inp
 
 	if optimization_input_parameters['optimization'][run_number]['alpha']['type']=='Linear':
 		alpha=alpha_start+((alpha_end-alpha_start)*(i+1)/n_iter)
-		print(alpha)
 
 	elif optimization_input_parameters['optimization'][run_number]['alpha']['type']=='Log':
 		alpha_start_log=np.log(alpha_start)
@@ -477,19 +475,6 @@ def update_alpha(loss_iter,alpha,i,alpha_mult,optimization_type,optimization_inp
 				alpha*=alpha_mult
 		
 	return alpha
-
-#-----------------------------------------------------------------------------------------------
-# This function updates circuit parameters to previous circuit parameters if loss increases
-def check_circuit_parameters(old_circuit_parameters,cir,loss_iter,update_check,i,optimization_type):
-
-	# Checking criteria for reducing threshold
-	if update_check==1:
-		if i>0:
-			if loss_iter[i]['loss']>=loss_iter[i-1]['loss'] and optimization_type==0:
-				cir.circuit_parameters=old_circuit_parameters.copy()
-			elif loss_iter[i]['loss']<=loss_iter[i-1]['loss'] and optimization_type==1:
-				cir.circuit_parameters=old_circuit_parameters.copy()
-	return cir.circuit_parameters
 
 #-----------------------------------------------------------------------------------------------
 # Checking stopping condition ( if alpha<alpha_min )
@@ -544,15 +529,11 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	consec_iter       = optimization_input_parameters['optimization'][run_number]['consec_iter']
 	alpha_mult        = optimization_input_parameters['optimization'][run_number]['alpha_mult']
 	max_iteration     = optimization_input_parameters['optimization'][run_number]['max_iteration']
-	delta_threshold   = optimization_input_parameters['optimization'][run_number]['delta_threshold']
 	loss_type         = optimization_input_parameters['optimization'][run_number]['loss_type']
 	optimization_type = optimization_input_parameters['optimization'][run_number]['optimization_type']
 	
 	alpha         = optimization_input_parameters['optimization'][run_number]['alpha']['value']
 	alpha_initial = optimization_input_parameters['optimization'][run_number]['alpha']['value']
-	
-	# Creating old circuit parameters
-	old_circuit_parameters=cir.circuit_parameters.copy() # This dictionary will store the value of parameters for previous iterations
 	
 	# Creating the dictionaries
 	loss_iter={} 				# This dictionary will store the value of all loss values for different iterations
@@ -561,7 +542,6 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	extracted_parameters_iter={}# This dictionary will store the value of output parameters for different iterations
 	circuit_parameters_iter={} 	# This dictionary will store the value of circuit parameters for different iterations
 	sensitivity_iter={}			# This dictionary will store the value of output parameter sensitivty for different circuit parameters 
-	check_loss=1	
 	
 	# Running Eldo
 	cir.run_circuit()
@@ -604,7 +584,6 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		print('Update dictionary')
 		loss_iter[i]=cir.calc_loss(output_conditions,loss_weights)
 			
-
 		# Storing some parameters
 		alpha_parameters_iter[i]	= {'alpha':alpha}
 		loss_slope_iter[i-1]		= circuit_parameters_slope.copy()
@@ -616,7 +595,6 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		print('Save info')
 		save_info(optimization_input_parameters,optimization_results,i,1)
 		
-
 		# Opening the Run_Status File
 		print('Run Status ',str(i+1))
 		current_time=datetime.datetime.now()
@@ -625,27 +603,18 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		f.close()
 		previous_time=current_time
 
-
 		# Printing the values of loss for given iteration
 		print('\n-----------------------------Iteration Number ',i+1,'-------------------------------')
 		cf.print_loss_parameters(loss_iter[i])
-		
 
 		# Updating the value of alpha	
 		print('Update alpha')
 		alpha=update_alpha(loss_iter,alpha,i,alpha_mult,optimization_type,optimization_input_parameters,run_number)
-		
-
-		# Updating the value of circuit_parameters based on loss increase
-		print('Update circuit parameters')
-		old_circuit_parameters=check_circuit_parameters(old_circuit_parameters,cir,loss_iter,optimization_input_parameters['optimization'][run_number]['update_check'],i,optimization_type)
-
 
 		# Checking for stopping condition
 		print('Check stopping condition')
 		flag_alpha=check_stop_alpha(loss_iter,alpha,i,alpha_min)
 		flag_loss=check_stop_loss(loss_iter,i,consec_iter,optimization_type)
-		
 
 		# Incrementing i and breaking the loop if necessary
 		i+=1
@@ -663,18 +632,15 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	optimization_results['n_iter']=i
 	save_info(optimization_input_parameters,optimization_results,i,0)
 	
-
 	# Resetting the value of alpha
 	optimization_input_parameters['optimization'][run_number]['alpha']['value']=alpha_initial
 
 	# Finding the best optimization results
 	optimization_results['optimized_results']=cir.check_best_solution(optimization_results,0)
-	
 
 	# Assigning circuit_parameters and extracted_parameters with the best result
 	print_dict=optimization_results['optimized_results']
 	iter_number=print_dict['iter_number']-1
-
 	cir.update_circuit(optimization_results['circuit_parameters_iter'][iter_number].copy())
 	
 	# Printing the values
