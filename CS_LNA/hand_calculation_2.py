@@ -161,10 +161,9 @@ def get_best_point(circuit_parameters_iter,extracted_parameters_iter,output_cond
 	for j in j_array:
 		Io_array.append(extracted_parameters_iter[j]['Io'])
 		loss_gain=sc.ramp_func(output_conditions['gain_db']-extracted_parameters_iter[j]['gain_db'])
-		loss_iip3=sc.ramp_func(output_conditions['iip3_dbm']-extracted_parameters_iter[j]['iip3_dbm'])
 		loss_s11=sc.ramp_func(extracted_parameters_iter[j]['s11_db']-output_conditions['s11_db'])
 		loss_nf=sc.ramp_func(extracted_parameters_iter[j]['nf_db']-output_conditions['nf_db'])
-		loss_array.append(loss_gain+loss_iip3+loss_nf+loss_s11)
+		loss_array.append(loss_gain+loss_nf+loss_s11)
 		if loss_array[-1]==0:
 			loss_zero=1
 	
@@ -379,41 +378,6 @@ def update_initial_parameters(cir,optimization_input_parameters):
 	i=get_best_point(circuit_parameters_iter,extracted_parameters_iter,optimization_input_parameters['output_conditions'])
 	
 	cir.update_circuit_state(initial_circuit_parameters_iter[i],circuit_parameters_iter[i],extracted_parameters_iter[i])
-	
-	# Updating the value of Ld to get correct circuit parameters
-	multiplicative_factor=1.05
-	initial_circuit_parameters=cir.get_initial_circuit_parameters()
-	extracted_parameters=cir.get_extracted_parameters()
-	if extracted_parameters['0_gain_db']>(extracted_parameters['2_gain_db']+0.5):
-		initial_circuit_parameters['Ld']/=multiplicative_factor
-		cir.update_circuit(initial_circuit_parameters)
-		flag=0
-	elif extracted_parameters['2_gain_db']>(extracted_parameters['0_gain_db']+0.5):
-		initial_circuit_parameters['Ld']*=multiplicative_factor
-		cir.update_circuit(initial_circuit_parameters)
-		flag=1
-	
-	else:
-		return
-	
-	while flag!=2:
-		initial_circuit_parameters=cir.get_initial_circuit_parameters()
-		extracted_parameters=cir.get_extracted_parameters()
-		if extracted_parameters['0_gain_db']>(extracted_parameters['2_gain_db']+0.5):
-			if flag==1:
-				multiplicative_factor/=1.01
-			initial_circuit_parameters['Ld']/=multiplicative_factor
-			cir.update_circuit(initial_circuit_parameters)
-			flag=0
-		elif extracted_parameters['2_gain_db']>(extracted_parameters['0_gain_db']+0.5):
-			if flag==0:
-				multiplicative_factor/1.01
-			initial_circuit_parameters['Ld']*=multiplicative_factor
-			cir.update_circuit(initial_circuit_parameters)
-			flag=1
-		else:
-			flag=2
-			
 	
 
 """
