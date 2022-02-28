@@ -72,7 +72,7 @@ class Circuit():
 		self.extracted_parameters=write_extract(self.circuit_parameters,self.circuit_initialization_parameters)
 	
 	# Updating the circuit parameters and not running the circuit
-	def update_circuit_parameters(self,initial_circuit_parameters):
+	def update_circuit_parameters_1(self,initial_circuit_parameters):
 		self.initial_circuit_parameters=initial_circuit_parameters
 		self.circuit_parameters=get_final_circuit_parameters(self.initial_circuit_parameters)
 	
@@ -233,7 +233,7 @@ class Circuit():
 			# Updating circuit_parameters
 			self.initial_circuit_parameters[param_name]=self.initial_circuit_parameters[param_name]-change
 		
-		self.update_circuit_parameters(self.initial_circuit_parameters)
+		self.update_circuit_parameters_1(self.initial_circuit_parameters)
 			
 	# Function to check the best solution
 	def check_best_solution(self,optimization_results,loss_max):
