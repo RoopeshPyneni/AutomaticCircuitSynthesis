@@ -416,8 +416,6 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 	extracted_parameters_initial=cir.get_extracted_parameters()
 
 	# Creating new dictionaries
-	circuit_parameters1=cir.get_initial_circuit_parameters() # This dictionary will store the values of parameters after increment to calculate the slope
-	extracted_parameters1=cir.get_extracted_parameters() # This dictionary will store the values of parameters after increment to calculate the slope
 	circuit_parameters_slope={} # This dictionary will store the values of slope of different losses with change of all circuit parameters
 	
 	# Calculating the value to update each parameter with
@@ -425,14 +423,14 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 		
 		# Calculating the increment value
 		increment_factor=delta_threshold # The value by which parameter increases = increment_factor*parameter
-		increment=cir.get_initial_circuit_parameters()[param_name]*increment_factor
+		increment=initial_circuit_parameters_initial[param_name]*increment_factor
 	
 		# Incrementing the circuit parameter
-		circuit_parameters1=cir.get_initial_circuit_parameters()
-		circuit_parameters1[param_name]=circuit_parameters1[param_name]+increment
+		initial_circuit_parameters1=initial_circuit_parameters_initial.copy()
+		initial_circuit_parameters1[param_name]=initial_circuit_parameters1[param_name]+increment
 		
 		# Extracting Loss
-		cir.update_circuit(circuit_parameters1)
+		cir.update_circuit(initial_circuit_parameters1)
 		loss_dict1=cir.calc_loss(output_conditions,loss_weights)
 		
 		# Calculating Slope	
@@ -440,9 +438,9 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 		for param in loss_dict:
 			circuit_parameters_slope[param_name][param]=(loss_dict1[param]-loss_dict[param])/increment
 			
-		circuit_parameters_sensitivity[param_name]={}
-		
 		# Calculating Sensitivity
+		circuit_parameters_sensitivity[param_name]={}
+		extracted_parameters1=cir.get_extracted_parameters()
 		for categ_name in optimization_input_parameters['optimization'][run_number]['output_parameters_list']:
 			initial_param=extracted_parameters_initial[categ_name]
 			final_param=extracted_parameters1[categ_name]

@@ -168,7 +168,7 @@ class Circuit():
 		loss_s11_middle=A8*sp.ramp_func(s11_middle-s11_ref_middle)
 		loss_gain_delta2=A9*abs(gain_0-gain_2)
 		
-		loss=loss_gain+loss_iip3+loss_s11+loss_nf+loss_Io+loss_gain_delta+loss_gain_flatness
+		loss=loss_gain+loss_iip3+loss_s11+loss_nf+loss_Io+loss_gain_delta+loss_gain_flatness+loss_s11_middle+loss_gain_delta2
 		loss_dict={
 			'loss':loss,
 			'loss_gain':loss_gain,
@@ -195,7 +195,7 @@ class Circuit():
 			if loss_iter['loss']==loss_iter['loss_Io']:
 				change_loss_parameters=['loss_Io']
 			else:
-				change_loss_parameters=['loss_s11','loss_gain','loss_iip3','loss_nf','loss_gain_delta','loss_gain_flatness','loss_s11_middle']
+				change_loss_parameters=['loss_s11','loss_gain','loss_iip3','loss_nf','loss_gain_delta','loss_gain_flatness','loss_s11_middle','loss_gain_delta2']
 		
 		# Loss Type = 1
 		elif loss_type==1:
@@ -630,8 +630,8 @@ def dict_convert(circuit_parameters,circuit_initialization_parameters):
 
 	# Getting the width, length, mf for Capacitors
 	write_dict['wid_cap_g'],write_dict['len_cap_g']=calculate_MOS_capacitor(circuit_parameters['Cg'])
-	write_dict['mf_cap_s']=1+int(circuit_parameters['Cs']*1e11)
-	write_dict['mf_cap_d']=1+int(circuit_parameters['Cd']/5.63e-15)
+	write_dict['mf_cap_s']=1+int(circuit_parameters['Cs']/5.6329e-15)
+	write_dict['mf_cap_d']=1+int(circuit_parameters['Cd']/1.7166e-16)
 
 	# Getting inductor parameters
 	if circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_inductor':
