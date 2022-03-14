@@ -339,6 +339,7 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		print('----- Iteration ',i,' -----')
 
 		initial_circuit_parameters=cir.get_initial_circuit_parameters()
+		circuit_parameters=cir.get_circuit_parameters()
 		extracted_parameters=cir.get_extracted_parameters()
 
 		# Updating Ld
@@ -367,7 +368,7 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		
 		# Updating the values
 		fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
-		initial_circuit_parameters['Ls']=initial_circuit_parameters['Ls']*50*4/(2*extracted_parameters['1_Zin_R']+extracted_parameters['0_Zin_R']+extracted_parameters['2_Zin_R'])
+		initial_circuit_parameters['Ls']=circuit_parameters['Ls']*50*4/(2*extracted_parameters['1_Zin_R']+extracted_parameters['0_Zin_R']+extracted_parameters['2_Zin_R'])
 		initial_circuit_parameters['Lg']=initial_circuit_parameters['Lg']-(2*extracted_parameters['1_Zin_I']+extracted_parameters['0_Zin_I']+extracted_parameters['2_Zin_I'])/(4*2*np.pi*fo)
 		
 		# Running the circuit and updating the results
@@ -413,7 +414,7 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	cf.print_extracted_parameters(cir.get_extracted_parameters())
 
 	
-
+	"""
 	#======================================================== Step 2 =======================================================
 	print('\n\n--------------------------------- Operating Point Updations ------------------------------------')
 
@@ -430,5 +431,6 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	cf.print_initial_circuit_parameters(cir.get_initial_circuit_parameters())
 	cf.print_circuit_parameters(cir.circuit_parameters)
 	cf.print_extracted_parameters(cir.extracted_parameters)
+	"""
 
 #===========================================================================================================================

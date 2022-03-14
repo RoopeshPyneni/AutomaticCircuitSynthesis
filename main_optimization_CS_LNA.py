@@ -187,7 +187,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=5
+	optimization_input_parameters['optimization'][1]['max_iteration']=200
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
@@ -244,7 +244,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	# Optimization Run 2
 	optimization_input_parameters['optimization'][2]=copy.deepcopy(optimization_input_parameters['optimization'][1])
 	optimization_input_parameters['optimization']['simulation'][2]=copy.deepcopy(optimization_input_parameters['optimization']['simulation'][1])
-	optimization_input_parameters['optimization'][2]['max_iteration']=5
+	optimization_input_parameters['optimization'][2]['max_iteration']=400
 	optimization_input_parameters['optimization'][2]['optimizing_parameters']=['Lg','Io','W','Ls','Cd','Rk','Cs']
 	
 	optimization_input_parameters['optimization'][2]['alpha']['value']=0.005
@@ -561,7 +561,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Real_Ld_Test_1'						# SET THE FILENAME HERE
+	filename=f_directory+'Real_Ld_Test_4'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
