@@ -411,7 +411,7 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	cf.print_circuit_parameters(cir.get_circuit_parameters())
 	cf.print_extracted_parameters(cir.get_extracted_parameters())
 
-	
+	"""	
 	#======================================================== Step 2 =======================================================
 	print('\n\n--------------------------------- Operating Point Updations ------------------------------------')
 
@@ -428,5 +428,6 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	cf.print_initial_circuit_parameters(cir.get_initial_circuit_parameters())
 	cf.print_circuit_parameters(cir.circuit_parameters)
 	cf.print_extracted_parameters(cir.extracted_parameters)
+	"""
 
 #===========================================================================================================================

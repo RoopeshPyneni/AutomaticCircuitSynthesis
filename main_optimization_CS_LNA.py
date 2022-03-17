@@ -129,7 +129,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']=4 #'manual'
+	optimization_input_parameters['pre_optimization']['type']='manual'
 
 	optimization_input_parameters['pre_optimization']['I_Rdivider_max']=100e-6
 	
@@ -137,19 +137,20 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Manual Hand Calculations
 	optimization_input_parameters['pre_optimization']['manual_circuit_parameters']={
-	'Cd': 751e-15,
-	'Ld': 14.2e-9,
-	'W': 2.28e-3,
-	'Cg': 152e-12,
-	'Io': 505e-6,
+	'Ld': 9e-9,
+	'Cd': 5.977423889299368e-13,
+	'W': 0.0023583977287756483,
+	'Cg': 1.5458676014581085e-10,
+	'Io': 0.0006907015356571114,
 	'Rsum': 10000,
-	'Rk': 0.828,
-	'Ls': 1.92e-9,
-	'Lg': 15.7e-9,
+	'Rk': 0.95,
+	'Ls': 3.182280567225685e-09,
+	'Lg': 1.627035404565489e-08,
 	'Rb': 5000,
-	'Cs': 28.7e-12
+	'Cs': 1.9244427648712094e-11,
+	'Wk': 100
 	}	
-
+	
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Pre Optimization Simulation Parameters
@@ -173,7 +174,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	# Getting the number of optimization runs
 	optimization_input_parameters['optimization']={}
 	optimization_input_parameters['optimization']['run']='NO'
-	optimization_input_parameters['optimization']['n_runs']=2
+	optimization_input_parameters['optimization']['n_runs']=1
 
 	# Getting the type of optimization
 	if optimization_name=='LOSS':
@@ -187,7 +188,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=200
+	optimization_input_parameters['optimization'][1]['max_iteration']=20
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
@@ -221,7 +222,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	}
 
 	optimization_input_parameters['optimization'][1]['alpha']={}
-	optimization_input_parameters['optimization'][1]['alpha']['value']=0.005
+	optimization_input_parameters['optimization'][1]['alpha']['value']=0.05
 	optimization_input_parameters['optimization'][1]['alpha']['type']='Normal' # 'Linear','Log'
 	optimization_input_parameters['optimization'][1]['alpha']['start']=0.8
 	optimization_input_parameters['optimization'][1]['alpha']['end']=0.05
@@ -561,7 +562,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Testing_Pre_Optimization_1_2'						# SET THE FILENAME HERE
+	filename=f_directory+'Testing_Single_Point_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
