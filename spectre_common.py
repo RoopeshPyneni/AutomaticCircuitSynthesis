@@ -388,5 +388,38 @@ def find_TSMC_Inductor(Q,L):
 
 	return min_index,data.at[min_index,'Width'],data.at[min_index,'Radius'],data.at[min_index,'N_Turns'],data.at[min_index,'gdis'],data.at[min_index,'spc']
 
+#-----------------------------------------------------------------      
+# Function that converts resistance to length and width
+def get_TSMC_resistor(resistance):
+	sheet_resistance=124.45
+	W_min=0.4e-6
+	dW=0.0691e-6
+	width=W_min-dW
+	length=width*resistance/sheet_resistance
+	
+	return length,W_min
+
+#-----------------------------------------------------------------      
+# Function that converts capacitance to length and width for MOS capacitor
+def calculate_MOS_capacitor(cap):
+	cox=17.25*1e-3
+	w_check=np.sqrt(cap/cox)
+	if w_check>2e-5:
+		length=2e-5
+		width=cap/(cox*length)
+		return width,length
+	if w_check<1.2e-7:
+		width=1.2e-7
+		length=cap/(cox*width)
+		return width,length
+	return w_check,w_check
+
+
+#-----------------------------------------------------------------      
+# Function that converts capacitance to length and width for MOS capacitor
+def calculate_mimcap(cap_required,cap_1):
+	
+	return 1+int(cap_required/cap_1)
+
 
 #==========================================================================================================================

@@ -68,13 +68,13 @@ class Circuit():
 	# Updating the circuit parameters and running the circuit
 	def update_circuit(self,initial_circuit_parameters):
 		self.initial_circuit_parameters=initial_circuit_parameters
-		self.circuit_parameters=get_final_circuit_parameters(self.initial_circuit_parameters)
+		self.circuit_parameters=get_final_circuit_parameters(self.initial_circuit_parameters,self.circuit_initialization_parameters)
 		self.extracted_parameters=write_extract(self.circuit_parameters,self.circuit_initialization_parameters)
 	
 	# Updating the circuit parameters and not running the circuit
 	def update_circuit_parameters_1(self,initial_circuit_parameters):
 		self.initial_circuit_parameters=initial_circuit_parameters
-		self.circuit_parameters=get_final_circuit_parameters(self.initial_circuit_parameters)
+		self.circuit_parameters=get_final_circuit_parameters(self.initial_circuit_parameters,self.circuit_initialization_parameters)
 	
 	# Getting the initial circuit parameters
 	def get_initial_circuit_parameters(self):
@@ -298,9 +298,11 @@ class Circuit():
 
 #--------------------------------------------------------------------------------------------------------------------------
 # Getting the final circuit parameters
-def get_final_circuit_parameters(initial_circuit_parameters):
+def get_final_circuit_parameters(initial_circuit_parameters,circuit_initialization_parameters):
 	
 	circuit_parameters=initial_circuit_parameters.copy()
+
+	# ~~~~~~~~~~~~~~~ CONSTRAINTS CHECK ~~~~~~~~~~~~~~~
 
 	# Constraints for Ld - can't be greater than 10nH
 	circuit_parameters['Ld']=initial_circuit_parameters['Ld']
@@ -312,11 +314,73 @@ def get_final_circuit_parameters(initial_circuit_parameters):
 		circuit_parameters['Ls']=10e-9
 
 	# Constraints for Rk - can't be greater than 1
-	if initial_circuit_parameters['Rk']<1.00:
-		circuit_parameters['Rk']=initial_circuit_parameters['Rk']
-	else:
+	if initial_circuit_parameters['Rk']>=1.0:
 		circuit_parameters['Rk']=0.95
+	if initial_circuit_parameters['Rk']<=0.0:
+		circuit_parameters['Rk']=0.05
 
+
+	# ~~~~~~~~~~~~~~~ GETTING EXTRA PARAMETERS ~~~~~~~~~~~~~~~
+
+	# Getting the circuit type
+	circuit_type=circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']
+
+	# Getting the value of resistances in parallel with L
+	if circuit_type!='series' and circuit_type!='mos_inductor':
+		circuit_parameters['res_d']=initial_circuit_parameters['Ld']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi*15
+		circuit_parameters['res_g']=initial_circuit_parameters['Lg']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi*50
+		circuit_parameters['res_ls']=initial_circuit_parameters['Ls']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi*15
+
+	# Getting the value of resistances in series with L
+	if circuit_type=='series' and circuit_type!='mos_inductor':
+		circuit_parameters['res_d']=initial_circuit_parameters['Ld']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi*15
+		circuit_parameters['res_g']=circuit_parameters['Lg']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi/50
+		circuit_parameters['res_ls']=circuit_parameters['Ls']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi/15
+
+	# Calculating the number of fingers for the MOSFETs
+	n_finger=int(circuit_parameters['W']/circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max'])+1
+	circuit_parameters['n_finger']=n_finger
+
+	# Getting the real resistor parameters
+	if circuit_type=='mos_resistor' or circuit_type=='mos_capacitor' or circuit_type=='mos_inductor':
+		R1=circuit_parameters['Rsum']*(1-circuit_parameters['Rk'])
+		R2=circuit_parameters['Rsum']*circuit_parameters['Rk']
+		circuit_parameters['res_b_len'],circuit_parameters['res_b_wid']=sp.get_TSMC_resistor(circuit_parameters['Rb'])
+		circuit_parameters['res_1_len'],circuit_parameters['res_1_wid']=sp.get_TSMC_resistor(R1)
+		circuit_parameters['res_2_len'],circuit_parameters['res_2_wid']=sp.get_TSMC_resistor(R2)
+
+	# Getting the real capacitors parameters
+	if circuit_type=='mos_capacitor' or circuit_type=='mos_inductor':
+		circuit_parameters['wid_cap_g'],circuit_parameters['len_cap_g']=sp.calculate_MOS_capacitor(circuit_parameters['Cg'])
+		circuit_parameters['mf_cap_s']=sp.calculate_mimcap(circuit_parameters['Cs'],5.6329e-15)		#1+int(circuit_parameters['Cs']/5.6329e-15)
+		circuit_parameters['mf_cap_d']=sp.calculate_mimcap(circuit_parameters['Cd'],1.7166e-16)		#1+int(circuit_parameters['Cd']/1.7166e-16)
+
+	# Getting the real inductor parameters
+	if circuit_type=='mos_inductor':
+		_,circuit_parameters['Ls_wid'],circuit_parameters['Ls_rad'],circuit_parameters['Ls_turn'],circuit_parameters['Ls_gdis'],circuit_parameters['Ls_spc']=sp.find_TSMC_Inductor(15,circuit_parameters['Ls'])
+		_,circuit_parameters['Ld_wid'],circuit_parameters['Ld_rad'],circuit_parameters['Ld_turn'],circuit_parameters['Ld_gdis'],circuit_parameters['Ld_spc']=sp.find_TSMC_Inductor(15,circuit_parameters['Ld'])
+
+	
+	# ~~~~~~~~~~~~~~~ CHANGING THE NAME ~~~~~~~~~~~~~~~
+
+	cir_writing_dict={	
+		'wid':'W',
+		'cur0':'Io',
+		'res_b':'Rb',
+		'ind_d':'Ld',
+		'ind_g':'Lg',
+		'ind_s':'Ls',
+		'cap_s':'Cs',
+		'cap_g':'Cg',
+		'cap_d':'Cd',
+		'res_sum':'Rsum',
+		'res_k':'Rk'
+	}
+
+	for param_name in cir_writing_dict:
+		circuit_parameters[param_name]=circuit_parameters[cir_writing_dict[param_name]]
+		del circuit_parameters[cir_writing_dict[param_name]]
+	
 	return circuit_parameters
 
 
@@ -583,101 +647,9 @@ def extract_vout(lines):
 ------------------------------------- FILE WRITE FUNCTIONS ----------------------------------------------------------------
 """
 
-#-----------------------------------------------------------------      
-# Function that converts input parameter dictionary to writing dictionary
-def dict_convert(circuit_parameters,circuit_initialization_parameters):
-	write_dict={}
-	
-	# param_names in write_dict will contain the name of the parameters as it is written in the .scs file
-	cir_writing_dict={	
-		'wid':'W',
-		'cur0':'Io',
-		'res_b':'Rb',
-		'ind_d':'Ld',
-		'ind_g':'Lg',
-		'ind_s':'Ls',
-		'cap_s':'Cs',
-		'cap_g':'Cg',
-		'cap_d':'Cd',
-		'res_sum':'Rsum',
-		'res_k':'Rk'
-	}
-
-	# Checking for wrong values
-	if circuit_parameters['Rk']>=1.0:
-		circuit_parameters['Rk']=0.95
-	if circuit_parameters['Rk']<=0.0:
-		circuit_parameters['Rk']=0.05
-
-	for param_name in cir_writing_dict:
-		write_dict[param_name]=circuit_parameters[cir_writing_dict[param_name]]
-	
-	# Getting the value of resistances
-	write_dict['res_g']=circuit_parameters['Lg']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi*50
-	write_dict['res_d']=circuit_parameters['Ld']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi*15
-	write_dict['res_ls']=circuit_parameters['Ls']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi*15
-
-	if circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='series':
-		write_dict['res_g']=circuit_parameters['Lg']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi/50
-		write_dict['res_ls']=circuit_parameters['Ls']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi/15
-
-	# Calculating the number of fingers
-	n_finger=int(circuit_parameters['W']/circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max'])+1
-	write_dict['n_finger']=n_finger
-
-	# Getting the width and length for TSMC Resistors
-	write_dict['res_b_len'],write_dict['res_b_wid']=get_TSMC_resistor(circuit_parameters['Rb'])
-	R1=circuit_parameters['Rsum']*(1-circuit_parameters['Rk'])
-	R2=circuit_parameters['Rsum']*circuit_parameters['Rk']
-	write_dict['res_1_len'],write_dict['res_1_wid']=get_TSMC_resistor(R1)
-	write_dict['res_2_len'],write_dict['res_2_wid']=get_TSMC_resistor(R2)
-	if 'Rl' in circuit_parameters:
-		write_dict['res_l_len'],write_dict['res_l_wid']=get_TSMC_resistor(circuit_parameters['Rl'])
-
-	# Getting the width, length, mf for Capacitors
-	write_dict['wid_cap_g'],write_dict['len_cap_g']=calculate_MOS_capacitor(circuit_parameters['Cg'])
-	write_dict['mf_cap_s']=1+int(circuit_parameters['Cs']/5.6329e-15)
-	write_dict['mf_cap_d']=1+int(circuit_parameters['Cd']/1.7166e-16)
-
-	# Getting inductor parameters
-	if circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_inductor':
-		_,write_dict['Ls_wid'],write_dict['Ls_rad'],write_dict['Ls_turn'],write_dict['Ls_gdis'],write_dict['Ls_spc']=sp.find_TSMC_Inductor(15,circuit_parameters['Ls'])
-		_,write_dict['Ld_wid'],write_dict['Ld_rad'],write_dict['Ld_turn'],write_dict['Ld_gdis'],write_dict['Ld_spc']=sp.find_TSMC_Inductor(15,circuit_parameters['Ld'])
-
-	return write_dict
-
-#-----------------------------------------------------------------      
-# Function that converts resistance to length and width
-def get_TSMC_resistor(resistance):
-	sheet_resistance=124.45
-	W_min=0.4e-6
-	dW=0.0691e-6
-	width=W_min-dW
-	length=width*resistance/sheet_resistance
-	
-	return length,W_min
-
-#-----------------------------------------------------------------      
-# Function that converts capacitance to length and width for MOS capacitor
-def calculate_MOS_capacitor(cap):
-	cox=17.25*1e-3
-	w_check=np.sqrt(cap/cox)
-	if w_check>2e-5:
-		length=2e-5
-		width=cap/(cox*length)
-		return width,length
-	if w_check<1.2e-7:
-		width=1.2e-7
-		length=cap/(cox*width)
-		return width,length
-	return w_check,w_check
-
 #-----------------------------------------------------------------
 # Function that modifies the .scs file
 def write_circuit_parameters(circuit_parameters,circuit_initialization_parameters):
-	
-	# We will convert the circuit parameters to write_dict
-	write_dict=dict_convert(circuit_parameters,circuit_initialization_parameters)
 	
 	# Getting the filenames
 	filename1=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']+'/circ.scs'
@@ -687,9 +659,9 @@ def write_circuit_parameters(circuit_parameters,circuit_initialization_parameter
 	f=open(filename1,'r+')
 	s=''
 	for line in fileinput.input(filename1):
-		for param_name in write_dict:
+		for param_name in circuit_parameters:
 			if "parameters "+param_name+'=' in line:	# Checking for a particular parameter in the .scs file
-				line=line.replace(line,sp.print_param(param_name,write_dict[param_name]))	# Replacing the parameter in the .scs file
+				line=line.replace(line,sp.print_param(param_name,circuit_parameters[param_name]))	# Replacing the parameter in the .scs file
 		s=s+line
 	f.truncate(0)
 	f.write(s)
@@ -699,9 +671,9 @@ def write_circuit_parameters(circuit_parameters,circuit_initialization_parameter
 	f=open(filename2,'r+')
 	s=''
 	for line in fileinput.input(filename2):
-		for param_name in write_dict:
+		for param_name in circuit_parameters:
 			if "parameters "+param_name+'=' in line:	# Checking for a particular parameter in the .scs file
-				line=line.replace(line,sp.print_param(param_name,write_dict[param_name]))	# Replacing the parameter in the .scs file
+				line=line.replace(line,sp.print_param(param_name,circuit_parameters[param_name]))	# Replacing the parameter in the .scs file
 		s=s+line
 	f.truncate(0)
 	f.write(s)
