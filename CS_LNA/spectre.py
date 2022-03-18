@@ -150,7 +150,7 @@ class Circuit():
 		A2=loss_weights['iip3_dbm']	# Weight for iip3
 		A3=loss_weights['s11_db']	# Weight for s11
 		A4=loss_weights['nf_db']	# Weight for nf
-		A5=loss_weights['Io']	# Weight for Io
+		A5=loss_weights['Io']		# Weight for Io
 		
 		A6=loss_weights['gain_delta']
 		A7=loss_weights['gain_flatness']
@@ -933,7 +933,7 @@ def write_extract_single(i,circuit_parameters,circuit_initialization_parameters)
 	return (i,extracted_parameters)
 
 #-----------------------------------------------------------------------------------------------
-# This function will write the circuit parameters, run Eldo and extract the output parameters
+# This function will write the circuit parameters, run spectre and extract the output parameters
 def get_final_extracted_parameters(extracted_parameters_combined):
 	
 	final_extracted_parameters={}
@@ -1033,8 +1033,8 @@ def get_final_extracted_parameters(extracted_parameters_combined):
 	return final_extracted_parameters
 
 #-----------------------------------------------------------------------------------------------
-# This function will write the circuit parameters, run Eldo and extract the output parameters
-def write_extract(circuit_parameters,circuit_initialization_parameters):
+# This function will write the circuit parameters, run spectre and extract the output parameters for a single process
+def write_extract_single_process(circuit_parameters,circuit_initialization_parameters):
 	
 	pool=mp.Pool()
 
@@ -1089,6 +1089,36 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 	pool.join()
 
 	return final_extracted_parameters
+
+#-----------------------------------------------------------------------------------------------
+# This function will combine the extracted_parameters
+def get_final_extracted_parameters_process(extracted_parameters_process):
+	extracted_parameters={}
+	for process in extracted_parameters_process:
+		for param_name in extracted_parameters_process[process]:
+			extracted_parameters[process+'_'+param_name]=extracted_parameters_process[process][param_name]
+	return extracted_parameters
+
+#-----------------------------------------------------------------------------------------------
+# This function will write the circuit parameters, run spectre and extract the output parameters for a the given set of processes
+def write_extract(circuit_parameters,circuit_initialization_parameters):
+
+	process_choice=circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
+	
+	if process_choice=='tt' or process_choice=='tt' or process_choice=='tt':
+		circuit_initialization_parameters['simulation']['netlist_parameters']['process_corner']=process_choice
+		extracted_parameters=write_extract_single_process(circuit_parameters,circuit_initialization_parameters)
+		return extracted_parameters
+	
+	else:
+		process_list=['ss','tt','ff']
+		extracted_parameters_process={}
+		for process in process_list:
+			circuit_initialization_parameters['simulation']['netlist_parameters']['process_corner']=process
+			extracted_parameters_process[process]={}
+			extracted_parameters_process[process]=write_extract_single_process(circuit_parameters,circuit_initialization_parameters)
+		
+		extracted_parameters=get_final_extracted_parameters_process(extracted_parameters_process)
 
 
 #==========================================================================================================================
