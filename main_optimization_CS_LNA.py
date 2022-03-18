@@ -121,7 +121,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 		'fund_1':fo,
 		'cir_temp':27,
 		'n_harm':5,
-		'process_corner':'tt'
+		'process_corner':'ss'
 	}
 
 #---------------------------------------------------------------------------------------------------------------------------
