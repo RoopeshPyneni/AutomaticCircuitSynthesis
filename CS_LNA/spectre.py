@@ -764,7 +764,7 @@ def write_MOS_parameters(circuit_initialization_parameters):
 	
 #-----------------------------------------------------------------
 # Function that adds Simulation Parameters
-def write_simulation_parameters(circuit_initialization_parameters):
+def write_simulation_parameters(circuit_initialization_parameters,circuit_name):
 	
 	# Adding simulation_parameters to write_dict
 	write_dict={}
@@ -776,45 +776,19 @@ def write_simulation_parameters(circuit_initialization_parameters):
 	write_dict['v_dd']=circuit_initialization_parameters['MOS']['Vdd']
 
 	# Getting the filenames
-	filename1=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']+'/circ.scs'
-	filename2=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']+'/circ.scs'
-
-	# Writing the simulation parameters to Basic File
-	f=open(filename1,'r+')
-	s=''
-	write_check=1
-	include_check=0
-	
-	# Replacing the lines of .scs file
-	for line in fileinput.input(filename1):
-		if "include " in line:	# This line is used to include the MOS file in the .scs file
-			include_check=1
-			write_check=0
-
-		elif "include" not in line and include_check==1:
-			s=s+circuit_initialization_parameters['MOS']['filename'][process_corner]
-			include_check=0
-			write_check=1
-		
-		for param_name in write_dict:	# This line is used to replace the MOS parameters and simulation_parameters
-			if "parameters "+param_name+'=' in line:
-				line=line.replace(line,sp.print_param(param_name,write_dict[param_name]))
-		
-		if write_check==1:
-			s=s+line
-
-	f.truncate(0)
-	f.write(s)
-	f.close()
+	if circuit_name=='basic':
+		filename=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']+'/circ.scs'
+	else:
+		filename=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']+'/circ.scs'
 
 	# Writing the simulation parameters to IIP3 File
-	f=open(filename2,'r+')
+	f=open(filename,'r+')
 	s=''
 	write_check=1
 	include_check=0
 
 	# Replacing the lines of .scs file
-	for line in fileinput.input(filename2):
+	for line in fileinput.input(filename):
 		if "include " in line:	# This line is used to include the MOS file in the .scs file
 			include_check=1
 			write_check=0
@@ -827,18 +801,19 @@ def write_simulation_parameters(circuit_initialization_parameters):
 		for param_name in write_dict:	# This line is used to replace the MOS parameters and simulation_parameters
 			if "parameters "+param_name+'=' in line:
 				line=line.replace(line,sp.print_param(param_name,write_dict[param_name]))
-				
-		if 'hb_test' in line and 'errpreset=conservative' in line and circuit_initialization_parameters['simulation']['standard_parameters']['conservative']=='NO':
-			line_split=line.split()
-			line=''
-			for word in line_split:
-				if 'errpreset=conservative' not in word:
-					line=line+word+' '
-			line=line+'\n'
 		
-		elif 'hb_test' in line and 'errpreset=conservative' not in line and circuit_initialization_parameters['simulation']['standard_parameters']['conservative']=='YES':
-			line=line[:-1]+' errpreset=conservative \n'
+		if circuit_name=='iip3':
+			if 'hb_test' in line and 'errpreset=conservative' in line and circuit_initialization_parameters['simulation']['standard_parameters']['conservative']=='NO':
+				line_split=line.split()
+				line=''
+				for word in line_split:
+					if 'errpreset=conservative' not in word:
+						line=line+word+' '
+				line=line+'\n'
 			
+			elif 'hb_test' in line and 'errpreset=conservative' not in line and circuit_initialization_parameters['simulation']['standard_parameters']['conservative']=='YES':
+				line=line[:-1]+' errpreset=conservative \n'
+				
 		
 		if write_check==1:
 			s=s+line
@@ -863,7 +838,7 @@ def write_extract_basic(circuit_initialization_parameters):
 	sp.write_tcsh_file(circuit_initialization_parameters,'basic')
 
 	# Writing the simulation parameters
-	write_simulation_parameters(circuit_initialization_parameters)
+	write_simulation_parameters(circuit_initialization_parameters,'basic')
 
 	# Running netlist file
 	sp.run_file(circuit_initialization_parameters)
@@ -886,7 +861,7 @@ def write_extract_iip3(circuit_initialization_parameters):
 		circuit_initialization_parameters['simulation']['netlist_parameters']['pin']=pin
 			
 		# Writing the simulation parameters
-		write_simulation_parameters(circuit_initialization_parameters)
+		write_simulation_parameters(circuit_initialization_parameters,'iip3')
 
 		# Running netlist file
 		sp.run_file(circuit_initialization_parameters)
@@ -915,7 +890,7 @@ def write_extract_iip3(circuit_initialization_parameters):
 			circuit_initialization_parameters['simulation']['netlist_parameters']['pin']=pin[i]
 				
 			# Writing the simulation parameters
-			write_simulation_parameters(circuit_initialization_parameters)
+			write_simulation_parameters(circuit_initialization_parameters,'iip3')
 
 			# Writing the tcsh file for Basic Analysis
 			sp.write_tcsh_file(circuit_initialization_parameters,'iip3')
