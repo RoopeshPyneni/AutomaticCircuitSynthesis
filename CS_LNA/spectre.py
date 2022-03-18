@@ -220,15 +220,15 @@ class Circuit():
 			change=0
 			for loss_name in change_loss_parameters:
 				change+=circuit_parameters_slope[param_name][loss_name]
-			change=change*(self.circuit_parameters[param_name]**2)*alpha
+			change=change*(self.initial_circuit_parameters[param_name]**2)*alpha
 		
 		
 			# Checking if the parameter is updated by a large value
 			change_limit=0.25 # If the incremented value is more than +- change_limit*parameter_name, then we will limit the change
-			if change>change_limit*self.circuit_parameters[param_name]:
-				change=change_limit*self.circuit_parameters[param_name]
-			if change<-1*change_limit*self.circuit_parameters[param_name]:
-				change=-1*change_limit*self.circuit_parameters[param_name]
+			if change>change_limit*self.initial_circuit_parameters[param_name]:
+				change=change_limit*self.initial_circuit_parameters[param_name]
+			if change<-1*change_limit*self.initial_circuit_parameters[param_name]:
+				change=-1*change_limit*self.initial_circuit_parameters[param_name]
 			
 			# Updating circuit_parameters
 			self.initial_circuit_parameters[param_name]=self.initial_circuit_parameters[param_name]-change
