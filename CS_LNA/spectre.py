@@ -770,7 +770,7 @@ def write_simulation_parameters(circuit_initialization_parameters,circuit_name):
 	write_dict={}
 	for param_name in circuit_initialization_parameters['simulation']['netlist_parameters']:
 		write_dict[param_name]=circuit_initialization_parameters['simulation']['netlist_parameters'][param_name]
-	process_corner=circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
+	process_corner=circuit_initialization_parameters['simulation']['netlist_parameters']['process_corner']
 	
 	write_dict['len']=circuit_initialization_parameters['MOS']['Lmin']
 	write_dict['v_dd']=circuit_initialization_parameters['MOS']['Vdd']
