@@ -1119,7 +1119,13 @@ def get_final_extracted_parameters_process(extracted_parameters_process):
 		'gain_delta':'max',
 		'gain_delta_0':'max',
 		'gain_delta_2':'max',
-		'Io':'max'
+		'Io':'max',
+		'Zin_R':'mid',
+		'Zin_I':'mid',
+		'p_source':'mid',
+		'gm1':'mid',
+		'vg1':'mid',
+		'vd1':'mid'
 	}
 
 	# Getting the min or mid or max parameter values for the best values
