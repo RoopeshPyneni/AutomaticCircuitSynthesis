@@ -1016,7 +1016,7 @@ def get_final_extracted_parameters(extracted_parameters_combined):
 	# Calculating the gain delta
 	final_extracted_parameters['gain_delta']=abs(extracted_parameters_combined[0]['gain_db']-extracted_parameters_combined[2]['gain_db'])
 	final_extracted_parameters['gain_delta_0']=sp.ramp_func(extracted_parameters_combined[0]['gain_db']-extracted_parameters_combined[1]['gain_db'])
-	final_extracted_parameters['gain_delta_1']=sp.ramp_func(extracted_parameters_combined[2]['gain_db']-extracted_parameters_combined[1]['gain_db'])
+	final_extracted_parameters['gain_delta_2']=sp.ramp_func(extracted_parameters_combined[2]['gain_db']-extracted_parameters_combined[1]['gain_db'])
 
 	# Calculating the value of s11
 	s11_array=[]
