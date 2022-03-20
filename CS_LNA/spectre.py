@@ -132,7 +132,10 @@ class Circuit():
 		nf=self.extracted_parameters['nf_db']
 		Io=self.extracted_parameters['Io']
 
+		gain_delta0=self.extracted_parameters['gain_delta_0']
+		gain_delta2=self.extracted_parameters['gain_delta_2']
 		gain_delta=self.extracted_parameters['gain_delta']
+
 		s11_middle=self.extracted_parameters['s11_middle']
 		
 		# Reference Values
@@ -152,7 +155,7 @@ class Circuit():
 		A5=loss_weights['Io']		# Weight for Io
 		
 		A6=loss_weights['gain_delta']
-		A7=loss_weights['gain_flatness']
+		#A7=loss_weights['gain_flatness']
 		A8=loss_weights['s11_db_middle']
 		A9=loss_weights['gain_delta2']
 		
@@ -162,12 +165,13 @@ class Circuit():
 		loss_s11=A3*sp.ramp_func(s11-s11_ref)
 		loss_nf=A4*sp.ramp_func(nf-nf_ref)
 		loss_Io=A5*Io
-		loss_gain_delta=A6*sp.ramp_func(gain_0-gain)+A6*sp.ramp_func(gain_2-gain)
-		loss_gain_flatness=A7*sp.ramp_func(gain-gain_delta_ref-gain_0)+A7*sp.ramp_func(gain-gain_delta_ref-gain_2)
+		loss_gain_delta=A6*gain_delta0+A6*gain_delta2
+		#loss_gain_flatness=A7*sp.ramp_func(gain-gain_delta_ref-gain_0)+A7*sp.ramp_func(gain-gain_delta_ref-gain_2)
 		loss_s11_middle=A8*sp.ramp_func(s11_middle-s11_ref_middle)
 		loss_gain_delta2=A9*gain_delta
 		
-		loss=loss_gain+loss_iip3+loss_s11+loss_nf+loss_Io+loss_gain_delta+loss_gain_flatness+loss_s11_middle+loss_gain_delta2
+		#loss=loss_gain+loss_iip3+loss_s11+loss_nf+loss_Io+loss_gain_delta+loss_gain_flatness+loss_s11_middle+loss_gain_delta2
+		loss=loss_gain+loss_iip3+loss_s11+loss_nf+loss_Io+loss_gain_delta+loss_s11_middle+loss_gain_delta2
 		loss_dict={
 			'loss':loss,
 			'loss_gain':loss_gain,
@@ -176,7 +180,7 @@ class Circuit():
 			'loss_nf':loss_nf,
 			'loss_Io':loss_Io,
 			'loss_gain_delta':loss_gain_delta,
-			'loss_gain_flatness':loss_gain_flatness,
+			#'loss_gain_flatness':loss_gain_flatness,
 			'loss_s11_middle':loss_s11_middle,
 			'loss_gain_delta2':loss_gain_delta2
 		}
@@ -1011,6 +1015,8 @@ def get_final_extracted_parameters(extracted_parameters_combined):
 	
 	# Calculating the gain delta
 	final_extracted_parameters['gain_delta']=abs(extracted_parameters_combined[0]['gain_db']-extracted_parameters_combined[2]['gain_db'])
+	final_extracted_parameters['gain_delta_0']=sp.ramp_func(extracted_parameters_combined[0]['gain_db']-extracted_parameters_combined[1]['gain_db'])
+	final_extracted_parameters['gain_delta_1']=sp.ramp_func(extracted_parameters_combined[2]['gain_db']-extracted_parameters_combined[1]['gain_db'])
 
 	# Calculating the value of s11
 	s11_array=[]
@@ -1102,6 +1108,35 @@ def get_final_extracted_parameters_process(extracted_parameters_process):
 	for process in extracted_parameters_process:
 		for param_name in extracted_parameters_process[process]:
 			extracted_parameters[process+'_'+param_name]=extracted_parameters_process[process][param_name]
+	
+	extracted_parameters_select={
+		'freq':'mid',
+		's11_db':'max',
+		's11_middle':'max',
+		'nf_db':'max',
+		'iip3_dbm':'min',
+		'gain_db':'min',
+		'gain_delta':'max',
+		'gain_delta_0':'max',
+		'gain_delta_2':'max',
+		'Io':'max'
+	}
+
+	# Getting the min or mid or max parameter values for the best values
+	for param in extracted_parameters_select:
+		if extracted_parameters_select[param]=='min':
+			param_array=[]
+			for i in extracted_parameters_process:
+				param_array.append(extracted_parameters_process[i][param])
+			extracted_parameters[param]=min(param_array)
+		elif extracted_parameters_select[param]=='max':
+			param_array=[]
+			for i in extracted_parameters_process:
+				param_array.append(extracted_parameters_process[i][param])
+			extracted_parameters[param]=max(param_array)
+		else:
+			extracted_parameters[param]=extracted_parameters_process['tt'][param]
+	
 	return extracted_parameters
 
 #-----------------------------------------------------------------------------------------------
