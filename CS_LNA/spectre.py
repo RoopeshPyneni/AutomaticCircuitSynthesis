@@ -132,9 +132,8 @@ class Circuit():
 		nf=self.extracted_parameters['nf_db']
 		Io=self.extracted_parameters['Io']
 
-		gain_0=self.extracted_parameters['0_gain_db']
-		gain_2=self.extracted_parameters['2_gain_db']
-		s11_middle=self.extracted_parameters['1_s11_db']
+		gain_delta=self.extracted_parameters['gain_delta']
+		s11_middle=self.extracted_parameters['s11_middle']
 		
 		# Reference Values
 		gain_ref=output_conditions['gain_db']
@@ -166,7 +165,7 @@ class Circuit():
 		loss_gain_delta=A6*sp.ramp_func(gain_0-gain)+A6*sp.ramp_func(gain_2-gain)
 		loss_gain_flatness=A7*sp.ramp_func(gain-gain_delta_ref-gain_0)+A7*sp.ramp_func(gain-gain_delta_ref-gain_2)
 		loss_s11_middle=A8*sp.ramp_func(s11_middle-s11_ref_middle)
-		loss_gain_delta2=A9*abs(gain_0-gain_2)
+		loss_gain_delta2=A9*gain_delta
 		
 		loss=loss_gain+loss_iip3+loss_s11+loss_nf+loss_Io+loss_gain_delta+loss_gain_flatness+loss_s11_middle+loss_gain_delta2
 		loss_dict={
@@ -1009,6 +1008,9 @@ def get_final_extracted_parameters(extracted_parameters_combined):
 	gain_index=gain_array.index(gain_min)
 	final_extracted_parameters['gain_db']=gain_min
 	final_extracted_parameters['gain_phase']=extracted_parameters_combined[gain_index]['gain_phase']
+	
+	# Calculating the gain delta
+	final_extracted_parameters['gain_delta']=abs(extracted_parameters_combined[0]['gain_db']-extracted_parameters_combined[2]['gain_db'])
 
 	# Calculating the value of s11
 	s11_array=[]
@@ -1023,7 +1025,10 @@ def get_final_extracted_parameters(extracted_parameters_combined):
 	final_extracted_parameters['s11_db']=s11_max
 	final_extracted_parameters['Zin_R']=extracted_parameters_combined[s11_index]['Zin_R']
 	final_extracted_parameters['Zin_I']=extracted_parameters_combined[s11_index]['Zin_I']
-
+	
+	# Calculating s11 middle
+	final_extracted_parameters['s11_middle']=extracted_parameters_combined[1]['s11_db']
+	
 	# Getting the iip3 values
 	iip3_array_list=['iip3_im3_intercept','iip3_im3_slope','iip3_fund_intercept','iip3_fund_slope','iip3_fund','iip3_im3','iip3_pin']
 	for param in iip3_array_list:
@@ -1119,6 +1124,7 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 			extracted_parameters_process[process]=write_extract_single_process(circuit_parameters,circuit_initialization_parameters)
 		
 		extracted_parameters=get_final_extracted_parameters_process(extracted_parameters_process)
+		return extracted_parameters
 
 
 #==========================================================================================================================

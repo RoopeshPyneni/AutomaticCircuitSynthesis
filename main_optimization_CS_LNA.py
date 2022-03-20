@@ -111,7 +111,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 
 	# Other Values
 	circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']=27
-	circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']='tt'
+	circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']='all'
 	circuit_initialization_parameters['simulation']['standard_parameters']['conservative']='NO'
 	circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max']=2e-6
 
@@ -158,15 +158,26 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['pre_optimization']['simulation']={}
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']={}
 
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['iip3_type']='basic'
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['std_temp']=27
+	# IIP3 Points
+	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['iip3_type']='basic'		# 'basic' or 'advanced' 
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['pin_fixed']=-65
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['pin_start']=-70
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['pin_stop']=-40
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['pin_points']=6
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['iip3_calc_points']=3
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['process_corner']='tt'
+	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['n_harm']=5
+	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['f_iip3']=1e6
+
+	# Operating frequency points
+	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['f_operating']=fo
+	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['f_range']=50e6
+
+	# Other Values
+	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['std_temp']=27
+	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['process_corner']='all'
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['conservative']='NO'
+	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['w_finger_max']=2e-6
+	
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the optimization parameters to the optimization_input_parameters dictionary
