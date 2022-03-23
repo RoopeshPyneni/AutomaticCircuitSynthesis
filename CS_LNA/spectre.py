@@ -259,6 +259,8 @@ class Circuit():
 		
 		for i in range(1,n_iter):
 			if sum([optimization_results['loss_iter'][i][key] for key in zero_loss_array])>loss_max:
+				if flag==1:
+					continue
 				if optimization_results['loss_iter'][i]['loss']<total_loss:
 					iter_min=i
 					total_loss=optimization_results['loss_iter'][i]['loss']
