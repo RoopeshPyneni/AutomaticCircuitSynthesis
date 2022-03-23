@@ -79,7 +79,7 @@ def get_output_conditions(optimization_input_parameters,fo):
 		'delta_v':0.1,
 		'Rs':50,
 		'Cload':400e-15,
-		's11_db_middle':-20.0
+		's11_db_middle':-15.0
 	}
 
 #---------------------------------------------------------------------------------------------------------------------------
@@ -200,7 +200,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=5
+	optimization_input_parameters['optimization'][1]['max_iteration']=100
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
@@ -585,7 +585,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Testing_Optimization_1'						# SET THE FILENAME HERE
+	filename=f_directory+'Optimization_Process_2'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

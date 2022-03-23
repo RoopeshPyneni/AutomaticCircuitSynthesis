@@ -247,7 +247,7 @@ class Circuit():
 		
 		# These arrays define which variable must be zero and which should be optimized
 		zero_loss_array=['loss_s11','loss_gain','loss_iip3','loss_nf']
-		minimize_loss_array=['loss_Io','loss_gain_delta','loss_gain_flatness','loss_s11_middle']
+		minimize_loss_array=['loss_Io','loss_gain_delta','loss_s11_middle']
 
 		# Checking the first iter point
 		total_loss=optimization_results['loss_iter'][0]['loss']
