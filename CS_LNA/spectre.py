@@ -1149,7 +1149,7 @@ def get_final_extracted_parameters_process(extracted_parameters_process):
 
 #-----------------------------------------------------------------------------------------------
 # This function will write the circuit parameters, run spectre and extract the output parameters for a the given set of processes
-def write_extract(circuit_parameters,circuit_initialization_parameters):
+def write_extract_single_temperature(circuit_parameters,circuit_initialization_parameters):
 
 	process_choice=circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
 	
@@ -1167,6 +1167,73 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 			extracted_parameters_process[process]=write_extract_single_process(circuit_parameters,circuit_initialization_parameters)
 		
 		extracted_parameters=get_final_extracted_parameters_process(extracted_parameters_process)
+		return extracted_parameters
+
+#-----------------------------------------------------------------------------------------------
+# This function will combine the extracted_parameters
+def get_final_extracted_parameters_temperature(extracted_parameters_temp):
+	extracted_parameters={}
+	for temp in extracted_parameters_temp:
+		single_temp=temp
+		for param_name in extracted_parameters_temp[temp]:
+			extracted_parameters[str(temp)+'_'+param_name]=extracted_parameters_temp[temp][param_name]
+	
+	extracted_parameters_select={
+		'freq':'mid',
+		's11_db':'max',
+		's11_middle':'max',
+		'nf_db':'max',
+		'iip3_dbm':'min',
+		'gain_db':'min',
+		'gain_delta':'max',
+		'gain_delta_0':'max',
+		'gain_delta_2':'max',
+		'Io':'max',
+		'Zin_R':'mid',
+		'Zin_I':'mid',
+		'p_source':'mid',
+		'gm1':'mid',
+		'vg1':'mid',
+		'vd1':'mid'
+	}
+
+	# Getting the min or mid or max parameter values for the best values
+	for param in extracted_parameters_select:
+		if extracted_parameters_select[param]=='min':
+			param_array=[]
+			for i in extracted_parameters_temp:
+				param_array.append(extracted_parameters_temp[i][param])
+			extracted_parameters[param]=min(param_array)
+		elif extracted_parameters_select[param]=='max':
+			param_array=[]
+			for i in extracted_parameters_temp:
+				param_array.append(extracted_parameters_temp[i][param])
+			extracted_parameters[param]=max(param_array)
+		else:
+			extracted_parameters[param]=extracted_parameters_temp[single_temp][param]
+	
+	return extracted_parameters
+
+
+#-----------------------------------------------------------------------------------------------
+# This function will write the circuit parameters, run spectre and extract the output parameters for a the given set of processes
+def write_extract(circuit_parameters,circuit_initialization_parameters):
+
+	temp_list=circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']
+	
+	if len(temp_list)==1:
+		circuit_initialization_parameters['simulation']['netlist_parameters']['cir_temp']=temp_list[0]
+		extracted_parameters=write_extract_single_temperature(circuit_parameters,circuit_initialization_parameters)
+		return extracted_parameters
+	
+	else:
+		extracted_parameters_temp={}
+		for temp in temp_list:
+			circuit_initialization_parameters['simulation']['netlist_parameters']['cir_temp']=temp
+			extracted_parameters_temp[temp]={}
+			extracted_parameters_temp[temp]=write_extract_single_temperature(circuit_parameters,circuit_initialization_parameters)
+		
+		extracted_parameters=get_final_extracted_parameters_temperature(extracted_parameters_temp)
 		return extracted_parameters
 
 
