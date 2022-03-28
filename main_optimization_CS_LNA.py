@@ -150,7 +150,8 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	'Lg': 1.693407413266686e-08,
 	'Rb': 5000,
 	'Cs': 1.543016896294383e-11,
-	'Wk': 100
+	'Wk': 100,
+	'Io_k':2e-6
 	}	
 	
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -201,14 +202,14 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=100
+	optimization_input_parameters['optimization'][1]['max_iteration']=3
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
 	optimization_input_parameters['optimization'][1]['alpha_mult']=1
 	optimization_input_parameters['optimization'][1]['loss_type']=2
 	optimization_input_parameters['optimization'][1]['optimization_type']=0
-	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Cd','Rk','Cs']
+	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Cd','Rk','Cs','Io_k']
 	optimization_input_parameters['optimization'][1]['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
 
 	# NOTES :
@@ -587,7 +588,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Optimization_Temp_1'						# SET THE FILENAME HERE
+	filename=f_directory+'Test_Optimization_Temp_2_with_Iok'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

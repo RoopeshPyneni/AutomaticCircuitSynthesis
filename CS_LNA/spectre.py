@@ -323,6 +323,10 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 		circuit_parameters['Rk']=0.95
 	if initial_circuit_parameters['Rk']<=0.0:
 		circuit_parameters['Rk']=0.05
+	
+	# Constraints for Io_k - can't let the value of Io change by more than 0.5*Io
+	if initial_circuit_parameters['Io_k']>=0.005*initial_circuit_parameters['Io']:
+		circuit_parameters['Io_k']=0.005*initial_circuit_parameters['Io']
 
 
 	# ~~~~~~~~~~~~~~~ GETTING EXTRA PARAMETERS ~~~~~~~~~~~~~~~
@@ -370,7 +374,7 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 
 	cir_writing_dict={	
 		'wid':'W',
-		'cur0':'Io',
+		#'cur0':'Io',
 		'res_b':'Rb',
 		'ind_d':'Ld',
 		'ind_g':'Lg',
@@ -385,6 +389,11 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 	for param_name in cir_writing_dict:
 		circuit_parameters[param_name]=circuit_parameters[cir_writing_dict[param_name]]
 		del circuit_parameters[cir_writing_dict[param_name]]
+	
+	circuit_temp=circuit_initialization_parameters['simulation']['netlist_parameters']['cir_temp']
+	std_temp=circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']
+	circuit_parameters['cur0']=circuit_parameters['Io']+(circuit_temp-std_temp)*circuit_parameters['Io_k']
+	del circuit_parameters['Io']
 	
 	return circuit_parameters
 
