@@ -140,20 +140,19 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	# Manual Hand Calculations
 	optimization_input_parameters['pre_optimization']['manual_circuit_parameters']={
 	'Ld': 9e-9,
-	'Cd': 5.977423889299368e-13,
-	'W': 0.0023583977287756483,
+	'Cd': 4.602291449431157e-13,
+	'W': 0.0025355111165153267,
 	'Cg': 1.5458676014581085e-10,
-	'Io': 0.0006907015356571114,
+	'Io': 0.0007421079007402233,
 	'Rsum': 10000,
 	'Rk': 0.95,
 	'Ls': 3.182280567225685e-09,
-	'Lg': 1.627035404565489e-08,
+	'Lg': 1.693407413266686e-08,
 	'Rb': 5000,
-	'Cs': 1.9244427648712094e-11,
+	'Cs': 1.543016896294383e-11,
 	'Wk': 100
 	}	
 	
-
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Pre Optimization Simulation Parameters
 	optimization_input_parameters['pre_optimization']['simulation']={}
@@ -577,7 +576,7 @@ f_directory='/home/ee18b028/Optimization/Simulation_Results/CS_LNA/'
 
 file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 
-optimization_input_parameters['optimization']['run']='NO' #'YES'
+optimization_input_parameters['optimization']['run']='YES' #'YES'
 optimization_input_parameters['temperature_analysis']['run']='NO'
 optimization_input_parameters['sensitivity_analysis']['run']='NO'
 optimization_input_parameters['process_analysis']['run']='NO'
@@ -588,7 +587,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Single_Run_Multiple_Temp'						# SET THE FILENAME HERE
+	filename=f_directory+'Optimization_Temp_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
