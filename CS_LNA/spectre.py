@@ -993,7 +993,7 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 		# Creating spectre run directory
 		spectre_folder=circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['tcsh']+'Spectre_Run/'
 		spectre_path=spectre_folder+'T'+str(i)+'/'
-		if not os.path.exists(spectre_folder):
+		if not os.path.exists(spectre_path):
 			shutil.copytree(spectre_folder+'T_extra/',spectre_path)
 
 		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['directory']=netlist_path
