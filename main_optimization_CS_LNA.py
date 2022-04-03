@@ -175,8 +175,8 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	# Other Values
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['std_temp']=27
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['temp_list']=[27]
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['process_corner']=['tt']
+	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['temp_list']=[-40,27,120]
+	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['process_corner']=['ss','tt','ff']
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['conservative']='NO'
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['w_finger_max']=2e-6
 	

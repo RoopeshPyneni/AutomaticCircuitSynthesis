@@ -7,6 +7,8 @@ File Description 	: This file will contain the functions to write, run, and read
 
 #==========================================================================================================================
 from cgitb import small
+import os
+import shutil
 import numpy as np
 import fileinput
 import multiprocessing as mp
@@ -981,8 +983,21 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 		i_freq,i_process,i_temp=sp.get_iteration(i,n_freq,n_process,n_temp)
 		circuit_initialization_parameters_run[i]={}
 		circuit_initialization_parameters_run[i]=copy.deepcopy(circuit_initialization_parameters)
-		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['directory']=circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['directory']+'T'+str(i)+'/'
-		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T'+str(i)+'/spectre_run.tcsh'
+		
+		# Creating netlist directory
+		netlist_folder=circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['directory']
+		netlist_path=netlist_folder+'T'+str(i)+'/'
+		if not os.path.exists(netlist_path):
+			shutil.copytree(netlist_folder+'T_extra/',netlist_path)
+
+		# Creating spectre run directory
+		spectre_folder=circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['tcsh']+'Spectre_Run/'
+		spectre_path=netlist_folder+'T'+str(i)+'/'
+		if not os.path.exists(netlist_path):
+			shutil.copytree(netlist_folder+'T_extra/',netlist_path)
+
+		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['directory']=netlist_path
+		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['tcsh']=spectre_path+'spectre_run.tcsh'
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['fund_1']=f_list[i_freq]
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['fund_2']=f_list[i_freq]+1e6
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['process_corner']=process_list[i_process]
