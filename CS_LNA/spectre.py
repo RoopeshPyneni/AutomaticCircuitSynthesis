@@ -982,7 +982,7 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 		circuit_initialization_parameters_run[i]={}
 		circuit_initialization_parameters_run[i]=copy.deepcopy(circuit_initialization_parameters)
 		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['directory']=circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['directory']+'T'+str(i)+'/'
-		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T'+str(i)+'1/spectre_run.tcsh'
+		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['tcsh']=circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['tcsh']+'Spectre_Run/T'+str(i)+'/spectre_run.tcsh'
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['fund_1']=f_list[i_freq]
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['fund_2']=f_list[i_freq]+1e6
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['process_corner']=process_list[i_process]
@@ -1103,7 +1103,7 @@ def get_final_extracted_parameters_frequency(extracted_parameters_split,f_list,p
 				gain_array.append(extracted_parameters_combined[i]['gain_db'])
 				gain_phase_array.append(extracted_parameters_combined[i]['gain_phase'])
 			gain_min=min(gain_array)
-			gain_index=gain_array.index(gain_min)
+			gain_index=f_list[gain_array.index(gain_min)]
 			final_extracted_parameters['gain_db']=gain_min
 			final_extracted_parameters['gain_phase']=extracted_parameters_combined[gain_index]['gain_phase']
 			
@@ -1121,7 +1121,7 @@ def get_final_extracted_parameters_frequency(extracted_parameters_split,f_list,p
 				ZR_array.append(extracted_parameters_combined[i]['Zin_R'])
 				ZI_array.append(extracted_parameters_combined[i]['Zin_I'])
 			s11_max=max(s11_array)
-			s11_index=s11_array.index(s11_max)
+			s11_index=f_list[s11_array.index(s11_max)]
 			final_extracted_parameters['s11_db']=s11_max
 			final_extracted_parameters['Zin_R']=extracted_parameters_combined[s11_index]['Zin_R']
 			final_extracted_parameters['Zin_I']=extracted_parameters_combined[s11_index]['Zin_I']
