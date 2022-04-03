@@ -337,6 +337,57 @@ def run_file(circuit_initialization_parameters):
 
 """
 ===========================================================================================================================
+------------------------------------- SPECTRE PARALLEL FUNCTIONS ----------------------------------------------------------
+"""
+
+#-----------------------------------------------------------------------------------------------	
+# This function will tell which frequency, process and temperature is the given iteration
+def get_iteration(i,n_freq,n_process,n_temp):
+	
+	# Getting the frequency number
+	i_freq=i//(n_process*n_temp)
+	i-=(i_freq*n_process*n_temp)
+
+	# Getting the process number
+	i_process=i//n_temp
+
+	# Getting the temperature number
+	i_temp=i-(i_process*n_temp)
+
+	return i_freq,i_process,i_temp
+
+#-----------------------------------------------------------------------------------------------	
+# This function will split the extracted_parameters_dictionary into subdictionaries
+def split_extracted_parameters(extracted_parameters_combined,f_list,process_list,temp_list):
+	
+	n_freq=len(f_list)
+	n_process=len(process_list)
+	n_temp=len(temp_list)
+	n_total=n_freq*n_process*n_temp
+
+	extracted_parameters_split={}
+	for i in range(n_total):
+		i_freq,i_process,i_temp=get_iteration(i,n_freq,n_process,n_temp)
+		freq=f_list[i_freq]
+		process=process_list[i_process]
+		temp=temp_list[i_temp]
+
+		if temp not in extracted_parameters_split:
+			extracted_parameters_split[temp]={}
+		
+		if process not in extracted_parameters_split[temp]:
+			extracted_parameters_split[temp][process]={}
+		
+		if freq not in extracted_parameters_split[temp][process]:
+			extracted_parameters_split[temp][process][freq]={}
+		
+		extracted_parameters_split[temp][process][freq]=extracted_parameters_combined[i].copy()
+	
+	return extracted_parameters_split
+
+
+"""
+===========================================================================================================================
 ------------------------------------- TSMC INDUCTOR FUNCTIONS -------------------------------------------------------------
 """
 
