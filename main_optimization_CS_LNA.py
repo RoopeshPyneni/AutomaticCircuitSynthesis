@@ -93,7 +93,6 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	# Filenames
 	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/CS_LNA/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/cadence_project/'
-	#circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='mos_inductor' # 'ideal', 'series','mos_resistor','mos_capacitor','mos_inductor'
 	
 	# IIP3 Points
@@ -264,7 +263,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	# Other Values
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['std_temp']=27
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['temp_list']=[-40,27,120]
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['process_corner']='all'
+	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['process_corner']=['ss','tt','ff']
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['conservative']='NO'
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['w_finger_max']=2e-6
 	
@@ -578,7 +577,7 @@ f_directory='/home/ee18b028/Optimization/Simulation_Results/CS_LNA/'
 
 file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 
-optimization_input_parameters['optimization']['run']='NO' #'YES'
+optimization_input_parameters['optimization']['run']='YES' #'YES'
 optimization_input_parameters['temperature_analysis']['run']='NO'
 optimization_input_parameters['sensitivity_analysis']['run']='NO'
 optimization_input_parameters['process_analysis']['run']='NO'
@@ -589,7 +588,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Test_new_spectre_run'						# SET THE FILENAME HERE
+	filename=f_directory+'Optimization_7parallel_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

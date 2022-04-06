@@ -377,7 +377,8 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 
 	cir_writing_dict={	
 		'wid':'W',
-		#'cur0':'Io',
+		'cur0':'Io',
+		'cur0_k':'Io_k',
 		'res_b':'Rb',
 		'ind_d':'Ld',
 		'ind_g':'Lg',
@@ -392,11 +393,6 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 	for param_name in cir_writing_dict:
 		circuit_parameters[param_name]=circuit_parameters[cir_writing_dict[param_name]]
 		del circuit_parameters[cir_writing_dict[param_name]]
-	
-	circuit_temp=circuit_initialization_parameters['simulation']['netlist_parameters']['cir_temp']
-	std_temp=circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']
-	circuit_parameters['cur0']=circuit_parameters['Io']+(circuit_temp-std_temp)*circuit_parameters['Io_k']
-	del circuit_parameters['Io']
 	
 	return circuit_parameters
 
@@ -953,7 +949,7 @@ def write_extract_single(i,circuit_parameters,circuit_initialization_parameters)
 # This function will write the circuit parameters, run spectre and extract the output parameters for a single process
 def write_extract(circuit_parameters,circuit_initialization_parameters):
 	
-	pool=mp.Pool(5)
+	pool=mp.Pool(7)
 
 	# Getting the values of frequency and range
 	f_operating=circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']
@@ -1222,7 +1218,7 @@ def get_final_extracted_parameters_temperature(extracted_parameters_process,temp
 		'gain_delta':'max',
 		'gain_delta_0':'max',
 		'gain_delta_2':'max',
-		'Io':'max',
+		'Io':'mid',
 		'Zin_R':'mid',
 		'Zin_I':'mid',
 		'p_source':'mid',
@@ -1244,7 +1240,7 @@ def get_final_extracted_parameters_temperature(extracted_parameters_process,temp
 				param_array.append(extracted_parameters_process[temp][param])
 			extracted_parameters[param]=max(param_array)
 		else:
-			extracted_parameters[param]=extracted_parameters_process[temp_list[0]][param]
+			extracted_parameters[param]=extracted_parameters_process[temp_list[1]][param]
 	
 	return extracted_parameters
 
