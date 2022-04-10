@@ -433,6 +433,9 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 		cir.update_circuit(initial_circuit_parameters1)
 		loss_dict1=cir.calc_loss(output_conditions,loss_weights)
 		
+		print(cir.initial_circuit_parameters)
+		print(cir.extracted_parameters)
+		
 		# Calculating Slope	
 		circuit_parameters_slope[param_name]={}
 		for param in loss_dict:
@@ -542,10 +545,10 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	# Creating the dictionaries
 	loss_iter={} 				# This dictionary will store the value of all loss values for different iterations
 	loss_slope_iter={} 			# This dictionary will store the value of slope of losses for all parameters for different iterations
-	alpha_parameters_iter={} 	# This dictionary will store the value of threshold for different iterations
-	extracted_parameters_iter={}# This dictionary will store the value of output parameters for different iterations
+	alpha_parameters_iter={} 		# This dictionary will store the value of threshold for different iterations
+	extracted_parameters_iter={}		# This dictionary will store the value of output parameters for different iterations
 	initial_circuit_parameters_iter={} 	# This dictionary will store the value of circuit parameters for different iterations
-	circuit_parameters_iter={} 	# This dictionary will store the value of circuit parameters for different iterations
+	circuit_parameters_iter={} 		# This dictionary will store the value of circuit parameters for different iterations
 	sensitivity_iter={}			# This dictionary will store the value of output parameter sensitivty for different circuit parameters 
 	
 	# Running Eldo
@@ -599,9 +602,6 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		cir.update_circuit_parameters(circuit_parameters_slope,optimization_input_parameters,run_number,loss,loss_type)
 	
 		if process_temp_type=='single_tp':
-			temp_list=cir.circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']
-			process_list=cir.circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
-			
 			cir.circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']=temp_list
 			cir.circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']=process_list
 		

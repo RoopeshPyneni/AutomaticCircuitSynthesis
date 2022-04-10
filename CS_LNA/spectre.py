@@ -317,6 +317,12 @@ class Circuit():
 		current_loss_total=sum([current_loss[param] for param in zero_loss_array])
 		current_temp=temp_middle
 		current_process=process_middle
+		
+		print('\n-------------------------------------\n')
+		print('Initial Loss Function : ',current_loss)
+		print('Initial Loss Total    : ',current_loss_total)
+		print('Initial Temperature   : ',current_temp)
+		print('Initial Process       : ',current_process)
 
 		for temp in temp_list:
 			for process in process_list:
@@ -324,12 +330,24 @@ class Circuit():
 					continue
 				loss=self.calc_loss(output_conditions,loss_weights,temp=temp,process=process)
 				loss_total=sum([loss[param] for param in zero_loss_array])
+				
+				print('\n-------------------------------------\n')
+				print('Current Loss Function : ',loss)
+				print('Current Loss Total    : ',loss_total)
+				print('Current Temperature   : ',temp)
+				print('Current Process       : ',process)
 
 				if loss_total>current_loss_total:
 					current_loss_total=loss_total
 					current_loss=loss.copy()
 					current_temp=temp
 					current_process=process
+		
+		print('\n-------------------------------------\n')
+		print('Final Loss Function : ',current_loss)
+		print('Final Loss Total    : ',current_loss_total)
+		print('Final Temperature   : ',current_temp)
+		print('Final Process       : ',current_process)
 
 		return current_loss,current_temp,current_process
 
