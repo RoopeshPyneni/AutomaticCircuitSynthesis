@@ -126,20 +126,28 @@ class Circuit():
 	#---------------------------- Optimization Functions -------------------------------------------
 
 	# This function calculates the loss for Io Optimization
-	def calc_loss(self,output_conditions,loss_weights):
+	# KWARGS : This is used to choose the temperature and process if necessary
+	def calc_loss(self,output_conditions,loss_weights,**kwargs):
+
+		# Adding the start of the parameter string
+		tp_string=''
+		if 'process' in kwargs:
+			tp_string=str(kwargs['temp'])+'_'+str(kwargs['process'])+'_'
+		elif 'temp' in kwargs:
+			tp_string=str(kwargs['temp'])+'_'
 		
 		# Extracted Values
-		gain=self.extracted_parameters['gain_db']
-		iip3=self.extracted_parameters['iip3_dbm']
-		s11=self.extracted_parameters['s11_db']
-		nf=self.extracted_parameters['nf_db']
-		Io=self.extracted_parameters['Io']
+		gain=self.extracted_parameters[tp_string+'gain_db']
+		iip3=self.extracted_parameters[tp_string+'iip3_dbm']
+		s11=self.extracted_parameters[tp_string+'s11_db']
+		nf=self.extracted_parameters[tp_string+'nf_db']
+		Io=self.extracted_parameters[tp_string+'Io']
 
-		gain_delta0=self.extracted_parameters['gain_delta_0']
-		gain_delta2=self.extracted_parameters['gain_delta_2']
-		gain_delta=self.extracted_parameters['gain_delta']
+		gain_delta0=self.extracted_parameters[tp_string+'gain_delta_0']
+		gain_delta2=self.extracted_parameters[tp_string+'gain_delta_2']
+		gain_delta=self.extracted_parameters[tp_string+'gain_delta']
 
-		s11_middle=self.extracted_parameters['s11_middle']
+		s11_middle=self.extracted_parameters[tp_string+'s11_middle']
 		
 		# Reference Values
 		gain_ref=output_conditions['gain_db']
@@ -1032,10 +1040,13 @@ def get_final_extracted_parameters(extracted_parameters_split,f_list,process_lis
 # This function will write the circuit parameters, run spectre and extract the output parameters
 def get_final_extracted_parameters_frequency(extracted_parameters_split,f_list,process_list,temp_list):
 	
+	# Getting the least, middle, and maximum frequency
+	f_len=len(f_list)
 	small_frequency=f_list[0]
-	mid_frequency=f_list[1]
-	large_frequency=f_list[2]
+	mid_frequency=f_list[(f_len-1)//2]
+	large_frequency=f_list[f_len-1]
 
+	# Selecting which parameters are DC, and which parameter to select for AC among different frequencies
 	extracted_parameters_select={
 		'v_source':'dc',
 		'i_source':'dc',
@@ -1074,17 +1085,18 @@ def get_final_extracted_parameters_frequency(extracted_parameters_split,f_list,p
 		'iip3_dbm':'min'
 	}
 
-	
+	# First, we will iterate among different temperature and process lists
 	extracted_parameters_frequency={}
 	for temp in temp_list:
 		extracted_parameters_frequency[temp]={}
 		for process in process_list:
-
 			extracted_parameters_frequency[temp][process]={}
+
+			# Now, we have a given process and temperature ; We need to find the extracted parameters for this set
 			final_extracted_parameters={}
 			extracted_parameters_combined=extracted_parameters_split[temp][process]
 
-			# Getting the values for all three frequencies
+			# Getting the values for all frequencies in case it is AC
 			for param in extracted_parameters_combined[mid_frequency]:
 				if param in extracted_parameters_select:
 					if extracted_parameters_select[param]=='dc':
@@ -1094,13 +1106,19 @@ def get_final_extracted_parameters_frequency(extracted_parameters_split,f_list,p
 			
 			# Getting the min or mid or max parameter values for the best values
 			for param in extracted_parameters_select:
+
+				# Case I : DC Parameter or AC Parameter with mid value
 				if extracted_parameters_select[param]=='mid' or extracted_parameters_select[param]=='dc':
 					final_extracted_parameters[param]=extracted_parameters_combined[mid_frequency][param]
+
+				# Case II : AC Parameter with minimum value
 				elif extracted_parameters_select[param]=='min':
 					param_array=[]
 					for i in extracted_parameters_combined:
 						param_array.append(extracted_parameters_combined[i][param])
 					final_extracted_parameters[param]=min(param_array)
+				
+				# Case III : AC Parameter with maximum value
 				else:
 					param_array=[]
 					for i in extracted_parameters_combined:
@@ -1154,6 +1172,11 @@ def get_final_extracted_parameters_frequency(extracted_parameters_split,f_list,p
 # This function will combine the extracted_parameters
 def get_final_extracted_parameters_process(extracted_parameters_frequency,process_list,temp_list):
 	
+	# Getting the centre process
+	process_len=len(process_list)
+	middle_process=process_list[(process_len-1)//2]
+
+	# Getting the values for all process for all temperature
 	extracted_parameters_process={}
 	for temp in temp_list:
 		extracted_parameters_process[temp]={}
@@ -1171,7 +1194,7 @@ def get_final_extracted_parameters_process(extracted_parameters_frequency,proces
 		'gain_delta':'max',
 		'gain_delta_0':'max',
 		'gain_delta_2':'max',
-		'Io':'max',
+		'Io':'mid',
 		'Zin_R':'mid',
 		'Zin_I':'mid',
 		'p_source':'mid',
@@ -1180,22 +1203,29 @@ def get_final_extracted_parameters_process(extracted_parameters_frequency,proces
 		'vd1':'mid'
 	}
 
+	# Choosing the best process among the different temperatures
 	for temp in temp_list:
 		
 		# Getting the min or mid or max parameter values for the best values
 		for param in extracted_parameters_select:
+
+			# Case I : Minimum value
 			if extracted_parameters_select[param]=='min':
 				param_array=[]
 				for process in process_list:
 					param_array.append(extracted_parameters_frequency[temp][process][param])
 				extracted_parameters_process[temp][param]=min(param_array)
+			
+			# Case II : Maximum value
 			elif extracted_parameters_select[param]=='max':
 				param_array=[]
 				for process in process_list:
 					param_array.append(extracted_parameters_frequency[temp][process][param])
 				extracted_parameters_process[temp][param]=max(param_array)
+			
+			# Case III : Middle value ( for typical corner )
 			else:
-				extracted_parameters_process[temp][param]=extracted_parameters_frequency[temp]['tt'][param]
+				extracted_parameters_process[temp][param]=extracted_parameters_frequency[temp][middle_process][param]
 	
 	return extracted_parameters_process
 
@@ -1203,6 +1233,11 @@ def get_final_extracted_parameters_process(extracted_parameters_frequency,proces
 # This function will combine the extracted_parameters
 def get_final_extracted_parameters_temperature(extracted_parameters_process,temp_list):
 	
+	# Getting the centre temperature
+	temp_len=len(temp_list)
+	middle_temp=temp_list[(temp_len-1)//2]
+
+	# Getting the values for all temperatures
 	extracted_parameters={}
 	for temp in extracted_parameters_process:
 		for param_name in extracted_parameters_process[temp]:
@@ -1229,18 +1264,24 @@ def get_final_extracted_parameters_temperature(extracted_parameters_process,temp
 
 	# Getting the min or mid or max parameter values for the best values
 	for param in extracted_parameters_select:
+		
+		# Case I : Minimum value
 		if extracted_parameters_select[param]=='min':
 			param_array=[]
 			for temp in temp_list:
 				param_array.append(extracted_parameters_process[temp][param])
 			extracted_parameters[param]=min(param_array)
+		
+		# Case II : Maximum value
 		elif extracted_parameters_select[param]=='max':
 			param_array=[]
 			for temp in temp_list:
 				param_array.append(extracted_parameters_process[temp][param])
 			extracted_parameters[param]=max(param_array)
+		
+		# Case III : Middle value ( for central temperature )
 		else:
-			extracted_parameters[param]=extracted_parameters_process[temp_list[1]][param]
+			extracted_parameters[param]=extracted_parameters_process[middle_temp][param]
 	
 	return extracted_parameters
 
