@@ -295,6 +295,45 @@ class Circuit():
 		
 		return opt_dict
 
+	# This function will check which process and temperature is the worst case
+	def check_worst_case(self,output_conditions,loss_weights):
+
+		# Getting the temperature and process list
+		temp_list=self.circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']
+		process_list=self.circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
+
+		# Getting the middle temperature and process
+		temp_len=len(temp_list)
+		process_len=len(process_list)
+
+		temp_middle=temp_list[(temp_len-1)//2]
+		process_middle=temp_list[(process_len-1)//2]
+
+		# Getting the list of parameters that need to be optimized
+		zero_loss_array=['loss_s11','loss_gain','loss_iip3','loss_nf']
+
+		# Choosing the centre point as the best point
+		current_loss=self.calc_loss(output_conditions,loss_weights,temp=temp_middle,process=process_middle).copy()
+		current_loss_total=sum([current_loss[param] for param in zero_loss_array])
+		current_temp=temp_middle
+		current_process=process_middle
+
+		for temp in temp_list:
+			for process in process_list:
+				if temp==temp_middle and process==process_middle:
+					continue
+				loss=self.calc_loss(output_conditions,loss_weights,temp=temp,process=process)
+				loss_total=sum([loss[param] for param in zero_loss_array])
+
+				if loss_total>current_loss_total:
+					current_loss_total=loss_total
+					current_loss=loss.copy()
+					current_temp=temp
+					current_process=process
+
+		return current_loss,current_temp,current_process
+
+
 	# Function to perform pre optimization
 	def pre_optimization(self,optimization_input_parameters,timing_results):
 		pr.pre_optimization(self,optimization_input_parameters,timing_results)

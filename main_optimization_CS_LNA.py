@@ -202,7 +202,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=2
+	optimization_input_parameters['optimization'][1]['max_iteration']=3
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
@@ -211,6 +211,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization'][1]['optimization_type']=0
 	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Cd','Rk','Cs','Io_k']
 	optimization_input_parameters['optimization'][1]['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
+	optimization_input_parameters['optimization'][1]['process_temp_type']='single_tp'
 
 	# NOTES :
 	# loss_type will tell how to update the circuit parameters

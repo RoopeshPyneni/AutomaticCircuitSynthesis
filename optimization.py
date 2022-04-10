@@ -526,16 +526,18 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	
 	output_conditions=optimization_input_parameters['output_conditions']
 	
-	loss_weights      = optimization_input_parameters['optimization'][run_number]['loss_weights']
-	alpha_min         = optimization_input_parameters['optimization'][run_number]['alpha_min']
-	consec_iter       = optimization_input_parameters['optimization'][run_number]['consec_iter']
-	alpha_mult        = optimization_input_parameters['optimization'][run_number]['alpha_mult']
-	max_iteration     = optimization_input_parameters['optimization'][run_number]['max_iteration']
-	loss_type         = optimization_input_parameters['optimization'][run_number]['loss_type']
-	optimization_type = optimization_input_parameters['optimization'][run_number]['optimization_type']
+	loss_weights      	= optimization_input_parameters['optimization'][run_number]['loss_weights']
+	alpha_min         	= optimization_input_parameters['optimization'][run_number]['alpha_min']
+	consec_iter       	= optimization_input_parameters['optimization'][run_number]['consec_iter']
+	alpha_mult        	= optimization_input_parameters['optimization'][run_number]['alpha_mult']
+	max_iteration     	= optimization_input_parameters['optimization'][run_number]['max_iteration']
+	loss_type         	= optimization_input_parameters['optimization'][run_number]['loss_type']
+	optimization_type 	= optimization_input_parameters['optimization'][run_number]['optimization_type']
 	
-	alpha         = optimization_input_parameters['optimization'][run_number]['alpha']['value']
-	alpha_initial = optimization_input_parameters['optimization'][run_number]['alpha']['value']
+	alpha         		= optimization_input_parameters['optimization'][run_number]['alpha']['value']
+	alpha_initial 		= optimization_input_parameters['optimization'][run_number]['alpha']['value']
+
+	process_temp_type	= optimization_input_parameters['optimization'][run_number]['process_temp_type']
 	
 	# Creating the dictionaries
 	loss_iter={} 				# This dictionary will store the value of all loss values for different iterations
@@ -575,11 +577,33 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 
 	#--------------------------- Performing the iterations ---------------------------------
 	while i<max_iteration:
+
+		# Checking the worst case loss for single_tp
+		if process_temp_type=='single_tp':
+			loss_weights=optimization_input_parameters['optimization'][run_number]['loss_weights']
+			loss,temp,process=cir.check_worst_case(output_conditions,loss_weights)
 	
 		# Calculating the slope of loss and output sensitivity and updating the circuit parameters
 		print('Calculate slope')
-		circuit_parameters_slope,circuit_parameters_sensitivity=calc_loss_slope(cir,output_conditions,loss_iter[i-1],optimization_input_parameters,run_number)
-		cir.update_circuit_parameters(circuit_parameters_slope,optimization_input_parameters,run_number,loss_iter[i-1],loss_type)
+
+		if process_temp_type=='single_tp':
+			temp_list=cir.circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']
+			process_list=cir.circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
+			
+			cir.circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']=[temp]
+			cir.circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']=[process]
+		else:
+			loss=loss_iter[i-1]
+
+		circuit_parameters_slope,circuit_parameters_sensitivity=calc_loss_slope(cir,output_conditions,loss,optimization_input_parameters,run_number)
+		cir.update_circuit_parameters(circuit_parameters_slope,optimization_input_parameters,run_number,loss,loss_type)
+	
+		if process_temp_type=='single_tp':
+			temp_list=cir.circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']
+			process_list=cir.circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
+			
+			cir.circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']=temp_list
+			cir.circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']=process_list
 		
 		# Extracting output parameters for new circuit parameters
 		print('Run circuit')
