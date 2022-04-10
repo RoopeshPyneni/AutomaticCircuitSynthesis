@@ -307,7 +307,7 @@ class Circuit():
 		process_len=len(process_list)
 
 		temp_middle=temp_list[(temp_len-1)//2]
-		process_middle=temp_list[(process_len-1)//2]
+		process_middle=process_list[(process_len-1)//2]
 
 		# Getting the list of parameters that need to be optimized
 		zero_loss_array=['loss_s11','loss_gain','loss_iip3','loss_nf']
