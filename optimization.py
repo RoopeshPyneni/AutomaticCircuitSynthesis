@@ -561,6 +561,9 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	optimization_results['optimization_start']['extracted_parameters']=cir.get_extracted_parameters()
 
 	# Calculating loss
+	initial_circuit_parameters_iter[-1]=cir.initial_circuit_parameters.copy()
+	circuit_parameters_iter[-1]=cir.circuit_parameters.copy()
+	extracted_parameters_iter[-1]=cir.extracted_parameters.copy()
 	loss_iter[-1]=cir.calc_loss(output_conditions,loss_weights)
 	
 	# Printing the values of loss before optimization

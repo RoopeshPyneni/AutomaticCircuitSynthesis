@@ -254,21 +254,21 @@ class Circuit():
 
 		# Defining some values
 		n_iter=optimization_results['n_iter']
-		iter_min=0
+		iter_min=-1
 		
 		# These arrays define which variable must be zero and which should be optimized
 		zero_loss_array=['loss_s11','loss_gain','loss_iip3','loss_nf']
 		minimize_loss_array=['loss_Io','loss_gain_delta','loss_s11_middle']
 
 		# Checking the first iter point
-		total_loss=optimization_results['loss_iter'][0]['loss']
-		loss_Io_min=sum([optimization_results['loss_iter'][0][key] for key in minimize_loss_array])
-		if sum([optimization_results['loss_iter'][0][key] for key in zero_loss_array])>loss_max:
+		total_loss=optimization_results['loss_iter'][-1]['loss']
+		loss_Io_min=sum([optimization_results['loss_iter'][-1][key] for key in minimize_loss_array])
+		if sum([optimization_results['loss_iter'][-1][key] for key in zero_loss_array])>loss_max:
 			flag=0
 		else:
 			flag=1 # This means that we got the final point
 		
-		for i in range(1,n_iter):
+		for i in range(0,n_iter):
 			if sum([optimization_results['loss_iter'][i][key] for key in zero_loss_array])>loss_max:
 				if flag==1:
 					continue
