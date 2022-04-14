@@ -140,19 +140,19 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	# Manual Hand Calculations
 	optimization_input_parameters['pre_optimization']['manual_circuit_parameters']={
 	'Ld': 9e-9,
-	'Cd': 4.906166522986728e-13,
-	'W': 0.0026498136304906154,
+	'Cd': 5.489969859971638e-13,
+	'W': 0.0026388121426774475,
 	'Cg': 1.5458676014581085e-10,
-	'Io': 0.0013930494441418571,
+	'Io': 0.0019063507140805855,
 	'Rsum': 10000,
-	'Rk': 0.95,
+	'Rk': 0.9310180237866711,
 	'Ls': 3.182280567225685e-09,
-	'Lg': 1.750635993731022e-08,
+	'Lg': 1.6553517519102767e-08,
 	'Rb': 5000,
-	'Cs': 1.2969812317648152e-11,
+	'Cs': 1.2271777187332068e-11,
 	'Wk': 100,
-	'Io_k':2.0010313781380156e-06
-	}	
+	'Io_k':2.0683025703619897e-06
+	}
 	
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Pre Optimization Simulation Parameters
@@ -202,7 +202,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=50
+	optimization_input_parameters['optimization'][1]['max_iteration']=25
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
@@ -211,7 +211,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization'][1]['optimization_type']=0
 	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Cd','Rk','Cs','Io_k']
 	optimization_input_parameters['optimization'][1]['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
-	optimization_input_parameters['optimization'][1]['process_temp_type']='single_tp'
+	optimization_input_parameters['optimization'][1]['process_temp_type']='all'
 
 	# NOTES :
 	# loss_type will tell how to update the circuit parameters
@@ -545,7 +545,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'2_Optimization_TP_1'						# SET THE FILENAME HERE
+	filename=f_directory+'2_Optimization_TP_3'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
