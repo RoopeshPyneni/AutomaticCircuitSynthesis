@@ -749,7 +749,7 @@ def write_circuit_parameters(circuit_parameters,circuit_initialization_parameter
 
 	print('\n\n----- Write Circuit Parameters -------\n\n')
 	print(circuit_parameters)
-	
+
 	# We will write the new values to the Basic Circuit
 	f=open(filename1,'r+')
 	s=''
@@ -1139,6 +1139,9 @@ def write_extract_multiple_circuits(circuit_parameters_dict,circuit_initializati
 	circuit_parameters_run={}
 	for i in range(n_runs):
 		circuit_parameters_run[i]=circuit_parameters_dict[i//n_circuits].copy()
+
+		print('\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~ CIRCUIT PARAMETER RUN ~~~~~~~~~~~~~~~~\n\n\n')
+		print(circuit_parameters_run[i])
 		
 	# Creating new circuit initialization parameters
 	circuit_initialization_parameters_run={}
