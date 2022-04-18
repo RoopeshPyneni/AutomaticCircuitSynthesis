@@ -406,13 +406,13 @@ def split_extracted_parameters_multiple(extracted_parameters_combined,f_list,pro
 		if circuit_number not in extracted_parameters_split:
 			extracted_parameters_split[circuit_number]={}
 
-		if temp not in extracted_parameters_split:
+		if temp not in extracted_parameters_split[circuit_number]:
 			extracted_parameters_split[circuit_number][temp]={}
 		
-		if process not in extracted_parameters_split[temp]:
+		if process not in extracted_parameters_split[circuit_number][temp]:
 			extracted_parameters_split[circuit_number][temp][process]={}
 		
-		if freq not in extracted_parameters_split[temp][process]:
+		if freq not in extracted_parameters_split[circuit_number][temp][process]:
 			extracted_parameters_split[circuit_number][temp][process][freq]={}
 		
 		extracted_parameters_split[circuit_number][temp][process][freq]=extracted_parameters_combined[i].copy()
