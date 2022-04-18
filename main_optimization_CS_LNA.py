@@ -151,7 +151,9 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	'Rb': 5000,
 	'Cs': 1.2271777187332068e-11,
 	'Wk': 100,
-	'Io_k':2.0683025703619897e-06
+	'Io_k':2.0683025703619897e-06,
+	'Wpr':800e-9,
+	'Cpr':10e-15
 	}
 	
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -545,7 +547,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'1_Test_Optimization_Best_Point_1'						# SET THE FILENAME HERE
+	filename=f_directory+'2_Test_Single_ProcessCapacitor_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

@@ -23,7 +23,7 @@ import sys
 """
 
 #--------------------------------------------------------------------------------------------------------------------------
-# Creating a class for the circuit 
+# Creating a class for the circuit
 class Circuit():
 	
 	#-----------------------------------------------------------------------------------------------
@@ -415,8 +415,11 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 		circuit_parameters['res_ls']=circuit_parameters['Ls']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi/15
 
 	# Calculating the number of fingers for the MOSFETs
-	n_finger=int(circuit_parameters['W']/circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max'])+1
-	circuit_parameters['n_finger']=n_finger
+	#n_finger=int(circuit_parameters['W']/circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max'])+1
+	#circuit_parameters['n_finger']=n_finger
+
+	circuit_parameters['n_finger']=int(circuit_parameters['W']/circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max'])+1
+	circuit_parameters['n_finger_pr']=int(circuit_parameters['Wpr']/circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max'])+1
 
 	# Getting the real resistor parameters
 	if circuit_type=='mos_resistor' or circuit_type=='mos_capacitor' or circuit_type=='mos_inductor':
@@ -431,6 +434,7 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 		circuit_parameters['wid_cap_g'],circuit_parameters['len_cap_g']=sp.calculate_MOS_capacitor(circuit_parameters['Cg'])
 		circuit_parameters['mf_cap_s']=sp.calculate_mimcap(circuit_parameters['Cs'],5.6329e-15)		#1+int(circuit_parameters['Cs']/5.6329e-15)
 		circuit_parameters['mf_cap_d']=sp.calculate_mimcap(circuit_parameters['Cd'],1.7166e-16)		#1+int(circuit_parameters['Cd']/1.7166e-16)
+		circuit_parameters['mf_cap_pr']=sp.calculate_mimcap(circuit_parameters['Cpr'],1.7166e-16)		#1+int(circuit_parameters['Cd']/1.7166e-16)
 
 	# Getting the real inductor parameters
 	if circuit_type=='mos_inductor':
@@ -451,6 +455,8 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 		'cap_s':'Cs',
 		'cap_g':'Cg',
 		'cap_d':'Cd',
+		'wid_pr':'Wpr',
+		'cap_pr':'Cpr',
 		'res_sum':'Rsum',
 		'res_k':'Rk'
 	}
@@ -849,6 +855,17 @@ def write_simulation_parameters(circuit_initialization_parameters,circuit_name):
 	for param_name in circuit_initialization_parameters['simulation']['netlist_parameters']:
 		write_dict[param_name]=circuit_initialization_parameters['simulation']['netlist_parameters'][param_name]
 	process_corner=circuit_initialization_parameters['simulation']['netlist_parameters']['process_corner']
+
+	# Write dict with process switches
+	write_dict['sw_pr1']=0.0
+	write_dict['sw_pr2']=0.0
+	write_dict['sw_pr3']=0.0
+	if process_corner=='tt':
+		write_dict['sw_pr3']=1.0
+	else:
+		write_dict['sw_pr3']=1.0
+		write_dict['sw_pr2']=1.0
+		write_dict['sw_pr1']=1.0
 	
 	write_dict['len']=circuit_initialization_parameters['MOS']['Lmin']
 	write_dict['v_dd']=circuit_initialization_parameters['MOS']['Vdd']
