@@ -211,7 +211,8 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization'][1]['alpha_mult']=1
 	optimization_input_parameters['optimization'][1]['loss_type']=2
 	optimization_input_parameters['optimization'][1]['optimization_type']=0
-	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Cd','Rk','Cs','Io_k']
+	#optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Cd','Rk','Cs','Io_k']
+	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Cd','Cpr','Wpr']
 	optimization_input_parameters['optimization'][1]['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
 	optimization_input_parameters['optimization'][1]['process_temp_type']='all'
 
@@ -547,7 +548,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'2_Test_Single_ProcessCapacitor_1'						# SET THE FILENAME HERE
+	filename=f_directory+'2_Test_Optimization_ProcessCapacitor_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
