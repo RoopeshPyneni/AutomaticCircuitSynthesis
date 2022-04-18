@@ -385,6 +385,41 @@ def split_extracted_parameters(extracted_parameters_combined,f_list,process_list
 	
 	return extracted_parameters_split
 
+#-----------------------------------------------------------------------------------------------	
+# This function will split the extracted_parameters_dictionary into subdictionaries
+def split_extracted_parameters_multiple(extracted_parameters_combined,f_list,process_list,temp_list,n_circuits):
+	
+	n_freq=len(f_list)
+	n_process=len(process_list)
+	n_temp=len(temp_list)
+	n_total=n_circuits*n_freq*n_process*n_temp
+
+	extracted_parameters_split={}
+	for i in range(n_total):
+		i_freq,i_process,i_temp=get_iteration(i%n_circuits,n_freq,n_process,n_temp)
+		freq=f_list[i_freq]
+		process=process_list[i_process]
+		temp=temp_list[i_temp]
+
+		circuit_number=i//n_circuits
+
+		if circuit_number not in extracted_parameters_split:
+			extracted_parameters_split[circuit_number]={}
+
+		if temp not in extracted_parameters_split:
+			extracted_parameters_split[circuit_number][temp]={}
+		
+		if process not in extracted_parameters_split[temp]:
+			extracted_parameters_split[circuit_number][temp][process]={}
+		
+		if freq not in extracted_parameters_split[temp][process]:
+			extracted_parameters_split[circuit_number][temp][process][freq]={}
+		
+		extracted_parameters_split[circuit_number][temp][process][freq]=extracted_parameters_combined[i].copy()
+	
+	return extracted_parameters_split
+
+
 
 """
 ===========================================================================================================================

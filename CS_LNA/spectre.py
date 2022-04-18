@@ -67,6 +67,14 @@ class Circuit():
 	# Running the circuit
 	def run_circuit(self):
 		self.extracted_parameters=write_extract(self.circuit_parameters,self.circuit_initialization_parameters)
+	
+	# Running multiple circuits 
+	def run_circuit_multiple(self,initial_circuit_parameters_dict):
+		circuit_parameters_dict={}
+		for i in initial_circuit_parameters_dict:
+			circuit_parameters_dict[i]=get_final_circuit_parameters(initial_circuit_parameters_dict[i],self.circuit_initialization_parameters)
+		extracted_parameters_dict=write_extract(circuit_parameters_dict,self.circuit_initialization_parameters)
+		return extracted_parameters_dict
 
 	# Updating the circuit parameters and running the circuit
 	def update_circuit(self,initial_circuit_parameters):
@@ -1092,6 +1100,82 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 	extracted_parameters_split=sp.split_extracted_parameters(extracted_parameters_combined,f_list,process_list,temp_list)
 
 	final_extracted_parameters=get_final_extracted_parameters(extracted_parameters_split,f_list,process_list,temp_list)
+	
+	pool.close()
+	pool.join()
+
+	return final_extracted_parameters
+
+#-----------------------------------------------------------------------------------------------
+# This function will write the circuit parameters, run spectre and extract the output parameters for a single process
+def write_extract_multiple_circuits(circuit_parameters_dict,circuit_initialization_parameters):
+	
+	pool=mp.Pool(8)
+
+	# Getting the values of frequency and range
+	f_operating=circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']
+	f_range=circuit_initialization_parameters['simulation']['standard_parameters']['f_range']
+	f_list=[f_operating-f_range,f_operating,f_operating+f_range]
+	n_freq=3
+
+	# Getting the different processes
+	process_list=circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
+	n_process=len(process_list)
+
+	# Getting the temperature list
+	temp_list=circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']
+	n_temp=len(temp_list)
+
+	# Getting the circuit parameters list
+	n_circuits=len(circuit_parameters_dict)
+
+	# Getting the total number of runs
+	n_runs=n_circuits*n_freq*n_process*n_temp
+
+	# Creating new circuit parameter files
+	circuit_parameters_run={}
+	for i in range(n_runs):
+		circuit_parameters_run[i]=circuit_parameters_dict[i//n_circuits].copy()
+		
+	# Creating new circuit initialization parameters
+	circuit_initialization_parameters_run={}
+	for i in range(n_runs):
+		i_freq,i_process,i_temp=sp.get_iteration(i%n_circuits,n_freq,n_process,n_temp)
+		circuit_initialization_parameters_run[i]={}
+		circuit_initialization_parameters_run[i]=copy.deepcopy(circuit_initialization_parameters)
+		
+		# Creating netlist directory
+		netlist_folder=circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['directory']
+		netlist_path=netlist_folder+'T'+str(i)+'/'
+		if not os.path.exists(netlist_path):
+			shutil.copytree(netlist_folder+'T_extra/',netlist_path)
+
+		# Creating spectre run directory
+		spectre_folder=circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['tcsh']+'Spectre_Run/'
+		spectre_path=spectre_folder+'T'+str(i)+'/'
+		if not os.path.exists(spectre_path):
+			shutil.copytree(spectre_folder+'T_extra/',spectre_path)
+
+		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['directory']=netlist_path
+		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['tcsh']=spectre_path+'spectre_run.tcsh'
+		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['fund_1']=f_list[i_freq]
+		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['fund_2']=f_list[i_freq]+1e6
+		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['process_corner']=process_list[i_process]
+		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['cir_temp']=temp_list[i_temp]
+		
+	# Creating processes
+	results_async=[pool.apply_async(write_extract_single,args=(i,circuit_parameters_run[i],circuit_initialization_parameters_run[i])) for i in range(n_runs)]
+
+	extracted_parameters_combined={}
+	for r in results_async:
+		(i,extracted_parameters)=r.get()
+		extracted_parameters_combined[i]=extracted_parameters
+		
+	extracted_parameters_split=sp.split_extracted_parameters_multiple(extracted_parameters_combined,f_list,process_list,temp_list,n_circuits)
+
+	final_extracted_parameters={}
+	for i in range(n_circuits):
+		final_extracted_parameters[i]=get_final_extracted_parameters(extracted_parameters_split[i],f_list,process_list,temp_list)
 	
 	pool.close()
 	pool.join()

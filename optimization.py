@@ -409,16 +409,18 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 	circuit_parameters_sensitivity={}
 	for param_name in optimization_input_parameters['optimization'][run_number]['optimizing_parameters']:
 		circuit_parameters_sensitivity[param_name]=0
+	circuit_parameters_slope={} # This dictionary will store the values of slope of different losses with change of all circuit parameters
 	
 	# Getting initial values
 	initial_circuit_parameters_initial=cir.get_initial_circuit_parameters()
-	circuit_parameters_initial=cir.get_circuit_parameters()
 	extracted_parameters_initial=cir.get_extracted_parameters()
 
-	# Creating new dictionaries
-	circuit_parameters_slope={} # This dictionary will store the values of slope of different losses with change of all circuit parameters
-	
-	# Calculating the value to update each parameter with
+	# Getting the list of circuit and extracted parameters
+	initial_circuit_parameters_dict={}
+	extracted_parameters_dict={}
+
+	# Calculating the initial circuit parameters dict
+	i=0
 	for param_name in optimization_input_parameters['optimization'][run_number]['optimizing_parameters']:
 		
 		# Calculating the increment value
@@ -426,15 +428,19 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 		increment=initial_circuit_parameters_initial[param_name]*increment_factor
 	
 		# Incrementing the circuit parameter
-		initial_circuit_parameters1=initial_circuit_parameters_initial.copy()
-		initial_circuit_parameters1[param_name]=initial_circuit_parameters1[param_name]+increment
-		
-		# Extracting Loss
-		cir.update_circuit(initial_circuit_parameters1)
+		initial_circuit_parameters_dict[i]=initial_circuit_parameters_initial.copy()
+		initial_circuit_parameters_dict[i][param_name]=initial_circuit_parameters_dict[i][param_name]+increment
+
+	# Running the circuits and calculating the loss
+	cir.run_circuit_multiple(initial_circuit_parameters_dict)
+
+	# Calculating the slope and sensitivity
+	i=0
+	for param_name in optimization_input_parameters['optimization'][run_number]['optimizing_parameters']:
+
+		cir.extracted_parameters=extracted_parameters_dict[i].copy()
 		loss_dict1=cir.calc_loss(output_conditions,loss_weights)
-		
-		print(cir.initial_circuit_parameters)
-		print(cir.extracted_parameters)
+		extracted_parameters1=extracted_parameters_dict[i].copy()
 		
 		# Calculating Slope	
 		circuit_parameters_slope[param_name]={}
@@ -443,14 +449,13 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 			
 		# Calculating Sensitivity
 		circuit_parameters_sensitivity[param_name]={}
-		extracted_parameters1=cir.get_extracted_parameters()
 		for categ_name in optimization_input_parameters['optimization'][run_number]['output_parameters_list']:
 			initial_param=extracted_parameters_initial[categ_name]
 			final_param=extracted_parameters1[categ_name]
 			percent_change=(final_param-initial_param)/(initial_param*increment_factor)
 			circuit_parameters_sensitivity[param_name][categ_name]=percent_change
 	
-	cir.update_circuit_state(initial_circuit_parameters_initial,circuit_parameters_initial,extracted_parameters_initial)
+	cir.extracted_parameters=extracted_parameters_initial.copy()
 		
 	return circuit_parameters_slope,circuit_parameters_sensitivity
 
