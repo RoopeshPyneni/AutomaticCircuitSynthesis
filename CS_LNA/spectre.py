@@ -76,7 +76,7 @@ class Circuit():
 		for i in initial_circuit_parameters_dict:
 			circuit_parameters_dict[i]=get_final_circuit_parameters(initial_circuit_parameters_dict[i].copy(),self.circuit_initialization_parameters).copy()
 		print(circuit_parameters_dict)
-		extracted_parameters_dict=write_extract(circuit_parameters_dict,self.circuit_initialization_parameters)
+		extracted_parameters_dict=write_extract_multiple_circuits(circuit_parameters_dict,self.circuit_initialization_parameters)
 		return extracted_parameters_dict
 
 	# Updating the circuit parameters and running the circuit
