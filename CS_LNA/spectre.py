@@ -74,7 +74,7 @@ class Circuit():
 		print(initial_circuit_parameters_dict)
 		circuit_parameters_dict={}
 		for i in initial_circuit_parameters_dict:
-			circuit_parameters_dict[i]=get_final_circuit_parameters(initial_circuit_parameters_dict[i],self.circuit_initialization_parameters).copy()
+			circuit_parameters_dict[i]=get_final_circuit_parameters(initial_circuit_parameters_dict[i].copy(),self.circuit_initialization_parameters).copy()
 		print(circuit_parameters_dict)
 		extracted_parameters_dict=write_extract(circuit_parameters_dict,self.circuit_initialization_parameters)
 		return extracted_parameters_dict
@@ -426,9 +426,6 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 		circuit_parameters['res_ls']=circuit_parameters['Ls']*circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']*2*np.pi/15
 
 	# Calculating the number of fingers for the MOSFETs
-	#n_finger=int(circuit_parameters['W']/circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max'])+1
-	#circuit_parameters['n_finger']=n_finger
-
 	circuit_parameters['n_finger']=int(circuit_parameters['W']/circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max'])+1
 	circuit_parameters['n_finger_pr']=int(circuit_parameters['Wpr']/circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max'])+1
 
@@ -750,6 +747,9 @@ def write_circuit_parameters(circuit_parameters,circuit_initialization_parameter
 	filename1=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']+'/circ.scs'
 	filename2=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']+'/circ.scs'
 
+	print('\n\n----- Write Circuit Parameters -------\n\n')
+	print(circuit_parameters)
+	
 	# We will write the new values to the Basic Circuit
 	f=open(filename1,'r+')
 	s=''
