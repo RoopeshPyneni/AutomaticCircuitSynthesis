@@ -1138,7 +1138,7 @@ def write_extract_multiple_circuits(circuit_parameters_dict,circuit_initializati
 	# Creating new circuit parameter files
 	circuit_parameters_run={}
 	for i in range(n_runs):
-		circuit_parameters_run[i]=circuit_parameters_dict[i//n_circuits].copy()
+		circuit_parameters_run[i]=circuit_parameters_dict[i%n_circuits].copy()
 
 		print('\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~ CIRCUIT PARAMETER RUN ~~~~~~~~~~~~~~~~\n\n\n')
 		print(circuit_parameters_run[i])
@@ -1146,7 +1146,7 @@ def write_extract_multiple_circuits(circuit_parameters_dict,circuit_initializati
 	# Creating new circuit initialization parameters
 	circuit_initialization_parameters_run={}
 	for i in range(n_runs):
-		i_freq,i_process,i_temp=sp.get_iteration(i%n_circuits,n_freq,n_process,n_temp)
+		i_freq,i_process,i_temp=sp.get_iteration(i//n_circuits,n_freq,n_process,n_temp)
 		circuit_initialization_parameters_run[i]={}
 		circuit_initialization_parameters_run[i]=copy.deepcopy(circuit_initialization_parameters)
 		

@@ -396,12 +396,12 @@ def split_extracted_parameters_multiple(extracted_parameters_combined,f_list,pro
 
 	extracted_parameters_split={}
 	for i in range(n_total):
-		i_freq,i_process,i_temp=get_iteration(i%n_circuits,n_freq,n_process,n_temp)
+		i_freq,i_process,i_temp=get_iteration(i//n_circuits,n_freq,n_process,n_temp)
 		freq=f_list[i_freq]
 		process=process_list[i_process]
 		temp=temp_list[i_temp]
 
-		circuit_number=i//n_circuits
+		circuit_number=i%n_circuits
 
 		if circuit_number not in extracted_parameters_split:
 			extracted_parameters_split[circuit_number]={}
