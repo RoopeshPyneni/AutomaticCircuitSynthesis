@@ -430,6 +430,7 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 		# Incrementing the circuit parameter
 		initial_circuit_parameters_dict[i]=initial_circuit_parameters_initial.copy()
 		initial_circuit_parameters_dict[i][param_name]=initial_circuit_parameters_dict[i][param_name]+increment
+		i+=1
 
 	# Running the circuits and calculating the loss
 	cir.run_circuit_multiple(initial_circuit_parameters_dict)
@@ -441,6 +442,7 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 		cir.extracted_parameters=extracted_parameters_dict[i].copy()
 		loss_dict1=cir.calc_loss(output_conditions,loss_weights)
 		extracted_parameters1=extracted_parameters_dict[i].copy()
+		i+=1
 		
 		# Calculating Slope	
 		circuit_parameters_slope[param_name]={}
