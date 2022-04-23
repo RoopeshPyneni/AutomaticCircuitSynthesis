@@ -215,8 +215,8 @@ def Parameter_Sweep(file_directory_netlist,file_directory_output):
 		'fund_1':1e9
 	}
 
-	len_array=np.linspace(5e-6,100e-6,20)
-	wid_array=np.linspace(5e-6,10e-6,2)
+	len_array=np.linspace(0.2e-6,10e-6,50)
+	wid_array=np.linspace(0.2e-6,10e-6,50)
 	
 	# Creating the folder to store the outputs
 	if not os.path.exists(file_directory_output):
@@ -265,7 +265,7 @@ start=datetime.datetime.now()
 print(start)
 
 # Code to do capacitor sweep data storage
-file_directory_output='/home/ee18b028/Optimization/Simulation_Results/Capacitor/Sweep2/'
+file_directory_output='/home/ee18b028/Optimization/Simulation_Results/Capacitor/Sweep1/'
 Parameter_Sweep(file_directory,file_directory_output)
 
 end=datetime.datetime.now()
