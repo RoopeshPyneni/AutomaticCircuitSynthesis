@@ -259,7 +259,7 @@ def Parameter_Sweep(file_directory_netlist,file_directory_output):
 """
 
 # Filenames for the netlist file
-file_directory='/home/ee18b028/cadence_project/Test_Circuits/Capacitor/capacitor_test_3'
+file_directory='/home/ee18b028/cadence_project/Test_Circuits/Capacitor/capacitor_test_1'
 
 start=datetime.datetime.now()
 print(start)
