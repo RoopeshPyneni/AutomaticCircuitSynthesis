@@ -2,8 +2,9 @@
 """
 Name				: Roopesh Pyneni
 Roll Number			: EE18B028
-File Description 	: This file will contain different analysis that is performed to characterize the resistors in TSMC 65nm model file
+File Description 	: This file is used to store the value of Q and L of TSMC Inductor by sweeping various inductor parameters
 """
+
 #===========================================================================================================================
 import numpy as np
 import fileinput
@@ -11,15 +12,14 @@ import os
 from matplotlib import pylab
 from pylab import *
 
+
 """
-====================================================================================================================================================================================
------------------------------------------------------------- EXTRACTION FUNCTION ---------------------------------------------------------------------------------------------------
+============================================================================================================================
+------------------------------------------ EXTRACTION FUNCTION -------------------------------------------------------------
 """
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Changing the values extracted as 10e1, 1.5e-2 to a floating point value 
-# Input: Value of the number in string format 	
-# Output: Value of the number in float
 def valueE_to_value(value_name):
     
     # Extracting the number before and after e
@@ -37,8 +37,6 @@ def valueE_to_value(value_name):
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Extracting the files as an array of lines
-# Inputs: file name
-# Output: array of lines
 def extract_file(file_name):
 	f=open(file_name)
 	lines=f.readlines()
@@ -103,8 +101,8 @@ def extract_hb_param(filename,freq,i_cur):
 
 
 """
-====================================================================================================================================================================================
------------------------------------------------------------- FILE WRITE FUNCTIONS --------------------------------------------------------------------------------------------------
+============================================================================================================================
+------------------------------------------ FILE WRITE FUNCTIONS ------------------------------------------------------------
 """
 
 #-----------------------------------------------------------------
@@ -130,7 +128,8 @@ def write_circuit_parameters(filename,circuit_parameters):
 # Inputs  : Optimization_Input_Parameters
 # Outputs : NONE
 def write_tcsh_file(file_directory):
-	filename='/home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh'
+	
+	filename='/home/ee18b028/cadence_project/Spectre_Run/spectre_run.tcsh'
 	f=open(filename,'r+')
 	s=''
 	
@@ -147,17 +146,17 @@ def write_tcsh_file(file_directory):
 
 
 """
-====================================================================================================================================================================================
------------------------------------------------------------- SPECTRE RUNNING FUNCTIONS ---------------------------------------------------------------------------------------------
+============================================================================================================================
+------------------------------------------ SPECTRE RUNNING FUNCTIONS -------------------------------------------------------
 """
 
 #-----------------------------------------------------------------------------------------------	
 # This function will run the shell commands to run Spectre
 def run_file():
-	os.system('tcsh /home/ee18b028/Optimization/Codes/AutomaticCircuitSynthesis/spectre_run.tcsh')	# This is the command to run the spectre file
+	os.system('tcsh /home/ee18b028/cadence_project/Spectre_Run/spectre_run.tcsh')	# This is the command to run the spectre file
 	
 #-----------------------------------------------------------------------------------------------
-# This function will write the circuit parameters, run Eldo and extract the output parameters
+# This function will write the circuit parameters, run spectre and extract the output parameters
 def write_extract(file_directory,circuit_parameters):
 
 	# Getting the filenames
@@ -180,41 +179,71 @@ def write_extract(file_directory,circuit_parameters):
 	
 	return capacitance
 
-#===========================================================================================================================
 
 """
-====================================================================================================================================================
------------------------------------------------------------- CAPACITOR TEST 1 ----------------------------------------------------------------------
+============================================================================================================================
+------------------------------------------ SWEEPING CIRCUIT PARAMETERS -----------------------------------------------------
 """
 
 #---------------------------------------------------------------------------------------------------------------------------	
-# Calculating the capacitance of the MOS Capacitor by varying nf, width and length, i_sin ( i_sin should not vary C much )
-def MOS_Capacitor_1(file_directory_netlist,file_directory_output):
+# Calculating the Q and L of the inductor for various circuit parameters
+def Parameter_Sweep(file_directory_netlist,file_directory_output):
 
-	# Storing the variable names
 	circuit_parameters={
-		'len':5e-6,
-		'wid':5e-6,
+		'len':0.2e-6,
+		'wid':0.2e-6,
 		'i_sin':1e-6,
 		'm_factor':1.0,
 		'fund_1':1e9
 	}
 
-	# Running spectre
-	capacitance=write_extract(file_directory_netlist,circuit_parameters)
+	len_array=np.linspace(5e-6,100e-6,20)
+	wid_array=np.linspace(5e-6,100e-6,20)
+	
+	# Creating the folder to store the outputs
+	if not os.path.exists(file_directory_output):
+		os.makedirs(file_directory_output)
 
-	# Printing the value
-	print('Capacitance : ',capacitance)
+	# Opening the file
+	filename_csv=file_directory_output+'capacitor_sweep.csv'
+	f=open(filename_csv,'w')
+	f.write('Width,Length,Capacitance\n')
+
+	for wid in wid_array:
+		for len in len_array:
+			
+						
+			# Storing the circuit parameters
+			circuit_parameters={
+				'len':len,
+				'wid':wid,
+				'i_sin':1e-6,
+				'm_factor':1.0,
+				'fund_1':1e9
+			}
+			
+			print(circuit_parameters)
+			
+			# Running spectre
+			capacitance=write_extract(file_directory_netlist,circuit_parameters)
+
+			# Writing the results
+			f.write(str(wid)+',')
+			f.write(str(len)+',')
+			f.write(str(capacitance)+'\n')
+
+	f.close()
 		
+	
 """
-====================================================================================================================================================
------------------------------------------------------------- MAIN PROGRAM --------------------------------------------------------------------------
+====================================================================================================================================================================================
+------------------------------------------------------------ MAIN PROGRAM ----------------------------------------------------------------------------------------------------------
 """
 
 # Filenames for the netlist file
 file_directory='/home/ee18b028/cadence_project/Test_Circuits/Capacitor/capacitor_test_1'
 
-# Code to find the capacitance of mim cap
-write_directory_capacitor_1='/home/ee18b028/Optimization/Simulation_Results/Capacitance/Test_1/'
-MOS_Capacitor_1(file_directory,write_directory_capacitor_1)
+# Code to do capacitor sweep data storage
+file_directory_output='/home/ee18b028/Optimization/Simulation_Results/Capacitor/Sweep1/'
+Parameter_Sweep(file_directory,file_directory_output)
 
