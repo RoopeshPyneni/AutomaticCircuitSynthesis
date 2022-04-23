@@ -176,8 +176,8 @@ def write_extract(file_directory,circuit_parameters):
 
 	# Getting the filenames
 	filename_w=file_directory+'/circ.scs'
-	#filename_r=file_directory+'/circ.raw/hb_test.fd.pss_hb'
-	filename_r=file_directory+'/ac.out'
+	filename_r=file_directory+'/circ.raw/hb_test.fd.pss_hb'
+	#filename_r=file_directory+'/ac.out'
 
 	# Writing the tcsh file for Basic Analysis
 	write_tcsh_file(file_directory)
@@ -192,8 +192,8 @@ def write_extract(file_directory,circuit_parameters):
 	freq=circuit_parameters['fund_1']
 	i_cur=circuit_parameters['i_sin']
 	
-	#capacitance=extract_hb_param(filename_r,freq,i_cur)
-	capacitance=extract_ac_param(filename_r)
+	capacitance=extract_hb_param(filename_r,freq,i_cur)
+	#capacitance=extract_ac_param(filename_r)
 	
 	return capacitance
 
