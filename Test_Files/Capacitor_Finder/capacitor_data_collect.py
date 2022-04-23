@@ -216,7 +216,7 @@ def Parameter_Sweep(file_directory_netlist,file_directory_output):
 	}
 
 	len_array=np.linspace(5e-6,100e-6,20)
-	wid_array=np.linspace(5e-6,10e-6,20)
+	wid_array=np.linspace(5e-6,10e-6,2)
 	
 	# Creating the folder to store the outputs
 	if not os.path.exists(file_directory_output):
@@ -261,11 +261,15 @@ def Parameter_Sweep(file_directory_netlist,file_directory_output):
 # Filenames for the netlist file
 file_directory='/home/ee18b028/cadence_project/Test_Circuits/Capacitor/capacitor_test_3'
 
-print(datetime.datetime.now())
+start=datetime.datetime.now()
+print(start)
 
 # Code to do capacitor sweep data storage
 file_directory_output='/home/ee18b028/Optimization/Simulation_Results/Capacitor/Sweep2/'
 Parameter_Sweep(file_directory,file_directory_output)
 
-print(datetime.datetime.now())
+end=datetime.datetime.now()
+print(start)
+print(end)
+print(end-start)
 
