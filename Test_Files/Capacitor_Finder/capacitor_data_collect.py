@@ -99,6 +99,21 @@ def extract_hb_param(filename,freq,i_cur):
 	
 	return capacitance
 
+#--------------------------------------------------------------------------------------------------------------------------	
+# Extracting the AC from the file
+def extract_ac_param(filename):
+
+	# Getting the filename
+	lines=extract_file(filename)
+
+	# Skipping the first few lines
+	lines=lines[7:]
+	lines=lines[0].split()
+
+	# Extracting the values frim the required line
+	capacitance=valueE_to_value(lines[6])
+	
+	return capacitance
 
 """
 ============================================================================================================================
@@ -161,7 +176,8 @@ def write_extract(file_directory,circuit_parameters):
 
 	# Getting the filenames
 	filename_w=file_directory+'/circ.scs'
-	filename_r=file_directory+'/circ.raw/hb_test.fd.pss_hb'
+	#filename_r=file_directory+'/circ.raw/hb_test.fd.pss_hb'
+	filename_r=file_directory+'/ac.out'
 
 	# Writing the tcsh file for Basic Analysis
 	write_tcsh_file(file_directory)
@@ -175,7 +191,9 @@ def write_extract(file_directory,circuit_parameters):
 	# Extracting the HB Parameters
 	freq=circuit_parameters['fund_1']
 	i_cur=circuit_parameters['i_sin']
-	capacitance=extract_hb_param(filename_r,freq,i_cur)
+	
+	#capacitance=extract_hb_param(filename_r,freq,i_cur)
+	capacitance=extract_ac_param(filename_r)
 	
 	return capacitance
 
@@ -198,7 +216,7 @@ def Parameter_Sweep(file_directory_netlist,file_directory_output):
 	}
 
 	len_array=np.linspace(5e-6,100e-6,20)
-	wid_array=np.linspace(5e-6,100e-6,20)
+	wid_array=np.linspace(5e-6,10e-6,20)
 	
 	# Creating the folder to store the outputs
 	if not os.path.exists(file_directory_output):
@@ -241,9 +259,13 @@ def Parameter_Sweep(file_directory_netlist,file_directory_output):
 """
 
 # Filenames for the netlist file
-file_directory='/home/ee18b028/cadence_project/Test_Circuits/Capacitor/capacitor_test_1'
+file_directory='/home/ee18b028/cadence_project/Test_Circuits/Capacitor/capacitor_test_3'
+
+print(datetime.datetime.now())
 
 # Code to do capacitor sweep data storage
-file_directory_output='/home/ee18b028/Optimization/Simulation_Results/Capacitor/Sweep1/'
+file_directory_output='/home/ee18b028/Optimization/Simulation_Results/Capacitor/Sweep2/'
 Parameter_Sweep(file_directory,file_directory_output)
+
+print(datetime.datetime.now())
 
