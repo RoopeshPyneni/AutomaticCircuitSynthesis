@@ -467,7 +467,7 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 		'cap_g':'Cg',
 		'cap_d':'Cd',
 		'wid_pr':'Wpr',
-		'cap_pr':'Cpr',
+		#'cap_pr':'Cpr',
 		'res_sum':'Rsum',
 		'res_k':'Rk',
 		'wid_cap_pr':'wid_Cpr'
