@@ -442,7 +442,10 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 		circuit_parameters['wid_cap_g'],circuit_parameters['len_cap_g']=sp.calculate_MOS_capacitor(circuit_parameters['Cg'])
 		circuit_parameters['mf_cap_s']=sp.calculate_mimcap(circuit_parameters['Cs'],5.6329e-15)		#1+int(circuit_parameters['Cs']/5.6329e-15)
 		circuit_parameters['mf_cap_d']=sp.calculate_mimcap(circuit_parameters['Cd'],1.7166e-16)		#1+int(circuit_parameters['Cd']/1.7166e-16)
-		circuit_parameters['mf_cap_pr']=sp.calculate_mimcap(circuit_parameters['Cpr'],1.7166e-16)		#1+int(circuit_parameters['Cd']/1.7166e-16)
+		
+		#circuit_parameters['mf_cap_pr']=sp.calculate_mimcap(circuit_parameters['Cpr'],1.7166e-16)		#1+int(circuit_parameters['Cd']/1.7166e-16)
+		circuit_parameters['mf_cap_pr']=1
+		circuit_parameters['len_cap_pr']=1e-6
 
 	# Getting the real inductor parameters
 	if circuit_type=='mos_inductor':
@@ -466,7 +469,8 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 		'wid_pr':'Wpr',
 		'cap_pr':'Cpr',
 		'res_sum':'Rsum',
-		'res_k':'Rk'
+		'res_k':'Rk',
+		'wid_cap_pr':'wid_Cpr'
 	}
 
 	for param_name in cir_writing_dict:
