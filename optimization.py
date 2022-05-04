@@ -435,6 +435,8 @@ def calc_loss_slope(cir,output_conditions,loss_dict,optimization_input_parameter
 	# Running the circuits and calculating the loss
 	extracted_parameters_dict=cir.run_circuit_multiple(initial_circuit_parameters_dict)
 
+	print(extracted_parameters_dict)
+
 	# Calculating the slope and sensitivity
 	i=0
 	for param_name in optimization_input_parameters['optimization'][run_number]['optimizing_parameters']:

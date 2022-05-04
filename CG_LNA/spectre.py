@@ -1013,8 +1013,7 @@ def write_extract_multiple_circuits(circuit_parameters_dict,circuit_initializati
 	for i in range(n_runs):
 		circuit_parameters_run[i]=circuit_parameters_dict[i%n_circuits].copy()
 
-		print('\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~ CIRCUIT PARAMETER RUN ~~~~~~~~~~~~~~~~\n\n\n')
-		print(circuit_parameters_run[i])
+		print('~~~~~~~~~~~~~~~~~~~~~~~~~ CIRCUIT PARAMETER RUN '+str(i)+'~~~~~~~~~~~~~~~~')
 		
 	# Creating new circuit initialization parameters
 	circuit_initialization_parameters_run={}
@@ -1049,8 +1048,16 @@ def write_extract_multiple_circuits(circuit_parameters_dict,circuit_initializati
 	for r in results_async:
 		(i,extracted_parameters)=r.get()
 		extracted_parameters_combined[i]=extracted_parameters
+
+		print('\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~ CIRCUIT PARAMETER RUN ~~~~~~~~~~~~~~~~\n\n\n')
+		print('Getting the combined extracted parameters after optimization')
+		print(extracted_parameters_combined)
 		
 	extracted_parameters_split=sp.split_extracted_parameters_multiple(extracted_parameters_combined,f_list,process_list,temp_list,n_circuits)
+	
+	print('\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~ CIRCUIT PARAMETER RUN ~~~~~~~~~~~~~~~~\n\n\n')
+	print('Splitting the combined extracted parameters')
+	print(extracted_parameters_split)
 
 	final_extracted_parameters={}
 	for i in range(n_circuits):
@@ -1058,6 +1065,10 @@ def write_extract_multiple_circuits(circuit_parameters_dict,circuit_initializati
 	
 	pool.close()
 	pool.join()
+
+	print('\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~ CIRCUIT PARAMETER RUN ~~~~~~~~~~~~~~~~\n\n\n')
+	print('Getting the final extracted parameters')
+	print(final_extracted_parameters)
 
 	return final_extracted_parameters
 
