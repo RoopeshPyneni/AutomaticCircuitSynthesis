@@ -279,7 +279,7 @@ def get_temperature_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['temperature_analysis']['start_current']=0.1
 	optimization_input_parameters['temperature_analysis']['stop_current']=10
-	optimization_input_parameters['temperature_analysis']['n_current']=1
+	optimization_input_parameters['temperature_analysis']['n_current']=5
 
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -512,7 +512,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Test_Temperature_Analysis'						# SET THE FILENAME HERE
+	filename=f_directory+'Test_Temperature_Analysis_2'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
