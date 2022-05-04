@@ -1095,6 +1095,9 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['fund_2']=f_list[i_freq]+1e6
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['process_corner']=process_list[i_process]
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['cir_temp']=temp_list[i_temp]
+
+		print('Process Name')
+		print(process_list[i_process])
 		
 	# Creating processes
 	results_async=[pool.apply_async(write_extract_single,args=(i,circuit_parameters_run[i],circuit_initialization_parameters_run[i])) for i in range(n_runs)]
