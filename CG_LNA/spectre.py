@@ -376,8 +376,7 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 		'Resd':'Rd',
 		'cap1':'C1',
 		'cap2':'C2',
-		'Resbias':'Rbias',
-		'Wk':'n_W'
+		'Resbias':'Rbias'
 	}
 
 	for param_name in cir_writing_dict:
