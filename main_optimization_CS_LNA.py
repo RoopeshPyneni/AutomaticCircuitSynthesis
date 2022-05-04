@@ -87,7 +87,6 @@ def get_output_conditions(optimization_input_parameters,fo):
 def get_simulation_conditions(circuit_initialization_parameters,fo):
 	
 	circuit_initialization_parameters['simulation']={}
-
 	circuit_initialization_parameters['simulation']['standard_parameters']={}
 
 	# Filenames

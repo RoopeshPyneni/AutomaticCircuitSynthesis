@@ -117,6 +117,7 @@ class Circuit():
 
 		print(self.initial_circuit_initialization_parameters)
 		print(self.circuit_initialization_parameters)
+		print(self.circuit_initialization_parameters['simulation'])
 
 	# Writing the simulation parameters
 	def write_simulation_parameters(self):
