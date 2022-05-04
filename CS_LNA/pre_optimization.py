@@ -157,8 +157,6 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 		# Extracting the MOSFET Parameters from the MOS file
 		hc4.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
 
-
-
 	# Printing the values
 	cf.print_initial_circuit_parameters(cir.get_initial_circuit_parameters())
 	cf.print_circuit_parameters(cir.get_circuit_parameters())
