@@ -60,7 +60,19 @@ def update_extracted_parameters(extracted_parameters,optimization_input_paramete
 		f.write(str(extracted_parameters[param_name])+',')	# Writing the values to the file
 	f.write('\n')
 	f.close()
+
+#---------------------------------------------------------------------------------------------------------------------------
+# Get the required data from the extracted parameters
+def get_single_temp_extracted_parameters(extracted_parameters,temp):
 	
+	final_extracted_parameters={}
+	for param in extracted_parameters:
+		str_temp=str(temp)
+		len_temp=len(str_temp)
+		if str_temp==param[:len_temp]:
+			final_extracted_parameters[param[len_temp+1:]]=extracted_parameters[param]
+	
+	return final_extracted_parameters
 
 """
 ============================================================================================================================
@@ -111,14 +123,22 @@ def temperature_analysis(cir,optimization_input_parameters,timing_results):
 	# Performing the analysis
 	temp_array=cir.circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']
 
-	for temp in temp_array:
-		write_extracted_parameters_initial(cir.extracted_parameters,optimization_input_parameters,temp)
-	
+	flag=0
 	for current in current_array:
 		cir.circuit_parameters['Io']=current
 		cir.run_circuit()
-		update_extracted_parameters(cir.extracted_parameters,optimization_input_parameters,temp,current)		# Writing the values to the output file
-		extracted_parameters_iter[temp][current]=cir.extracted_parameters.copy()
+
+		if flag==0:
+			flag=1
+			for temp in temp_array:
+				write_extracted_parameters_initial(cir.extracted_parameters,optimization_input_parameters,temp)
+		
+		for temp in temp_array:
+			final_extracted_parameters=get_single_temp_extracted_parameters(cir.extracted_parameters,temp)
+			update_extracted_parameters(final_extracted_parameters,optimization_input_parameters,temp,current)		# Writing the values to the output file
+			if temp not in extracted_parameters_iter:
+				extracted_parameters_iter[temp]={}
+			extracted_parameters_iter[temp][current]=final_extracted_parameters.copy()
 
 	# Restoring the value of parameters
 	cir.update_circuit_state(initial_circuit_parameters_initial,circuit_parameters_initial,extracted_parameters_initial)
