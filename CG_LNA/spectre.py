@@ -1201,18 +1201,34 @@ def get_final_extracted_parameters_process(extracted_parameters_frequency,proces
 				extracted_parameters_process[temp][process+'_'+param_name]=extracted_parameters_frequency[temp][process][param_name]
 	
 	extracted_parameters_select={
+		'v_source':'mid',
+		'i_source':'mid',
+		'p_source':'mid',
+		
+		'vg':'mid',
+		'vd':'mid',
+		'vs':'mid',
+
+		'Io':'mid',
+		'gm1':'mid',
+		'gds1':'mid',
+		'vt':'mid',
+		'vdsat':'mid',
+		'cgs1':'mid',
+		'cgd1':'mid',
+		
 		'freq':'mid',
 		's11_db':'max',
 		's12_db':'mid',
 		's21_db':'mid',
 		's22_db':'mid',
+		'k':'mid',
 		'nf_db':'max',
 		'iip3_dbm':'min',
+
 		'gain_db':'min',
-		'Io':'mid',
 		'Zin_R':'mid',
-		'Zin_I':'mid',
-		'p_source':'mid',
+		'Zin_I':'mid'
 	}
 
 	# Choosing the best process among the different temperatures
@@ -1256,18 +1272,34 @@ def get_final_extracted_parameters_temperature(extracted_parameters_process,temp
 			extracted_parameters[str(temp)+'_'+param_name]=extracted_parameters_process[temp][param_name]
 	
 	extracted_parameters_select={
+		'v_source':'mid',
+		'i_source':'mid',
+		'p_source':'mid',
+		
+		'vg':'mid',
+		'vd':'mid',
+		'vs':'mid',
+
+		'Io':'mid',
+		'gm1':'mid',
+		'gds1':'mid',
+		'vt':'mid',
+		'vdsat':'mid',
+		'cgs1':'mid',
+		'cgd1':'mid',
+		
 		'freq':'mid',
 		's11_db':'max',
 		's12_db':'mid',
 		's21_db':'mid',
 		's22_db':'mid',
+		'k':'mid',
 		'nf_db':'max',
 		'iip3_dbm':'min',
+
 		'gain_db':'min',
-		'Io':'mid',
 		'Zin_R':'mid',
-		'Zin_I':'mid',
-		'p_source':'mid',
+		'Zin_I':'mid'
 	}
 
 	# Getting the min or mid or max parameter values for the best values
