@@ -21,6 +21,23 @@ from pylab import *
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the values of circuit_parameters to a txt file
+def write_initial_circuit_parameters(initial_circuit_parameters,optimization_input_parameters):
+	
+	filename=optimization_input_parameters['filename']['output']	# Getting the filename
+	
+	newpath =filename+'/Frequency_Analysis/Results'	# Creating the folder if it is not present
+	if not os.path.exists(newpath):
+		os.makedirs(newpath)
+
+	filename=filename+'/Frequency_Analysis/Results/initial_circuit_parameters.txt'
+	
+	f=open(filename,'w')
+	for param_name in initial_circuit_parameters:
+		f.write(str(param_name)+'\t'+str(initial_circuit_parameters[param_name])+'\n')	# Writing the values in the file
+	f.close()
+
+#---------------------------------------------------------------------------------------------------------------------------
+# Writing the values of circuit_parameters to a txt file
 def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 	
 	filename=optimization_input_parameters['filename']['output']	# Getting the filename
@@ -37,19 +54,6 @@ def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 	f.close()
 
 #---------------------------------------------------------------------------------------------------------------------------
-# Writing the header row for extracted parameters to a csv file
-def write_extracted_parameters_initial(extracted_parameters,optimization_input_parameters):
-	
-	filename=optimization_input_parameters['filename']['output']+'/Frequency_Analysis/Results/extracted_parameters.csv'	# Getting the filename
-
-	f=open(filename,'w')
-	f.write('Frequency')
-	for param_name in extracted_parameters:
-		f.write(','+param_name)	# Writing the names in the file
-	f.write('\n')
-	f.close()
-
-#---------------------------------------------------------------------------------------------------------------------------
 # Writing the values of extracted_parameters from each frequency iteration to a csv file
 def update_extracted_parameters(extracted_parameters,optimization_input_parameters,freq):
 	filename=optimization_input_parameters['filename']['output']+'/Frequency_Analysis/Results/extracted_parameters.csv'	# Getting the filename
@@ -60,6 +64,19 @@ def update_extracted_parameters(extracted_parameters,optimization_input_paramete
 		f.write(','+str(extracted_parameters[param_name]))	# Writing the values to the file
 	f.write('\n')
 	f.close()
+
+#---------------------------------------------------------------------------------------------------------------------------
+# Get the required data from the extracted parameters
+def get_single_freq_extracted_parameters(extracted_parameters,freq):
+	
+	final_extracted_parameters={}
+	for param in extracted_parameters:
+		str_freq=str(freq)
+		len_freq=len(str_freq)
+		if str_freq==param[:len_freq]:
+			final_extracted_parameters[param[len_freq+1:]]=extracted_parameters[param]
+	
+	return final_extracted_parameters
 
 
 """	
@@ -88,47 +105,38 @@ def frequency_analysis(cir,optimization_input_parameters,timing_results):
 	
 	cir.update_simulation_parameters(optimization_input_parameters['frequency_analysis']['simulation'])
 	
-	initial_extracted_parameters=cir.extracted_parameters.copy()
-	initial_circuit_parameters=cir.circuit_parameters.copy()
+	initial_circuit_parameters_initial=cir.get_initial_circuit_parameters()
+	circuit_parameters_initial=cir.get_circuit_parameters()
+	extracted_parameters_initial=cir.get_extracted_parameters()
 
 	# Creating Dictionaries to Store Values
 	extracted_parameters_iter={}
 	
 	# Creating an array for frequency analysis
-	start_freq=optimization_input_parameters['frequency_analysis']['start_freq']
-	stop_freq=optimization_input_parameters['frequency_analysis']['stop_freq']
-	n_freq=optimization_input_parameters['frequency_analysis']['n_freq']
-	sweep_type=optimization_input_parameters['frequency_analysis']['sweep_type']
-	if sweep_type=='linear':
-		freq_array=np.linspace(start_freq,stop_freq,n_freq)
-	else:
-		freq_array=np.logspace(np.log10(start_freq),np.log10(stop_freq),n_freq)
+	freq_array=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_list']
 	
 	# Writing the values to output files
+	cir.run_circuit()
+	write_initial_circuit_parameters(cir.initial_circuit_parameters,optimization_input_parameters)
 	write_circuit_parameters(cir.circuit_parameters,optimization_input_parameters)
-	write_extracted_parameters_initial(cir.extracted_parameters,optimization_input_parameters)
-
-	# Getting the initial value of frequency
-	initial_frequency=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']
-
+	
 	# Storing the results
 	extracted_parameters_iter={}
 	
 	# Performing the analysis
 	for freq in freq_array:
-		cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=freq
-		cir.run_circuit()
-		update_extracted_parameters(cir.extracted_parameters,optimization_input_parameters,freq)		# Writing the values to the output file
-		extracted_parameters_iter[freq]=cir.extracted_parameters.copy()
+		final_extracted_parameters=get_single_freq_extracted_parameters(cir.extracted_parameters,freq)
+		update_extracted_parameters(final_extracted_parameters,optimization_input_parameters,freq)		# Writing the values to the output file
+		extracted_parameters_iter[freq]=final_extracted_parameters.copy()
 
 	# Restoring the value of initial extracted and circuit parameters
-	cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=initial_frequency
-	cir.run_circuit()
+	cir.update_circuit_state(initial_circuit_parameters_initial,circuit_parameters_initial,extracted_parameters_initial)
 
 	# Plotting the graphs
 	file_directory=optimization_input_parameters['filename']['output']
-	spec_current=cir.circuit_parameters['Io']
-	plot_frequency_analysis(extracted_parameters_iter,file_directory,sweep_type)
+	
+	plot_type=optimization_input_parameters['frequency_analysis']['plot_type']
+	plot_frequency_analysis(extracted_parameters_iter,file_directory,plot_type)
 
 	# Storing the starting time
 	timing_results['frequency_analysis']['stop']=datetime.datetime.now()
