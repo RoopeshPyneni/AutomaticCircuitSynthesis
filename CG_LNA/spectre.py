@@ -32,9 +32,8 @@ class Circuit():
 		self.initial_circuit_parameters={}
 		self.circuit_parameters={}
 		self.extracted_parameters={}
-		self.initial_circuit_initialization_parameters=copy.deepcopy(circuit_initialization_parameters)
-		self.mos_parameters=sp.calculate_mos_parameters(self.circuit_initialization_parameters)
 
+		self.initial_circuit_initialization_parameters=copy.deepcopy(circuit_initialization_parameters)
 		# Getting the circuit name
 		if self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_resistor':
 			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_r'
@@ -56,6 +55,8 @@ class Circuit():
 			sys.exit()
 		
 		self.circuit_initialization_parameters=copy.deepcopy(self.initial_circuit_initialization_parameters)
+		self.mos_parameters=sp.calculate_mos_parameters(self.circuit_initialization_parameters)
+
 	
 	#-----------------------------------------------------------------------------------------------
 	#---------------------------- Circuit Parameter Functions --------------------------------------
