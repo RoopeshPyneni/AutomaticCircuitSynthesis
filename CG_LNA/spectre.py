@@ -983,11 +983,15 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 	for r in results_async:
 		(i,extracted_parameters)=r.get()
 		extracted_parameters_combined[i]=extracted_parameters
-		
-	extracted_parameters_split=sp.split_extracted_parameters(extracted_parameters_combined,f_list,process_list,temp_list)
-
-	final_extracted_parameters=get_final_extracted_parameters(extracted_parameters_split,f_list,process_list,temp_list)
 	
+	extracted_parameters_split=sp.split_extracted_parameters(extracted_parameters_combined,f_list,process_list,temp_list)
+	print('Extracted Parameters Split')
+	print(extracted_parameters_split)
+	
+	final_extracted_parameters=get_final_extracted_parameters(extracted_parameters_split,f_list,process_list,temp_list)
+	print('Final Parameters Split')
+	print(final_extracted_parameters)
+
 	pool.close()
 	pool.join()
 
