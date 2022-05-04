@@ -119,7 +119,7 @@ def iip3_analysis(cir,optimization_input_parameters,timing_results):
 	print('****************************************** IIP3 Analysis ***************************************************')
 	
 	# Storing the initial values
-	initial_freq=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']
+	initial_freq=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_list']
 	initial_pin=cir.circuit_initialization_parameters['simulation']['standard_parameters']['pin_fixed']
 	cir.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']='basic'
 	
@@ -163,7 +163,7 @@ def iip3_analysis(cir,optimization_input_parameters,timing_results):
 		
 	# Restoring the value of initial extracted and circuit parameters
 	cir.circuit_initialization_parameters['simulation']['standard_parameters']['pin_fixed']=initial_pin
-	cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=initial_freq
+	cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_list']=initial_freq
 	cir.run_circuit()
 
 	# Storing the starting time
