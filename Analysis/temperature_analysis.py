@@ -108,12 +108,12 @@ def temperature_analysis(cir,optimization_input_parameters,timing_results):
 	extracted_parameters_iter={}
 	
 	# Creating an array for Io sweep
-	room_temp_current_log=np.log10(cir.circuit_parameters['Io'])
+	room_temp_current_log=np.log10(cir.initial_circuit_parameters['Io'])
 	start_current=np.log10(optimization_input_parameters['temperature_analysis']['start_current'])
 	stop_current=np.log10(optimization_input_parameters['temperature_analysis']['stop_current'])
 	n_current=optimization_input_parameters['temperature_analysis']['n_current']
 	if n_current==1:
-		current_array=np.array([cir.circuit_parameters['Io']])
+		current_array=np.array([cir.initial_circuit_parameters['Io']])
 	else:
 		current_array=np.logspace(room_temp_current_log+start_current,room_temp_current_log+stop_current,n_current)
 	
@@ -125,7 +125,7 @@ def temperature_analysis(cir,optimization_input_parameters,timing_results):
 
 	flag=0
 	for current in current_array:
-		cir.circuit_parameters['Io']=current
+		cir.initial_circuit_parameters['Io']=current
 		cir.run_circuit()
 
 		if flag==0:
@@ -145,7 +145,7 @@ def temperature_analysis(cir,optimization_input_parameters,timing_results):
 
 	# Plotting the graphs
 	file_directory=optimization_input_parameters['filename']['output']
-	spec_current=cir.circuit_parameters['Io']
+	spec_current=cir.initial_circuit_parameters['Io']
 	plot_temp_analysis(extracted_parameters_iter,file_directory,spec_current)
 
 	# Storing the starting time
