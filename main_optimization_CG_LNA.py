@@ -206,7 +206,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization'][1]['optimization_type']=0
 	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Rb','Rd','Io','W','C1','C2']
 	#optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Rb','Rd','Io']
-	optimization_input_parameters['optimization'][1]['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','s12_db','s21_db','s22_db','k','nf_db','p_source','gm1']
+	optimization_input_parameters['optimization'][1]['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','nf_db','p_source','gm1']
 	optimization_input_parameters['optimization'][1]['process_temp_type']='all'
 
 	# NOTES :
@@ -251,7 +251,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 
 	# Other Values
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['std_temp']=27
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['temp_list']=[-40,27,120]
+	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['temp_list']=[27]
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['process_corner']='tt'
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['conservative']='NO'
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['w_finger_max']=2e-6

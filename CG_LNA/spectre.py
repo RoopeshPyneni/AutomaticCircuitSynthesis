@@ -1215,6 +1215,9 @@ def get_final_extracted_parameters_process(extracted_parameters_frequency,proces
 	extracted_parameters_select={
 		'freq':'mid',
 		's11_db':'max',
+		's12_db':'mid',
+		's21_db':'mid',
+		's22_db':'mid',
 		'nf_db':'max',
 		'iip3_dbm':'min',
 		'gain_db':'min',
@@ -1267,6 +1270,9 @@ def get_final_extracted_parameters_temperature(extracted_parameters_process,temp
 	extracted_parameters_select={
 		'freq':'mid',
 		's11_db':'max',
+		's12_db':'mid',
+		's21_db':'mid',
+		's22_db':'mid',
 		'nf_db':'max',
 		'iip3_dbm':'min',
 		'gain_db':'min',
