@@ -67,6 +67,7 @@ class Circuit():
 
 	# Running the circuit
 	def run_circuit(self):
+		self.circuit_parameters=get_final_circuit_parameters(self.initial_circuit_parameters,self.circuit_initialization_parameters)
 		self.extracted_parameters=write_extract(self.circuit_parameters,self.circuit_initialization_parameters)
 	
 	# Running multiple circuits 

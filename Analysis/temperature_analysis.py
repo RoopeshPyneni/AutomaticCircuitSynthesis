@@ -117,6 +117,8 @@ def temperature_analysis(cir,optimization_input_parameters,timing_results):
 	else:
 		current_array=np.logspace(room_temp_current_log+start_current,room_temp_current_log+stop_current,n_current)
 	
+	print('\n\n----- CURRENT ARRAY -------')
+	
 	# Writing the values to output files
 	write_circuit_parameters(cir.circuit_parameters,optimization_input_parameters)
 	
