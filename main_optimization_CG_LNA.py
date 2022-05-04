@@ -167,7 +167,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['iip3_calc_points']=3
 	
 	# Operating frequency points
-	optimization_input_parameters['pre_optimization']['standard_parameters']['f_list']=[fo]
+	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['f_list']=[fo]
 
 	# Other Values
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['std_temp']=27
