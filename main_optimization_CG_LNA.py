@@ -465,8 +465,8 @@ file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 
 optimization_input_parameters['optimization']['run']='NO' #'YES'
 optimization_input_parameters['temperature_analysis']['run']='NO'
-optimization_input_parameters['sensitivity_analysis']['run']='NO'
-optimization_input_parameters['process_analysis']['run']='YES'
+optimization_input_parameters['sensitivity_analysis']['run']='NYES'
+optimization_input_parameters['process_analysis']['run']='NO'
 optimization_input_parameters['iip3_analysis']['run']='NO'
 optimization_input_parameters['frequency_analysis']['run']='NO' #'YES'
 optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
@@ -474,7 +474,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Test_Process_Analysis_1'						# SET THE FILENAME HERE
+	filename=f_directory+'Test_Sensitivity_Analysis_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
