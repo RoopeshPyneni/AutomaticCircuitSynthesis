@@ -118,10 +118,6 @@ class Circuit():
 		self.circuit_initialization_parameters['simulation']['netlist_parameters']['n_harm']=self.circuit_initialization_parameters['simulation']['standard_parameters']['n_harm']
 		self.circuit_initialization_parameters['simulation']['netlist_parameters']['cir_temp']=self.circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']
 
-		print(self.initial_circuit_initialization_parameters)
-		print(self.circuit_initialization_parameters)
-		print(self.circuit_initialization_parameters['simulation'])
-
 	# Writing the simulation parameters
 	def write_simulation_parameters(self):
 		write_simulation_parameters(self.circuit_initialization_parameters)
@@ -986,13 +982,9 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 		extracted_parameters_combined[i]=extracted_parameters
 	
 	extracted_parameters_split=sp.split_extracted_parameters(extracted_parameters_combined,f_list,process_list,temp_list)
-	print('Extracted Parameters Split')
-	print(extracted_parameters_split)
 	
 	final_extracted_parameters=get_final_extracted_parameters(extracted_parameters_split,f_list,process_list,temp_list)
-	print('Final Parameters Split')
-	print(final_extracted_parameters)
-
+	
 	pool.close()
 	pool.join()
 
@@ -1079,17 +1071,11 @@ def write_extract_multiple_circuits(circuit_parameters_dict,circuit_initializati
 def get_final_extracted_parameters(extracted_parameters_split,f_list,process_list,temp_list):
 	
 	extracted_parameters_frequency=get_final_extracted_parameters_frequency(extracted_parameters_split,f_list,process_list,temp_list)
-	print('Parameters Frequency')
-	print(extracted_parameters_frequency)
-
+	
 	extracted_parameters_process=get_final_extracted_parameters_process(extracted_parameters_frequency,process_list,temp_list)
-	print('Parameters Process')
-	print(extracted_parameters_process)
-
+	
 	final_extracted_parameters=get_final_extracted_parameters_temperature(extracted_parameters_process,temp_list)
-	print('Parameters Temperature')
-	print(extracted_parameters_process)
-
+	
 	return final_extracted_parameters
 
 #-----------------------------------------------------------------------------------------------

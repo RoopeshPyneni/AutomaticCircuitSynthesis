@@ -120,6 +120,9 @@ def frequency_analysis(cir,optimization_input_parameters,timing_results):
 	write_initial_circuit_parameters(cir.initial_circuit_parameters,optimization_input_parameters)
 	write_circuit_parameters(cir.circuit_parameters,optimization_input_parameters)
 	
+	print('\n\n===== EXTRACTED PARAMETERS =====\n\n')
+	print(cir.extracted_parameters)
+
 	# Storing the results
 	extracted_parameters_iter={}
 	
