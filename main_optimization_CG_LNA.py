@@ -157,24 +157,6 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['pre_optimization']['simulation']={}
 	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']={}
 
-	# IIP3 Points
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['iip3_type']='basic'		# 'basic' or 'advanced' 
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['pin_fixed']=-65
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['pin_start']=-70
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['pin_stop']=-40
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['pin_points']=6
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['iip3_calc_points']=3
-	
-	# Operating frequency points
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['f_list']=[fo]
-
-	# Other Values
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['std_temp']=27
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['temp_list']=[27]
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['process_corner']='tt'
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['conservative']='NO'
-	optimization_input_parameters['pre_optimization']['simulation']['standard_parameters']['w_finger_max']=2e-6
-
 	
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the optimization parameters to the optimization_input_parameters dictionary
@@ -236,25 +218,6 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	# Optimization Simulation Parameters
 	optimization_input_parameters['optimization']['simulation'][1]={}
 	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']={}
-
-	# IIP3 Points
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['iip3_type']='basic'		# 'basic' or 'advanced' 
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['pin_fixed']=-65
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['pin_start']=-70
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['pin_stop']=-40
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['pin_points']=6
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['iip3_calc_points']=3
-	
-	# Operating frequency points
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['f_list']=[fo]
-
-	# Other Values
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['std_temp']=27
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['temp_list']=[27]
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['process_corner']='tt'
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['conservative']='NO'
-	optimization_input_parameters['optimization']['simulation'][1]['standard_parameters']['w_finger_max']=2e-6
-
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 2
@@ -572,7 +535,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Test_Optimization_3'						# SET THE FILENAME HERE
+	filename=f_directory+'Test_Optimization_4'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

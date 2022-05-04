@@ -88,20 +88,12 @@ def temperature_analysis(cir,optimization_input_parameters,timing_results):
 	
 	cir.update_simulation_parameters(optimization_input_parameters['temperature_analysis']['simulation'])
 	
-	initial_extracted_parameters=cir.extracted_parameters.copy()
-	initial_circuit_parameters=cir.circuit_parameters.copy()
+	initial_circuit_parameters_initial=cir.get_initial_circuit_parameters()
+	circuit_parameters_initial=cir.get_circuit_parameters()
+	extracted_parameters_initial=cir.get_extracted_parameters()
 
 	# Creating Dictionaries to Store Values
 	extracted_parameters_iter={}
-	
-	# Creating an array for temperature analysis
-	start_temp=optimization_input_parameters['temperature_analysis']['start_temp']
-	stop_temp=optimization_input_parameters['temperature_analysis']['stop_temp']
-	n_temp=optimization_input_parameters['temperature_analysis']['n_temp']
-	if n_temp==1:
-		temp_array=np.array(['27'])
-	else:
-		temp_array=np.linspace(start_temp,stop_temp,n_temp)
 	
 	# Creating an array for Io sweep
 	room_temp_current_log=np.log10(cir.circuit_parameters['Io'])
@@ -117,19 +109,19 @@ def temperature_analysis(cir,optimization_input_parameters,timing_results):
 	write_circuit_parameters(cir.circuit_parameters,optimization_input_parameters)
 	
 	# Performing the analysis
-	for temp in temp_array:
-		extracted_parameters_iter[temp]={}
-		write_extracted_parameters_initial(cir.extracted_parameters,optimization_input_parameters,temp)
-		for current in current_array:
-			cir.circuit_parameters['Io']=current
-			cir.update_temp(temp)
-			cir.run_circuit()
-			update_extracted_parameters(cir.extracted_parameters,optimization_input_parameters,temp,current)		# Writing the values to the output file
-			extracted_parameters_iter[temp][current]=cir.extracted_parameters.copy()
+	temp_array=cir.circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']
 
-	# Restoring the value of initial extracted and circuit parameters
-	cir.reset_temp()
-	cir.update_circuit(initial_circuit_parameters.copy())
+	for temp in temp_array:
+		write_extracted_parameters_initial(cir.extracted_parameters,optimization_input_parameters,temp)
+	
+	for current in current_array:
+		cir.circuit_parameters['Io']=current
+		cir.run_circuit()
+		update_extracted_parameters(cir.extracted_parameters,optimization_input_parameters,temp,current)		# Writing the values to the output file
+		extracted_parameters_iter[temp][current]=cir.extracted_parameters.copy()
+
+	# Restoring the value of parameters
+	cir.update_circuit_state(initial_circuit_parameters_initial,circuit_parameters_initial,extracted_parameters_initial)
 
 	# Plotting the graphs
 	file_directory=optimization_input_parameters['filename']['output']
