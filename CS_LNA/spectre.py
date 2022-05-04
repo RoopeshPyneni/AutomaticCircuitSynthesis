@@ -1206,131 +1206,142 @@ def get_final_extracted_parameters(extracted_parameters_split,f_list,process_lis
 # This function will write the circuit parameters, run spectre and extract the output parameters
 def get_final_extracted_parameters_frequency(extracted_parameters_split,f_list,process_list,temp_list):
 	
-	# Getting the least, middle, and maximum frequency
-	f_len=len(f_list)
-	small_frequency=f_list[0]
-	mid_frequency=f_list[(f_len-1)//2]
-	large_frequency=f_list[f_len-1]
+	if len(f_list)==1:
+		extracted_parameters_frequency={}
+		for temp in temp_list:
+			extracted_parameters_frequency[temp]={}
+			for process in process_list:
+				extracted_parameters_frequency[temp][process]={}
+				for freq in extracted_parameters_split[temp][process]:
+					for param in extracted_parameters_split[temp][process][freq]:
+						extracted_parameters_frequency[temp][process][param]=extracted_parameters_split[temp][process][freq][param]
+	
+	else:
+		# Getting the least, middle, and maximum frequency
+		f_len=len(f_list)
+		small_frequency=f_list[0]
+		mid_frequency=f_list[(f_len-1)//2]
+		large_frequency=f_list[f_len-1]
 
-	# Selecting which parameters are DC, and which parameter to select for AC among different frequencies
-	extracted_parameters_select={
-		'v_source':'dc',
-		'i_source':'dc',
-		'p_source':'dc',
-		
-		'vg1':'dc',
-		'vd1':'dc',
-		'vg2':'dc',
-
-		'Io':'dc',
-		'gm1':'dc',
-		'gds1':'dc',
-		'vth1':'dc',
-		'vds1':'dc',
-		'vdsat1':'dc',
-		'cgs1':'dc',
-		'cgd1':'dc',
-		'region1':'dc',
-		'check_vd1':'dc',
-
-		'vth2':'dc',
-		'vds2':'dc',
-		'vdsat2':'dc',
-		'cgs2':'dc',
-		'cgd2':'dc',
-		'region2':'dc',
-		'check_vd2':'dc',
-
-		'freq':'mid',
-		'vgs_ac':'mid',
-		's12_db':'max',
-		's21_db':'max',
-		's22_db':'max',
-		'k':'min',
-		'nf_db':'max',
-		'iip3_dbm':'min'
-	}
-
-	# First, we will iterate among different temperature and process lists
-	extracted_parameters_frequency={}
-	for temp in temp_list:
-		extracted_parameters_frequency[temp]={}
-		for process in process_list:
-			extracted_parameters_frequency[temp][process]={}
-
-			# Now, we have a given process and temperature ; We need to find the extracted parameters for this set
-			final_extracted_parameters={}
-			extracted_parameters_combined=extracted_parameters_split[temp][process]
-
-			# Getting the values for all frequencies in case it is AC
-			for param in extracted_parameters_combined[mid_frequency]:
-				if param in extracted_parameters_select:
-					if extracted_parameters_select[param]=='dc':
-						continue
-				for freq in f_list:
-					final_extracted_parameters[str(freq)+'_'+param]=extracted_parameters_combined[freq][param]
+		# Selecting which parameters are DC, and which parameter to select for AC among different frequencies
+		extracted_parameters_select={
+			'v_source':'dc',
+			'i_source':'dc',
+			'p_source':'dc',
 			
-			# Getting the min or mid or max parameter values for the best values
-			for param in extracted_parameters_select:
+			'vg1':'dc',
+			'vd1':'dc',
+			'vg2':'dc',
 
-				# Case I : DC Parameter or AC Parameter with mid value
-				if extracted_parameters_select[param]=='mid' or extracted_parameters_select[param]=='dc':
-					final_extracted_parameters[param]=extracted_parameters_combined[mid_frequency][param]
+			'Io':'dc',
+			'gm1':'dc',
+			'gds1':'dc',
+			'vth1':'dc',
+			'vds1':'dc',
+			'vdsat1':'dc',
+			'cgs1':'dc',
+			'cgd1':'dc',
+			'region1':'dc',
+			'check_vd1':'dc',
 
-				# Case II : AC Parameter with minimum value
-				elif extracted_parameters_select[param]=='min':
-					param_array=[]
-					for i in extracted_parameters_combined:
-						param_array.append(extracted_parameters_combined[i][param])
-					final_extracted_parameters[param]=min(param_array)
+			'vth2':'dc',
+			'vds2':'dc',
+			'vdsat2':'dc',
+			'cgs2':'dc',
+			'cgd2':'dc',
+			'region2':'dc',
+			'check_vd2':'dc',
+
+			'freq':'mid',
+			'vgs_ac':'mid',
+			's12_db':'max',
+			's21_db':'max',
+			's22_db':'max',
+			'k':'min',
+			'nf_db':'max',
+			'iip3_dbm':'min'
+		}
+
+		# First, we will iterate among different temperature and process lists
+		extracted_parameters_frequency={}
+		for temp in temp_list:
+			extracted_parameters_frequency[temp]={}
+			for process in process_list:
+				extracted_parameters_frequency[temp][process]={}
+
+				# Now, we have a given process and temperature ; We need to find the extracted parameters for this set
+				final_extracted_parameters={}
+				extracted_parameters_combined=extracted_parameters_split[temp][process]
+
+				# Getting the values for all frequencies in case it is AC
+				for param in extracted_parameters_combined[mid_frequency]:
+					if param in extracted_parameters_select:
+						if extracted_parameters_select[param]=='dc':
+							continue
+					for freq in f_list:
+						final_extracted_parameters[str(freq)+'_'+param]=extracted_parameters_combined[freq][param]
 				
-				# Case III : AC Parameter with maximum value
-				else:
-					param_array=[]
-					for i in extracted_parameters_combined:
-						param_array.append(extracted_parameters_combined[i][param])
-					final_extracted_parameters[param]=max(param_array)
-			
-			# Calculating the value of gain
-			gain_array=[]
-			gain_phase_array=[]
-			for i in extracted_parameters_combined:
-				gain_array.append(extracted_parameters_combined[i]['gain_db'])
-				gain_phase_array.append(extracted_parameters_combined[i]['gain_phase'])
-			gain_min=min(gain_array)
-			gain_index=f_list[gain_array.index(gain_min)]
-			final_extracted_parameters['gain_db']=gain_min
-			final_extracted_parameters['gain_phase']=extracted_parameters_combined[gain_index]['gain_phase']
-			
-			# Calculating the gain delta
-			final_extracted_parameters['gain_delta']=abs(extracted_parameters_combined[small_frequency]['gain_db']-extracted_parameters_combined[large_frequency]['gain_db'])
-			final_extracted_parameters['gain_delta_0']=sp.ramp_func(extracted_parameters_combined[small_frequency]['gain_db']-extracted_parameters_combined[mid_frequency]['gain_db'])
-			final_extracted_parameters['gain_delta_2']=sp.ramp_func(extracted_parameters_combined[large_frequency]['gain_db']-extracted_parameters_combined[mid_frequency]['gain_db'])
+				# Getting the min or mid or max parameter values for the best values
+				for param in extracted_parameters_select:
 
-			# Calculating the value of s11
-			s11_array=[]
-			ZR_array=[]
-			ZI_array=[]
-			for i in extracted_parameters_combined:
-				s11_array.append(extracted_parameters_combined[i]['s11_db'])
-				ZR_array.append(extracted_parameters_combined[i]['Zin_R'])
-				ZI_array.append(extracted_parameters_combined[i]['Zin_I'])
-			s11_max=max(s11_array)
-			s11_index=f_list[s11_array.index(s11_max)]
-			final_extracted_parameters['s11_db']=s11_max
-			final_extracted_parameters['Zin_R']=extracted_parameters_combined[s11_index]['Zin_R']
-			final_extracted_parameters['Zin_I']=extracted_parameters_combined[s11_index]['Zin_I']
-			
-			# Calculating s11 middle
-			final_extracted_parameters['s11_middle']=extracted_parameters_combined[mid_frequency]['s11_db']
-			
-			# Getting the iip3 values
-			iip3_array_list=['iip3_im3_intercept','iip3_im3_slope','iip3_fund_intercept','iip3_fund_slope','iip3_fund','iip3_im3','iip3_pin']
-			for param in iip3_array_list:
-				if param in extracted_parameters_combined[mid_frequency]:
-					final_extracted_parameters[param]=extracted_parameters_combined[mid_frequency][param]
+					# Case I : DC Parameter or AC Parameter with mid value
+					if extracted_parameters_select[param]=='mid' or extracted_parameters_select[param]=='dc':
+						final_extracted_parameters[param]=extracted_parameters_combined[mid_frequency][param]
 
-			extracted_parameters_frequency[temp][process]=final_extracted_parameters.copy()
+					# Case II : AC Parameter with minimum value
+					elif extracted_parameters_select[param]=='min':
+						param_array=[]
+						for i in extracted_parameters_combined:
+							param_array.append(extracted_parameters_combined[i][param])
+						final_extracted_parameters[param]=min(param_array)
+					
+					# Case III : AC Parameter with maximum value
+					else:
+						param_array=[]
+						for i in extracted_parameters_combined:
+							param_array.append(extracted_parameters_combined[i][param])
+						final_extracted_parameters[param]=max(param_array)
+				
+				# Calculating the value of gain
+				gain_array=[]
+				gain_phase_array=[]
+				for i in extracted_parameters_combined:
+					gain_array.append(extracted_parameters_combined[i]['gain_db'])
+					gain_phase_array.append(extracted_parameters_combined[i]['gain_phase'])
+				gain_min=min(gain_array)
+				gain_index=f_list[gain_array.index(gain_min)]
+				final_extracted_parameters['gain_db']=gain_min
+				final_extracted_parameters['gain_phase']=extracted_parameters_combined[gain_index]['gain_phase']
+				
+				# Calculating the gain delta
+				final_extracted_parameters['gain_delta']=abs(extracted_parameters_combined[small_frequency]['gain_db']-extracted_parameters_combined[large_frequency]['gain_db'])
+				final_extracted_parameters['gain_delta_0']=sp.ramp_func(extracted_parameters_combined[small_frequency]['gain_db']-extracted_parameters_combined[mid_frequency]['gain_db'])
+				final_extracted_parameters['gain_delta_2']=sp.ramp_func(extracted_parameters_combined[large_frequency]['gain_db']-extracted_parameters_combined[mid_frequency]['gain_db'])
+
+				# Calculating the value of s11
+				s11_array=[]
+				ZR_array=[]
+				ZI_array=[]
+				for i in extracted_parameters_combined:
+					s11_array.append(extracted_parameters_combined[i]['s11_db'])
+					ZR_array.append(extracted_parameters_combined[i]['Zin_R'])
+					ZI_array.append(extracted_parameters_combined[i]['Zin_I'])
+				s11_max=max(s11_array)
+				s11_index=f_list[s11_array.index(s11_max)]
+				final_extracted_parameters['s11_db']=s11_max
+				final_extracted_parameters['Zin_R']=extracted_parameters_combined[s11_index]['Zin_R']
+				final_extracted_parameters['Zin_I']=extracted_parameters_combined[s11_index]['Zin_I']
+				
+				# Calculating s11 middle
+				final_extracted_parameters['s11_middle']=extracted_parameters_combined[mid_frequency]['s11_db']
+				
+				# Getting the iip3 values
+				iip3_array_list=['iip3_im3_intercept','iip3_im3_slope','iip3_fund_intercept','iip3_fund_slope','iip3_fund','iip3_im3','iip3_pin']
+				for param in iip3_array_list:
+					if param in extracted_parameters_combined[mid_frequency]:
+						final_extracted_parameters[param]=extracted_parameters_combined[mid_frequency][param]
+
+				extracted_parameters_frequency[temp][process]=final_extracted_parameters.copy()
 
 	return extracted_parameters_frequency
 
@@ -1346,54 +1357,62 @@ def get_final_extracted_parameters_process(extracted_parameters_frequency,proces
 	extracted_parameters_process={}
 	for temp in temp_list:
 		extracted_parameters_process[temp]={}
-		for process in process_list:
-			for param_name in extracted_parameters_frequency[temp][process]:
-				extracted_parameters_process[temp][process+'_'+param_name]=extracted_parameters_frequency[temp][process][param_name]
-	
-	extracted_parameters_select={
-		'freq':'mid',
-		's11_db':'max',
-		's11_middle':'max',
-		'nf_db':'max',
-		'iip3_dbm':'min',
-		'gain_db':'min',
-		'gain_delta':'max',
-		'gain_delta_0':'max',
-		'gain_delta_2':'max',
-		'Io':'mid',
-		'Zin_R':'mid',
-		'Zin_I':'mid',
-		'p_source':'mid',
-		'gm1':'mid',
-		'vg1':'mid',
-		'vd1':'mid'
-	}
 
-	# Choosing the best process among the different temperatures
-	for temp in temp_list:
+		if len(process_list)==1:
+			for process in process_list:
+				for param_name in extracted_parameters_frequency[temp][process]:
+					extracted_parameters_process[temp][param_name]=extracted_parameters_frequency[temp][process][param_name]
+
+		else:
+			for process in process_list:
+				for param_name in extracted_parameters_frequency[temp][process]:
+					extracted_parameters_process[temp][process+'_'+param_name]=extracted_parameters_frequency[temp][process][param_name]
+
+	if len(process_list)!=1:
+		extracted_parameters_select={
+			'freq':'mid',
+			's11_db':'max',
+			's11_middle':'max',
+			'nf_db':'max',
+			'iip3_dbm':'min',
+			'gain_db':'min',
+			'gain_delta':'max',
+			'gain_delta_0':'max',
+			'gain_delta_2':'max',
+			'Io':'mid',
+			'Zin_R':'mid',
+			'Zin_I':'mid',
+			'p_source':'mid',
+			'gm1':'mid',
+			'vg1':'mid',
+			'vd1':'mid'
+		}
+
+		# Choosing the best process among the different temperatures
+		for temp in temp_list:
+			
+			# Getting the min or mid or max parameter values for the best values
+			for param in extracted_parameters_select:
+
+				# Case I : Minimum value
+				if extracted_parameters_select[param]=='min':
+					param_array=[]
+					for process in process_list:
+						param_array.append(extracted_parameters_frequency[temp][process][param])
+					extracted_parameters_process[temp][param]=min(param_array)
+				
+				# Case II : Maximum value
+				elif extracted_parameters_select[param]=='max':
+					param_array=[]
+					for process in process_list:
+						param_array.append(extracted_parameters_frequency[temp][process][param])
+					extracted_parameters_process[temp][param]=max(param_array)
+				
+				# Case III : Middle value ( for typical corner )
+				else:
+					extracted_parameters_process[temp][param]=extracted_parameters_frequency[temp][middle_process][param]
 		
-		# Getting the min or mid or max parameter values for the best values
-		for param in extracted_parameters_select:
-
-			# Case I : Minimum value
-			if extracted_parameters_select[param]=='min':
-				param_array=[]
-				for process in process_list:
-					param_array.append(extracted_parameters_frequency[temp][process][param])
-				extracted_parameters_process[temp][param]=min(param_array)
-			
-			# Case II : Maximum value
-			elif extracted_parameters_select[param]=='max':
-				param_array=[]
-				for process in process_list:
-					param_array.append(extracted_parameters_frequency[temp][process][param])
-				extracted_parameters_process[temp][param]=max(param_array)
-			
-			# Case III : Middle value ( for typical corner )
-			else:
-				extracted_parameters_process[temp][param]=extracted_parameters_frequency[temp][middle_process][param]
-	
-	return extracted_parameters_process
+		return extracted_parameters_process
 
 #-----------------------------------------------------------------------------------------------
 # This function will combine the extracted_parameters
@@ -1405,51 +1424,59 @@ def get_final_extracted_parameters_temperature(extracted_parameters_process,temp
 
 	# Getting the values for all temperatures
 	extracted_parameters={}
-	for temp in extracted_parameters_process:
-		for param_name in extracted_parameters_process[temp]:
-			extracted_parameters[str(temp)+'_'+param_name]=extracted_parameters_process[temp][param_name]
-	
-	extracted_parameters_select={
-		'freq':'mid',
-		's11_db':'max',
-		's11_middle':'max',
-		'nf_db':'max',
-		'iip3_dbm':'min',
-		'gain_db':'min',
-		'gain_delta':'max',
-		'gain_delta_0':'max',
-		'gain_delta_2':'max',
-		'Io':'mid',
-		'Zin_R':'mid',
-		'Zin_I':'mid',
-		'p_source':'mid',
-		'gm1':'mid',
-		'vg1':'mid',
-		'vd1':'mid'
-	}
 
-	# Getting the min or mid or max parameter values for the best values
-	for param in extracted_parameters_select:
-		
-		# Case I : Minimum value
-		if extracted_parameters_select[param]=='min':
-			param_array=[]
-			for temp in temp_list:
-				param_array.append(extracted_parameters_process[temp][param])
-			extracted_parameters[param]=min(param_array)
-		
-		# Case II : Maximum value
-		elif extracted_parameters_select[param]=='max':
-			param_array=[]
-			for temp in temp_list:
-				param_array.append(extracted_parameters_process[temp][param])
-			extracted_parameters[param]=max(param_array)
-		
-		# Case III : Middle value ( for central temperature )
-		else:
-			extracted_parameters[param]=extracted_parameters_process[middle_temp][param]
+	if len(temp_list)==1:
+		for temp in extracted_parameters_process:
+			for param_name in extracted_parameters_process[temp]:
+				extracted_parameters[param_name]=extracted_parameters_process[temp][param_name]
+
+	else:
+		for temp in extracted_parameters_process:
+			for param_name in extracted_parameters_process[temp]:
+				extracted_parameters[str(temp)+'_'+param_name]=extracted_parameters_process[temp][param_name]
 	
-	return extracted_parameters
+	if len(temp_list)!=1:
+		extracted_parameters_select={
+			'freq':'mid',
+			's11_db':'max',
+			's11_middle':'max',
+			'nf_db':'max',
+			'iip3_dbm':'min',
+			'gain_db':'min',
+			'gain_delta':'max',
+			'gain_delta_0':'max',
+			'gain_delta_2':'max',
+			'Io':'mid',
+			'Zin_R':'mid',
+			'Zin_I':'mid',
+			'p_source':'mid',
+			'gm1':'mid',
+			'vg1':'mid',
+			'vd1':'mid'
+		}
+
+		# Getting the min or mid or max parameter values for the best values
+		for param in extracted_parameters_select:
+			
+			# Case I : Minimum value
+			if extracted_parameters_select[param]=='min':
+				param_array=[]
+				for temp in temp_list:
+					param_array.append(extracted_parameters_process[temp][param])
+				extracted_parameters[param]=min(param_array)
+			
+			# Case II : Maximum value
+			elif extracted_parameters_select[param]=='max':
+				param_array=[]
+				for temp in temp_list:
+					param_array.append(extracted_parameters_process[temp][param])
+				extracted_parameters[param]=max(param_array)
+			
+			# Case III : Middle value ( for central temperature )
+			else:
+				extracted_parameters[param]=extracted_parameters_process[middle_temp][param]
+		
+		return extracted_parameters
 
 
 
