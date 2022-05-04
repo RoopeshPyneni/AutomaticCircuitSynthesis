@@ -64,6 +64,21 @@ def update_extracted_parameters(extracted_parameters,optimization_input_paramete
 		f.write(str(extracted_parameters[param_name])+',')	# Writing the values to the file
 	f.write('\n')
 	f.close()
+
+#---------------------------------------------------------------------------------------------------------------------------
+# Get the required data from the extracted parameters
+def get_single_temp_process_extracted_parameters(extracted_parameters,temp,process):
+	
+	final_extracted_parameters={}
+
+	string_name=str(temp)+'_'+str(process)+'_'
+	string_len=len(string_name)
+
+	for param in extracted_parameters:
+		if string_name==param[:string_len]:
+			final_extracted_parameters[param[string_len:]]=extracted_parameters[param]
+	
+	return final_extracted_parameters
 	
 
 """	
@@ -92,8 +107,9 @@ def process_analysis(cir,optimization_input_parameters,timing_results):
 	
 	cir.update_simulation_parameters(optimization_input_parameters['process_analysis']['simulation'])
 	
-	initial_extracted_parameters=cir.extracted_parameters.copy()
-	initial_circuit_parameters=cir.circuit_parameters.copy()
+	initial_circuit_parameters_initial=cir.get_initial_circuit_parameters()
+	circuit_parameters_initial=cir.get_circuit_parameters()
+	extracted_parameters_initial=cir.get_extracted_parameters()
 
 	# Creating Dictionaries to Store Values
 	extracted_parameters_iter={}
@@ -101,33 +117,26 @@ def process_analysis(cir,optimization_input_parameters,timing_results):
 	# Writing the values to output files
 	write_circuit_parameters(cir.circuit_parameters,optimization_input_parameters)
 	
-	# Creating the list of process corners
-	process_corner_list=['tt','ff','ss']
-
 	# Creating an array for temperature analysis
-	start_temp=optimization_input_parameters['process_analysis']['start_temp']
-	stop_temp=optimization_input_parameters['process_analysis']['stop_temp']
-	n_temp=optimization_input_parameters['process_analysis']['n_temp']
-	if n_temp==1:
-		temp_array=np.array(['27'])
-	else:
-		temp_array=np.linspace(start_temp,stop_temp,n_temp)
+	temp_array=cir.circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']
+	process_array=cir.circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
 
 	# Performing the analysis
-	for process_corner in process_corner_list:
-		extracted_parameters_iter[process_corner]={}
-		cir.circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']=process_corner
-		write_extracted_parameters_initial(cir.extracted_parameters,optimization_input_parameters,process_corner)
-		cir.write_simulation_parameters()
-		for temp in temp_array:
-			cir.update_temp(temp)
-			cir.run_circuit()
-			update_extracted_parameters(cir.extracted_parameters,optimization_input_parameters,process_corner,temp)		# Writing the values to the output file
-			extracted_parameters_iter[process_corner][temp]=cir.extracted_parameters.copy()
+	cir.run_circuit()
+
+	for process in process_array:
+		extracted_parameters_iter[process]={}
+		flag=0
+		for temp in  temp_array:
+			final_extracted_parameters=get_single_temp_process_extracted_parameters(cir.extracted_parameters,temp,process)
+			if flag==0:
+				flag=1
+				write_extracted_parameters_initial(final_extracted_parameters,optimization_input_parameters,process)
+			update_extracted_parameters(final_extracted_parameters,optimization_input_parameters,process,temp)		# Writing the values to the output file
+			extracted_parameters_iter[process][temp]=final_extracted_parameters.copy()
 		
 	# Restoring the value of initial extracted and circuit parameters
-	cir.reset_temp()
-	cir.update_circuit(initial_circuit_parameters.copy())
+	cir.update_circuit_state(initial_circuit_parameters_initial,circuit_parameters_initial,extracted_parameters_initial)
 	
 	# Plotting the graphs
 	file_directory=optimization_input_parameters['filename']['output']
