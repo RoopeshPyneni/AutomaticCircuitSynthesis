@@ -21,6 +21,23 @@ from pylab import *
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the values of circuit_parameters to a txt file
+def write_initial_circuit_parameters(initial_circuit_parameters,optimization_input_parameters):
+	
+	filename=optimization_input_parameters['filename']['output']	# Getting the filename
+	
+	newpath =filename+'/Circuit_Parameter_Analysis/Results'	# Creating the folder if it is not present
+	if not os.path.exists(newpath):
+		os.makedirs(newpath)
+
+	filename=filename+'/Circuit_Parameter_Analysis/Results/initial_circuit_parameters.txt'
+	
+	f=open(filename,'w')
+	for param_name in initial_circuit_parameters:
+		f.write(str(param_name)+'\t'+str(initial_circuit_parameters[param_name])+'\n')	# Writing the values in the file
+	f.close()
+
+#---------------------------------------------------------------------------------------------------------------------------
+# Writing the values of circuit_parameters to a txt file
 def write_circuit_parameters(circuit_parameters,optimization_input_parameters,i):
 	
 	filename=optimization_input_parameters['filename']['output']	# Getting the filename
@@ -93,8 +110,9 @@ def circuit_parameter_analysis(cir,optimization_input_parameters,timing_results)
 	for i in range(n_runs):	
 		
 		# Getting the initial value of parameters
-		initial_extracted_parameters=cir.extracted_parameters.copy()
-		initial_circuit_parameters=cir.circuit_parameters.copy()
+		initial_circuit_parameters_initial=cir.get_initial_circuit_parameters()
+		circuit_parameters_initial=cir.get_circuit_parameters()
+		extracted_parameters_initial=cir.get_extracted_parameters()
 		
 		# Creating an array for circuit parameter analysis
 		parameter_name=optimization_input_parameters['circuit_parameter_analysis'][i]['parameter_name']
@@ -105,8 +123,8 @@ def circuit_parameter_analysis(cir,optimization_input_parameters,timing_results)
 		sweep_type=optimization_input_parameters['circuit_parameter_analysis'][i]['sweep_type']
 
 		if parameter_select_type=='relative':
-			start*=cir.circuit_parameters[parameter_name]
-			stop*=cir.circuit_parameters[parameter_name]
+			start*=cir.initial_circuit_parameters[parameter_name]
+			stop*=cir.initial_circuit_parameters[parameter_name]
 
 		if sweep_type=='linear':
 			parameter_array=np.linspace(start,stop,n_value)
@@ -114,7 +132,8 @@ def circuit_parameter_analysis(cir,optimization_input_parameters,timing_results)
 			parameter_array=np.logspace(np.log10(start),np.log10(stop),n_value)
 		
 		# Writing the values to output files
-		write_circuit_parameters(cir.circuit_parameters,optimization_input_parameters,i)
+		cir.run_circuit()
+		write_circuit_parameters(cir.initial_circuit_parameters,optimization_input_parameters,i)
 		write_extracted_parameters_initial(cir.extracted_parameters,optimization_input_parameters,parameter_name,i)
 
 		# Storing the results
@@ -122,14 +141,13 @@ def circuit_parameter_analysis(cir,optimization_input_parameters,timing_results)
 		
 		# Performing the analysis
 		for value in parameter_array:
-			cir.circuit_parameters[parameter_name]=value
+			cir.initial_circuit_parameters[parameter_name]=value
 			cir.run_circuit()
 			update_extracted_parameters(cir.extracted_parameters,optimization_input_parameters,value,i)		# Writing the values to the output file
 			extracted_parameters_iter[value]=cir.extracted_parameters.copy()
 
 		# Restoring the value of initial extracted and circuit parameters
-		cir.circuit_parameters=initial_circuit_parameters.copy()
-		cir.extracted_parameters=initial_extracted_parameters.copy()
+		cir.update_circuit_state(initial_circuit_parameters_initial,circuit_parameters_initial,extracted_parameters_initial)
 
 		# Plotting the graphs
 		file_directory=optimization_input_parameters['filename']['output']

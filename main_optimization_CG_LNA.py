@@ -252,7 +252,6 @@ def get_sensitivity_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['sensitivity_analysis']['simulation']['standard_parameters']['temp_list']=[-40,27,120]
 
-
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the temperature analysis parameters to the optimization_input_parameters dictionary
 def get_temperature_analysis_parameters(optimization_input_parameters,fo):
@@ -286,6 +285,22 @@ def get_process_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['process_analysis']['simulation']['standard_parameters']['temp_list']=[-40,0,40,80,120]
 	optimization_input_parameters['process_analysis']['simulation']['standard_parameters']['process_corner']=['ss','tt','ff']
+
+#---------------------------------------------------------------------------------------------------------------------------
+# Function that sets the frequency analysis parameters to the optimization_input_parameters dictionary
+def get_frequency_analysis_parameters(optimization_input_parameters,fo):
+
+	optimization_input_parameters['frequency_analysis']={}
+	optimization_input_parameters['frequency_analysis']['run']='NO'
+
+	optimization_input_parameters['frequency_analysis']['plot_type']='linear' # 'log'
+
+	#~~~~~~~~~~~~~~~~~~~~~~~~~
+	# Frequency Analysis Simulation Parameters
+	optimization_input_parameters['frequency_analysis']['simulation']={}
+	optimization_input_parameters['frequency_analysis']['simulation']['standard_parameters']={}
+
+	optimization_input_parameters['frequency_analysis']['simulation']['standard_parameters']['f_list']=[0.8e9,0.9e9,1.0e9,1.1e9,1.2e9]
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the temperature analysis parameters to the optimization_input_parameters dictionary
@@ -327,22 +342,6 @@ def get_iip3_analysis_parameters(optimization_input_parameters,fo):
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the frequency analysis parameters to the optimization_input_parameters dictionary
-def get_frequency_analysis_parameters(optimization_input_parameters,fo):
-
-	optimization_input_parameters['frequency_analysis']={}
-	optimization_input_parameters['frequency_analysis']['run']='NO'
-
-	optimization_input_parameters['frequency_analysis']['plot_type']='linear' # 'log'
-
-	#~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Frequency Analysis Simulation Parameters
-	optimization_input_parameters['frequency_analysis']['simulation']={}
-	optimization_input_parameters['frequency_analysis']['simulation']['standard_parameters']={}
-
-	optimization_input_parameters['frequency_analysis']['simulation']['standard_parameters']['f_list']=[0.8e9,0.9e9,1.0e9,1.1e9,1.2e9]
-
-#---------------------------------------------------------------------------------------------------------------------------
-# Function that sets the frequency analysis parameters to the optimization_input_parameters dictionary
 def get_circuit_parameter_analysis_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['circuit_parameter_analysis']={}
@@ -362,16 +361,7 @@ def get_circuit_parameter_analysis_parameters(optimization_input_parameters,fo):
 	# Frequency Analysis Simulation Parameters
 	optimization_input_parameters['circuit_parameter_analysis']['simulation']={}
 	optimization_input_parameters['circuit_parameter_analysis']['simulation']['standard_parameters']={}
-
-	optimization_input_parameters['circuit_parameter_analysis']['simulation']['standard_parameters']['iip3_type']='basic'
-	optimization_input_parameters['circuit_parameter_analysis']['simulation']['standard_parameters']['std_temp']=27
-	optimization_input_parameters['circuit_parameter_analysis']['simulation']['standard_parameters']['pin_fixed']=-65
-	optimization_input_parameters['circuit_parameter_analysis']['simulation']['standard_parameters']['pin_start']=-70
-	optimization_input_parameters['circuit_parameter_analysis']['simulation']['standard_parameters']['pin_stop']=-40
-	optimization_input_parameters['circuit_parameter_analysis']['simulation']['standard_parameters']['pin_points']=16
-	optimization_input_parameters['circuit_parameter_analysis']['simulation']['standard_parameters']['iip3_calc_points']=5
-	optimization_input_parameters['circuit_parameter_analysis']['simulation']['standard_parameters']['process_corner']='tt'
-	optimization_input_parameters['circuit_parameter_analysis']['simulation']['standard_parameters']['conservative']='YES'
+	#optimization_input_parameters['circuit_parameter_analysis']['simulation']['standard_parameters']['f_list']=[0.8e9,0.9e9,1.0e9,1.1e9,1.2e9]
 
 
 
@@ -446,13 +436,13 @@ optimization_input_parameters['temperature_analysis']['run']='NO'
 optimization_input_parameters['sensitivity_analysis']['run']='NO'
 optimization_input_parameters['process_analysis']['run']='NO'
 optimization_input_parameters['iip3_analysis']['run']='NO'
-optimization_input_parameters['frequency_analysis']['run']='YES' #'YES'
-optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
+optimization_input_parameters['frequency_analysis']['run']='NO' #'YES'
+optimization_input_parameters['circuit_parameter_analysis']['run']='YES' #'YES'
 
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'6_Test_Frequency_Analysis_2'						# SET THE FILENAME HERE
+	filename=f_directory+'7_Test_Circuit_Parameter_Analysis_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

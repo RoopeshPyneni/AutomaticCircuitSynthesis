@@ -1070,20 +1070,12 @@ def write_extract_multiple_circuits(circuit_parameters_dict,circuit_initializati
 # This function will write the circuit parameters, run spectre and extract the output parameters
 def get_final_extracted_parameters(extracted_parameters_split,f_list,process_list,temp_list):
 	
-	print('\n\n\nExtracted Parameters Split\n')
-	print(extracted_parameters_split)
 	extracted_parameters_frequency=get_final_extracted_parameters_frequency(extracted_parameters_split,f_list,process_list,temp_list)
 	
-	print('\n\n\nExtracted Parameters Frequency\n')
-	print(extracted_parameters_frequency)
 	extracted_parameters_process=get_final_extracted_parameters_process(extracted_parameters_frequency,process_list,temp_list)
 	
-	print('\n\n\nExtracted Parameters Process\n')
-	print(extracted_parameters_process)
 	final_extracted_parameters=get_final_extracted_parameters_temperature(extracted_parameters_process,temp_list)
 	
-	print('\n\n\nFinal Extracted Parameters Split\n')
-	print(final_extracted_parameters)
 	return final_extracted_parameters
 
 #-----------------------------------------------------------------------------------------------
