@@ -787,6 +787,9 @@ def write_simulation_parameters(circuit_initialization_parameters,circuit_name):
 			write_check=0
 
 		elif "include" not in line and include_check==1:
+			print('\n\n WRITE SIMULATION PARAMETERS')
+			print(process_corner)
+			print(circuit_initialization_parameters['MOS']['filename'][process_corner])
 			s=s+circuit_initialization_parameters['MOS']['filename'][process_corner]
 			include_check=0
 			write_check=1
@@ -973,7 +976,7 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 
 		print('Process Name')
 		print(process_list[i_process])
-		
+
 		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['directory']=netlist_path
 		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['tcsh']=spectre_path+'spectre_run.tcsh'
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['fund_1']=f_list[i_freq]
