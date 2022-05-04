@@ -446,7 +446,7 @@ optimization_input_parameters['temperature_analysis']['run']='NO'
 optimization_input_parameters['sensitivity_analysis']['run']='NO'
 optimization_input_parameters['process_analysis']['run']='NO'
 optimization_input_parameters['iip3_analysis']['run']='NO'
-optimization_input_parameters['frequency_analysis']['run']='NO' #'YES'
+optimization_input_parameters['frequency_analysis']['run']='YES' #'YES'
 optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 
 if file_choose=='S':
