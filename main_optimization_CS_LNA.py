@@ -106,9 +106,8 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	circuit_initialization_parameters['simulation']['standard_parameters']['f_iip3']=1e6
 
 	# Operating frequency points
-	circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=fo
-	circuit_initialization_parameters['simulation']['standard_parameters']['f_range']=50e6
-
+	circuit_initialization_parameters['simulation']['standard_parameters']['f_list']=[fo-50e6,fo,fo+50e6]
+	
 	# Other Values
 	circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']=27
 	circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']=[-40,27,120]

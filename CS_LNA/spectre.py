@@ -6,7 +6,6 @@ File Description 	: This file will contain the functions to write, run, and read
 """
 
 #==========================================================================================================================
-from cgitb import small
 import os
 import shutil
 import numpy as np
@@ -70,12 +69,9 @@ class Circuit():
 	
 	# Running multiple circuits 
 	def run_circuit_multiple(self,initial_circuit_parameters_dict):
-		print('\n\n\n******************* MULTIPLE RUNS ********************************\n\n\n')
-		print(initial_circuit_parameters_dict)
 		circuit_parameters_dict={}
 		for i in initial_circuit_parameters_dict:
 			circuit_parameters_dict[i]=get_final_circuit_parameters(initial_circuit_parameters_dict[i].copy(),self.circuit_initialization_parameters).copy()
-		print(circuit_parameters_dict)
 		extracted_parameters_dict=write_extract_multiple_circuits(circuit_parameters_dict,self.circuit_initialization_parameters)
 		return extracted_parameters_dict
 
@@ -136,6 +132,7 @@ class Circuit():
 	#-----------------------------------------------------------------------------------------------
 	#---------------------------- Optimization Functions -------------------------------------------
 
+	#-----------------------------------------------------------------------------------------------
 	# This function calculates the loss for Io Optimization
 	# KWARGS : This is used to choose the temperature and process if necessary
 	def calc_loss(self,output_conditions,loss_weights,**kwargs):
@@ -169,7 +166,7 @@ class Circuit():
 		gain_delta_ref=output_conditions['gain_delta']
 		s11_ref_middle=output_conditions['s11_db_middle']
 				
-		#Defining the weights to calculate Loss
+		# Defining the weights to calculate Loss
 		A1=loss_weights['gain_db']	# Weight for gain
 		A2=loss_weights['iip3_dbm']	# Weight for iip3
 		A3=loss_weights['s11_db']	# Weight for s11
@@ -209,6 +206,7 @@ class Circuit():
 		
 		return loss_dict
 	
+	#-----------------------------------------------------------------------------------------------
 	# This function updates the values of circuit parameters by trying to minimize loss
 	def update_circuit_parameters(self,circuit_parameters_slope,optimization_input_parameters,run_number,loss_iter,loss_type):
 		
@@ -259,7 +257,8 @@ class Circuit():
 			self.initial_circuit_parameters[param_name]=self.initial_circuit_parameters[param_name]-change
 		
 		self.update_circuit_parameters_1(self.initial_circuit_parameters)
-			
+	
+	#-----------------------------------------------------------------------------------------------
 	# Function to check the best solution
 	def check_best_solution(self,optimization_results,loss_max):
 
@@ -277,8 +276,9 @@ class Circuit():
 		if sum([optimization_results['loss_iter'][-1][key] for key in zero_loss_array])>loss_max:
 			flag=0
 		else:
-			flag=1 # This means that we got the final point
+			flag=1 # This means that we got a correct point
 		
+		# Checking other iterations
 		for i in range(0,n_iter):
 			if sum([optimization_results['loss_iter'][i][key] for key in zero_loss_array])>loss_max:
 				if flag==1:
@@ -306,6 +306,7 @@ class Circuit():
 		
 		return opt_dict
 
+	#-----------------------------------------------------------------------------------------------
 	# This function will check which process and temperature is the worst case
 	def check_worst_case(self,output_conditions,loss_weights):
 
@@ -362,7 +363,7 @@ class Circuit():
 
 		return current_loss,current_temp,current_process
 
-
+	#-----------------------------------------------------------------------------------------------
 	# Function to perform pre optimization
 	def pre_optimization(self,optimization_input_parameters,timing_results):
 		pr.pre_optimization(self,optimization_input_parameters,timing_results)
@@ -370,6 +371,7 @@ class Circuit():
 	#-----------------------------------------------------------------------------------------------
 	#---------------------------- Other Functions --------------------------------------------------
 
+	#-----------------------------------------------------------------------------------------------
 	# Calculating the iip3
 	def calculate_iip3(self,n_pin,n_points,vout_fund_mag,vout_im3_mag,pin):
 		return sp.calculate_iip3_multiple_points(n_pin,n_points,vout_fund_mag,vout_im3_mag,pin)
@@ -574,7 +576,6 @@ def extract_sp_param(circuit_initialization_parameters):
 	extracted_parameters={}
 	
 	# Skipping the first few lines
-	#lines=lines[12:]
 	while 1:
 		if 'format freq' not in lines[0]:
 			lines=lines[1:]
@@ -750,9 +751,6 @@ def write_circuit_parameters(circuit_parameters,circuit_initialization_parameter
 	# Getting the filenames
 	filename1=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']+'/circ.scs'
 	filename2=circuit_initialization_parameters['simulation']['standard_parameters']['directory']+circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']+'/circ.scs'
-
-	print('\n\n----- Write Circuit Parameters -------\n\n')
-	print(circuit_parameters)
 
 	# We will write the new values to the Basic Circuit
 	f=open(filename1,'r+')
@@ -1049,10 +1047,8 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 	pool=mp.Pool(7)
 
 	# Getting the values of frequency and range
-	f_operating=circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']
-	f_range=circuit_initialization_parameters['simulation']['standard_parameters']['f_range']
-	f_list=[f_operating-f_range,f_operating,f_operating+f_range]
-	n_freq=3
+	f_list=circuit_initialization_parameters['simulation']['standard_parameters']['f_list']
+	n_freq=len(f_list)
 
 	# Getting the different processes
 	process_list=circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
@@ -1120,10 +1116,8 @@ def write_extract_multiple_circuits(circuit_parameters_dict,circuit_initializati
 	pool=mp.Pool(8)
 
 	# Getting the values of frequency and range
-	f_operating=circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']
-	f_range=circuit_initialization_parameters['simulation']['standard_parameters']['f_range']
-	f_list=[f_operating-f_range,f_operating,f_operating+f_range]
-	n_freq=3
+	f_list=circuit_initialization_parameters['simulation']['standard_parameters']['f_list']
+	n_freq=len(f_list)
 
 	# Getting the different processes
 	process_list=circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
