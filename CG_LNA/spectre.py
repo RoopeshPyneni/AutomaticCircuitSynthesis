@@ -763,7 +763,7 @@ def write_simulation_parameters(circuit_initialization_parameters,circuit_name):
 	write_dict={}
 	for param_name in circuit_initialization_parameters['simulation']['netlist_parameters']:
 		write_dict[param_name]=circuit_initialization_parameters['simulation']['netlist_parameters'][param_name]
-	process_corner=circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
+	process_corner=circuit_initialization_parameters['simulation']['netlist_parameters']['process_corner']
 
 	write_dict['len']=circuit_initialization_parameters['MOS']['Lmin']
 	write_dict['v_dd']=circuit_initialization_parameters['MOS']['Vdd']
@@ -790,6 +790,7 @@ def write_simulation_parameters(circuit_initialization_parameters,circuit_name):
 			print('\n\n WRITE SIMULATION PARAMETERS')
 			print(process_corner)
 			print(circuit_initialization_parameters['MOS']['filename'][process_corner])
+			
 			s=s+circuit_initialization_parameters['MOS']['filename'][process_corner]
 			include_check=0
 			write_check=1
@@ -976,6 +977,7 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 
 		print('Process Name')
 		print(process_list[i_process])
+		
 
 		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['directory']=netlist_path
 		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['tcsh']=spectre_path+'spectre_run.tcsh'
@@ -983,6 +985,8 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['fund_2']=f_list[i_freq]+1e6
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['process_corner']=process_list[i_process]
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['cir_temp']=temp_list[i_temp]
+
+		print(circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['process_corner'])
 		
 	# Creating processes
 	results_async=[pool.apply_async(write_extract_single,args=(i,circuit_parameters_run[i],circuit_initialization_parameters_run[i])) for i in range(n_runs)]
