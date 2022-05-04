@@ -140,20 +140,20 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	# Manual Hand Calculations
 	optimization_input_parameters['pre_optimization']['manual_circuit_parameters']={
 	'Ld': 9e-9,
-	'Cd': 5.489969859971638e-13,
-	'W': 0.0026388121426774475,
+	'Cd': 5.489971363501514e-13,
+	'W': 0.0025202377594010653,
 	'Cg': 1.5458676014581085e-10,
-	'Io': 0.0019063507140805855,
+	'Io': 0.0016369962227517215,
 	'Rsum': 10000,
-	'Rk': 0.9310180237866711,
+	'Rk': 0.95,
 	'Ls': 3.182280567225685e-09,
-	'Lg': 1.6553517519102767e-08,
+	'Lg': 1.792018017477487e-08,
 	'Rb': 5000,
-	'Cs': 1.2271777187332068e-11,
+	'Cs': 1.2271773971045355e-11,
 	'Wk': 100,
-	'Io_k':2.0683025703619897e-06,
-	'Wpr':800e-9,
-	'wid_Cpr':5e-6,
+	'Io_k':2.2262529019823066e-06,
+	'Wpr':6.951933459876268e-07,
+	'wid_Cpr':4.074636060571575e-06,
 	}
 	
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -204,7 +204,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=50
+	optimization_input_parameters['optimization'][1]['max_iteration']=250
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
@@ -212,7 +212,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	optimization_input_parameters['optimization'][1]['loss_type']=2
 	optimization_input_parameters['optimization'][1]['optimization_type']=0
 	optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Lg','Io','W','Ls','Cd','Rk','Cs','Io_k','wid_Cpr','Wpr']
-	#optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Cd','Cpr','wid_Cpr']
+	#optimization_input_parameters['optimization'][1]['optimizing_parameters']=['Cd','Wpr','wid_Cpr']
 	optimization_input_parameters['optimization'][1]['output_parameters_list']=['Io','gain_db','iip3_dbm','s11_db','Zin_R','Zin_I','nf_db','p_source','gm1','vg1','vd1']
 	optimization_input_parameters['optimization'][1]['process_temp_type']='all'
 
@@ -548,7 +548,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'1_Optimization_1'						# SET THE FILENAME HERE
+	filename=f_directory+'1_Optimization_3'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
