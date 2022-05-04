@@ -936,6 +936,8 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 
 	# Getting the different processes
 	process_list=circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
+	print('Process List')
+	print(process_list)
 	n_process=len(process_list)
 
 	# Getting the temperature list
@@ -969,6 +971,9 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 		if not os.path.exists(spectre_path):
 			shutil.copytree(spectre_folder+'T_extra/',spectre_path)
 
+		print('Process Name')
+		print(process_list[i_process])
+		
 		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['directory']=netlist_path
 		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['tcsh']=spectre_path+'spectre_run.tcsh'
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['fund_1']=f_list[i_freq]
