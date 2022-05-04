@@ -250,25 +250,8 @@ def get_sensitivity_analysis_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['sensitivity_analysis']['simulation']={}
 	optimization_input_parameters['sensitivity_analysis']['simulation']['standard_parameters']={}
 
-	optimization_input_parameters['sensitivity_analysis']['simulation']['standard_parameters']['basic_circuit']='basic_parameters_tsmc_65_rcm'
-	optimization_input_parameters['sensitivity_analysis']['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_tsmc_65_rcm'
-	optimization_input_parameters['sensitivity_analysis']['simulation']['standard_parameters']['iip3_type']='basic'
-	optimization_input_parameters['sensitivity_analysis']['simulation']['standard_parameters']['std_temp']=27
-	optimization_input_parameters['sensitivity_analysis']['simulation']['standard_parameters']['pin_fixed']=-65
-	optimization_input_parameters['sensitivity_analysis']['simulation']['standard_parameters']['pin_start']=-70
-	optimization_input_parameters['sensitivity_analysis']['simulation']['standard_parameters']['pin_stop']=-40
-	optimization_input_parameters['sensitivity_analysis']['simulation']['standard_parameters']['pin_points']=16
-	optimization_input_parameters['sensitivity_analysis']['simulation']['standard_parameters']['iip3_calc_points']=5
-	optimization_input_parameters['sensitivity_analysis']['simulation']['standard_parameters']['process_corner']='tt'
-	optimization_input_parameters['sensitivity_analysis']['simulation']['standard_parameters']['conservative']='YES'
+	optimization_input_parameters['sensitivity_analysis']['simulation']['standard_parameters']['temp_list']=[-40,27,120]
 
-	optimization_input_parameters['sensitivity_analysis']['simulation']['netlist_parameters']={
-		'pin':-65,
-		'fund_2':fo+1e6,
-		'fund_1':fo,
-		'cir_temp':27,
-		'n_harm':15
-	}
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the temperature analysis parameters to the optimization_input_parameters dictionary

@@ -21,6 +21,23 @@ from pylab import *
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the values of circuit_parameters to a txt file
+def write_initial_circuit_parameters(initial_circuit_parameters,optimization_input_parameters):
+	
+	filename=optimization_input_parameters['filename']['output']	# Getting the filename
+	
+	newpath =filename+'/Temperature_Analysis/Results'	# Creating the folder if it is not present
+	if not os.path.exists(newpath):
+		os.makedirs(newpath)
+
+	filename=filename+'/Temperature_Analysis/Results/initial_circuit_parameters.txt'
+	
+	f=open(filename,'w')
+	for param_name in initial_circuit_parameters:
+		f.write(str(param_name)+'\t'+str(initial_circuit_parameters[param_name])+'\n')	# Writing the values in the file
+	f.close()
+
+#---------------------------------------------------------------------------------------------------------------------------
+# Writing the values of circuit_parameters to a txt file
 def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 	
 	filename=optimization_input_parameters['filename']['output']	# Getting the filename
@@ -121,6 +138,7 @@ def temperature_analysis(cir,optimization_input_parameters,timing_results):
 	print('\n\n----- CURRENT ARRAY -------')
 	
 	# Writing the values to output files
+	write_initial_circuit_parameters(cir.initial_circuit_parameters,optimization_input_parameters)
 	write_circuit_parameters(cir.circuit_parameters,optimization_input_parameters)
 	
 	# Performing the analysis
