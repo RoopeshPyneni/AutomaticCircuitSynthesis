@@ -107,14 +107,17 @@ class Circuit():
 	def update_simulation_parameters(self,simulation_parameters):
 		
 		self.circuit_initialization_parameters=copy.deepcopy(self.initial_circuit_initialization_parameters)
-		
+
 		if 'standard_parameters' in simulation_parameters:
 			for param_name in simulation_parameters['standard_parameters']:
 				self.circuit_initialization_parameters['simulation']['standard_parameters'][param_name]=simulation_parameters['standard_parameters'][param_name]
 		
 		self.circuit_initialization_parameters['simulation']['netlist_parameters']['n_harm']=self.circuit_initialization_parameters['simulation']['standard_parameters']['n_harm']
 		self.circuit_initialization_parameters['simulation']['netlist_parameters']['cir_temp']=self.circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']
-	
+
+		print(self.initial_circuit_initialization_parameters)
+		print(self.circuit_initialization_parameters)
+
 	# Writing the simulation parameters
 	def write_simulation_parameters(self):
 		write_simulation_parameters(self.circuit_initialization_parameters)
