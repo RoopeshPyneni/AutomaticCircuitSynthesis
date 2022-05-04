@@ -105,7 +105,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	# Other Values
 	circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']=27
 	circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']=[27]
-	circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']='tt'
+	circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']=['tt']
 	circuit_initialization_parameters['simulation']['standard_parameters']['conservative']='NO'
 	circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max']=2e-6
 
