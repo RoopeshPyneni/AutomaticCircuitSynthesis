@@ -1078,8 +1078,12 @@ def write_extract_multiple_circuits(circuit_parameters_dict,circuit_initializati
 def get_final_extracted_parameters(extracted_parameters_split,f_list,process_list,temp_list):
 	
 	extracted_parameters_frequency=get_final_extracted_parameters_frequency(extracted_parameters_split,f_list,process_list,temp_list)
+	print('Parameters Frequency')
+	print(extracted_parameters_frequency)
 
 	extracted_parameters_process=get_final_extracted_parameters_process(extracted_parameters_frequency,process_list,temp_list)
+	print('Parameters Process')
+	print(extracted_parameters_process)
 
 	final_extracted_parameters=get_final_extracted_parameters_temperature(extracted_parameters_process,temp_list)
 
