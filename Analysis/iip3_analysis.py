@@ -21,6 +21,23 @@ from pylab import *
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Writing the values of circuit_parameters to a txt file
+def write_initial_circuit_parameters(initial_circuit_parameters,optimization_input_parameters):
+	
+	filename=optimization_input_parameters['filename']['output']	# Getting the filename
+	
+	newpath =filename+'/Temperature_Analysis/Results'	# Creating the folder if it is not present
+	if not os.path.exists(newpath):
+		os.makedirs(newpath)
+
+	filename=filename+'/Temperature_Analysis/Results/initial_circuit_parameters.txt'
+	
+	f=open(filename,'w')
+	for param_name in initial_circuit_parameters:
+		f.write(str(param_name)+'\t'+str(initial_circuit_parameters[param_name])+'\n')	# Writing the values in the file
+	f.close()
+
+#---------------------------------------------------------------------------------------------------------------------------
+# Writing the values of circuit_parameters to a txt file
 def write_circuit_parameters(circuit_parameters,optimization_input_parameters):
 	
 	filename=optimization_input_parameters['filename']['output']	# Getting the filename
@@ -105,6 +122,7 @@ def iip3_analysis(cir,optimization_input_parameters,timing_results):
 	initial_freq=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']
 	initial_pin=cir.circuit_initialization_parameters['simulation']['standard_parameters']['pin_fixed']
 	cir.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']='basic'
+	
 	cir.update_simulation_parameters(optimization_input_parameters['iip3_analysis']['simulation'])
 	
 	# Pin values and frequency array
@@ -117,12 +135,13 @@ def iip3_analysis(cir,optimization_input_parameters,timing_results):
 	pin_array=np.linspace(pin_start,pin_stop,n_pin)
 	
 	# Writing the values to output files
+	write_initial_circuit_parameters(cir.initial_circuit_parameters,optimization_input_parameters)
 	write_circuit_parameters(cir.circuit_parameters,optimization_input_parameters)
 	write_extracted_parameters_initial(optimization_input_parameters)
 	
 	# Performing the analysis
 	for freq in freq_array:
-		cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=freq
+		cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_list']=[freq]
 		im3_array=[]
 		fund_array=[]
 		for pin in pin_array:

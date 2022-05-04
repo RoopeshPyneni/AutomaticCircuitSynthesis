@@ -320,25 +320,7 @@ def get_iip3_analysis_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['iip3_analysis']['simulation']={}
 	optimization_input_parameters['iip3_analysis']['simulation']['standard_parameters']={}
 
-	optimization_input_parameters['iip3_analysis']['simulation']['standard_parameters']['basic_circuit']='basic_parameters_tsmc_65_rcm'
-	optimization_input_parameters['iip3_analysis']['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_tsmc_65_rcm'
-	optimization_input_parameters['iip3_analysis']['simulation']['standard_parameters']['iip3_type']='basic'
-	optimization_input_parameters['iip3_analysis']['simulation']['standard_parameters']['std_temp']=27
-	optimization_input_parameters['iip3_analysis']['simulation']['standard_parameters']['pin_fixed']=-65
-	optimization_input_parameters['iip3_analysis']['simulation']['standard_parameters']['pin_start']=-70
-	optimization_input_parameters['iip3_analysis']['simulation']['standard_parameters']['pin_stop']=-40
-	optimization_input_parameters['iip3_analysis']['simulation']['standard_parameters']['pin_points']=16
-	optimization_input_parameters['iip3_analysis']['simulation']['standard_parameters']['iip3_calc_points']=5
-	optimization_input_parameters['iip3_analysis']['simulation']['standard_parameters']['process_corner']='tt'
-	optimization_input_parameters['iip3_analysis']['simulation']['standard_parameters']['conservative']='YES'
-
-	optimization_input_parameters['iip3_analysis']['simulation']['netlist_parameters']={
-		'pin':-65,
-		'fund_2':fo+1e6,
-		'fund_1':fo,
-		'cir_temp':27,
-		'n_harm':15
-	}
+	optimization_input_parameters['iip3_analysis']['simulation']['standard_parameters']['f_list']=[0.8e9,0.9e9,1.0e9,1.1e9,1.2e9]
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the frequency analysis parameters to the optimization_input_parameters dictionary
@@ -435,14 +417,14 @@ optimization_input_parameters['optimization']['run']='NO' #'YES'
 optimization_input_parameters['temperature_analysis']['run']='NO'
 optimization_input_parameters['sensitivity_analysis']['run']='NO'
 optimization_input_parameters['process_analysis']['run']='NO'
-optimization_input_parameters['iip3_analysis']['run']='NO'
+optimization_input_parameters['iip3_analysis']['run']='YES'
 optimization_input_parameters['frequency_analysis']['run']='NO' #'YES'
-optimization_input_parameters['circuit_parameter_analysis']['run']='YES' #'YES'
+optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'7_Test_Circuit_Parameter_Analysis_1'						# SET THE FILENAME HERE
+	filename=f_directory+'8_Test_IIP3_Analysis_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
