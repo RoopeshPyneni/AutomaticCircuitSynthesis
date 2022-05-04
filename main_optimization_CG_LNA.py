@@ -105,7 +105,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 
 	# Other Values
 	circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']=27
-	circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']=[27]
+	circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']=[-40,27,120]
 	circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']='tt'
 	circuit_initialization_parameters['simulation']['standard_parameters']['conservative']='NO'
 	circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max']=2e-6
@@ -573,7 +573,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'Test_Optimization_2'						# SET THE FILENAME HERE
+	filename=f_directory+'Test_Optimization_3'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

@@ -32,7 +32,8 @@ class Circuit():
 		self.initial_circuit_parameters={}
 		self.circuit_parameters={}
 		self.extracted_parameters={}
-		self.circuit_initialization_parameters=circuit_initialization_parameters
+		self.initial_circuit_initialization_parameters=copy.deepcopy(circuit_initialization_parameters)
+		self.circuit_initialization_parameters=copy.deepcopy(circuit_initialization_parameters)
 		self.mos_parameters=sp.calculate_mos_parameters(self.circuit_initialization_parameters)
 
 		# Getting the circuit name
@@ -104,6 +105,8 @@ class Circuit():
 
 	# Updating the simulation parameters
 	def update_simulation_parameters(self,simulation_parameters):
+		
+		self.circuit_initialization_parameters=copy.deepcopy(self.initial_circuit_initialization_parameters)
 		
 		if 'standard_parameters' in simulation_parameters:
 			for param_name in simulation_parameters['standard_parameters']:
