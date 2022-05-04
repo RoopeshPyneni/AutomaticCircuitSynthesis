@@ -787,10 +787,6 @@ def write_simulation_parameters(circuit_initialization_parameters,circuit_name):
 			write_check=0
 
 		elif "include" not in line and include_check==1:
-			print('\n\n WRITE SIMULATION PARAMETERS')
-			print(process_corner)
-			print(circuit_initialization_parameters['MOS']['filename'][process_corner])
-			
 			s=s+circuit_initialization_parameters['MOS']['filename'][process_corner]
 			include_check=0
 			write_check=1
@@ -940,8 +936,6 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 
 	# Getting the different processes
 	process_list=circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
-	print('Process List')
-	print(process_list)
 	n_process=len(process_list)
 
 	# Getting the temperature list
@@ -975,10 +969,6 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 		if not os.path.exists(spectre_path):
 			shutil.copytree(spectre_folder+'T_extra/',spectre_path)
 
-		print('Process Name')
-		print(process_list[i_process])
-		
-
 		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['directory']=netlist_path
 		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['tcsh']=spectre_path+'spectre_run.tcsh'
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['fund_1']=f_list[i_freq]
@@ -986,8 +976,6 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['process_corner']=process_list[i_process]
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['cir_temp']=temp_list[i_temp]
 
-		print(circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['process_corner'])
-		
 	# Creating processes
 	results_async=[pool.apply_async(write_extract_single,args=(i,circuit_parameters_run[i],circuit_initialization_parameters_run[i])) for i in range(n_runs)]
 
@@ -1098,6 +1086,8 @@ def get_final_extracted_parameters(extracted_parameters_split,f_list,process_lis
 	print(extracted_parameters_process)
 
 	final_extracted_parameters=get_final_extracted_parameters_temperature(extracted_parameters_process,temp_list)
+	print('Parameters Temperature')
+	print(extracted_parameters_process)
 
 	return final_extracted_parameters
 
@@ -1379,7 +1369,7 @@ def get_final_extracted_parameters_temperature(extracted_parameters_process,temp
 			else:
 				extracted_parameters[param]=extracted_parameters_process[middle_temp][param]
 		
-		return extracted_parameters
+	return extracted_parameters
 
 
 
