@@ -34,32 +34,34 @@ class Circuit():
 		self.circuit_parameters={}
 		self.extracted_parameters={}
 		self.initial_circuit_initialization_parameters=copy.deepcopy(circuit_initialization_parameters)
-		self.circuit_initialization_parameters=copy.deepcopy(circuit_initialization_parameters)
 		self.mos_parameters=sp.calculate_mos_parameters(self.circuit_initialization_parameters)
 
 		# Getting the circuit name
-		if self.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_resistor':
-			self.circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_r'
-			self.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_r'
+		if self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_resistor':
+			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_r'
+			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_r'
 		
-		elif self.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='series':
-			self.circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_series'
-			self.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_series'
+		elif self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='series':
+			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_series'
+			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_series'
 
-		elif self.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_capacitor':
-			self.circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_rc'
-			self.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_rc'
+		elif self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_capacitor':
+			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_rc'
+			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_rc'
 
-		elif self.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_inductor':
-			self.circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_rcl'
-			self.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_rcl'
+		elif self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_inductor':
+			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_rcl'
+			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_rcl'
 
-		elif self.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='ideal':
-			self.circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
-			self.circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
+		elif self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='ideal':
+			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
+			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb'
 		
 		else:
 			sys.exit()
+		
+		self.circuit_initialization_parameters=copy.deepcopy(self.initial_circuit_initialization_parameters)
+		
 	
 	#-----------------------------------------------------------------------------------------------
 	#---------------------------- Circuit Parameter Functions --------------------------------------
