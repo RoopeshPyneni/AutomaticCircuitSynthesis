@@ -1202,12 +1202,21 @@ def write_extract_multiple_circuits(circuit_parameters_dict,circuit_initializati
 # This function will write the circuit parameters, run spectre and extract the output parameters
 def get_final_extracted_parameters(extracted_parameters_split,f_list,process_list,temp_list):
 	
+	print("\n\nExtracted Parameters Split\n")
+	print(extracted_parameters_split)
 	extracted_parameters_frequency=get_final_extracted_parameters_frequency(extracted_parameters_split,f_list,process_list,temp_list)
 
+	print("\n\nExtracted Parameters Frequency\n")
+	print(extracted_parameters_frequency)
 	extracted_parameters_process=get_final_extracted_parameters_process(extracted_parameters_frequency,process_list,temp_list)
 
+	print("\n\nExtracted Parameters Process\n")
+	print(extracted_parameters_process)
 	final_extracted_parameters=get_final_extracted_parameters_temperature(extracted_parameters_process,temp_list)
-
+	
+	print("\n\nExtracted Parameters Temperature\n")
+	print(final_extracted_parameters)
+	
 	return final_extracted_parameters
 
 #-----------------------------------------------------------------------------------------------
@@ -1275,6 +1284,7 @@ def get_final_extracted_parameters_frequency(extracted_parameters_split,f_list,p
 		for temp in temp_list:
 			extracted_parameters_frequency[temp]={}
 			for process in process_list:
+			
 				extracted_parameters_frequency[temp][process]={}
 
 				# Now, we have a given process and temperature ; We need to find the extracted parameters for this set
@@ -1348,7 +1358,7 @@ def get_final_extracted_parameters_frequency(extracted_parameters_split,f_list,p
 				for param in iip3_array_list:
 					if param in extracted_parameters_combined[mid_frequency]:
 						final_extracted_parameters[param]=extracted_parameters_combined[mid_frequency][param]
-
+				
 				extracted_parameters_frequency[temp][process]=final_extracted_parameters.copy()
 
 	return extracted_parameters_frequency
@@ -1375,8 +1385,14 @@ def get_final_extracted_parameters_process(extracted_parameters_frequency,proces
 			for process in process_list:
 				for param_name in extracted_parameters_frequency[temp][process]:
 					extracted_parameters_process[temp][process+'_'+param_name]=extracted_parameters_frequency[temp][process][param_name]
-
+	
+	print('\n\nExtracted Parameters Process Initial :')
+	print(extracted_parameters_process)
+	
 	if len(process_list)!=1:
+		
+		print('\n\nMultiple Processes')
+		
 		extracted_parameters_select={
 			'freq':'mid',
 			's11_db':'max',
@@ -1420,7 +1436,7 @@ def get_final_extracted_parameters_process(extracted_parameters_frequency,proces
 				else:
 					extracted_parameters_process[temp][param]=extracted_parameters_frequency[temp][middle_process][param]
 		
-		return extracted_parameters_process
+	return extracted_parameters_process
 
 #-----------------------------------------------------------------------------------------------
 # This function will combine the extracted_parameters
@@ -1484,7 +1500,7 @@ def get_final_extracted_parameters_temperature(extracted_parameters_process,temp
 			else:
 				extracted_parameters[param]=extracted_parameters_process[middle_temp][param]
 		
-		return extracted_parameters
+	return extracted_parameters
 
 
 

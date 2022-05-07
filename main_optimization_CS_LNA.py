@@ -71,10 +71,10 @@ def get_output_conditions(optimization_input_parameters,fo):
 	
 	optimization_input_parameters['output_conditions']={
 		's11_db':-10.0,
-		'iip3_dbm':-10.0,
+		'iip3_dbm':-15.0,
 		'gain_db':15.0,
 		'gain_delta':1.5,
-		'nf_db':1.5,
+		'nf_db':1.7,
 		'wo':2.0*np.pi*fo,
 		'delta_v':0.1,
 		'Rs':50,
@@ -110,7 +110,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	# Other Values
 	circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']=27
 	circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']=[-40,27,120]
-	circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']=['tt']
+	circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']=['ss','tt','ff']
 	circuit_initialization_parameters['simulation']['standard_parameters']['conservative']='NO'
 	circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max']=2e-6
 
@@ -180,7 +180,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=250
+	optimization_input_parameters['optimization'][1]['max_iteration']=100
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
@@ -503,7 +503,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'1_Optimization_3'						# SET THE FILENAME HERE
+	filename=f_directory+'2_Optimization_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
