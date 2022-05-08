@@ -246,7 +246,7 @@ def get_sensitivity_analysis_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['sensitivity_analysis']['run']='NO'
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Temperature Analysis Simulation Parameters
+	# Sensitivity Analysis Simulation Parameters
 	optimization_input_parameters['sensitivity_analysis']['simulation']={}
 	optimization_input_parameters['sensitivity_analysis']['simulation']['standard_parameters']={}
 
