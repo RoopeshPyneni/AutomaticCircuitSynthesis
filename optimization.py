@@ -149,10 +149,6 @@ def save_info_single_array_iter(filename_root,filename_name,values_iter,iter_no)
 # Function that stores the data of loss slopes vs iterations in a csv file
 def save_info_double_array_iter(filename_root,filename_name,values_iter,iter_no):
 	
-	if iter_no==0:
-		return
-	iter_no=iter_no-1
-	
 	filename=filename_root+filename_name
 	
 	if iter_no==0:
