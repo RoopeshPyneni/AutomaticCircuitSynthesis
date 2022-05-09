@@ -604,7 +604,7 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 			cir.circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']=[temp]
 			cir.circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']=[process]
 		else:
-			loss=loss_iter[i-1]
+			loss=loss_iter[i-1].copy()
 
 		circuit_parameters_slope,circuit_parameters_sensitivity=calc_loss_slope(cir,output_conditions,loss,optimization_input_parameters,run_number)
 		cir.update_circuit_parameters(circuit_parameters_slope,optimization_input_parameters,run_number,loss,loss_type)
@@ -668,7 +668,7 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	
 	# Storing the final results
 	optimization_results['n_iter']=i
-	save_info(optimization_input_parameters,optimization_results,i,0)
+	save_info(optimization_input_parameters,optimization_results,i,1)
 	
 	# Resetting the value of alpha
 	optimization_input_parameters['optimization'][run_number]['alpha']['value']=alpha_initial

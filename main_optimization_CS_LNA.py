@@ -71,10 +71,10 @@ def get_output_conditions(optimization_input_parameters,fo):
 	
 	optimization_input_parameters['output_conditions']={
 		's11_db':-10.0,
-		'iip3_dbm':-15.0,
+		'iip3_dbm':-10.0,
 		'gain_db':15.0,
 		'gain_delta':1.5,
-		'nf_db':1.7,
+		'nf_db':1.5,
 		'wo':2.0*np.pi*fo,
 		'delta_v':0.1,
 		'Rs':50,
@@ -437,7 +437,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'3_Test_Optimization_1'						# SET THE FILENAME HERE
+	filename=f_directory+'3_Test_Optimization_2'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

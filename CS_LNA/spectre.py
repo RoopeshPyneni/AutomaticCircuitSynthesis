@@ -267,6 +267,12 @@ class Circuit():
 	# Function to check the best solution
 	def check_best_solution(self,optimization_results,loss_max):
 
+		for i in range(1000):
+			print('\n')
+
+		print('\nOptimization Results\n')
+		print(optimization_results)
+
 		# Defining some values
 		n_iter=optimization_results['n_iter']
 		iter_min=-1
@@ -283,6 +289,11 @@ class Circuit():
 		else:
 			flag=1 # This means that we got a correct point
 		
+		print('Iteration:-1')
+		print('Total Loss  :',total_loss)
+		print('Loss Io Min :',loss_Io_min)
+		print('Check Best  :',flag)
+		
 		# Checking other iterations
 		for i in range(0,n_iter):
 			if sum([optimization_results['loss_iter'][i][key] for key in zero_loss_array])>loss_max:
@@ -298,6 +309,11 @@ class Circuit():
 				iter_min=i
 				loss_Io_min=sum([optimization_results['loss_iter'][i][key] for key in minimize_loss_array])
 				flag=1
+			
+			print('Iteration:',i)
+			print('Total Loss  :',total_loss)
+			print('Loss Io Min :',loss_Io_min)
+			print('Check Best  :',flag)
 
 		# Creating output dictionary
 		opt_dict={}
@@ -308,6 +324,9 @@ class Circuit():
 			opt_dict['perfect_point']='No'
 		opt_dict['iter_number']=iter_min+1
 		opt_dict['Io_loss']=loss_Io_min
+	
+		print('\n\nFinal Output Dictionary')
+		print(opt_dict)
 		
 		return opt_dict
 
