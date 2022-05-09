@@ -296,21 +296,34 @@ class Circuit():
 		
 		# Checking other iterations
 		for i in range(0,n_iter):
-			if sum([optimization_results['loss_iter'][i][key] for key in zero_loss_array])>loss_max:
-				if flag==1:
-					continue
-				if optimization_results['loss_iter'][i]['loss']<total_loss:
-					iter_min=i
-					total_loss=optimization_results['loss_iter'][i]['loss']
-					loss_Io_min=sum([optimization_results['loss_iter'][i][key] for key in minimize_loss_array])
-				continue
 
-			if flag==0 or (flag==1 and sum([optimization_results['loss_iter'][i][key] for key in minimize_loss_array])<loss_Io_min):
+			zero_loss_value=sum([optimization_results['loss_iter'][i][key] for key in zero_loss_array])
+			minimize_loss_value=sum([optimization_results['loss_iter'][i][key] for key in minimize_loss_array])
+			total_loss_value=optimization_results['loss_iter'][i]['loss']
+
+			print('Iteration:',i)
+			print('Zero Loss Value:',zero_loss_value)
+			print('Minimize Loss Value:',minimize_loss_value)
+			print('Total Loss Value:',total_loss_value)
+			
+			if zero_loss_value>loss_max:
+				if flag==1:
+					print('Continue 1 : Due to already finding correct point')
+					continue
+				
+				if total_loss_value<total_loss:
+					iter_min=i
+					total_loss=total_loss_value
+					loss_Io_min=minimize_loss_value
+					print('Continue 2 : Due to having a smaller loss without best point')
+					continue
+
+			if flag==0 or (flag==1 and minimize_loss_value<loss_Io_min):
 				iter_min=i
-				loss_Io_min=sum([optimization_results['loss_iter'][i][key] for key in minimize_loss_array])
+				total_loss=total_loss_value
+				loss_Io_min=minimize_loss_value
 				flag=1
 			
-			print('Iteration:',i)
 			print('Total Loss  :',total_loss)
 			print('Loss Io Min :',loss_Io_min)
 			print('Check Best  :',flag)
