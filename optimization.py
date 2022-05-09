@@ -133,14 +133,14 @@ def save_info_single_array_iter(filename_root,filename_name,values_iter,iter_no)
 
 	if iter_no==0:
 		f.write('Iteration No,')
-		for param in values_iter[0]:
+		for param in values_iter[-1]:
 			f.write(str(param)+',')
 		f.write('\n')
 	
 	
-	f.write(str(iter_no+1)+',')
-	for param in values_iter[iter_no]:
-		f.write(str(values_iter[iter_no][param])+',')
+	f.write(str(iter_no)+',')
+	for param in values_iter[iter_no-1]:
+		f.write(str(values_iter[iter_no-1][param])+',')
 	f.write('\n')
 	
 	f.close()
@@ -158,20 +158,19 @@ def save_info_double_array_iter(filename_root,filename_name,values_iter,iter_no)
 		f=open(filename,'a')
 	
 	
-
 	if iter_no==0:
 		f.write('Iteration No,')
-		for param in values_iter[0]:
+		for param in values_iter[-1]:
 			f.write(str(param)+',')
-			for categ in values_iter[0][param]:
+			for categ in values_iter[-1][param]:
 				f.write(str(categ)+',')
 		f.write('\n')
 	
-	f.write(str(iter_no+1)+',')
-	for param in values_iter[iter_no]:
+	f.write(str(iter_no)+',')
+	for param in values_iter[iter_no-1]:
 		f.write(str(param)+',')
-		for categ in values_iter[iter_no][param]:
-			f.write(str(values_iter[iter_no][param][categ])+',')
+		for categ in values_iter[iter_no-1][param]:
+			f.write(str(values_iter[iter_no-1][param][categ])+',')
 	f.write('\n')
 	
 	f.close()
