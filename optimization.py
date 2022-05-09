@@ -569,6 +569,7 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 	circuit_parameters_iter[-1]=cir.circuit_parameters.copy()
 	extracted_parameters_iter[-1]=cir.extracted_parameters.copy()
 	loss_iter[-1]=cir.calc_loss(output_conditions,loss_weights)
+	alpha_parameters_iter[-1]={'alpha':alpha}
 	
 	# Printing the values of loss before optimization
 	print('-----------------------------Before Iteration---------------------------------')
@@ -621,13 +622,13 @@ def opt_single_run(cir,optimization_input_parameters,run_number):
 		loss_iter[i]=cir.calc_loss(output_conditions,loss_weights)
 			
 		# Storing some parameters
-		alpha_parameters_iter[i]	= {'alpha':alpha}
 		loss_slope_iter[i-1]		= circuit_parameters_slope.copy()
 		sensitivity_iter[i-1]		= circuit_parameters_sensitivity.copy()
 		initial_circuit_parameters_iter[i]= cir.get_initial_circuit_parameters()
 		circuit_parameters_iter[i]	= cir.get_circuit_parameters()
 		extracted_parameters_iter[i]= cir.get_extracted_parameters()
-
+		alpha_parameters_iter[i]	= {'alpha':alpha}
+		
 		# Saving Results of Each Iteration
 		print('Save info')
 		save_info(optimization_input_parameters,optimization_results,i,1)
