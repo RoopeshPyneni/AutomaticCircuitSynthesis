@@ -138,7 +138,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	# Manual Hand Calculations
 	optimization_input_parameters['pre_optimization']['manual_circuit_parameters']={
 	'Ld': 9e-9,
-	'Cd': 5.489971363501514e-13,
+	'Cd': 4.5030716938496983e-13,
 	'W': 0.0025202377594010653,
 	'Cg': 1.5458676014581085e-10,
 	'Io': 0.0016369962227517215,
@@ -153,7 +153,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	'Wpr':6.951933459876268e-07,
 	'wid_Cpr':4.074636060571575e-06,
 	}
-	
+
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Pre Optimization Simulation Parameters
 	optimization_input_parameters['pre_optimization']['simulation']={}
@@ -438,7 +438,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'4_Optimization_3'						# SET THE FILENAME HERE
+	filename=f_directory+'5_Optimization_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
