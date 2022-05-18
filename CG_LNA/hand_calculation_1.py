@@ -370,10 +370,10 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		print('---------------Iteration ',i+1,' --------------------')
 		
 		# Calculating Rb
-		cir.circuit_parameters['Rb']=calc_Rb(opt_conditions,cir.mos_parameters,cir.circuit_parameters)
+		cir.initial_circuit_parameters['Rb']=calc_Rb(opt_conditions,cir.mos_parameters,cir.initial_circuit_parameters)
 	
 		# Calculating C2 and Rbias
-		cir.circuit_parameters['C2'],cir.circuit_parameters['Rbias']=calc_C2_updated(cir.extracted_parameters,opt_conditions,cir.circuit_parameters,optimization_input_parameters)
+		cir.initial_circuit_parameters['C2'],cir.initial_circuit_parameters['Rbias']=calc_C2_updated(cir.extracted_parameters,opt_conditions,cir.initial_circuit_parameters,optimization_input_parameters)
 		
 		# Running Eldo
 		cir.run_circuit()
@@ -386,7 +386,7 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		i+=1
 		
 	# Calculating dc outputs
-	dc_outputs=calc_dc_opt(cir.circuit_parameters,cir.mos_parameters,opt_conditions)
+	dc_outputs=calc_dc_opt(cir.initial_circuit_parameters,cir.mos_parameters,opt_conditions)
 	
 	return dc_outputs
 
@@ -415,10 +415,10 @@ def dc_optimize_gm(cir,optimization_input_parameters):
 		print('------------------Iteration Number ',i+1,'----------------------')
 	
 		# Updating W and Io
-		cir.circuit_parameters=update_W_Io_gm(cir.circuit_parameters,gmRs)
+		cir.initial_circuit_parameters=update_W_Io_gm(cir.initial_circuit_parameters,gmRs)
 		
 		# Updating Rb
-		cir.circuit_parameters['Rb']=calc_Rb(output_conditions,cir.mos_parameters,cir.circuit_parameters)
+		cir.initial_circuit_parameters['Rb']=calc_Rb(output_conditions,cir.mos_parameters,cir.initial_circuit_parameters)
 		
 		# Running Eldo
 		cir.run_circuit()
@@ -455,10 +455,10 @@ def dc_optimize_gm_vdsat(cir,optimization_input_parameters):
 		print('------------------Iteration Number ',i+1,'----------------------')
 	
 		# Updating W and Io
-		cir.circuit_parameters=update_W_Io_gm_vdsat(cir.circuit_parameters,gm,Rs,vdsat,vdsat_reqd)
+		cir.initial_circuit_parameters=update_W_Io_gm_vdsat(cir.initial_circuit_parameters,gm,Rs,vdsat,vdsat_reqd)
 		
 		# Updating Rb
-		cir.circuit_parameters['Rb']=calc_Rb(output_conditions,cir.mos_parameters,cir.circuit_parameters)
+		cir.initial_circuit_parameters['Rb']=calc_Rb(output_conditions,cir.mos_parameters,cir.initial_circuit_parameters)
 		
 		# Running Eldo
 		cir.run_circuit()
@@ -486,10 +486,12 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 
 	# Storing the Circuit and Extracted Parameters
 	optimization_results['auto_hc']={}
+	optimization_results['auto_hc']['initial_circuit_parameters']=cir.initial_circuit_parameters.copy()
 	optimization_results['auto_hc']['circuit_parameters']=cir.circuit_parameters.copy()
 	optimization_results['auto_hc']['extracted_parameters']=cir.extracted_parameters.copy()
 
 	# Printing the values
+	cf.print_initial_circuit_parameters(cir.initial_circuit_parameters)
 	cf.print_circuit_parameters(cir.circuit_parameters)
 	cf.print_extracted_parameters(cir.extracted_parameters)
 
@@ -503,10 +505,12 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 
 	# Storing the Circuit and Extracted Parameters
 	optimization_results['hc_update']={}
+	optimization_results['hc_update']['initial_circuit_parameters']=cir.initial_circuit_parameters.copy()
 	optimization_results['hc_update']['circuit_parameters']=cir.circuit_parameters.copy()
 	optimization_results['hc_update']['extracted_parameters']=cir.extracted_parameters.copy()
 
 	# Printing the values
+	cf.print_initial_circuit_parameters(cir.initial_circuit_parameters)
 	cf.print_circuit_parameters(cir.circuit_parameters)
 	cf.print_extracted_parameters(cir.extracted_parameters)
 
@@ -520,10 +524,12 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 
 	# Storing the Circuit and Extracted Parameters
 	optimization_results['gmvd_update']={}
+	optimization_results['gmvd_update']['initial_circuit_parameters']=cir.initial_circuit_parameters.copy()
 	optimization_results['gmvd_update']['circuit_parameters']=cir.circuit_parameters.copy()
 	optimization_results['gmvd_update']['extracted_parameters']=cir.extracted_parameters.copy()
 
 	# Printing the values
+	cf.print_initial_circuit_parameters(cir.initial_circuit_parameters)
 	cf.print_circuit_parameters(cir.circuit_parameters)
 	cf.print_extracted_parameters(cir.extracted_parameters)
 
