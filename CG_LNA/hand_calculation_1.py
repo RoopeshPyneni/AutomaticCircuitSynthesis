@@ -333,7 +333,6 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	# Calculating Io min and W
 	#initial_circuit_parameters['Io'],initial_circuit_parameters['W']=calc_Io_min(opt_conditions,mos_parameters)
 	initial_circuit_parameters['Io'],initial_circuit_parameters['W']=calc_Io_W(opt_conditions,mos_parameters,vdsat_reqd)
-	print(initial_circuit_parameters)
 	
 	# Calculating Rd
 	initial_circuit_parameters['Rd']=calc_Rd(opt_conditions)
