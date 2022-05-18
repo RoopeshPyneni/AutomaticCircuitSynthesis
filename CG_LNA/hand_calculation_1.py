@@ -325,32 +325,33 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	vdsat_reqd=optimization_input_parameters['pre_optimization']['vdsat_reqd']
 	
 	# Creating dictionary of output parameters	
-	circuit_parameters={}
+	initial_circuit_parameters={}
 	circuit_parameters_list=['Rb','Rd','Io','C1','C2','W','Rbias']
 	for param_name in circuit_parameters_list:
-		circuit_parameters[param_name]=0
+		initial_circuit_parameters[param_name]=0
 	
 	# Calculating Io min and W
-	#circuit_parameters['Io'],circuit_parameters['W']=calc_Io_min(opt_conditions,mos_parameters)
-	circuit_parameters['Io'],circuit_parameters['W']=calc_Io_W(opt_conditions,mos_parameters,vdsat_reqd)
+	#initial_circuit_parameters['Io'],initial_circuit_parameters['W']=calc_Io_min(opt_conditions,mos_parameters)
+	initial_circuit_parameters['Io'],initial_circuit_parameters['W']=calc_Io_W(opt_conditions,mos_parameters,vdsat_reqd)
+	print(initial_circuit_parameters)
 	
 	# Calculating Rd
-	circuit_parameters['Rd']=calc_Rd(opt_conditions)
+	initial_circuit_parameters['Rd']=calc_Rd(opt_conditions)
 	
 	# Calculating C1
-	circuit_parameters['C1']=calc_C1(opt_conditions,optimization_input_parameters)
+	initial_circuit_parameters['C1']=calc_C1(opt_conditions,optimization_input_parameters)
 		
 	# Calculating Rb
-	circuit_parameters['Rb']=calc_Rb(opt_conditions,mos_parameters,circuit_parameters)	
+	initial_circuit_parameters['Rb']=calc_Rb(opt_conditions,mos_parameters,initial_circuit_parameters)	
 	
 	# Calculating C2 and Rbias
-	circuit_parameters['C2'],circuit_parameters['Rbias']=calc_C2(mos_parameters,opt_conditions,circuit_parameters,optimization_input_parameters)
+	initial_circuit_parameters['C2'],initial_circuit_parameters['Rbias']=calc_C2(mos_parameters,opt_conditions,initial_circuit_parameters,optimization_input_parameters)
 	
 	# Calculating dc outputs
-	dc_outputs=calc_dc_opt(circuit_parameters,mos_parameters,opt_conditions)
+	dc_outputs=calc_dc_opt(initial_circuit_parameters,mos_parameters,opt_conditions)
 	
 	# Running Eldo
-	cir.update_circuit(circuit_parameters)
+	cir.update_circuit(initial_circuit_parameters)
 	
 	return dc_outputs
 
