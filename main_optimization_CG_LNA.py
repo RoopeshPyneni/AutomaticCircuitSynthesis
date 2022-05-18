@@ -363,8 +363,8 @@ optimization_name='LOSS'
 
 # ---------- MOSFET Parameters ----------
 #get_mos_parameters(circuit_initialization_parameters,'TSMC180')
-#get_mos_parameters(circuit_initialization_parameters,'TSMC65')
-get_mos_parameters(circuit_initialization_parameters,'IBM130')
+get_mos_parameters(circuit_initialization_parameters,'TSMC65')
+#get_mos_parameters(circuit_initialization_parameters,'IBM130')
 
 # ---------- Output Conditions ----------
 fo=1e9
@@ -424,7 +424,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'2_Pre_Optimization_IBM_130'						# SET THE FILENAME HERE
+	filename=f_directory+'3_Pre_Optimization_TSMC_65'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
