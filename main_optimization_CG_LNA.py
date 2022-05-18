@@ -125,7 +125,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']='manual'
+	optimization_input_parameters['pre_optimization']['type']=1
 
 	optimization_input_parameters['pre_optimization']['Step1b_Limit']=5
 	optimization_input_parameters['pre_optimization']['Step2_Limit']=5
@@ -362,8 +362,8 @@ optimization_name='LOSS'
 """
 
 # ---------- MOSFET Parameters ----------
-#get_mos_parameters(circuit_initialization_parameters,'TSMC180')
-get_mos_parameters(circuit_initialization_parameters,'TSMC65')
+get_mos_parameters(circuit_initialization_parameters,'TSMC180')
+#get_mos_parameters(circuit_initialization_parameters,'TSMC65')
 #get_mos_parameters(circuit_initialization_parameters,'IBM130')
 
 # ---------- Output Conditions ----------
@@ -417,14 +417,14 @@ optimization_input_parameters['optimization']['run']='NO' #'YES'
 optimization_input_parameters['temperature_analysis']['run']='NO'
 optimization_input_parameters['sensitivity_analysis']['run']='NO'
 optimization_input_parameters['process_analysis']['run']='NO'
-optimization_input_parameters['iip3_analysis']['run']='YES'
+optimization_input_parameters['iip3_analysis']['run']='NO'
 optimization_input_parameters['frequency_analysis']['run']='NO' #'YES'
 optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'8_Test_IIP3_Analysis_1'						# SET THE FILENAME HERE
+	filename=f_directory+'1_Pre_Optimization_TSMC_180'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
