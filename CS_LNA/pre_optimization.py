@@ -97,7 +97,7 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 
 	print('************************************************************************************************************')
 	print('*********************************** Pre Optimization *******************************************************')
-	print('\n\n')
+	print('')
 	
 	cir.update_simulation_parameters(optimization_input_parameters['pre_optimization']['simulation'])
 	save_input_results_pre_optimization(cir,optimization_input_parameters)
@@ -109,7 +109,7 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 	if optimization_input_parameters['pre_optimization']['type']=='manual':
 		
 		print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Manual Operating Point Selection ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-		print('\n\n')
+		print('')
 
 		#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#--------------------Initial Point Calculations-------------------------
@@ -128,7 +128,7 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 	if optimization_input_parameters['pre_optimization']['type']==1:
 		
 		print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-		print('\n\n')
+		print('')
 
 		# Extracting the MOSFET Parameters from the MOS file
 		hc1.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
@@ -136,7 +136,7 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 	if optimization_input_parameters['pre_optimization']['type']==2:
 		
 		print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-		print('\n\n')
+		print('')
 
 		# Extracting the MOSFET Parameters from the MOS file
 		hc2.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
@@ -144,7 +144,7 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 	if optimization_input_parameters['pre_optimization']['type']==3:
 		
 		print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 3 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-		print('\n\n')
+		print('')
 
 		# Extracting the MOSFET Parameters from the MOS file
 		hc3.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)
@@ -152,7 +152,7 @@ def pre_optimization(cir,optimization_input_parameters,timing_results):
 	if optimization_input_parameters['pre_optimization']['type']==4:
 		
 		print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Automatic Operating Point Selection 4 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-		print('\n\n')
+		print('')
 
 		# Extracting the MOSFET Parameters from the MOS file
 		hc4.automatic_initial_parameters(cir,optimization_input_parameters,optimization_results)

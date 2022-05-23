@@ -269,7 +269,7 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	
 	f_list=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_list']
 	len_flist=len(f_list)
-	f_range=f_list[len_flist]-f_list[0]
+	f_range=f_list[len_flist-1]-f_list[0]
 	Qin=calculate_Qin(s11,fo,f_range)
 	global gm
 	gm=20e-3
@@ -294,13 +294,22 @@ def update_initial_parameters(cir,optimization_input_parameters):
 
 	i=0
 	
-    # Getting the output conditions
+	# Getting the output conditions
 	fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
 	Cox=cir.mos_parameters['cox']
 	un=cir.mos_parameters['un']
 	vdd=cir.mos_parameters['vdd']
 	Lmin=cir.mos_parameters['Lmin']
 	nf=optimization_input_parameters['output_conditions']['nf_db']
+	
+	f_list=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_list']
+	nameR0=str(f_list[0])+'_Zin_R'
+	nameR1=str(f_list[1])+'_Zin_R'
+	nameR2=str(f_list[2])+'_Zin_R'
+	nameI0=str(f_list[0])+'_Zin_I'
+	nameI1=str(f_list[1])+'_Zin_I'
+	nameI2=str(f_list[2])+'_Zin_I'
+	
 
 	while i<5:
 
@@ -314,7 +323,7 @@ def update_initial_parameters(cir,optimization_input_parameters):
 
 		# Updating W to improve the Qin
 		Z_max=calculate_Zim_max(optimization_input_parameters['output_conditions']['s11_db'])
-		Z_diff=np.abs(extracted_parameters['0_Zin_I']-extracted_parameters['2_Zin_I'])
+		Z_diff=np.abs(extracted_parameters[nameI0]-extracted_parameters[nameI2])
 		initial_circuit_parameters['W']=initial_circuit_parameters['W']*Z_diff/Z_max*1.2
 	
 		# Calculating Io from W and gm based on NF Calculation
@@ -323,8 +332,8 @@ def update_initial_parameters(cir,optimization_input_parameters):
 
 		# Updating the values
 		fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
-		initial_circuit_parameters['Ls']=initial_circuit_parameters['Ls']*50*4/(2*extracted_parameters['1_Zin_R']+extracted_parameters['0_Zin_R']+extracted_parameters['2_Zin_R'])
-		initial_circuit_parameters['Lg']=initial_circuit_parameters['Lg']-(2*extracted_parameters['1_Zin_I']+extracted_parameters['0_Zin_I']+extracted_parameters['2_Zin_I'])/(4*2*np.pi*fo)
+		initial_circuit_parameters['Ls']=initial_circuit_parameters['Ls']*50*4/(2*extracted_parameters[nameR1]+extracted_parameters[nameR0]+extracted_parameters[nameR2])
+		initial_circuit_parameters['Lg']=initial_circuit_parameters['Lg']-(2*extracted_parameters[nameI1]+extracted_parameters[nameI0]+extracted_parameters[nameI2])/(4*2*np.pi*fo)
 		
 		# Running the circuit and updating the results
 		cir.update_circuit(initial_circuit_parameters)

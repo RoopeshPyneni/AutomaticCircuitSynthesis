@@ -78,7 +78,7 @@ def get_output_conditions(optimization_input_parameters,fo):
 		'wo':2.0*np.pi*fo,
 		'delta_v':0.1,
 		'Rs':50,
-		'Cload':100e-15,
+		'Cload':2000e-15,
 		's11_db_middle':-15.0
 	}
 
@@ -106,7 +106,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 
 	# Operating frequency points
 	circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=fo
-	circuit_initialization_parameters['simulation']['standard_parameters']['f_list']=[fo-50e6,fo,fo+50e6] #[fo] #[fo-50e6,fo,fo+50e6]
+	circuit_initialization_parameters['simulation']['standard_parameters']['f_list']=[fo-50e6,fo,fo+50e6] #[fo-50e6,fo,fo+50e6] #[fo]
 	
 	# Other Values
 	circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']=27
@@ -378,8 +378,8 @@ optimization_name='LOSS'
 
 # ---------- MOSFET Parameters ----------
 # get_mos_parameters(circuit_initialization_parameters,'TSMC180')
-# get_mos_parameters(circuit_initialization_parameters,'TSMC65')
-get_mos_parameters(circuit_initialization_parameters,'IBM130')
+get_mos_parameters(circuit_initialization_parameters,'TSMC65')
+# get_mos_parameters(circuit_initialization_parameters,'IBM130')
 
 # ---------- Output Conditions ----------
 fo=1e9
@@ -439,7 +439,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'3_Test_PreOpt_M3_1'						# SET THE FILENAME HERE
+	filename=f_directory+'3_Test_PreOpt_M3_Cd2000_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
