@@ -437,14 +437,16 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 		circuit_parameters['Ls']=10e-9
 
 	# Constraints for Rk - can't be greater than 1
-	if initial_circuit_parameters['Rk']>=1.0:
-		circuit_parameters['Rk']=0.95
-	if initial_circuit_parameters['Rk']<=0.0:
-		circuit_parameters['Rk']=0.05
-	
+	if 'Rk' in initial_circuit_parameters:
+		if initial_circuit_parameters['Rk']>=1.0:
+			circuit_parameters['Rk']=0.95
+		if initial_circuit_parameters['Rk']<=0.0:
+			circuit_parameters['Rk']=0.05
+		
 	# Constraints for Io_k - can't let the value of Io change by more than 0.5*Io
-	if initial_circuit_parameters['Io_k']>=0.005*initial_circuit_parameters['Io']:
-		circuit_parameters['Io_k']=0.005*initial_circuit_parameters['Io']
+	if 'Io_k' in initial_circuit_parameters:
+		if initial_circuit_parameters['Io_k']>=0.005*initial_circuit_parameters['Io']:
+			circuit_parameters['Io_k']=0.005*initial_circuit_parameters['Io']
 
 
 	# ~~~~~~~~~~~~~~~ GETTING EXTRA PARAMETERS ~~~~~~~~~~~~~~~
@@ -466,7 +468,8 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 
 	# Calculating the number of fingers for the MOSFETs
 	circuit_parameters['n_finger']=int(circuit_parameters['W']/circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max'])+1
-	circuit_parameters['n_finger_pr']=int(circuit_parameters['Wpr']/circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max'])+1
+	if 'Wpr' in circuit_parameters:
+		circuit_parameters['n_finger_pr']=int(circuit_parameters['Wpr']/circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max'])+1
 
 	# Getting the real resistor parameters
 	if circuit_type=='mos_resistor' or circuit_type=='mos_capacitor' or circuit_type=='mos_inductor':
@@ -513,8 +516,9 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 	}
 
 	for param_name in cir_writing_dict:
-		circuit_parameters[param_name]=circuit_parameters[cir_writing_dict[param_name]]
-		del circuit_parameters[cir_writing_dict[param_name]]
+		if param_name in circuit_parameters:
+			circuit_parameters[param_name]=circuit_parameters[cir_writing_dict[param_name]]
+			del circuit_parameters[cir_writing_dict[param_name]]
 	
 	return circuit_parameters
 

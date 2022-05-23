@@ -31,7 +31,9 @@ def calculate_Ld(Cload,fo):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating gm
-def calculate_gm(gain,Rd,Qin):
+def calculate_gm(gain,fo,Ld,Qin):
+	wo=2*np.pi*fo
+	Rd=Ld*wo*15
 	return gain/2/Rd/Qin
 
 #-----------------------------------------------------------------------------------------------
@@ -234,7 +236,7 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
     
 	# Getting the output conditions
 	Cload=output_conditions['Cload']
-	gain=10**(output_conditions('gain_db')/20)
+	gain=10**(output_conditions['gain_db']/20)
 	fo=output_conditions['wo']/(2*np.pi)
 	Rs=output_conditions['Rs']
 	s11=output_conditions['s11_db']
@@ -248,16 +250,17 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	# Calculating the circuit parameters
 	initial_circuit_parameters={}
 	initial_circuit_parameters['Ld']=calculate_Ld(Cload,fo)
+	Ld=initial_circuit_parameters['Ld']
 	Qin=2.5
-	gm=calculate_gm(gain,fo,cgs,nf)
-	cgs=calculate_cgs(gm,fo,Rs,initial_circuit_parameters['Ld'],nf)
+	gm=calculate_gm(gain,fo,Ld,Qin)
+	cgs=calculate_cgs(gm,fo,Rs,Ld,nf)
 	
 	initial_circuit_parameters['W']=calculate_W(cgs,Lmin,Cox)
 	
 	initial_circuit_parameters['Io']=calculate_Io(gm,un,Cox,initial_circuit_parameters['W'],Lmin)
 	
-	initial_circuit_parameters['Ls']=calculate_Ls(Rs,cgs,gm,fo)
-	initial_circuit_parameters['Lg']=calculate_Lg(initial_circuit_parameters['Ls'],cgs)
+	initial_circuit_parameters['Ls']=calculate_Ls(Rs,cgs,gm)
+	initial_circuit_parameters['Lg']=calculate_Lg(initial_circuit_parameters['Ls'],cgs,fo)
 	initial_circuit_parameters['Rb']=5000
 
 	initial_circuit_parameters['Cs']=100/(2*np.pi*50*fo)

@@ -92,7 +92,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	# Filenames
 	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/CS_LNA/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/cadence_project/'
-	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='mos_inductor' # 'ideal', 'series','mos_resistor','mos_capacitor','mos_inductor'
+	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='ideal' # 'ideal', 'series','mos_resistor','mos_capacitor','mos_inductor'
 	
 	# IIP3 Points
 	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']='basic'		# 'basic' or 'advanced' 
@@ -105,6 +105,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	circuit_initialization_parameters['simulation']['standard_parameters']['f_iip3']=1e6
 
 	# Operating frequency points
+	circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=fo
 	circuit_initialization_parameters['simulation']['standard_parameters']['f_list']=[fo] #[fo-50e6,fo,fo+50e6]
 	
 	# Other Values
