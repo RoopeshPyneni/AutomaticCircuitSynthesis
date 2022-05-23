@@ -251,7 +251,6 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 		'gain_delta2':0.1/10.0
 	}
 	
-	
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the temperature analysis parameters to the optimization_input_parameters dictionary
 def get_sensitivity_analysis_parameters(optimization_input_parameters,fo):
@@ -316,7 +315,6 @@ def get_frequency_analysis_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['frequency_analysis']['simulation']['standard_parameters']={}
 
 	optimization_input_parameters['frequency_analysis']['simulation']['standard_parameters']['f_list']=[0.8e9,0.9e9,1.0e9,1.1e9,1.2e9]
-
 
 #---------------------------------------------------------------------------------------------------------------------------
 # Function that sets the temperature analysis parameters to the optimization_input_parameters dictionary
@@ -439,7 +437,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'3_Test_PreOpt_M3_Cd2000_1'						# SET THE FILENAME HERE
+	filename=f_directory+'3_Test_PreOpt_M3_Cd2000_IPUpdateBest_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

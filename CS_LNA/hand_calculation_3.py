@@ -310,8 +310,13 @@ def update_initial_parameters(cir,optimization_input_parameters):
 	nameI1=str(f_list[1])+'_Zin_I'
 	nameI2=str(f_list[2])+'_Zin_I'
 	
+	write_parameters_initial(cir,optimization_input_parameters)
+	initial_circuit_parameters_iter={}
+	circuit_parameters_iter={}
+	extracted_parameters_iter={}
+	j=0
 
-	while i<5:
+	while i<10:
 
 		# Printing the iteration number
 		i+=1
@@ -330,6 +335,17 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		global gm
 		initial_circuit_parameters['Io']=calculate_Io(gm,un,Cox,initial_circuit_parameters['W'],Lmin)
 
+		# Running the circuit and updating the results
+		cir.update_circuit(initial_circuit_parameters)
+		extracted_parameters=cir.get_extracted_parameters()
+		update_parameters(cir,optimization_input_parameters,i,'Ld_W_Io')
+		
+		# Storing the results
+		initial_circuit_parameters_iter[j]=initial_circuit_parameters
+		circuit_parameters_iter[j]=cir.get_circuit_parameters()
+		extracted_parameters_iter[j]=extracted_parameters
+		j+=1
+
 		# Updating the values
 		fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
 		initial_circuit_parameters['Ls']=initial_circuit_parameters['Ls']*50*4/(2*extracted_parameters[nameR1]+extracted_parameters[nameR0]+extracted_parameters[nameR2])
@@ -337,6 +353,13 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		
 		# Running the circuit and updating the results
 		cir.update_circuit(initial_circuit_parameters)
+		update_parameters(cir,optimization_input_parameters,i,'Ls_Lg')
+
+		# Storing the results
+		initial_circuit_parameters_iter[j]=initial_circuit_parameters
+		circuit_parameters_iter[j]=cir.get_circuit_parameters()
+		extracted_parameters_iter[j]=cir.get_extracted_parameters()
+		j+=1
 		
 	
 
