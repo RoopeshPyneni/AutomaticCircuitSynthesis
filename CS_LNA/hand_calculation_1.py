@@ -275,22 +275,11 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 def update_initial_parameters(cir,optimization_input_parameters):
 
 	i=0
-	Lmin=cir.mos_parameters['Lmin']
-	Cox=cir.mos_parameters['cox']
-	un=cir.mos_parameters['un']
-	vdd=cir.mos_parameters['vdd']
-  
-    	# Getting the output conditions
-	Cload=optimization_input_parameters['output_conditions']['Cload']
+	
+    # Getting the output conditions
 	fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
-	nf=optimization_input_parameters['output_conditions']['nf_db']
-
+	
 	write_parameters_initial(cir,optimization_input_parameters)
-
-	initial_circuit_parameters_iter={}
-	circuit_parameters_iter={}
-	extracted_parameters_iter={}
-	j=0
 
 	while i<10:
 
@@ -302,48 +291,13 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		circuit_parameters=cir.get_circuit_parameters()
 		extracted_parameters=cir.get_extracted_parameters()
 
-		# Updating Cd
-		initial_circuit_parameters['Cd']=updating_Cd(extracted_parameters['cgd2'],Cload,initial_circuit_parameters['Ld'],fo)
-		
-		# Updating W to improve the Qin
-		Z_max=calculate_Zim_max(optimization_input_parameters['output_conditions']['s11_db'])
-		Z_diff=np.abs(extracted_parameters['0_Zin_I']-extracted_parameters['2_Zin_I'])
-		initial_circuit_parameters['W']=initial_circuit_parameters['W']*Z_diff/Z_max*1.2
-		
-		# Calculating Io from W and gm based on NF Calculation
-		global gm
-		gm=update_gm(extracted_parameters['nf_db'],nf,gm)
-		initial_circuit_parameters['Io']=calculate_Io(gm,un,Cox,initial_circuit_parameters['W'],Lmin)
-
-		# Running the circuit and updating the results
-		cir.update_circuit(initial_circuit_parameters)
-		extracted_parameters=cir.get_extracted_parameters()
-		update_parameters(cir,optimization_input_parameters,i,'Ld_W_Io')
-		
-		# Storing the results
-		initial_circuit_parameters_iter[j]=initial_circuit_parameters
-		circuit_parameters_iter[j]=cir.get_circuit_parameters()
-		extracted_parameters_iter[j]=extracted_parameters
-		j+=1
-		
 		# Updating the values
 		fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
-		initial_circuit_parameters['Ls']=circuit_parameters['Ls']*50*4/(2*extracted_parameters['1_Zin_R']+extracted_parameters['0_Zin_R']+extracted_parameters['2_Zin_R'])
-		initial_circuit_parameters['Lg']=initial_circuit_parameters['Lg']-(2*extracted_parameters['1_Zin_I']+extracted_parameters['0_Zin_I']+extracted_parameters['2_Zin_I'])/(4*2*np.pi*fo)
+		initial_circuit_parameters['Ls']=circuit_parameters['Ls']*50/(extracted_parameters['Zin_R'])
+		initial_circuit_parameters['Lg']=initial_circuit_parameters['Lg']-extracted_parameters['Zin_I']/(2*np.pi*fo)
 		
 		# Running the circuit and updating the results
 		cir.update_circuit(initial_circuit_parameters)
-		update_parameters(cir,optimization_input_parameters,i,'Ls_Lg')
-
-		# Storing the results
-		initial_circuit_parameters_iter[j]=initial_circuit_parameters
-		circuit_parameters_iter[j]=cir.get_circuit_parameters()
-		extracted_parameters_iter[j]=cir.get_extracted_parameters()
-		j+=1
-	
-	i=get_best_point(circuit_parameters_iter,extracted_parameters_iter,optimization_input_parameters['output_conditions'])
-	
-	cir.update_circuit_state(initial_circuit_parameters_iter[i],circuit_parameters_iter[i],extracted_parameters_iter[i])
 	
 
 """
@@ -373,7 +327,6 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	cf.print_circuit_parameters(cir.get_circuit_parameters())
 	cf.print_extracted_parameters(cir.get_extracted_parameters())
 
-	"""	
 	#======================================================== Step 2 =======================================================
 	print('\n\n--------------------------------- Operating Point Updations ------------------------------------')
 
@@ -390,6 +343,5 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	cf.print_initial_circuit_parameters(cir.get_initial_circuit_parameters())
 	cf.print_circuit_parameters(cir.circuit_parameters)
 	cf.print_extracted_parameters(cir.extracted_parameters)
-	"""
-
+	
 #===========================================================================================================================

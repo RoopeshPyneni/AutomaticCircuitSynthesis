@@ -291,7 +291,7 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		# Updating the values
 		fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
 		initial_circuit_parameters['Ls']=circuit_parameters['Ls']*50/(extracted_parameters['Zin_R'])
-		initial_circuit_parameters['Lg']=initial_circuit_parameters['Lg']-extracted_parameters['1_Zin_I']/(2*np.pi*fo)
+		initial_circuit_parameters['Lg']=initial_circuit_parameters['Lg']-extracted_parameters['Zin_I']/(2*np.pi*fo)
 		
 		# Running the circuit and updating the results
 		cir.update_circuit(initial_circuit_parameters)
