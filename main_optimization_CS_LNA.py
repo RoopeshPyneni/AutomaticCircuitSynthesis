@@ -105,14 +105,14 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	circuit_initialization_parameters['simulation']['standard_parameters']['f_iip3']=1e6
 
 	# Operating frequency points
-	circuit_initialization_parameters['simulation']['standard_parameters']['f_list']=[fo-50e6,fo,fo+50e6]
+	circuit_initialization_parameters['simulation']['standard_parameters']['f_list']=[fo] #[fo-50e6,fo,fo+50e6]
 	
 	# Other Values
 	circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']=27
-	circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']=[-40,27,120]
-	circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']=['ss','tt','ff']
+	circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']=[27] #[-40,27,120]
+	circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']=['tt'] #['ss','tt','ff']
 	circuit_initialization_parameters['simulation']['standard_parameters']['conservative']='NO'
-	circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max']=2e-6
+	circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max']=2 #2e-6
 
 	circuit_initialization_parameters['simulation']['netlist_parameters']={
 		'pin':-65,
@@ -129,7 +129,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']='manual'
+	optimization_input_parameters['pre_optimization']['type']=1 #'manual'
 
 	optimization_input_parameters['pre_optimization']['I_Rdivider_max']=100e-6
 	
@@ -376,9 +376,9 @@ optimization_name='LOSS'
 """
 
 # ---------- MOSFET Parameters ----------
-#get_mos_parameters(circuit_initialization_parameters,'TSMC180')
-get_mos_parameters(circuit_initialization_parameters,'TSMC65')
-#get_mos_parameters(circuit_initialization_parameters,'IBM130')
+# get_mos_parameters(circuit_initialization_parameters,'TSMC180')
+# get_mos_parameters(circuit_initialization_parameters,'TSMC65')
+get_mos_parameters(circuit_initialization_parameters,'IBM130')
 
 # ---------- Output Conditions ----------
 fo=1e9
@@ -427,7 +427,7 @@ f_directory='/home/ee18b028/Optimization/Simulation_Results/CS_LNA/'
 
 file_choose='S' # 'S' to run a single time; 'M' to run multiple times
 
-optimization_input_parameters['optimization']['run']='YES' #'YES'
+optimization_input_parameters['optimization']['run']='NO' #'YES'
 optimization_input_parameters['temperature_analysis']['run']='NO'
 optimization_input_parameters['sensitivity_analysis']['run']='NO'
 optimization_input_parameters['process_analysis']['run']='NO'
@@ -438,7 +438,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'5_Optimization_1'						# SET THE FILENAME HERE
+	filename=f_directory+'1_Test_PreOpt_M1_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

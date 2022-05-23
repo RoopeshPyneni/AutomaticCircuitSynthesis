@@ -25,45 +25,23 @@ def db_to_normal(val_db):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Ld
-def calculate_Ld(Cload,Cd,fo):
-    wo=2*np.pi*fo
-    Ld=1/(wo*wo*(Cload+Cd))
-    return Ld
-
-#-----------------------------------------------------------------------------------------------
-# Calculating Qin
-def calculate_Qin(s11,fo,f_delta):
-	Ks=10**(-0.2*s11)-1
-	
-	f1=1+(f_delta/fo)
-	f2=1-(f_delta/fo)
-
-	kf1=f1-(1/f1)
-	kf2=f2-(1/f2)
-
-	kf=max(kf1,kf2)
-
-	Qin=(1/kf)*np.sqrt(1/Ks)
-
-	return Qin
-
-#-----------------------------------------------------------------------------------------------
-# Calculating Cgs
-def calculate_cgs(Rs,fo,Qin):
-    wo=2*np.pi*fo
-    cgs=1/(2*Rs*Qin*wo)
-    return cgs
+def calculate_Ld(Cload,fo):
+	wo=2*np.pi*fo
+	return 1/wo/wo/Cload
 
 #-----------------------------------------------------------------------------------------------
 # Calculating gm
-def calculate_gm(Ld,fo,cgs,nf):
-	wo=2*np.pi*fo
-	Rd=wo*Ld*15
-	A=200*((wo*cgs)**2)/Rd
-	B=100*((wo*cgs)**2)
-	C=1-10**(0.1*nf)
-	return 2*A/(np.sqrt(B*B-4*A*C)-B)
+def calculate_gm(gain,Rd,Qin):
+	return gain/2/Rd/Qin
 
+#-----------------------------------------------------------------------------------------------
+# Calculating Cgs
+def calculate_cgs(gm,fo,Rs,Ld,NF):
+	F=10**(NF/10)
+	wo=2*np.pi*fo
+	Rd=Ld*wo*15
+	wt=wo*np.sqrt((2*gm*Rs+4*Rs/Rd)/(F-1))
+	return gm/wt
 
 #-----------------------------------------------------------------------------------------------
 # Calculating W
@@ -77,7 +55,7 @@ def calculate_Io(gm,un,cox,W,Lmin):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Ls
-def calculate_Ls(rsource,cgs,gm,fo):
+def calculate_Ls(rsource,cgs,gm):
     return rsource*cgs/gm
     
 #-----------------------------------------------------------------------------------------------
@@ -96,24 +74,6 @@ def calculate_Zim_max(s11):
 	return Z_im_max
 
 #-----------------------------------------------------------------------------------------------
-# Calculating R1 and R2
-def calculate_Rsum_Rk(vdd,fo,Cg,Imax):
-
-	# Getting the value of k
-	Rk=0.9 # This is set arbitrarily
-
-	# Getting the value of Rsum from Reff
-	Reff=10/(2*np.pi*fo*Cg)
-	Rsum=Reff/(Rk*(1-Rk))
-	
-	# Multiplying R1 and R2 to get a higher value
-	Rmin=vdd/Imax
-	if Rsum<Rmin:
-		Rsum=Rmin
-
-	return Rsum,Rk
-
-#-----------------------------------------------------------------------------------------------
 # Updating R1 and R2
 def updating_R1_R2(vdsat1,vdsat2,vth,vdd,Imax):
 	vg=vdsat1+vdsat2+vth
@@ -130,11 +90,13 @@ def updating_R1_R2(vdsat1,vdsat2,vth,vdd,Imax):
 	return R1,R2
 
 #-----------------------------------------------------------------------------------------------
-# Updating Ld
-def updating_Ld(Cgd,Cload,Cd,fo):
+# Updating Cd
+def updating_Cd(Cgd,Cload,Ld,fo):
 	wo=2*np.pi*fo
-	Ld=1/(wo*wo*(Cload+Cd+Cgd))
-	return Ld
+	Cd=1/(wo*wo*(Ld))
+	Cd-=Cload
+	Cd-=Cgd
+	return Cd
 
 #-----------------------------------------------------------------------------------------------
 # Updating gm
@@ -161,10 +123,9 @@ def get_best_point(circuit_parameters_iter,extracted_parameters_iter,output_cond
 	for j in j_array:
 		Io_array.append(extracted_parameters_iter[j]['Io'])
 		loss_gain=sc.ramp_func(output_conditions['gain_db']-extracted_parameters_iter[j]['gain_db'])
-		loss_iip3=sc.ramp_func(output_conditions['iip3_dbm']-extracted_parameters_iter[j]['iip3_dbm'])
 		loss_s11=sc.ramp_func(extracted_parameters_iter[j]['s11_db']-output_conditions['s11_db'])
 		loss_nf=sc.ramp_func(extracted_parameters_iter[j]['nf_db']-output_conditions['nf_db'])
-		loss_array.append(loss_gain+loss_iip3+loss_nf+loss_s11)
+		loss_array.append(loss_gain+loss_nf+loss_s11)
 		if loss_array[-1]==0:
 			loss_zero=1
 	
@@ -273,8 +234,8 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
     
 	# Getting the output conditions
 	Cload=output_conditions['Cload']
+	gain=10**(output_conditions('gain_db')/20)
 	fo=output_conditions['wo']/(2*np.pi)
-	f_range=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_range']
 	Rs=output_conditions['Rs']
 	s11=output_conditions['s11_db']
 	nf=output_conditions['nf_db']
@@ -286,19 +247,19 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 
 	# Calculating the circuit parameters
 	initial_circuit_parameters={}
-	initial_circuit_parameters['Cd']=Cload
-	initial_circuit_parameters['Ld']=calculate_Ld(Cload,initial_circuit_parameters['Cd'],fo)
-	Qin=calculate_Qin(s11,fo,f_range)
-	cgs=calculate_cgs(Rs,fo,Qin)
+	initial_circuit_parameters['Ld']=calculate_Ld(Cload,fo)
+	Qin=2.5
+	gm=calculate_gm(gain,fo,cgs,nf)
+	cgs=calculate_cgs(gm,fo,Rs,initial_circuit_parameters['Ld'],nf)
+	
 	initial_circuit_parameters['W']=calculate_W(cgs,Lmin,Cox)
-	global gm
-	gm=calculate_gm(initial_circuit_parameters['Ld'],fo,cgs,nf)
-	initial_circuit_parameters['Cg']=100*cgs
+	
 	initial_circuit_parameters['Io']=calculate_Io(gm,un,Cox,initial_circuit_parameters['W'],Lmin)
-	initial_circuit_parameters['Rsum'],initial_circuit_parameters['Rk']=calculate_Rsum_Rk(vdd,fo,initial_circuit_parameters['Cg'],optimization_input_parameters['pre_optimization']['I_Rdivider_max'])
+	
 	initial_circuit_parameters['Ls']=calculate_Ls(Rs,cgs,gm,fo)
-	initial_circuit_parameters['Lg']=calculate_Lg(initial_circuit_parameters['Ls'],cgs,fo)
+	initial_circuit_parameters['Lg']=calculate_Lg(initial_circuit_parameters['Ls'],cgs)
 	initial_circuit_parameters['Rb']=5000
+
 	initial_circuit_parameters['Cs']=100/(2*np.pi*50*fo)
 	if cir.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_capacitor' or cir.circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_inductor':
 		initial_circuit_parameters['Cs']=10/(2*np.pi*50*fo)
@@ -335,10 +296,11 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		print('----- Iteration ',i,' -----')
 
 		initial_circuit_parameters=cir.get_initial_circuit_parameters()
+		circuit_parameters=cir.get_circuit_parameters()
 		extracted_parameters=cir.get_extracted_parameters()
 
-		# Updating Ld
-		initial_circuit_parameters['Ld']=updating_Ld(extracted_parameters['cgd2'],Cload,initial_circuit_parameters['Cd'],fo)
+		# Updating Cd
+		initial_circuit_parameters['Cd']=updating_Cd(extracted_parameters['cgd2'],Cload,initial_circuit_parameters['Ld'],fo)
 		
 		# Updating W to improve the Qin
 		Z_max=calculate_Zim_max(optimization_input_parameters['output_conditions']['s11_db'])
@@ -363,7 +325,7 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		
 		# Updating the values
 		fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
-		initial_circuit_parameters['Ls']=initial_circuit_parameters['Ls']*50*4/(2*extracted_parameters['1_Zin_R']+extracted_parameters['0_Zin_R']+extracted_parameters['2_Zin_R'])
+		initial_circuit_parameters['Ls']=circuit_parameters['Ls']*50*4/(2*extracted_parameters['1_Zin_R']+extracted_parameters['0_Zin_R']+extracted_parameters['2_Zin_R'])
 		initial_circuit_parameters['Lg']=initial_circuit_parameters['Lg']-(2*extracted_parameters['1_Zin_I']+extracted_parameters['0_Zin_I']+extracted_parameters['2_Zin_I'])/(4*2*np.pi*fo)
 		
 		# Running the circuit and updating the results
@@ -379,41 +341,6 @@ def update_initial_parameters(cir,optimization_input_parameters):
 	i=get_best_point(circuit_parameters_iter,extracted_parameters_iter,optimization_input_parameters['output_conditions'])
 	
 	cir.update_circuit_state(initial_circuit_parameters_iter[i],circuit_parameters_iter[i],extracted_parameters_iter[i])
-	
-	# Updating the value of Ld to get correct circuit parameters
-	multiplicative_factor=1.05
-	initial_circuit_parameters=cir.get_initial_circuit_parameters()
-	extracted_parameters=cir.get_extracted_parameters()
-	if extracted_parameters['0_gain_db']>(extracted_parameters['2_gain_db']+0.5):
-		initial_circuit_parameters['Ld']/=multiplicative_factor
-		cir.update_circuit(initial_circuit_parameters)
-		flag=0
-	elif extracted_parameters['2_gain_db']>(extracted_parameters['0_gain_db']+0.5):
-		initial_circuit_parameters['Ld']*=multiplicative_factor
-		cir.update_circuit(initial_circuit_parameters)
-		flag=1
-	
-	else:
-		return
-	
-	while flag!=2:
-		initial_circuit_parameters=cir.get_initial_circuit_parameters()
-		extracted_parameters=cir.get_extracted_parameters()
-		if extracted_parameters['0_gain_db']>(extracted_parameters['2_gain_db']+0.5):
-			if flag==1:
-				multiplicative_factor/=1.01
-			initial_circuit_parameters['Ld']/=multiplicative_factor
-			cir.update_circuit(initial_circuit_parameters)
-			flag=0
-		elif extracted_parameters['2_gain_db']>(extracted_parameters['0_gain_db']+0.5):
-			if flag==0:
-				multiplicative_factor/1.01
-			initial_circuit_parameters['Ld']*=multiplicative_factor
-			cir.update_circuit(initial_circuit_parameters)
-			flag=1
-		else:
-			flag=2
-			
 	
 
 """
@@ -443,8 +370,7 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	cf.print_circuit_parameters(cir.get_circuit_parameters())
 	cf.print_extracted_parameters(cir.get_extracted_parameters())
 
-	
-
+	"""	
 	#======================================================== Step 2 =======================================================
 	print('\n\n--------------------------------- Operating Point Updations ------------------------------------')
 
@@ -461,5 +387,6 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	cf.print_initial_circuit_parameters(cir.get_initial_circuit_parameters())
 	cf.print_circuit_parameters(cir.circuit_parameters)
 	cf.print_extracted_parameters(cir.extracted_parameters)
+	"""
 
 #===========================================================================================================================
