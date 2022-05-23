@@ -27,19 +27,22 @@ def db_to_normal(val_db):
 # Calculating Ld
 def calculate_Ld(Cload,fo):
 	wo=2*np.pi*fo
-	return 1/wo/wo/Cload
+	return 1/(wo*wo*Cload)
 
 #-----------------------------------------------------------------------------------------------
 # Calculating gm
 def calculate_gm(gain,fo,Ld,Qin):
 	wo=2*np.pi*fo
 	Rd=Ld*wo*15
-	return gain/2/Rd/Qin
+	gm=gain/(2*Rd*Qin)
+	print('gm=',gm)
+	return gm
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Cgs
 def calculate_cgs(gm,fo,Rs,Ld,NF):
 	F=10**(NF/10)
+	#F=NF
 	wo=2*np.pi*fo
 	Rd=Ld*wo*15
 	wt=wo*np.sqrt((2*gm*Rs+4*Rs/Rd)/(F-1))
@@ -237,6 +240,8 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	# Getting the output conditions
 	Cload=output_conditions['Cload']
 	gain=10**(output_conditions['gain_db']/20)
+	#gain=output_conditions['gain_db']
+	print(gain)
 	fo=output_conditions['wo']/(2*np.pi)
 	Rs=output_conditions['Rs']
 	s11=output_conditions['s11_db']
@@ -276,7 +281,7 @@ def update_initial_parameters(cir,optimization_input_parameters):
 
 	i=0
 	
-    # Getting the output conditions
+    	# Getting the output conditions
 	fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
 	
 	write_parameters_initial(cir,optimization_input_parameters)
@@ -293,7 +298,7 @@ def update_initial_parameters(cir,optimization_input_parameters):
 
 		# Updating the values
 		fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
-		initial_circuit_parameters['Ls']=circuit_parameters['Ls']*50/(extracted_parameters['Zin_R'])
+		initial_circuit_parameters['Ls']=initial_circuit_parameters['Ls']*50/(extracted_parameters['Zin_R'])
 		initial_circuit_parameters['Lg']=initial_circuit_parameters['Lg']-extracted_parameters['Zin_I']/(2*np.pi*fo)
 		
 		# Running the circuit and updating the results
@@ -327,6 +332,7 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	cf.print_circuit_parameters(cir.get_circuit_parameters())
 	cf.print_extracted_parameters(cir.get_extracted_parameters())
 
+	"""
 	#======================================================== Step 2 =======================================================
 	print('\n\n--------------------------------- Operating Point Updations ------------------------------------')
 
@@ -343,5 +349,6 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	cf.print_initial_circuit_parameters(cir.get_initial_circuit_parameters())
 	cf.print_circuit_parameters(cir.circuit_parameters)
 	cf.print_extracted_parameters(cir.extracted_parameters)
+	"""
 	
 #===========================================================================================================================

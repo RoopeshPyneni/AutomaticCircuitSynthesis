@@ -72,13 +72,13 @@ def get_output_conditions(optimization_input_parameters,fo):
 	optimization_input_parameters['output_conditions']={
 		's11_db':-10.0,
 		'iip3_dbm':-10.0,
-		'gain_db':15.0,
+		'gain_db':20.0,
 		'gain_delta':1.5,
 		'nf_db':1.5,
 		'wo':2.0*np.pi*fo,
 		'delta_v':0.1,
 		'Rs':50,
-		'Cload':2000e-15,
+		'Cload':100e-15,
 		's11_db_middle':-15.0
 	}
 
@@ -90,7 +90,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	circuit_initialization_parameters['simulation']['standard_parameters']={}
 
 	# Filenames
-	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/CS_LNA/'
+	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/CS_LNA_1/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/cadence_project/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='ideal' # 'ideal', 'series','mos_resistor','mos_capacitor','mos_inductor'
 	

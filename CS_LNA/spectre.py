@@ -267,12 +267,6 @@ class Circuit():
 	# Function to check the best solution
 	def check_best_solution(self,optimization_results,loss_max):
 
-		for i in range(1000):
-			print('\n')
-
-		print('\nOptimization Results\n')
-		print(optimization_results)
-
 		# Defining some values
 		n_iter=optimization_results['n_iter']
 		iter_min=-1
@@ -289,11 +283,6 @@ class Circuit():
 		else:
 			flag=1 # This means that we got a correct point
 		
-		print('Iteration:-1')
-		print('Total Loss  :',total_loss)
-		print('Loss Io Min :',loss_Io_min)
-		print('Check Best  :',flag)
-		
 		# Checking other iterations
 		for i in range(0,n_iter):
 
@@ -301,21 +290,14 @@ class Circuit():
 			minimize_loss_value=sum([optimization_results['loss_iter'][i][key] for key in minimize_loss_array])
 			total_loss_value=optimization_results['loss_iter'][i]['loss']
 
-			print('Iteration:',i)
-			print('Zero Loss Value:',zero_loss_value)
-			print('Minimize Loss Value:',minimize_loss_value)
-			print('Total Loss Value:',total_loss_value)
-			
 			if zero_loss_value>loss_max:
 				if flag==1:
-					print('Continue 1 : Due to already finding correct point')
 					continue
 				
 				if total_loss_value<total_loss:
 					iter_min=i
 					total_loss=total_loss_value
 					loss_Io_min=minimize_loss_value
-					print('Continue 2 : Due to having a smaller loss without best point')
 					continue
 
 			if flag==0 or (flag==1 and minimize_loss_value<loss_Io_min):
@@ -324,10 +306,6 @@ class Circuit():
 				loss_Io_min=minimize_loss_value
 				flag=1
 			
-			print('Total Loss  :',total_loss)
-			print('Loss Io Min :',loss_Io_min)
-			print('Check Best  :',flag)
-
 		# Creating output dictionary
 		opt_dict={}
 		opt_dict['loss_max']=loss_max
@@ -338,9 +316,6 @@ class Circuit():
 		opt_dict['iter_number']=iter_min+1
 		opt_dict['Io_loss']=loss_Io_min
 	
-		print('\n\nFinal Output Dictionary')
-		print(opt_dict)
-		
 		return opt_dict
 
 	#-----------------------------------------------------------------------------------------------
@@ -367,12 +342,6 @@ class Circuit():
 		current_temp=temp_middle
 		current_process=process_middle
 		
-		print('\n-------------------------------------\n')
-		print('Initial Loss Function : ',current_loss)
-		print('Initial Loss Total    : ',current_loss_total)
-		print('Initial Temperature   : ',current_temp)
-		print('Initial Process       : ',current_process)
-
 		for temp in temp_list:
 			for process in process_list:
 				if temp==temp_middle and process==process_middle:
@@ -380,24 +349,12 @@ class Circuit():
 				loss=self.calc_loss(output_conditions,loss_weights,temp=temp,process=process)
 				loss_total=sum([loss[param] for param in zero_loss_array])
 				
-				print('\n-------------------------------------\n')
-				print('Current Loss Function : ',loss)
-				print('Current Loss Total    : ',loss_total)
-				print('Current Temperature   : ',temp)
-				print('Current Process       : ',process)
-
 				if loss_total>current_loss_total:
 					current_loss_total=loss_total
 					current_loss=loss.copy()
 					current_temp=temp
 					current_process=process
 		
-		print('\n-------------------------------------\n')
-		print('Final Loss Function : ',current_loss)
-		print('Final Loss Total    : ',current_loss_total)
-		print('Final Temperature   : ',current_temp)
-		print('Final Process       : ',current_process)
-
 		return current_loss,current_temp,current_process
 
 	#-----------------------------------------------------------------------------------------------
@@ -516,7 +473,7 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 	}
 
 	for param_name in cir_writing_dict:
-		if param_name in circuit_parameters:
+		if cir_writing_dict[param_name] in circuit_parameters:
 			circuit_parameters[param_name]=circuit_parameters[cir_writing_dict[param_name]]
 			del circuit_parameters[cir_writing_dict[param_name]]
 	
@@ -1077,15 +1034,13 @@ def write_extract_single(i,circuit_parameters,circuit_initialization_parameters)
 	for param_name in iip3_extracted_parameters:
 		extracted_parameters[param_name]=iip3_extracted_parameters[param_name]
 	
-	print(i,extracted_parameters)
-
 	return (i,extracted_parameters)
 
 #-----------------------------------------------------------------------------------------------
 # This function will write the circuit parameters, run spectre and extract the output parameters for a single process
 def write_extract(circuit_parameters,circuit_initialization_parameters):
 	
-	pool=mp.Pool(7)
+	pool=mp.Pool(8)
 
 	# Getting the values of frequency and range
 	f_list=circuit_initialization_parameters['simulation']['standard_parameters']['f_list']
@@ -1093,8 +1048,6 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 
 	# Getting the different processes
 	process_list=circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']
-	print('Process List')
-	print(process_list)
 	n_process=len(process_list)
 
 	# Getting the temperature list
@@ -1108,7 +1061,7 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 	circuit_parameters_run={}
 	for i in range(n_runs):
 		circuit_parameters_run[i]=circuit_parameters.copy()
-		
+
 	# Creating new circuit initialization parameters
 	circuit_initialization_parameters_run={}
 	for i in range(n_runs):
@@ -1128,18 +1081,13 @@ def write_extract(circuit_parameters,circuit_initialization_parameters):
 		if not os.path.exists(spectre_path):
 			shutil.copytree(spectre_folder+'T_extra/',spectre_path)
 		
-		print('Process Name')
-		print(process_list[i_process])
-
 		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['directory']=netlist_path
 		circuit_initialization_parameters_run[i]['simulation']['standard_parameters']['tcsh']=spectre_path+'spectre_run.tcsh'
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['fund_1']=f_list[i_freq]
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['fund_2']=f_list[i_freq]+1e6
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['process_corner']=process_list[i_process]
 		circuit_initialization_parameters_run[i]['simulation']['netlist_parameters']['cir_temp']=temp_list[i_temp]
-
-		
-		
+	
 	# Creating processes
 	results_async=[pool.apply_async(write_extract_single,args=(i,circuit_parameters_run[i],circuit_initialization_parameters_run[i])) for i in range(n_runs)]
 
@@ -1186,9 +1134,6 @@ def write_extract_multiple_circuits(circuit_parameters_dict,circuit_initializati
 	for i in range(n_runs):
 		circuit_parameters_run[i]=circuit_parameters_dict[i%n_circuits].copy()
 
-		print('\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~ CIRCUIT PARAMETER RUN ~~~~~~~~~~~~~~~~\n\n\n')
-		print(circuit_parameters_run[i])
-		
 	# Creating new circuit initialization parameters
 	circuit_initialization_parameters_run={}
 	for i in range(n_runs):
@@ -1238,20 +1183,11 @@ def write_extract_multiple_circuits(circuit_parameters_dict,circuit_initializati
 # This function will write the circuit parameters, run spectre and extract the output parameters
 def get_final_extracted_parameters(extracted_parameters_split,f_list,process_list,temp_list):
 	
-	print("\n\nExtracted Parameters Split\n")
-	print(extracted_parameters_split)
 	extracted_parameters_frequency=get_final_extracted_parameters_frequency(extracted_parameters_split,f_list,process_list,temp_list)
 
-	print("\n\nExtracted Parameters Frequency\n")
-	print(extracted_parameters_frequency)
 	extracted_parameters_process=get_final_extracted_parameters_process(extracted_parameters_frequency,process_list,temp_list)
 
-	print("\n\nExtracted Parameters Process\n")
-	print(extracted_parameters_process)
 	final_extracted_parameters=get_final_extracted_parameters_temperature(extracted_parameters_process,temp_list)
-	
-	print("\n\nExtracted Parameters Temperature\n")
-	print(final_extracted_parameters)
 	
 	return final_extracted_parameters
 
@@ -1422,12 +1358,7 @@ def get_final_extracted_parameters_process(extracted_parameters_frequency,proces
 				for param_name in extracted_parameters_frequency[temp][process]:
 					extracted_parameters_process[temp][process+'_'+param_name]=extracted_parameters_frequency[temp][process][param_name]
 	
-	print('\n\nExtracted Parameters Process Initial :')
-	print(extracted_parameters_process)
-	
 	if len(process_list)!=1:
-		
-		print('\n\nMultiple Processes')
 		
 		extracted_parameters_select={
 			'freq':'mid',
