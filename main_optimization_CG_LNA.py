@@ -87,7 +87,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	# Filenames
 	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/CG_LNA/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/cadence_project/'
-	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='ideal' # 'ideal','mos_resistor','mos_capacitor','mos_inductor'
+	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='mos_capacitor' # 'ideal','mos_resistor','mos_capacitor','mos_capacitor2'
 	
 	# IIP3 Points
 	circuit_initialization_parameters['simulation']['standard_parameters']['iip3_type']='basic'		# 'basic' or 'advanced' 
@@ -125,7 +125,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']=1
+	optimization_input_parameters['pre_optimization']['type']=2 # 'manual'
 
 	optimization_input_parameters['pre_optimization']['Step1b_Limit']=5
 	optimization_input_parameters['pre_optimization']['Step2_Limit']=5
@@ -134,13 +134,37 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 	optimization_input_parameters['pre_optimization']['gmrs_threshold']=0.2
 	optimization_input_parameters['pre_optimization']['vdsat_threshold']=0.02
 
-	optimization_input_parameters['pre_optimization']['C1_threshold']=100
+	optimization_input_parameters['pre_optimization']['C1_threshold']=10
 	optimization_input_parameters['pre_optimization']['C2_threshold']=100
 	optimization_input_parameters['pre_optimization']['Rbias_threshold']=100
 	optimization_input_parameters['pre_optimization']['Rbias_minimum']=1000
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Manual Hand Calculations
+	optimization_input_parameters['pre_optimization']['manual_circuit_parameters']={
+		'Rb':272,
+		'Rd':360,
+		'Io':666e-6,
+		'C1':31.8e-12,
+		'C2':163e-12,
+		'W':275e-6,
+		'Rbias':1000
+	}
+	
+	"""
+	optimization_input_parameters['pre_optimization']['manual_circuit_parameters']={
+		'Rb':343,
+		'Rd':320,
+		'Io':937e-6,
+		'C1':21.7e-12,
+		'C2':110e-12,
+		'W':183e-6,
+		'Rbias':1000
+	}
+	"""
+	
+	
+	"""
 	optimization_input_parameters['pre_optimization']['manual_circuit_parameters']={
 		'Rb':274,
 		'Rd':360,
@@ -150,6 +174,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 		'W':275e-6,
 		'Rbias':1000
 	}
+	"""
 	
 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -178,7 +203,7 @@ def get_optimization_parameters(optimization_input_parameters,fo,optimization_na
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# Optimization Run 1
 	optimization_input_parameters['optimization'][1]={}
-	optimization_input_parameters['optimization'][1]['max_iteration']=3
+	optimization_input_parameters['optimization'][1]['max_iteration']=200
 	optimization_input_parameters['optimization'][1]['alpha_min']=-1
 	optimization_input_parameters['optimization'][1]['consec_iter']=-1
 	optimization_input_parameters['optimization'][1]['delta_threshold']=0.001
@@ -361,8 +386,8 @@ optimization_name='LOSS'
 """
 
 # ---------- MOSFET Parameters ----------
-get_mos_parameters(circuit_initialization_parameters,'TSMC180')
-# get_mos_parameters(circuit_initialization_parameters,'TSMC65')
+# get_mos_parameters(circuit_initialization_parameters,'TSMC180')
+get_mos_parameters(circuit_initialization_parameters,'TSMC65')
 # get_mos_parameters(circuit_initialization_parameters,'IBM130')
 
 # ---------- Output Conditions ----------
@@ -423,7 +448,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'4_Test_Optimization_TSMC_180'						# SET THE FILENAME HERE
+	filename=f_directory+'6_Opt_TSMC_65_RC_4'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

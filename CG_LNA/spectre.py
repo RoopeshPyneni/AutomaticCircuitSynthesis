@@ -43,9 +43,9 @@ class Circuit():
 			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_rc'
 			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_rc'
 
-		elif self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_inductor':
-			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_rcl'
-			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_rcl'
+		elif self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='mos_capacitor2':
+			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters_rc2'
+			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['iip3_circuit']='iip3_hb_rc2'
 
 		elif self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']=='ideal':
 			self.initial_circuit_initialization_parameters['simulation']['standard_parameters']['basic_circuit']='basic_parameters'
@@ -361,16 +361,25 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 	circuit_parameters['n_finger']=int(circuit_parameters['W']/circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max'])+1
 
 	# Getting the real resistor parameters
-	if circuit_type=='mos_resistor' or circuit_type=='mos_capacitor' or circuit_type=='mos_inductor':
+	if circuit_type=='mos_resistor' or circuit_type=='mos_capacitor' or circuit_type=='mos_capacitor2':
 		circuit_parameters['Resb_L'],circuit_parameters['Resb_W']=sp.get_TSMC_resistor(circuit_parameters['Rb'])
 		circuit_parameters['Resd_L'],circuit_parameters['Resd_W']=sp.get_TSMC_resistor(circuit_parameters['Rd'])
 		circuit_parameters['Resbias_L'],circuit_parameters['Resbias_W']=sp.get_TSMC_resistor(circuit_parameters['Rbias'])
 
 	# Getting the real capacitors parameters
-	if circuit_type=='mos_capacitor' or circuit_type=='mos_inductor':
-		circuit_parameters['mf_cap1']=sp.calculate_mimcap(circuit_parameters['C1'],1e-11)	
-		circuit_parameters['mf_cap2']=sp.calculate_mimcap(circuit_parameters['C2'],1e-11)	
+	if circuit_type=='mos_capacitor':
+		circuit_parameters['wid_cap1']=1e-6
+		circuit_parameters['wid_cap2']=1e-6
+		circuit_parameters['len_cap1']=0.2e-6
+		circuit_parameters['len_cap2']=0.2e-6
+		circuit_parameters['mf_cap1']=sp.calculate_mimcap(circuit_parameters['C1'],1.7749388e-15)
+		circuit_parameters['mf_cap2']=sp.calculate_mimcap(circuit_parameters['C2'],1.7166e-16)	
 
+	if circuit_type=='mos_capacitor2':
+		circuit_parameters['wid_cap1']=1e-6
+		circuit_parameters['len_cap1']=1e-6
+		circuit_parameters['mf_cap1']=sp.calculate_mimcap(circuit_parameters['C1'],1.7749388e-15)	# 1e-11
+		circuit_parameters['mf_cap2']=1	
 		circuit_parameters['wid_cap2'],circuit_parameters['len_cap2']=sp.calculate_MOS_capacitor(circuit_parameters['C2'])
 		
 	# ~~~~~~~~~~~~~~~ CHANGING THE NAME ~~~~~~~~~~~~~~~

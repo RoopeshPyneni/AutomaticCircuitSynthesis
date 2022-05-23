@@ -194,7 +194,7 @@ def MOS_Capacitor_1(file_directory_netlist,file_directory_output):
 	# Storing the variable names
 	circuit_parameters={
 		'len':1e-6,
-		'wid':5e-6,
+		'wid':1e-6,
 		'i_sin':1e-6,
 		'm_factor':1.0,
 		'fund_1':1e9

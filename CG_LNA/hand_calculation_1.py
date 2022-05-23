@@ -331,8 +331,8 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 		initial_circuit_parameters[param_name]=0
 	
 	# Calculating Io min and W
-	#initial_circuit_parameters['Io'],initial_circuit_parameters['W']=calc_Io_min(opt_conditions,mos_parameters)
-	initial_circuit_parameters['Io'],initial_circuit_parameters['W']=calc_Io_W(opt_conditions,mos_parameters,vdsat_reqd)
+	initial_circuit_parameters['Io'],initial_circuit_parameters['W']=calc_Io_min(opt_conditions,mos_parameters)
+	#initial_circuit_parameters['Io'],initial_circuit_parameters['W']=calc_Io_W(opt_conditions,mos_parameters,vdsat_reqd)
 	
 	# Calculating Rd
 	initial_circuit_parameters['Rd']=calc_Rd(opt_conditions)
@@ -519,13 +519,13 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	print('\n\n--------------------------------- gm and vdsat Updation ------------------------------------')
 	
 	# Calculating the Values of Circuit Parameters
-	dc_optimize_gm_vdsat(cir,optimization_input_parameters)
+	dc_optimize_gm(cir,optimization_input_parameters)
 
 	# Storing the Circuit and Extracted Parameters
-	optimization_results['gmvd_update']={}
-	optimization_results['gmvd_update']['initial_circuit_parameters']=cir.initial_circuit_parameters.copy()
-	optimization_results['gmvd_update']['circuit_parameters']=cir.circuit_parameters.copy()
-	optimization_results['gmvd_update']['extracted_parameters']=cir.extracted_parameters.copy()
+	optimization_results['gm_update']={}
+	optimization_results['gm_update']['initial_circuit_parameters']=cir.initial_circuit_parameters.copy()
+	optimization_results['gm_update']['circuit_parameters']=cir.circuit_parameters.copy()
+	optimization_results['gm_update']['extracted_parameters']=cir.extracted_parameters.copy()
 
 	# Printing the values
 	cf.print_initial_circuit_parameters(cir.initial_circuit_parameters)
