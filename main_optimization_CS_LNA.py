@@ -90,7 +90,7 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 	circuit_initialization_parameters['simulation']['standard_parameters']={}
 
 	# Filenames
-	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/CS_LNA_1/'
+	circuit_initialization_parameters['simulation']['standard_parameters']['directory']='/home/ee18b028/cadence_project/CS_LNA_2/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['tcsh']='/home/ee18b028/cadence_project/'
 	circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']='ideal' # 'ideal', 'series','mos_resistor','mos_capacitor','mos_inductor'
 	
@@ -106,14 +106,14 @@ def get_simulation_conditions(circuit_initialization_parameters,fo):
 
 	# Operating frequency points
 	circuit_initialization_parameters['simulation']['standard_parameters']['f_operating']=fo
-	circuit_initialization_parameters['simulation']['standard_parameters']['f_list']=[fo] #[fo-50e6,fo,fo+50e6]
+	circuit_initialization_parameters['simulation']['standard_parameters']['f_list']=[fo-50e6,fo,fo+50e6] #[fo] #[fo-50e6,fo,fo+50e6]
 	
 	# Other Values
 	circuit_initialization_parameters['simulation']['standard_parameters']['std_temp']=27
 	circuit_initialization_parameters['simulation']['standard_parameters']['temp_list']=[27] #[-40,27,120]
 	circuit_initialization_parameters['simulation']['standard_parameters']['process_corner']=['tt'] #['ss','tt','ff']
 	circuit_initialization_parameters['simulation']['standard_parameters']['conservative']='NO'
-	circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max']=2 #2e-6
+	circuit_initialization_parameters['simulation']['standard_parameters']['w_finger_max']=2e-6
 
 	circuit_initialization_parameters['simulation']['netlist_parameters']={
 		'pin':-65,
@@ -130,7 +130,7 @@ def get_pre_optimization_parameters(optimization_input_parameters,fo):
 
 	optimization_input_parameters['pre_optimization']={}
 
-	optimization_input_parameters['pre_optimization']['type']=2 #'manual'
+	optimization_input_parameters['pre_optimization']['type']=3 #'manual'
 
 	optimization_input_parameters['pre_optimization']['I_Rdivider_max']=100e-6
 	
@@ -439,7 +439,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'2_Test_PreOpt_M2_2'						# SET THE FILENAME HERE
+	filename=f_directory+'3_Test_PreOpt_M3_1'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 
