@@ -301,6 +301,8 @@ def update_initial_parameters(cir,optimization_input_parameters):
 	vdd=cir.mos_parameters['vdd']
 	Lmin=cir.mos_parameters['Lmin']
 	nf=optimization_input_parameters['output_conditions']['nf_db']
+	target_gain=optimization_input_parameters['output_conditions']['gain_db']
+	target_gain=10**(target_gain/20)
 	
 	f_list=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_list']
 	nameR0=str(f_list[0])+'_Zin_R'
@@ -333,6 +335,10 @@ def update_initial_parameters(cir,optimization_input_parameters):
 	
 		# Calculating Io from W and gm based on NF Calculation
 		global gm
+		gain=extracted_parameters['gain_db']
+		gain=10**(gain/20)
+		if gain<target_gain:
+			gm*=(1.2*target_gain/gain)
 		initial_circuit_parameters['Io']=calculate_Io(gm,un,Cox,initial_circuit_parameters['W'],Lmin)
 
 		# Running the circuit and updating the results
