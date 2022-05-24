@@ -24,10 +24,12 @@ def db_to_normal(val_db):
     return 10**(val_db/10)
 
 #-----------------------------------------------------------------------------------------------
-# Calculating Ld
-def calculate_Ld(Cload,fo,Cd):
+# Calculating Cd
+def calculate_Cd(Cload,Ld,fo):
 	wo=2*np.pi*fo
-	return 1/wo/wo/(Cload+Cd)
+	Cd=1/(wo*wo*(Ld))
+	Cd-=Cload
+	return Cd
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Qin
@@ -47,17 +49,22 @@ def calculate_Qin(s11,fo,f_delta):
 	return Qin
 
 #-----------------------------------------------------------------------------------------------
-# Calculating gm
-def calculate_gm(gain,fo,Ld,Qin):
-	wo=2*np.pi*fo
-	Rd=Ld*wo*15
-	return gain/2/Rd/Qin
+# Calculating Cgs
+def calculate_cgs(Rs,fo,Qin):
+    wo=2*np.pi*fo
+    cgs=1/(2*Rs*Qin*wo)
+    return cgs
 
 #-----------------------------------------------------------------------------------------------
-# Calculating Cgs
-def calculate_cgs(fo,Rs,Qin):
+# Calculating gm
+def calculate_gm(Ld,fo,cgs,nf):
 	wo=2*np.pi*fo
-	return 1/2/Rs/Qin/wo
+	Rd=wo*Ld*15
+	A=200*((wo*cgs)**2)/Rd
+	B=100*((wo*cgs)**2)
+	C=1-10**(0.1*nf)
+	return 8*A/(np.sqrt(B*B-4*A*C)-B)
+
 
 #-----------------------------------------------------------------------------------------------
 # Calculating W
@@ -71,7 +78,7 @@ def calculate_Io(gm,un,cox,W,Lmin):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Ls
-def calculate_Ls(rsource,cgs,gm):
+def calculate_Ls(rsource,cgs,gm,fo):
     return rsource*cgs/gm
     
 #-----------------------------------------------------------------------------------------------
@@ -268,8 +275,8 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
     
 	# Getting the output conditions
 	Cload=output_conditions['Cload']
-	gain=10**(output_conditions['gain_db']/20)
 	fo=output_conditions['wo']/(2*np.pi)
+	f_range=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_range']
 	Rs=output_conditions['Rs']
 	s11=output_conditions['s11_db']
 	nf=output_conditions['nf_db']
@@ -281,27 +288,17 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 
 	# Calculating the circuit parameters
 	initial_circuit_parameters={}
-	
-	initial_circuit_parameters['Cd']=Cload
-	Cd=initial_circuit_parameters['Cd']
-	initial_circuit_parameters['Ld']=calculate_Ld(Cload,fo,Cd)
-	Ld=initial_circuit_parameters['Ld']
-	
-	f_list=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_list']
-	len_flist=len(f_list)
-	f_range=f_list[len_flist-1]-f_list[0]
+	initial_circuit_parameters['Ld']=9e-9
+	initial_circuit_parameters['Cd']=calculate_Cd(Cload,initial_circuit_parameters['Ld'],fo)
 	Qin=calculate_Qin(s11,fo,f_range)
-	global gm
-	gm=20e-3
-	cgs=calculate_cgs(fo,Rs,Qin)
+	cgs=calculate_cgs(Rs,fo,Qin)
 	initial_circuit_parameters['W']=calculate_W(cgs,Lmin,Cox)
-	
+	global gm
+	gm=calculate_gm(initial_circuit_parameters['Ld'],fo,cgs,nf)
+	initial_circuit_parameters['Cg']=100*cgs
 	initial_circuit_parameters['Io']=calculate_Io(gm,un,Cox,initial_circuit_parameters['W'],Lmin)
-	
-	initial_circuit_parameters['Cg']=10*cgs
 	initial_circuit_parameters['Rsum'],initial_circuit_parameters['Rk']=calculate_Rsum_Rk(vdd,fo,initial_circuit_parameters['Cg'],optimization_input_parameters['pre_optimization']['I_Rdivider_max'])
-
-	initial_circuit_parameters['Ls']=calculate_Ls(Rs,cgs,gm)
+	initial_circuit_parameters['Ls']=calculate_Ls(Rs,cgs,gm,fo)
 	initial_circuit_parameters['Lg']=calculate_Lg(initial_circuit_parameters['Ls'],cgs,fo)
 	initial_circuit_parameters['Rb']=5000
 	initial_circuit_parameters['Cs']=100/(2*np.pi*50*fo)
@@ -316,24 +313,18 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 def update_initial_parameters(cir,optimization_input_parameters):
 
 	i=0
-	
-	# Getting the output conditions
-	fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
+	Lmin=cir.mos_parameters['Lmin']
 	Cox=cir.mos_parameters['cox']
 	un=cir.mos_parameters['un']
 	vdd=cir.mos_parameters['vdd']
-	Lmin=cir.mos_parameters['Lmin']
+  
+    	# Getting the output conditions
+	Cload=optimization_input_parameters['output_conditions']['Cload']
+	fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
 	nf=optimization_input_parameters['output_conditions']['nf_db']
-	
-	f_list=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_list']
-	nameR0=str(f_list[0])+'_Zin_R'
-	nameR1=str(f_list[1])+'_Zin_R'
-	nameR2=str(f_list[2])+'_Zin_R'
-	nameI0=str(f_list[0])+'_Zin_I'
-	nameI1=str(f_list[1])+'_Zin_I'
-	nameI2=str(f_list[2])+'_Zin_I'
-	
+
 	write_parameters_initial(cir,optimization_input_parameters)
+
 	initial_circuit_parameters_iter={}
 	circuit_parameters_iter={}
 	extracted_parameters_iter={}
@@ -349,13 +340,17 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		circuit_parameters=cir.get_circuit_parameters()
 		extracted_parameters=cir.get_extracted_parameters()
 
+		# Updating Cd
+		initial_circuit_parameters['Cd']=updating_Cd(extracted_parameters['cgd2'],Cload,initial_circuit_parameters['Ld'],fo)
+		
 		# Updating W to improve the Qin
 		Z_max=calculate_Zim_max(optimization_input_parameters['output_conditions']['s11_db'])
-		Z_diff=np.abs(extracted_parameters[nameI0]-extracted_parameters[nameI2])
+		Z_diff=np.abs(extracted_parameters['0_Zin_I']-extracted_parameters['2_Zin_I'])
 		initial_circuit_parameters['W']=initial_circuit_parameters['W']*Z_diff/Z_max*1.2
-	
+		
 		# Calculating Io from W and gm based on NF Calculation
 		global gm
+		gm=update_gm(extracted_parameters['nf_db'],nf,gm)
 		initial_circuit_parameters['Io']=calculate_Io(gm,un,Cox,initial_circuit_parameters['W'],Lmin)
 
 		# Running the circuit and updating the results
@@ -368,11 +363,11 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		circuit_parameters_iter[j]=cir.get_circuit_parameters()
 		extracted_parameters_iter[j]=extracted_parameters
 		j+=1
-
+		
 		# Updating the values
 		fo=optimization_input_parameters['output_conditions']['wo']/(2*np.pi)
-		initial_circuit_parameters['Ls']=initial_circuit_parameters['Ls']*50*4/(2*extracted_parameters[nameR1]+extracted_parameters[nameR0]+extracted_parameters[nameR2])
-		initial_circuit_parameters['Lg']=initial_circuit_parameters['Lg']-(2*extracted_parameters[nameI1]+extracted_parameters[nameI0]+extracted_parameters[nameI2])/(4*2*np.pi*fo)
+		initial_circuit_parameters['Ls']=circuit_parameters['Ls']*50*4/(2*extracted_parameters['1_Zin_R']+extracted_parameters['0_Zin_R']+extracted_parameters['2_Zin_R'])
+		initial_circuit_parameters['Lg']=initial_circuit_parameters['Lg']-(2*extracted_parameters['1_Zin_I']+extracted_parameters['0_Zin_I']+extracted_parameters['2_Zin_I'])/(4*2*np.pi*fo)
 		
 		# Running the circuit and updating the results
 		cir.update_circuit(initial_circuit_parameters)
@@ -383,7 +378,10 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		circuit_parameters_iter[j]=cir.get_circuit_parameters()
 		extracted_parameters_iter[j]=cir.get_extracted_parameters()
 		j+=1
-		
+	
+	i=get_best_point(circuit_parameters_iter,extracted_parameters_iter,optimization_input_parameters['output_conditions'])
+	
+	cir.update_circuit_state(initial_circuit_parameters_iter[i],circuit_parameters_iter[i],extracted_parameters_iter[i])
 	
 
 """
@@ -413,6 +411,7 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	cf.print_circuit_parameters(cir.get_circuit_parameters())
 	cf.print_extracted_parameters(cir.get_extracted_parameters())
 
+	"""	
 	#======================================================== Step 2 =======================================================
 	print('\n\n--------------------------------- Operating Point Updations ------------------------------------')
 
@@ -429,5 +428,6 @@ def automatic_initial_parameters(cir,optimization_input_parameters,optimization_
 	cf.print_initial_circuit_parameters(cir.get_initial_circuit_parameters())
 	cf.print_circuit_parameters(cir.circuit_parameters)
 	cf.print_extracted_parameters(cir.extracted_parameters)
-	
+	"""
+
 #===========================================================================================================================
