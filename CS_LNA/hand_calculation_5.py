@@ -48,10 +48,13 @@ def calculate_Qin(s11,fo,f_delta):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating gm
-def calculate_gm(gain,fo,Ld,Qin):
+def calculate_gm(Ld,fo,cgs,nf):
 	wo=2*np.pi*fo
-	Rd=Ld*wo*15
-	return gain/2/Rd/Qin
+	Rd=wo*Ld*15
+	A=200*((wo*cgs)**2)/Rd
+	B=100*((wo*cgs)**2)
+	C=1-10**(0.1*nf)
+	return 2*A/(np.sqrt(B*B-4*A*C)-B)
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Cgs
@@ -292,7 +295,7 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	f_range=f_list[len_flist-1]-f_list[0]
 	Qin=calculate_Qin(s11,fo,f_range)
 	global gm
-	gm=20e-3
+	gm=calculate_gm(initial_circuit_parameters['Ld'],fo,cgs,nf)
 	cgs=calculate_cgs(fo,Rs,Qin)
 	initial_circuit_parameters['W']=calculate_W(cgs,Lmin,Cox)
 	
@@ -326,6 +329,7 @@ def update_initial_parameters(cir,optimization_input_parameters):
 	nf=optimization_input_parameters['output_conditions']['nf_db']
 	target_gain=optimization_input_parameters['output_conditions']['gain_db']
 	target_gain=10**(target_gain/20)
+	Cload=optimization_input_parameters['output_conditions']['Cload']
 	
 	f_list=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_list']
 	nameR0=str(f_list[0])+'_Zin_R'
@@ -351,6 +355,9 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		circuit_parameters=cir.get_circuit_parameters()
 		extracted_parameters=cir.get_extracted_parameters()
 
+		# Updating Cd
+		initial_circuit_parameters['Cd']=updating_Cd(extracted_parameters['cgd2'],Cload,initial_circuit_parameters['Ld'],fo)
+
 		# Updating W to improve the Qin
 		Z_max=calculate_Zim_max(optimization_input_parameters['output_conditions']['s11_db'])
 		Z_diff=np.abs(extracted_parameters[nameI0]-extracted_parameters[nameI2])
@@ -358,10 +365,10 @@ def update_initial_parameters(cir,optimization_input_parameters):
 	
 		# Calculating Io from W and gm based on NF Calculation
 		global gm
-		gain=extracted_parameters['gain_db']
-		gain=10**(gain/20)
-		if gain<target_gain:
-			gm*=(1.2*target_gain/gain)
+		#gain=extracted_parameters['gain_db']
+		#gain=10**(gain/20)
+		#if gain<target_gain:
+		#	gm*=(1.2*target_gain/gain)
 		initial_circuit_parameters['Io']=calculate_Io(gm,un,Cox,initial_circuit_parameters['W'],Lmin)
 
 		# Running the circuit and updating the results
@@ -370,9 +377,9 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		update_parameters(cir,optimization_input_parameters,i,'Ld_W_Io')
 		
 		# Storing the results
-		initial_circuit_parameters_iter[j]=initial_circuit_parameters
+		initial_circuit_parameters_iter[j]=cir.get_initial_circuit_parameters()
 		circuit_parameters_iter[j]=cir.get_circuit_parameters()
-		extracted_parameters_iter[j]=extracted_parameters
+		extracted_parameters_iter[j]=cir.get_extracted_parameters()
 		j+=1
 
 		# Updating the values
@@ -385,11 +392,34 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		update_parameters(cir,optimization_input_parameters,i,'Ls_Lg')
 
 		# Storing the results
-		initial_circuit_parameters_iter[j]=initial_circuit_parameters
+		initial_circuit_parameters_iter[j]=cir.get_initial_circuit_parameters()
 		circuit_parameters_iter[j]=cir.get_circuit_parameters()
 		extracted_parameters_iter[j]=cir.get_extracted_parameters()
 		j+=1
-		
+	
+	print('\n\n\n')
+	print(initial_circuit_parameters_iter)
+	print('\n\n\n')
+	print(circuit_parameters_iter)
+	print('\n\n\n')
+	print(extracted_parameters_iter)
+	
+	i=get_best_point(circuit_parameters_iter,extracted_parameters_iter,optimization_input_parameters['output_conditions'])
+	print('\n\n\n')
+	print('Best Point : ',i)
+	
+	cir.update_circuit_state(initial_circuit_parameters_iter[i],circuit_parameters_iter[i],extracted_parameters_iter[i])
+	cir.initial_circuit_parameters=initial_circuit_parameters_iter[i].copy()
+	cir.circuit_parameters=circuit_parameters_iter[i].copy()
+	cir.extracted_parameters=extracted_parameters_iter[i].copy()
+	
+	print('\n\n\n')
+	print('\nInitial Circuit Parameters')
+	print(initial_circuit_parameters_iter[i])
+	print('\nCircuit Parameters')
+	print(circuit_parameters_iter[i])
+	print('\nExtracted Parameters')
+	print(extracted_parameters_iter[i])
 	
 
 """
