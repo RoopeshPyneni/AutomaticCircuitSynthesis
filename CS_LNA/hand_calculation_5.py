@@ -294,9 +294,10 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	len_flist=len(f_list)
 	f_range=f_list[len_flist-1]-f_list[0]
 	Qin=calculate_Qin(s11,fo,f_range)
+	cgs=calculate_cgs(fo,Rs,Qin)
 	global gm
 	gm=calculate_gm(initial_circuit_parameters['Ld'],fo,cgs,nf)
-	cgs=calculate_cgs(fo,Rs,Qin)
+	
 	initial_circuit_parameters['W']=calculate_W(cgs,Lmin,Cox)
 	
 	initial_circuit_parameters['Io']=calculate_Io(gm,un,Cox,initial_circuit_parameters['W'],Lmin)
