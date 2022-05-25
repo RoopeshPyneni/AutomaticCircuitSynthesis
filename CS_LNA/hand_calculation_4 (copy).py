@@ -25,9 +25,9 @@ def db_to_normal(val_db):
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Ld
-def calculate_Ld(Cload,fo):
+def calculate_Ld(Cload,fo,Cd):
 	wo=2*np.pi*fo
-	return 1/wo/wo/Cload
+	return 1/wo/wo/(Cload+Cd)
 
 #-----------------------------------------------------------------------------------------------
 # Calculating Qin
@@ -88,6 +88,24 @@ def calculate_Zim_max(s11):
 	H_by_Zim_max_sq=(1/s11_mag_sq)-1
 	Z_im_max=100*np.sqrt(1/H_by_Zim_max_sq)
 	return Z_im_max
+
+#-----------------------------------------------------------------------------------------------
+# Calculating R1 and R2
+def calculate_Rsum_Rk(vdd,fo,Cg,Imax):
+
+	# Getting the value of k
+	Rk=0.9 # This is set arbitrarily
+
+	# Getting the value of Rsum from Reff
+	Reff=10/(2*np.pi*fo*Cg)
+	Rsum=Reff/(Rk*(1-Rk))
+	
+	# Multiplying R1 and R2 to get a higher value
+	Rmin=vdd/Imax
+	if Rsum<Rmin:
+		Rsum=Rmin
+
+	return Rsum,Rk
 
 #-----------------------------------------------------------------------------------------------
 # Updating R1 and R2
@@ -264,7 +282,9 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	# Calculating the circuit parameters
 	initial_circuit_parameters={}
 	
-	initial_circuit_parameters['Ld']=calculate_Ld(Cload,fo)
+	initial_circuit_parameters['Cd']=Cload
+	Cd=initial_circuit_parameters['Cd']
+	initial_circuit_parameters['Ld']=calculate_Ld(Cload,fo,Cd)
 	Ld=initial_circuit_parameters['Ld']
 	
 	f_list=cir.circuit_initialization_parameters['simulation']['standard_parameters']['f_list']
@@ -272,12 +292,15 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	f_range=f_list[len_flist-1]-f_list[0]
 	Qin=calculate_Qin(s11,fo,f_range)
 	global gm
-	gm=100e-3
+	gm=20e-3
 	cgs=calculate_cgs(fo,Rs,Qin)
 	initial_circuit_parameters['W']=calculate_W(cgs,Lmin,Cox)
 	
 	initial_circuit_parameters['Io']=calculate_Io(gm,un,Cox,initial_circuit_parameters['W'],Lmin)
 	
+	initial_circuit_parameters['Cg']=10*cgs
+	initial_circuit_parameters['Rsum'],initial_circuit_parameters['Rk']=calculate_Rsum_Rk(vdd,fo,initial_circuit_parameters['Cg'],optimization_input_parameters['pre_optimization']['I_Rdivider_max'])
+
 	initial_circuit_parameters['Ls']=calculate_Ls(Rs,cgs,gm)
 	initial_circuit_parameters['Lg']=calculate_Lg(initial_circuit_parameters['Ls'],cgs,fo)
 	initial_circuit_parameters['Rb']=5000
@@ -335,10 +358,10 @@ def update_initial_parameters(cir,optimization_input_parameters):
 	
 		# Calculating Io from W and gm based on NF Calculation
 		global gm
-		#gain=extracted_parameters['gain_db']
-		#gain=10**(gain/20)
-		#if gain<target_gain:
-		#	gm*=(1.2*target_gain/gain)
+		gain=extracted_parameters['gain_db']
+		gain=10**(gain/20)
+		if gain<target_gain:
+			gm*=(1.2*target_gain/gain)
 		initial_circuit_parameters['Io']=calculate_Io(gm,un,Cox,initial_circuit_parameters['W'],Lmin)
 
 		# Running the circuit and updating the results
@@ -366,30 +389,6 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		circuit_parameters_iter[j]=cir.get_circuit_parameters()
 		extracted_parameters_iter[j]=cir.get_extracted_parameters()
 		j+=1
-	
-	print('\n\n\n')
-	print(initial_circuit_parameters_iter)
-	print('\n\n\n')
-	print(circuit_parameters_iter)
-	print('\n\n\n')
-	print(extracted_parameters_iter)
-	
-	i=get_best_point(circuit_parameters_iter,extracted_parameters_iter,optimization_input_parameters['output_conditions'])
-	print('\n\n\n')
-	print('Best Point : ',i)
-	
-	cir.update_circuit_state(initial_circuit_parameters_iter[i],circuit_parameters_iter[i],extracted_parameters_iter[i])
-	cir.initial_circuit_parameters=initial_circuit_parameters_iter[i].copy()
-	cir.circuit_parameters=circuit_parameters_iter[i].copy()
-	cir.extracted_parameters=extracted_parameters_iter[i].copy()
-	
-	print('\n\n\n')
-	print('\nInitial Circuit Parameters')
-	print(initial_circuit_parameters_iter[i])
-	print('\nCircuit Parameters')
-	print(circuit_parameters_iter[i])
-	print('\nExtracted Parameters')
-	print(extracted_parameters_iter[i])
 		
 	
 

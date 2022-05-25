@@ -78,7 +78,7 @@ def get_output_conditions(optimization_input_parameters,fo):
 		'wo':2.0*np.pi*fo,
 		'delta_v':0.1,
 		'Rs':50,
-		'Cload':2000e-15,
+		'Cload':400e-15,
 		's11_db_middle':-15.0
 	}
 
@@ -437,7 +437,7 @@ optimization_input_parameters['circuit_parameter_analysis']['run']='NO' #'YES'
 if file_choose=='S':
 
 	# ------- Set Any Additional Parameters Here --------
-	filename=f_directory+'3_Test_PreOpt_M3_Cd2000_IPUpdateGain_1'						# SET THE FILENAME HERE
+	filename=f_directory+'3_Test_PreOpt_M3_Cd400_gm100_NoGmUpdate_2'						# SET THE FILENAME HERE
 	# ------- Set Any Additional Parameters Here --------
 	
 

@@ -102,10 +102,10 @@ class Circuit():
 		return self.extracted_parameters.copy()
 	
 	# Update circuit
-	def update_circuit_state(self,initial_circuit_parameters,circuit_parameters,extracted_circuit_parameters):
+	def update_circuit_state(self,initial_circuit_parameters,circuit_parameters,extracted_parameters):
 		self.initial_circuit_parameters=initial_circuit_parameters.copy()
 		self.circuit_parameters=circuit_parameters.copy()
-		self.extracted_circuit_parameters=extracted_circuit_parameters.copy()
+		self.extracted_parameters=extracted_parameters.copy()
 		
 	#-----------------------------------------------------------------------------------------------
 	#---------------------------- Simulation Parameter Functions -----------------------------------
@@ -381,6 +381,9 @@ class Circuit():
 def get_final_circuit_parameters(initial_circuit_parameters,circuit_initialization_parameters):
 	
 	circuit_parameters=initial_circuit_parameters.copy()
+	# Getting the circuit type
+	circuit_type=circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']
+
 
 	# ~~~~~~~~~~~~~~~ CONSTRAINTS CHECK ~~~~~~~~~~~~~~~
 
@@ -388,10 +391,13 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 	circuit_parameters['Ld']=initial_circuit_parameters['Ld']
 
 	# Constraints for Ls - can't be greater than 10nH
-	if initial_circuit_parameters['Ls']<10e-9:
-		circuit_parameters['Ls']=initial_circuit_parameters['Ls']
+	if circuit_type=='mos_inductor':
+		if initial_circuit_parameters['Ls']<10e-9:
+			circuit_parameters['Ls']=initial_circuit_parameters['Ls']
+		else:
+			circuit_parameters['Ls']=10e-9
 	else:
-		circuit_parameters['Ls']=10e-9
+		circuit_parameters['Ls']=initial_circuit_parameters['Ls']
 
 	# Constraints for Rk - can't be greater than 1
 	if 'Rk' in initial_circuit_parameters:
@@ -407,9 +413,6 @@ def get_final_circuit_parameters(initial_circuit_parameters,circuit_initializati
 
 
 	# ~~~~~~~~~~~~~~~ GETTING EXTRA PARAMETERS ~~~~~~~~~~~~~~~
-
-	# Getting the circuit type
-	circuit_type=circuit_initialization_parameters['simulation']['standard_parameters']['circuit_type']
 
 	# Getting the value of resistances in parallel with L
 	if circuit_type!='series' and circuit_type!='mos_inductor':

@@ -272,7 +272,7 @@ def calculate_initial_parameters(cir,optimization_input_parameters):
 	f_range=f_list[len_flist-1]-f_list[0]
 	Qin=calculate_Qin(s11,fo,f_range)
 	global gm
-	gm=100e-3
+	gm=20e-3
 	cgs=calculate_cgs(fo,Rs,Qin)
 	initial_circuit_parameters['W']=calculate_W(cgs,Lmin,Cox)
 	
@@ -335,10 +335,10 @@ def update_initial_parameters(cir,optimization_input_parameters):
 	
 		# Calculating Io from W and gm based on NF Calculation
 		global gm
-		#gain=extracted_parameters['gain_db']
-		#gain=10**(gain/20)
-		#if gain<target_gain:
-		#	gm*=(1.2*target_gain/gain)
+		gain=extracted_parameters['gain_db']
+		gain=10**(gain/20)
+		if gain<target_gain:
+			gm*=(1.2*target_gain/gain)
 		initial_circuit_parameters['Io']=calculate_Io(gm,un,Cox,initial_circuit_parameters['W'],Lmin)
 
 		# Running the circuit and updating the results
@@ -366,30 +366,6 @@ def update_initial_parameters(cir,optimization_input_parameters):
 		circuit_parameters_iter[j]=cir.get_circuit_parameters()
 		extracted_parameters_iter[j]=cir.get_extracted_parameters()
 		j+=1
-	
-	print('\n\n\n')
-	print(initial_circuit_parameters_iter)
-	print('\n\n\n')
-	print(circuit_parameters_iter)
-	print('\n\n\n')
-	print(extracted_parameters_iter)
-	
-	i=get_best_point(circuit_parameters_iter,extracted_parameters_iter,optimization_input_parameters['output_conditions'])
-	print('\n\n\n')
-	print('Best Point : ',i)
-	
-	cir.update_circuit_state(initial_circuit_parameters_iter[i],circuit_parameters_iter[i],extracted_parameters_iter[i])
-	cir.initial_circuit_parameters=initial_circuit_parameters_iter[i].copy()
-	cir.circuit_parameters=circuit_parameters_iter[i].copy()
-	cir.extracted_parameters=extracted_parameters_iter[i].copy()
-	
-	print('\n\n\n')
-	print('\nInitial Circuit Parameters')
-	print(initial_circuit_parameters_iter[i])
-	print('\nCircuit Parameters')
-	print(circuit_parameters_iter[i])
-	print('\nExtracted Parameters')
-	print(extracted_parameters_iter[i])
 		
 	
 
